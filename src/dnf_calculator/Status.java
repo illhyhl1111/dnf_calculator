@@ -15,69 +15,74 @@ interface StatusList
 
 public class Status {
 	
-	private StatusStore<?>[] statInfo; 
+	private StatusInfo[] statInfo;
 	
 	public Status()
 	{
-		statInfo = new StatusStore<?>[StatusList.STATNUM];
+		statInfo = new StatusInfo[StatusList.STATNUM];
 		int i;
 		for(i=0; i<StatusList.ELEMENTNUM; i++)
-			statInfo[i] = new StatusStore<>(new ElementInfo(false, 0));
+			statInfo[i] = new ElementInfo(false, 0);
 		
 		for(; i<StatusList.STATNUM; i++)
-			statInfo[i] = new StatusStore<StatInfo>(new StatInfo(0));
+			statInfo[i] = new StatusInfo(0);
 	}
 	
 	public void setStatus(Status_Public stat)
 	{
-		int i;
-		for(i=0; i<StatusList.ELEMENTNUM; i++)
-			statInfo[i].setElementStatus(stat.statInfo[i].getStatus().str, stat.statInfo[i].getElementStatus().hasElement);
-		
-		for(; i<StatusList.STATNUM; i++)
-			statInfo[i].setStatus(stat.statInfo[i].getStatus().str);
+		for(int i=0; i<StatusList.STATNUM; i++)
+			statInfo[i]=stat.publicInfo[i].getClone();
 	}
+	
+	class Status_Public
+	{
+		public StatusInfo[] publicInfo;  
+		
+		public Status_Public()
+		{
+			publicInfo = new StatusInfo[StatusList.STATNUM];
+			for(int i=0; i<StatusList.STATNUM; i++)
+				publicInfo[i] = statInfo[i].getClone();
+		}
+		
+		public void setStat(int stat, int strength)
+		{
+			publicInfo[stat].str=strength;
+		}
+		
+		public void setElementStat(int stat, int strength, boolean activated)
+		{
+			if(StatusList.ELEMENTNUM>stat){
+				publicInfo[stat].str=strength;
+				ElementInfo temp = (ElementInfo)publicInfo[stat];
+				temp.hasElement=activated;
+			}
+			else; //Make Error
+		}
+		
+		public void renewStat()
+		{
+			for(int i=0; i<StatusList.STATNUM; i++)
+				publicInfo[i] = statInfo[i].getClone();
+		}
+	}
+
 }
 
-class Status_Public
-{
-	public StatusStore<?>[] statInfo; 
-	
-	public Status_Public()
-	{
-		statInfo = new StatusStore<?>[StatusList.STATNUM];
-		int i;
-		for(i=0; i<StatusList.ELEMENTNUM; i++)
-			statInfo[i] = new StatusStore<ElementInfo>(new ElementInfo(false, 0));
-		
-		for(; i<StatusList.STATNUM; i++)
-			statInfo[i] = new StatusStore<StatInfo>(new StatInfo(0));
-	}
-	
-	public void setStat(int stat, int strength)
-	{
-		statInfo[stat].setStatus(strength);
-	}
-	
-	public void setElementStat(int stat, int strength, boolean activated)
-	{
-		if(StatusList.ELEMENTNUM>stat) statInfo[stat].setElementStatus(strength, activated);
-		else; //Make Error
-	}
-}
-
-class StatInfo
+class StatusInfo
 {
 	int str;
-	public StatInfo(int strength)
+	public StatusInfo(int strength)
 	{
 		str=strength;
 	}
 	
 	public void setInfo(int strength) { str=strength;}
+	
+	public StatusInfo getClone() {return new StatusInfo(str);}
 }
 
-class ElementInfo extends StatInfo
+class ElementInfo extends StatusInfo
 {
 	boolean hasElement;
 	
@@ -97,38 +102,6 @@ class ElementInfo extends StatInfo
 	{
 		super.setInfo(strength);
 	}
-}
-
-class StatusStore<T extends StatInfo>
-{
-	private T str;
 	
-	public StatusStore(T strength){
-		str=strength;
-	}
-	
-	public void setStatus(int strength){
-		str.setInfo(strength);
-	}
-	
-	public void setElementStatus(int strength, boolean activated)
-	{
-		ElementInfo temp;
-		if(str instanceof ElementInfo) temp = (ElementInfo)str;
-		else{
-			//print error
-			return;
-		}
-		temp.setInfo(activated, strength);
-	}
-	
-	public T getStatus()
-	{
-		return str;
-	}
-	
-	public ElementInfo getElementStatus()
-	{
-		return (ElementInfo)str;
-	}
+	public StatusInfo getClone() {return new ElementInfo(hasElement, str);}
 }
