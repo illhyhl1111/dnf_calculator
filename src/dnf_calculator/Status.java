@@ -1,8 +1,9 @@
 package dnf_calculator;
+//import java.util.HashMap;
 
-class StatusList
+class StatusArray
 {
-	public static final int STATNUM = 18;
+	public static final int STATNUM = 17;
 	public static final int ELEMENTNUM = 4;
 	public static final String[] statusList =
 		{
@@ -12,6 +13,22 @@ class StatusList
 			"dam_inc", "dam_crt", "dam_add",
 			"element_fire","element_water", "element_light","element_darkenss"
 		};
+	
+	//public HashMap<StatusList, Integer> hMap = new HashMap<StatusList, Integer>();
+	/*for(int i=0; i<STATNUM, i++)
+	{
+		hMap.put(i, statusList[i]);
+	}*/
+	
+}
+
+interface StatusList
+{
+	int ELEM_FIRE=0; int  ELEM_WATER=1; int  ELEM_LIGHT=2; int  ELEMT_DARKNESS=3;
+	int ATK_PHY=4; int  ATK_MAG=5; int  ATK_NODEF_PHY=6; int  ATK_NODEF_MAG=7; 
+	int DEF_DEC_FIXED=8; int  DEF_DEC_PERCENT=9; 
+	int DAM_INC=10; int  DAM_CRT=11; int  DAM_ADD=12;
+	int STR=13; int INTELL=14; int STA=15; int WILL=16;
 }
 
 public class Status {
@@ -20,14 +37,13 @@ public class Status {
 	
 	public Status()
 	{
-		statInfo = new StatusInfo<?>[StatusList.STATNUM];
+		statInfo = new StatusInfo<?>[StatusArray.STATNUM];
 		int i;
-		for(i=0; i<StatusList.STATNUM-StatusList.ELEMENTNUM; i++)
-			statInfo[i] = new StatusInfo<Integer>(StatusList.statusList[i], 0);
+		for(i=0; i<StatusArray.ELEMENTNUM; i++)
+			statInfo[i] = new StatusInfo<StatInfo>(StatusArray.statusList[i], new StatInfo(0));
 		
-		for(; i<StatusList.STATNUM; i++)
-			statInfo[i] = new StatusInfo<ElementInfo>(StatusList.statusList[i], new ElementInfo(false, 0));
-		
+		for(; i<StatusArray.STATNUM; i++)
+			statInfo[i] = new StatusInfo<ElementInfo>(StatusArray.statusList[i], new ElementInfo(false, 0));
 	}
 	
 	public void setStatus(Status_Public stat)
@@ -38,67 +54,81 @@ public class Status {
 
 class Status_Public
 {
-	int str;
-	int intell;
-	int sta;
-	int will;
-	
-	HashMap<Element, ElementInfo> elementMap=new HashMap<Element, ElementInfo>();
-	
-	int atk_phy;
-	int atk_mag;
-	int atk_indp;
-	int atk_noDef_phy;
-	int atk_noDef_mag;
-	
-	int def_dec_fixed;
-	int def_dec_percent;
-	
-	int dam_inc;
-	int dam_crt;
-	int dam_add;
+	public StatusInfo<?>[] statInfo; 
 	
 	public Status_Public()
 	{
-		str=0; intell=0; sta=0; will=0;
+		statInfo = new StatusInfo<?>[StatusArray.STATNUM];
+		int i;
+		for(i=0; i<StatusArray.ELEMENTNUM; i++)
+			statInfo[i] = new StatusInfo<StatInfo>(StatusArray.statusList[i], new StatInfo(0));
 		
-		elementMap.put(Element.FIRE, new ElementInfo(false, 0));
-		elementMap.put(Element.WATER, new ElementInfo(false, 0));
-		elementMap.put(Element.LIGHT, new ElementInfo(false, 0));
-		elementMap.put(Element.DARKNESS, new ElementInfo(false, 0));
-		
-		atk_phy=0; atk_mag=0; atk_noDef_phy=0; atk_noDef_mag=0;
-		def_dec_fixed=0; def_dec_percent=0;
-		dam_inc=0; dam_crt=0; dam_add=0;
+		for(; i<StatusArray.STATNUM; i++)
+			statInfo[i] = new StatusInfo<ElementInfo>(StatusArray.statusList[i], new ElementInfo(false, 0));
 	}
 	
+	public void setStat(int stat, int strength)
+	{
+		statInfo[stat].setStatus(strength);
+	}
+	
+	public void setElementStat(int stat, int strength, boolean activated)
+	{
+		if(StatusArray.ELEMENTNUM>stat) statInfo[stat].setElementStatus(strength, activated);
+		else; //Make Error
+	}
 }
 
-class ElementInfo
+class StatInfo
+{
+	int str;
+	public StatInfo(int strength)
+	{
+		str=strength;
+	}
+	
+	public void setInfo(int strength) { str=strength;}
+}
+
+class ElementInfo extends StatInfo
 {
 	boolean hasElement;
-	int elem_str;
 	
 	public ElementInfo(boolean activated, int strength)
 	{
+		super(strength);
 		hasElement=activated;
-		elem_str=strength;
 	}
 	
-	public void setElementInfo(boolean activated, int strength)
+	public void setInfo(boolean activated, int strength)
 	{
+		super.setInfo(strength);
 		hasElement=activated;
-		elem_str=strength;
+	}
+	
+	public void setInfo(int strength)
+	{
+		super.setInfo(strength);
 	}
 }
 
-class StatusInfo<T>
+class StatusInfo<T extends StatInfo>
 {
-	String statName;
-	T str;
+	private String statName;
+	private T str;
 	
 	public StatusInfo(String name, T strength){
 		statName=name;
 		str=strength;
+	}
+	
+	public void setStatus(int strength){
+		str.setInfo(strength);
+	}
+	
+	public void setElementStatus(int strength, boolean activated)
+	{
+		ElementInfo temp = (ElementInfo)str;
+		temp.setInfo(activated, strength);
 	}
 }
