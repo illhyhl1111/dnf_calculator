@@ -15,38 +15,43 @@ interface StatusList
 
 public class Status {
 	
-	private StatusInfo<?>[] statInfo; 
+	private StatusStore<?>[] statInfo; 
 	
 	public Status()
 	{
-		statInfo = new StatusInfo<?>[StatusList.STATNUM];
+		statInfo = new StatusStore<?>[StatusList.STATNUM];
 		int i;
 		for(i=0; i<StatusList.ELEMENTNUM; i++)
-			statInfo[i] = new StatusInfo<StatInfo>(new StatInfo(0));
+			statInfo[i] = new StatusStore<>(new ElementInfo(false, 0));
 		
 		for(; i<StatusList.STATNUM; i++)
-			statInfo[i] = new StatusInfo<ElementInfo>(new ElementInfo(false, 0));
+			statInfo[i] = new StatusStore<StatInfo>(new StatInfo(0));
 	}
 	
 	public void setStatus(Status_Public stat)
 	{
+		int i;
+		for(i=0; i<StatusList.ELEMENTNUM; i++)
+			statInfo[i].setElementStatus(stat.statInfo[i].getStatus().str, stat.statInfo[i].getElementStatus().hasElement);
 		
+		for(; i<StatusList.STATNUM; i++)
+			statInfo[i].setStatus(stat.statInfo[i].getStatus().str);
 	}
 }
 
 class Status_Public
 {
-	public StatusInfo<?>[] statInfo; 
+	public StatusStore<?>[] statInfo; 
 	
 	public Status_Public()
 	{
-		statInfo = new StatusInfo<?>[StatusList.STATNUM];
+		statInfo = new StatusStore<?>[StatusList.STATNUM];
 		int i;
 		for(i=0; i<StatusList.ELEMENTNUM; i++)
-			statInfo[i] = new StatusInfo<StatInfo>(new StatInfo(0));
+			statInfo[i] = new StatusStore<ElementInfo>(new ElementInfo(false, 0));
 		
 		for(; i<StatusList.STATNUM; i++)
-			statInfo[i] = new StatusInfo<ElementInfo>(new ElementInfo(false, 0));
+			statInfo[i] = new StatusStore<StatInfo>(new StatInfo(0));
 	}
 	
 	public void setStat(int stat, int strength)
@@ -94,11 +99,11 @@ class ElementInfo extends StatInfo
 	}
 }
 
-class StatusInfo<T extends StatInfo>
+class StatusStore<T extends StatInfo>
 {
 	private T str;
 	
-	public StatusInfo(T strength){
+	public StatusStore(T strength){
 		str=strength;
 	}
 	
@@ -108,7 +113,22 @@ class StatusInfo<T extends StatInfo>
 	
 	public void setElementStatus(int strength, boolean activated)
 	{
-		if(str instanceof ElementInfo) ElementInfo temp = (ElementInfo)str;
+		ElementInfo temp;
+		if(str instanceof ElementInfo) temp = (ElementInfo)str;
+		else{
+			//print error
+			return;
+		}
 		temp.setInfo(activated, strength);
+	}
+	
+	public T getStatus()
+	{
+		return str;
+	}
+	
+	public ElementInfo getElementStatus()
+	{
+		return (ElementInfo)str;
 	}
 }
