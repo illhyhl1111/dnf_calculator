@@ -1,5 +1,4 @@
 package dnf_calculator;
-import java.util.HashMap;
 
 class StatusList
 {
@@ -17,18 +16,10 @@ class StatusList
 
 public class Status {
 	
-	private HashMap<Element, ElementInfo> elementMap;
-	
 	private StatusInfo<?>[] statInfo; 
 	
 	public Status()
 	{
-		elementMap = new HashMap<Element, ElementInfo>();
-		elementMap.put(Element.FIRE, new ElementInfo(false, 0));
-		elementMap.put(Element.WATER, new ElementInfo(false, 0));
-		elementMap.put(Element.LIGHT, new ElementInfo(false, 0));
-		elementMap.put(Element.DARKNESS, new ElementInfo(false, 0));
-		
 		statInfo = new StatusInfo<?>[StatusList.STATNUM];
 		int i;
 		for(i=0; i<StatusList.STATNUM-StatusList.ELEMENTNUM; i++)
@@ -99,11 +90,6 @@ class ElementInfo
 		hasElement=activated;
 		elem_str=strength;
 	}
-}
-
-enum Element
-{
-	FIRE, WATER, LIGHT, DARKNESS;
 }
 
 class StatusInfo<T>
