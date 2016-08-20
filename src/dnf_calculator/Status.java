@@ -7,17 +7,17 @@ interface StatList
 	int WEP_PHY=4; int  WEP_MAG=5; int  WEP_NODEF_PHY=6; int  WEP_NODEF_MAG=7; int WEP_IND=19; int WEP_IND_REFORGE=20; 
 	int DEF_DEC_FIXED_PHY=8; int  DEF_DEC_PERCENT_PHY=9; int DEF_DEC_FIXED_MAG=36; int DEF_DEC_PERCENT_MAG=37;
 	int DAM_INC=10; int  DAM_CRT=11; int  DAM_ADD=12; 
-	int STR=13; int INTELL=14; int STA=15; int WILL=16;
+	int STR=13; int INT=14; int STA=15; int WILL=16;
 	int MAST_PHY=17; int MAST_MAG=18; int MAST_IND=21; int MAST_PHY_2=24; int MAST_MAG_2=25;
-	int STR_INC=22; int MAG_INC=23;
+	int STR_INC=22; int INT_INC=23;
 	int DAM_ADD_FIRE=26; int DAM_ADD_WATER=27; int DAM_ADD_LIGHT=28; int DAM_ADD_DARKNESS=29;
 	int DAM_BUF=30;	//투함포 이그니스 공대버프 
-	int CRT_PHY=31; int CRT_MAG=32; int CRT_LOW_PHY=33; int CRT_LOW_MAG=34; int CRT_BUF=35; int CRT_BACK_PHY=38; int CRT_BACK_MAG=39;
+	int CRT_PHY=31; int CRT_MAG=32; int CRT_LOW=33; int CRT_BUF=35; int CRT_BACK_PHY=38; int CRT_BACK_MAG=39;
 	int DAM_INC_BACK=40; int DAM_CRT_BACK=41; int DAM_ADD_BACK=42;
 	int BUF_INC=43; int BUF_CRT=44;
-	int DAM_SKILL = 45;
+	int DAM_SKILL = 34;
 	
-	public static final int STATNUM = 46;
+	public static final int STATNUM = 45;
 	public static final int ELEMENTNUM = 4;
 }
 
