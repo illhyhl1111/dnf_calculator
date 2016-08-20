@@ -6,12 +6,13 @@ public class Calculator {
 	{
 		//calculate with status
 		Status.PublicStatus stat=character.finalStatus.new PublicStatus();
+		double dec_defence=(1-getPhysicalPercentDefence(character, object));							// 방어력에 의해 감소하는 비율
 		
 		double inc_strength=1+stat.getStat(StatList.STR)*stat.getStat(StatList.STR_INC)/250;						// 1+힘/250
 		int inc_weapon1=(stat.getStat(StatList.WEP_PHY)*(100+stat.getStat(StatList.MAST_PHY_2)))/100;				// [무기물공*(100+마스터리2)/100]
 		int inc_weapon2=(inc_weapon1*(stat.getStat(StatList.MAST_PHY)+100))/100;									// [[무기물공*(100+마스터리2)/100]*(100+마스터리1)/100]
 		int defIgnore=(stat.getStat(StatList.WEP_NODEF_PHY)*(100-object.getStat(Monster_StatList.DIFFICULTY)))/100;	// 방어무시데미지
-		double frontATK=inc_strength*inc_weapon2+defIgnore;															// (힘)*(물공+방무뎀)
+		double frontATK=inc_strength*inc_weapon2*dec_defence*+defIgnore;											// (힘*물공)*방어력*TODO 속강+방무뎀
 		
 		
 		double avgCritical=stat.getStat(StatList.CRT_PHY)+stat.getStat(StatList.CRT_LOW)+3;			// 3+크리+크리저항
@@ -20,9 +21,10 @@ public class Calculator {
 		double inc_critical;																			// 크증뎀항
 		if(object.getBool(Monster_StatList.BACKATK) && stat.getStat(StatList.DAM_CRT_BACK)>stat.getStat(StatList.DAM_CRT))
 			inc_critical=(100-avgCritical)+avgCritical*1.5*(int)((100+stat.getStat(StatList.DAM_CRT_BACK))/100)
-					*(int)(100+stat.getStat(StatList.BUF_CRT))/100;										// (100-크리확률)+크리확률*1.5*(100+백크증뎀)/100*(100+크증버프)/100
+					*(int)((100+stat.getStat(StatList.BUF_CRT))/100);										// (100-크리확률)+크리확률*1.5*(100+백크증뎀)/100*(100+크증버프)/100
 		else inc_critical=(100-avgCritical)+avgCritical*1.5*(int)((100+stat.getStat(StatList.DAM_CRT))/100)
-					*(int)(100+stat.getStat(StatList.BUF_CRT))/100;										// (100-크리확률)+크리확률*1.5*(100+크증뎀)/100
+					*(int)((100+stat.getStat(StatList.BUF_CRT))/100);										// (100-크리확률)+크리확률*1.5*(100+크증뎀)/100
+		
 		
 		
 		if(mode==1)//average damage mode
@@ -38,11 +40,12 @@ public class Calculator {
 	{
 		//calculate with status
 		Status.PublicStatus stat=character.finalStatus.new PublicStatus();
+		double dec_defence=(1-getPhysicalPercentDefence(character, object));							// 방어력에 의해 감소하는 비율
 		
 		double inc_strength=1+stat.getStat(StatList.STR)*stat.getStat(StatList.STR_INC)/250;			// 1+힘/250
 		int inc_indep=(int)(stat.getStat(StatList.WEP_IND)*(double)(100+stat.getStat(StatList.MAST_IND))/100
-				+(double)stat.getStat(StatList.WEP_IND_REFORGE));										//독공*독공뻥+재련 
-		double frontATK=inc_strength*inc_indep;															// (힘)*(독공)
+				+(double)stat.getStat(StatList.WEP_IND_REFORGE));										// 독공*독공뻥+재련 
+		double frontATK=inc_strength*inc_indep*dec_defence;												// 힘*독공*방어력
 		
 		
 		double avgCritical=stat.getStat(StatList.CRT_PHY)+stat.getStat(StatList.CRT_LOW)+3;			// 3+크리+크리저항
@@ -51,9 +54,9 @@ public class Calculator {
 		double inc_critical;																			// 크증뎀항
 		if(object.getBool(Monster_StatList.BACKATK) && stat.getStat(StatList.DAM_CRT_BACK)>stat.getStat(StatList.DAM_CRT))
 			inc_critical=(100-avgCritical)+avgCritical*1.5*(int)((100+stat.getStat(StatList.DAM_CRT_BACK))/100)
-					*(int)(100+stat.getStat(StatList.BUF_CRT))/100;										// (100-크리확률)+크리확률*1.5*(100+백크증뎀)/100*(100+크증버프)/100
+					*(int)((100+stat.getStat(StatList.BUF_CRT))/100);										// (100-크리확률)+크리확률*1.5*(100+백크증뎀)/100*(100+크증버프)/100
 		else inc_critical=(100-avgCritical)+avgCritical*1.5*(int)((100+stat.getStat(StatList.DAM_CRT))/100)
-					*(int)(100+stat.getStat(StatList.BUF_CRT))/100;										// (100-크리확률)+크리확률*1.5*(100+크증뎀)/100
+					*(int)((100+stat.getStat(StatList.BUF_CRT))/100);										// (100-크리확률)+크리확률*1.5*(100+크증뎀)/100
 		
 		
 		if(mode==1)//average damage mode
@@ -69,12 +72,13 @@ public class Calculator {
 	{
 		//calculate with status
 		Status.PublicStatus stat=character.finalStatus.new PublicStatus();
+		double dec_defence=(1-getPhysicalPercentDefence(character, object));							// 방어력에 의해 감소하는 비율
 		
 		double inc_strength=1+stat.getStat(StatList.INT)*stat.getStat(StatList.INT_INC)/250;							// 1+지능/250
 		int inc_weapon1=(stat.getStat(StatList.WEP_MAG)*(100+stat.getStat(StatList.MAST_MAG_2)))/100;					// [무기마공*(100+마스터리2)/100]
 		int inc_weapon2=(inc_weapon1*(stat.getStat(StatList.MAST_MAG)+100))/100;										// [[무기마공*(100+마스터리2)/100]*(100+마스터리1)/100]
 		int defIgnore=(stat.getStat(StatList.WEP_NODEF_MAG)*(100-object.getStat(Monster_StatList.DIFFICULTY)))/100;		// 방어무시데미지
-		double frontATK=inc_strength*inc_weapon2+defIgnore;																// (지능)*(마공+방무뎀)
+		double frontATK=inc_strength*inc_weapon2*dec_defence*+defIgnore;												// (지능*마공)*방어력*TODO 속강+방무뎀
 		
 		
 		double avgCritical=stat.getStat(StatList.CRT_MAG)+stat.getStat(StatList.CRT_LOW)+3;			// 3+크리+크리저항
@@ -83,9 +87,9 @@ public class Calculator {
 		double inc_critical;																			// 크증뎀항
 		if(object.getBool(Monster_StatList.BACKATK) && stat.getStat(StatList.DAM_CRT_BACK)>stat.getStat(StatList.DAM_CRT))
 			inc_critical=(100-avgCritical)+avgCritical*1.5*(int)((100+stat.getStat(StatList.DAM_CRT_BACK))/100)
-					*(int)(100+stat.getStat(StatList.BUF_CRT))/100;										// (100-크리확률)+크리확률*1.5*(100+백크증뎀)/100*(100+크증버프)/100
+					*(int)((100+stat.getStat(StatList.BUF_CRT))/100);										// (100-크리확률)+크리확률*1.5*(100+백크증뎀)/100*(100+크증버프)/100
 		else inc_critical=(100-avgCritical)+avgCritical*1.5*(int)((100+stat.getStat(StatList.DAM_CRT))/100)
-					*(int)(100+stat.getStat(StatList.BUF_CRT))/100;										// (100-크리확률)+크리확률*1.5*(100+크증뎀)/100
+					*(int)((100+stat.getStat(StatList.BUF_CRT))/100);									// (100-크리확률)+크리확률*1.5*(100+크증뎀)/100
 		
 		
 		if(mode==1)//average damage mode
@@ -101,11 +105,12 @@ public class Calculator {
 	{
 		//calculate with status
 		Status.PublicStatus stat=character.finalStatus.new PublicStatus();
+		double dec_defence=(1-getPhysicalPercentDefence(character, object));							// 방어력에 의해 감소하는 비율
 		
 		double inc_strength=1+stat.getStat(StatList.INT)*stat.getStat(StatList.INT_INC)/250;			// 1+지능/250
 		int inc_indep=(int)(stat.getStat(StatList.WEP_IND)*(double)(100+stat.getStat(StatList.MAST_IND))/100
-				+(double)stat.getStat(StatList.WEP_IND_REFORGE));										//독공*독공뻥+재련 
-		double frontATK=inc_strength*inc_indep;															// (지능)*(독공)
+				+(double)stat.getStat(StatList.WEP_IND_REFORGE));										// 독공*독공뻥+재련 
+		double frontATK=inc_strength*inc_indep*dec_defence;												// 지능*독공*방어력
 		
 		
 		double avgCritical=stat.getStat(StatList.CRT_MAG)+stat.getStat(StatList.CRT_LOW)+3;			// 3+크리+크리저항
@@ -114,9 +119,9 @@ public class Calculator {
 		double inc_critical;																			// 크증뎀항
 		if(object.getBool(Monster_StatList.BACKATK) && stat.getStat(StatList.DAM_CRT_BACK)>stat.getStat(StatList.DAM_CRT))
 			inc_critical=(100-avgCritical)+avgCritical*1.5*(int)((100+stat.getStat(StatList.DAM_CRT_BACK))/100)
-					*(int)(100+stat.getStat(StatList.BUF_CRT))/100;										// (100-크리확률)+크리확률*1.5*(100+백크증뎀)/100*(100+크증버프)/100
+					*(int)((100+stat.getStat(StatList.BUF_CRT))/100);									// (100-크리확률)+크리확률*1.5*(100+백크증뎀)/100*(100+크증버프)/100
 		else inc_critical=(100-avgCritical)+avgCritical*1.5*(int)((100+stat.getStat(StatList.DAM_CRT))/100)
-					*(int)(100+stat.getStat(StatList.BUF_CRT))/100;										// (100-크리확률)+크리확률*1.5*(100+크증뎀)/100
+					*(int)((100+stat.getStat(StatList.BUF_CRT))/100);									// (100-크리확률)+크리확률*1.5*(100+크증뎀)/100
 		
 		
 		if(mode==1)//average damage mode
@@ -128,10 +133,10 @@ public class Calculator {
 	{ return fixedDamage_magical(skillValue, usedIndepValue , object, character, 1); }
 	
 	
-	public static long damage_enhancing_avg(Status.PublicStatus stat, Monster object, Char character)  
+	public static long damage_enhancing_avg(Status.PublicStatus stat, Monster object, Char character)  	// 속강증크증스증추뎀카운터투함포기타등등
 	{
 		
-		int inc_damage=(100+stat.getStat(StatList.BUF_INC))/100;										// 증뎀버프
+		double inc_damage=(100+stat.getStat(StatList.BUF_INC))/100;										// 증뎀버프
 		if(object.getBool(Monster_StatList.BACKATK) && stat.getStat(StatList.DAM_INC_BACK)>stat.getStat(StatList.DAM_INC))
 			inc_damage*=(100+stat.getStat(StatList.DAM_INC_BACK))/100;									// (100+증뎀)/100
 		else inc_damage*=(100+stat.getStat(StatList.DAM_INC))/100;										// (100+증뎀)/100
@@ -199,9 +204,11 @@ public class Calculator {
 	
 	public static double element_dmg(Monster object, Status.PublicStatus stat, int element)
 	{
-		if(!((ElementInfo)stat.publicInfo[element]).hasElement) return -1.0;
+		if(!((ElementInfo)stat.publicInfo[element]).hasElement) return -1.0;							// 해당 속성부여 없음
 		
-		double temp = ( 1.05+0.0045*(stat.getStat(element)-object.getStat(Monster_StatList.FIRE_RESIST+element-StatList.ELEM_FIRE) ) );
+		int index = element-StatList.ELEM_FIRE;
+		double temp = ( 1.05+0.0045*(stat.getStat(element)+stat.getStat(StatList.ELEM_FIRE_DEC+index)-object.getStat(Monster_StatList.FIRE_RESIST+index) ) );
+					  // 1+0.05(속성부여)+0.0045*(속강-속저오라-몹속저)
 		if(temp<0) return 0;
 		else return temp;
 	}
@@ -230,9 +237,35 @@ public class Calculator {
 		return mode;
 	}
 	
+	public static double getPhysicalPercentDefence(Char character, Monster object)
+	{
+		int level = character.level;
+		Status.PublicStatus stat=character.finalStatus.new PublicStatus();
+		
+		int fixedDef=object.getStat(Monster_StatList.DEFENSIVE_PHY);
+		fixedDef-=stat.getStat(StatList.DEF_DEC_FIXED_PHY);
+		fixedDef=(int)(fixedDef*(100.0-stat.getStat(StatList.DEF_DEC_PERCENT_PHY_SKILL))/100);
+		fixedDef=(int)(fixedDef*(100.0-stat.getStat(StatList.DEF_DEC_PERCENT_PHY_ITEM)*(double)object.getStat(Monster_StatList.TYPE)/100)/100);
+		
+		return ((double)(fixedDef))/((double)(fixedDef+level*200));
+	}
+	
+	public static double getMagicalPercentDefence(Char character, Monster object)
+	{
+		int level = character.level;
+		Status.PublicStatus stat=character.finalStatus.new PublicStatus();
+		
+		int fixedDef=object.getStat(Monster_StatList.DEFENSIVE_MAG);
+		fixedDef-=stat.getStat(StatList.DEF_DEC_FIXED_MAG);
+		fixedDef=(int)(fixedDef*(100.0-stat.getStat(StatList.DEF_DEC_PERCENT_MAG_SKILL))/100);
+		fixedDef=(int)(fixedDef*(100.0-stat.getStat(StatList.DEF_DEC_PERCENT_MAG_ITEM)*(double)object.getStat(Monster_StatList.TYPE)/100)/100);
+		
+		return ((double)(fixedDef))/((double)(fixedDef+level*200));
+	}
 }
 
 class Char
 {
 	Status finalStatus;
+	int level;
 }
