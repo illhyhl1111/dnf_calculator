@@ -1,11 +1,11 @@
 package dnf_calculator;
-//import java.util.HashMap;
+import java.util.HashMap;
 
 interface StatList									// 스탯 종류에 붙는 고유한 식별번호
 {
-	int ELEM_FIRE=0; int  ELEM_WATER=1; int  ELEM_LIGHT=2; int  ELEM_DARKNESS=3;											// 화, 수, 명, 암속성
+	int ELEM_FIRE=1; int  ELEM_WATER=2; int  ELEM_LIGHT=3; int  ELEM_DARKNESS=4;											// 화, 수, 명, 암속성
 	public static final int ELEMENTNUM = 4;							// 총 속성 개수
-	public static final int ELEMENTNUM_START = 0;							// 총 속성 개수
+	public static final int ELEMENTNUM_START = 1;					
 	///////////////////////////////////////
 	
 	int WEP_PHY=10; int  WEP_MAG=11; int  WEP_NODEF_PHY=12; int  WEP_NODEF_MAG=13; int WEP_IND=14; int WEP_IND_REFORGE=15; 		// 무기물공, 무기마공, 방무물공, 방무마공, 독공, 재련독공
@@ -37,21 +37,61 @@ interface StatList									// 스탯 종류에 붙는 고유한 식별번호
 public class Status {
 	
 	private AbstractStatusInfo[] statInfo;
+	public static HashMap<String, Integer> statHash = new HashMap<String, Integer>();
 	
 	public Status()									// 모든 스탯 0으로 초기화(디폴트 장비)
 	{
 		statInfo = new AbstractStatusInfo[StatList.STATNUM];
 		int i;
 		int j=0;									// 배열 index 숫자
-		for(i=StatList.ELEMENTNUM_START; i<StatList.ELEMENTNUM; i++, j++)
+		for(i=0; i<StatList.ELEMENTNUM; i++, j++)
 			statInfo[j] = new ElementInfo(false, 0);
 		
-		for(i=StatList.INTNUM_START; i<StatList.INTNUM; i++, j++)
+		for(i=0; i<StatList.INTNUM; i++, j++)
 			statInfo[j] = new StatusInfo(0);
 		
-		for(i=StatList.DOUBLENUM_START; i<StatList.DOUBLENUM; i++, j++)
+		for(i=0; i<StatList.DOUBLENUM; i++, j++)
 			statInfo[j] = new DoubleStatusInfo(0);
+	}
+	
+	public static void setStatHash()
+	{
+		statHash.put("화속성", StatList.ELEM_FIRE); statHash.put("화속", StatList.ELEM_FIRE);
+		statHash.put("수속성", StatList.ELEM_WATER); statHash.put("수속", StatList.ELEM_WATER);
+		statHash.put("명속성", StatList.ELEM_LIGHT); statHash.put("명속", StatList.ELEM_LIGHT);
+		statHash.put("암속성", StatList.ELEM_DARKNESS); statHash.put("암속", StatList.ELEM_DARKNESS);
 		
+		statHash.put("물공", StatList.WEP_PHY); statHash.put("무기물공", StatList.WEP_PHY);
+		statHash.put("마공", StatList.WEP_MAG); statHash.put("무기마공", StatList.WEP_MAG);
+		statHash.put("물리방무뎀", StatList.WEP_NODEF_PHY); statHash.put("마법방무뎀", StatList.WEP_NODEF_MAG);
+		statHash.put("독공", StatList.WEP_IND); statHash.put("재련독공", StatList.WEP_IND_REFORGE);
+	
+		statHash.put("고정물방깍", StatList.DEF_DEC_FIXED_PHY); statHash.put("고정마방깍", StatList.DEF_DEC_FIXED_MAG);
+		statHash.put("퍼물방깍_템", StatList.DEF_DEC_PERCENT_PHY_ITEM); statHash.put("퍼마방깍_템", StatList.DEF_DEC_PERCENT_MAG_ITEM);
+		
+		statHash.put("힘", StatList.STR); statHash.put("지능", StatList.INT);
+		statHash.put("체력", StatList.STA); statHash.put("정신력", StatList.WILL);
+		statHash.put("힘뻥", StatList.STR_INC); statHash.put("지능뻥", StatList.INT_INC);
+		
+		statHash.put("증뎀", StatList.DAM_INC); statHash.put("크증뎀", StatList.DAM_CRT); statHash.put("추뎀", StatList.DAM_ADD);
+		statHash.put("증뎀버프", StatList.BUF_INC); statHash.put("크증버프", StatList.BUF_CRT); statHash.put("크증뎀버프", StatList.BUF_CRT);
+		statHash.put("스증", StatList.DAM_SKILL); statHash.put("스증뎀", StatList.DAM_SKILL);
+		
+		statHash.put("백증뎀", StatList.DAM_INC_BACK); statHash.put("백크증", StatList.DAM_CRT_BACK); statHash.put("백추뎀", StatList.DAM_ADD_BACK);
+		statHash.put("화속추", StatList.DAM_ADD_FIRE); statHash.put("수속추", StatList.DAM_ADD_WATER);
+		statHash.put("명속추", StatList.DAM_ADD_LIGHT); statHash.put("암속추", StatList.DAM_ADD_DARKNESS);
+		statHash.put("화추뎀", StatList.DAM_ADD_FIRE); statHash.put("수추뎀", StatList.DAM_ADD_WATER);
+		statHash.put("명추뎀", StatList.DAM_ADD_LIGHT); statHash.put("암추뎀", StatList.DAM_ADD_DARKNESS);
+		
+		statHash.put("화속깍", StatList.ELEM_FIRE_DEC); statHash.put("수속깍", StatList.ELEM_WATER_DEC);
+		statHash.put("명속깍", StatList.ELEM_LIGHT_DEC); statHash.put("암속깍", StatList.ELEM_DARKNESS_DEC);
+		statHash.put("버프식증뎀", StatList.DAM_BUF); statHash.put("투함포항", StatList.DAM_BUF);
+		
+		statHash.put("퍼물방깍_스킬", StatList.DEF_DEC_PERCENT_PHY_SKILL); statHash.put("퍼마방깍_스킬", StatList.DEF_DEC_PERCENT_MAG_SKILL);
+		statHash.put("물크", StatList.CRT_PHY); statHash.put("마크", StatList.CRT_MAG); statHash.put("크리저항", StatList.CRT_LOW);
+		statHash.put("백물크", StatList.CRT_BACK_PHY); statHash.put("백마크", StatList.CRT_BACK_MAG);
+		statHash.put("물공마스터리", StatList.MAST_PHY); statHash.put("마공마스터리", StatList.MAST_MAG); statHash.put("독공뻥", StatList.MAST_IND);
+		statHash.put("물공마스터리2", StatList.MAST_PHY_2); statHash.put("마공마스터리2", StatList.MAST_MAG_2);
 	}
 	
 	public void setStatus(PublicStatus stat)		// 스탯을 inner class값으로 변경
@@ -104,6 +144,12 @@ public class Status {
 		{
 			for(int i=0; i<StatList.STATNUM; i++)
 				publicInfo[i] = statInfo[i].getClone();
+		}
+		
+		public int statStringToIndex(String stat)
+		{
+			if(statHash.containsKey(stat)) return statHash.get(stat);
+			else return -1; //print error
 		}
 	}
 
