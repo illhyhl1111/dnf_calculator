@@ -9,27 +9,43 @@ public abstract class Monster {							// 피격자 class
 	public Monster(Status stat)								
 	{
 		monster_status=stat;
-		monstInfo = new StatusInfo[StatList.STATNUM];
-		for(int i=Monster_StatList.STARTNUM; i<Monster_StatList.ELEMENTNUM; i++)
+		monstInfo = new StatusInfo[Monster_StatList.STATNUM];
+		int i;
+		for(i=0; i<Monster_StatList.BOOLNUM; i++)
+			monstInfo[i] = new BooleanInfo(false);
+		
+		for(; i<Monster_StatList.STATNUM; i++)
 			monstInfo[i] = new StatusInfo(0);
 		
-		monstInfo[Monster_StatList.TYPE] = new StatusInfo(MonsterType.NORMAL);
+		monstInfo[Monster_StatList.TYPE-Monster_StatList.STARTNUM] = new StatusInfo(MonsterType.NORMAL);
 	}
 	
-	public int getStat(int stat)
+	public int getStat(int stat) throws StatusTypeMismatch
 	{
-		if(monstInfo[stat] instanceof StatusInfo)
-			return ((StatusInfo)monstInfo[stat]).str;
-		else //print error
-			return -1;
+		if(monstInfo[stat-Monster_StatList.STARTNUM] instanceof StatusInfo)
+			return ((StatusInfo)monstInfo[stat-Monster_StatList.STARTNUM]).str;
+		else throw new StatusTypeMismatch("Integer");
 	}
 	
-	public boolean getBool(int stat)
+	public boolean getBool(int stat) throws StatusTypeMismatch
 	{
-		if(monstInfo[stat] instanceof BooleanInfo)
-			return ((BooleanInfo)monstInfo[stat]).bool;
-		else //print error
-			return false;
+		if(monstInfo[stat-Monster_StatList.STARTNUM] instanceof BooleanInfo)
+			return ((BooleanInfo)monstInfo[stat-Monster_StatList.STARTNUM]).bool;
+		else throw new StatusTypeMismatch("Boolean");
+	}
+	
+	public void setStat(int stat, int strength)	throws StatusTypeMismatch
+	{
+		if(monstInfo[stat-Monster_StatList.STARTNUM] instanceof StatusInfo)
+			((StatusInfo)monstInfo[stat-Monster_StatList.STARTNUM]).str=strength;
+		else throw new StatusTypeMismatch("Integer");
+	}
+	
+	public void setBooleanStat(int stat, boolean bool)	throws StatusTypeMismatch
+	{
+		if(monstInfo[stat-Monster_StatList.STARTNUM] instanceof StatusInfo)
+			((BooleanInfo)monstInfo[stat-Monster_StatList.STARTNUM]).bool=bool;
+		else throw new StatusTypeMismatch("Boolean");
 	}
 }
 
@@ -51,7 +67,7 @@ interface Monster_StatList
 	int DEFENSIVE_PHY=1008; int DEFENSIVE_MAG=1009;															// 물방, 마방
 	int LEVEL=1010;	int TYPE=1011;																			// 몹 레벨, 등급
 	
-	int STARTNUM=1000; int ELEMENTNUM=12;	int BOOLNUM=2;		//StatList와 겹치지 않는 시작번호, 스탯개수, bool형 스탯 개수
+	int STARTNUM=1000; int STATNUM=12;	int BOOLNUM=2;		//StatList와 겹치지 않는 시작번호, 스탯개수, bool형 스탯 개수
 }
 
 class BooleanInfo extends AbstractStatusInfo			// boolean형 스탯정보 저장 class

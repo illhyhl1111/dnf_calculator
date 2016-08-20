@@ -2,7 +2,7 @@ package dnf_calculator;
 
 public class Calculator {
 	
-	public static long percentDamage_physical(int skillPercent, Monster object, Char character, int mode)
+	public static long percentDamage_physical(int skillPercent, Monster object, Char character, int mode) throws StatusTypeMismatch
 	{
 		//calculate with status
 		Status.PublicStatus stat=character.finalStatus.new PublicStatus();
@@ -28,15 +28,15 @@ public class Calculator {
 		
 		
 		if(mode==1)//average damage mode
-			return (long)(skillPercent*frontATK*inc_critical*damage_enhancing_avg(stat, object, character, elementCal));
+			return (long)(skillPercent/100.0*frontATK*inc_critical*damage_enhancing_avg(stat, object, character, elementCal));
 		else // I DONT KNOW, SOMEWHAT ELSE
-			return (long)(skillPercent*frontATK*inc_critical*damage_enhancing_avg(stat, object, character, elementCal)); //TODO CHANGE TO ANOTHER MODE
+			return (long)(skillPercent/100.0*frontATK*inc_critical*damage_enhancing_avg(stat, object, character, elementCal)); //TODO CHANGE TO ANOTHER MODE
 	}
-	public static long percentDamage_physical(int skillPercent, Monster object, Char character)
+	public static long percentDamage_physical(int skillPercent, Monster object, Char character) throws StatusTypeMismatch
 	{ return percentDamage_physical(skillPercent, object, character, 1); }
 	
 	
-	public static long fixedDamage_physical(int skillValue, int usedIndepValue , Monster object, Char character, int mode)
+	public static long fixedDamage_physical(int skillValue, int usedIndepValue , Monster object, Char character, int mode) throws StatusTypeMismatch
 	{
 		//calculate with status
 		Status.PublicStatus stat=character.finalStatus.new PublicStatus();
@@ -65,11 +65,11 @@ public class Calculator {
 		else // I DONT KNOW, SOMEWHAT ELSE
 			return (long)((double)skillValue/usedIndepValue*frontATK*inc_critical*damage_enhancing_avg(stat, object, character, elementCal)); //TODO CHANGE TO ANOTHER MODE
 	}
-	public static long fixedDamage_physical(int skillValue, int usedIndepValue , Monster object, Char character)
+	public static long fixedDamage_physical(int skillValue, int usedIndepValue , Monster object, Char character) throws StatusTypeMismatch
 	{ return fixedDamage_physical(skillValue, usedIndepValue , object, character, 1); }
 	
 	
-	public static long percentDamage_magical(int skillPercent, Monster object, Char character, int mode)
+	public static long percentDamage_magical(int skillPercent, Monster object, Char character, int mode) throws StatusTypeMismatch
 	{
 		//calculate with status
 		Status.PublicStatus stat=character.finalStatus.new PublicStatus();
@@ -95,15 +95,15 @@ public class Calculator {
 		
 		
 		if(mode==1)//average damage mode
-			return (long)(skillPercent*frontATK*inc_critical*damage_enhancing_avg(stat, object, character, elementCal));
+			return (long)(skillPercent/100.0*frontATK*inc_critical*damage_enhancing_avg(stat, object, character, elementCal));
 		else // I DONT KNOW, SOMEWHAT ELSE
-			return (long)(skillPercent*frontATK*inc_critical*damage_enhancing_avg(stat, object, character, elementCal)); //TODO CHANGE TO ANOTHER MODE
+			return (long)(skillPercent/100.0*frontATK*inc_critical*damage_enhancing_avg(stat, object, character, elementCal)); //TODO CHANGE TO ANOTHER MODE
 	}
-	public static long percentDamage_magical(int skillPercent, Monster object, Char character)
-	{ return percentDamage_magical(skillPercent, object, character, 1); }
+	public static long percentDamage_magical(int skillPercent, Monster object, Char character) throws StatusTypeMismatch
+	{ return percentDamage_magical(skillPercent, object, character, 1); } 
 	
 	
-	public static long fixedDamage_magical(int skillValue, int usedIndepValue , Monster object, Char character, int mode)
+	public static long fixedDamage_magical(int skillValue, int usedIndepValue , Monster object, Char character, int mode) throws StatusTypeMismatch
 	{
 		//calculate with status
 		Status.PublicStatus stat=character.finalStatus.new PublicStatus();
@@ -132,11 +132,11 @@ public class Calculator {
 		else // I DONT KNOW, SOMEWHAT ELSE
 			return (long)((double)skillValue/usedIndepValue*frontATK*inc_critical*damage_enhancing_avg(stat, object, character, elementCal)); //TODO CHANGE TO ANOTHER MODE
 	}
-	public static long fixedDamage_magical(int skillValue, int usedIndepValue , Monster object, Char character)
-	{ return fixedDamage_magical(skillValue, usedIndepValue , object, character, 1); }
+	public static long fixedDamage_magical(int skillValue, int usedIndepValue , Monster object, Char character) throws StatusTypeMismatch
+	{ return fixedDamage_magical(skillValue, usedIndepValue , object, character, 1); } 
 	
 	
-	public static long damage_enhancing_avg(Status.PublicStatus stat, Monster object, Char character, CalculateElement elementCal)  	// 속강증크증스증추뎀카운터투함포기타등등
+	public static long damage_enhancing_avg(Status.PublicStatus stat, Monster object, Char character, CalculateElement elementCal) throws StatusTypeMismatch  	// 속강증크증스증추뎀카운터투함포기타등등
 	{
 		
 		double inc_damage=(100.0+stat.getStat(StatList.BUF_INC))/100.0;										// 증뎀버프
@@ -176,7 +176,7 @@ public class Calculator {
 		return (long)(inc_damage*inc_counter*inc_add*inc_skill*inc_buf);
 	}
 	
-	public static double getPhysicalPercentDefence(Char character, Monster object)									// 몹의 물리퍼센트 방어력 구하기
+	public static double getPhysicalPercentDefence(Char character, Monster object) throws StatusTypeMismatch							// 몹의 물리퍼센트 방어력 구하기
 	{
 		int level = character.level;
 		Status.PublicStatus stat=character.finalStatus.new PublicStatus();
@@ -189,7 +189,7 @@ public class Calculator {
 		return ((double)(fixedDef))/((double)(fixedDef+level*200));													// %방어력=고정방어력/(고정방어력+레벨*200)
 	}
 	
-	public static double getMagicalPercentDefence(Char character, Monster object)									// 몹의 마법퍼센트 방어력 구하기
+	public static double getMagicalPercentDefence(Char character, Monster object) throws StatusTypeMismatch			// 몹의 마법퍼센트 방어력 구하기
 	{
 		int level = character.level;
 		Status.PublicStatus stat=character.finalStatus.new PublicStatus();
@@ -212,7 +212,7 @@ class CalculateElement
 	private int mode;
 	private double inc_elem;																				// 속강항
 	
-	public CalculateElement(Monster object, Status.PublicStatus stat)
+	public CalculateElement(Monster object, Status.PublicStatus stat) throws StatusTypeMismatch
 	{
 		dmg_fire=element_dmg(object, stat, StatList.ELEM_FIRE);
 		dmg_water=element_dmg(object, stat, StatList.ELEM_WATER);
@@ -250,7 +250,7 @@ class CalculateElement
 	public double get_inc_light() {return dmg_light;}
 	public double get_inc_darkness() {return dmg_darkness;}
 	
-	public static double element_dmg(Monster object, Status.PublicStatus stat, int element)
+	public static double element_dmg(Monster object, Status.PublicStatus stat, int element) throws StatusTypeMismatch
 	{
 		if(!((ElementInfo)stat.publicInfo[element]).hasElement) return -1.0;							// 해당 속성부여 없음
 		
@@ -290,4 +290,10 @@ class Char
 {
 	Status finalStatus;
 	int level;
+	
+	public Char(Status stat, int lev)
+	{
+		finalStatus=stat;
+		level=lev;
+	}
 }

@@ -3,30 +3,30 @@ import java.util.HashMap;
 
 interface StatList									// 스탯 종류에 붙는 고유한 식별번호
 {
-	int ELEM_FIRE=1; int  ELEM_WATER=2; int  ELEM_LIGHT=3; int  ELEM_DARKNESS=4;											// 화, 수, 명, 암속성
+	int ELEM_FIRE=0; int  ELEM_WATER=1; int  ELEM_LIGHT=2; int  ELEM_DARKNESS=3;											// 화, 수, 명, 암속성
 	public static final int ELEMENTNUM = 4;							// 총 속성 개수
 	public static final int ELEMENTNUM_START = 1;					
 	///////////////////////////////////////
 	
-	int WEP_PHY=10; int  WEP_MAG=11; int  WEP_NODEF_PHY=12; int  WEP_NODEF_MAG=13; int WEP_IND=14; int WEP_IND_REFORGE=15; 		// 무기물공, 무기마공, 방무물공, 방무마공, 독공, 재련독공
-	int DEF_DEC_FIXED_PHY=16; int  DEF_DEC_PERCENT_PHY_ITEM=17; int DEF_DEC_FIXED_MAG=18; int DEF_DEC_PERCENT_MAG_ITEM=19;		// 고정물방깍, (아이템)퍼센트물방깍, 고정마방깍, (아이템)퍼센트마방깍
-	int STR=20; int INT=21; int STA=22; int WILL=23;																// 힘, 지능, 체력, 정신력
-	int STR_INC=24; int INT_INC=25;																					// 힘%증가, 지능%증가
-	int DAM_INC=26; int  DAM_CRT=27; int  DAM_ADD=28; 																// 증뎀, 크증뎀, 추뎀합
-	int BUF_INC=29; int BUF_CRT=30;																					//(스킬) 증뎀버프, 크증뎀버프
-	int DAM_SKILL = 31;																								// 스증뎀합
-	int DAM_INC_BACK=32; int DAM_CRT_BACK=33; int DAM_ADD_BACK=34;													//(조건부) 백어택 증뎀, 백어택 크증뎀, 백어택 추뎀
-	int DAM_ADD_FIRE=35; int DAM_ADD_WATER=36; int DAM_ADD_LIGHT=37; int DAM_ADD_DARKNESS=38;						// 화속추뎀, 수속추뎀, 명속추뎀, 암속추뎀 (높은속성추뎀 필요)
-	int ELEM_FIRE_DEC=39; int ELEM_WATER_DEC=40; int ELEM_LIGHT_DEC=41; int ELEM_DARKNESS_DEC=42;					// 화속저, 수속저, 명속저, 암속저
-	int DAM_BUF=43;																									// 투함포 이그니스 공대버프
-	public static final int INTNUM = 34;						// 총 int형 스탯 개수
+	int WEP_PHY=4; int  WEP_MAG=5; int  WEP_NODEF_PHY=6; int  WEP_NODEF_MAG=7; int WEP_IND=8; int WEP_IND_REFORGE=9; 		// 무기물공, 무기마공, 방무물공, 방무마공, 독공, 재련독공
+	int DEF_DEC_FIXED_PHY=10; int  DEF_DEC_PERCENT_PHY_ITEM=11; int DEF_DEC_FIXED_MAG=12; int DEF_DEC_PERCENT_MAG_ITEM=13;		// 고정물방깍, (아이템)퍼센트물방깍, 고정마방깍, (아이템)퍼센트마방깍
+	int STR=14; int INT=15; int STA=16; int WILL=17;																// 힘, 지능, 체력, 정신력
+	int STR_INC=18; int INT_INC=19;																					// 힘%증가, 지능%증가
+	int DAM_INC=20; int  DAM_CRT=21; int  DAM_ADD=22; 																// 증뎀, 크증뎀, 추뎀합
+	int DAM_INC_BACK=23; int DAM_CRT_BACK=24; int DAM_ADD_BACK=25;													//(조건부) 백어택 증뎀, 백어택 크증뎀, 백어택 추뎀
+	int DAM_ADD_FIRE=26; int DAM_ADD_WATER=27; int DAM_ADD_LIGHT=28; int DAM_ADD_DARKNESS=29;						// 화속추뎀, 수속추뎀, 명속추뎀, 암속추뎀 (높은속성추뎀 필요)
+	int ELEM_FIRE_DEC=30; int ELEM_WATER_DEC=31; int ELEM_LIGHT_DEC=32; int ELEM_DARKNESS_DEC=33;					// 화속저, 수속저, 명속저, 암속저
+	int DAM_BUF=34;																									// 투함포 이그니스 공대버프
+	public static final int INTNUM = 31;						// 총 int형 스탯 개수
 	public static final int INTNUM_START = 10;
 	///////////////////////////////////////
 	
-	int DEF_DEC_PERCENT_PHY_SKILL=100; int DEF_DEC_PERCENT_MAG_SKILL=101;												//(스킬) 퍼센트물방깍, 퍼센트마방깍
-	int CRT_PHY=102; int CRT_MAG=103; int CRT_LOW=104; int CRT_BUF=105; int CRT_BACK_PHY=106; int CRT_BACK_MAG=107;		// 물크, 마크, 크리저항감소, 백물크, 백마크
-	int MAST_PHY=108; int MAST_MAG=109; int MAST_IND=110; int MAST_PHY_2=111; int MAST_MAG_2=112;						// 물공마스터리, 마공마스터리, 독공%증가, 물공마스터리(종류 2), 마공마스터리(종류 2)
-	public static final int DOUBLENUM = 13;						// 총 double형 스탯 개수
+	int DAM_SKILL = 35;																								// 스증뎀합
+	int DEF_DEC_PERCENT_PHY_SKILL=36; int DEF_DEC_PERCENT_MAG_SKILL=37;												//(스킬) 퍼센트물방깍, 퍼센트마방깍
+	int CRT_PHY=38; int CRT_MAG=39; int CRT_LOW=40; int CRT_BACK_PHY=41; int CRT_BACK_MAG=42;		// 물크, 마크, 크리저항감소, 백물크, 백마크
+	int MAST_IND=43; int MAST_PHY=44; int MAST_MAG=45; int MAST_PHY_2=46; int MAST_MAG_2=47;						// 물공마스터리, 마공마스터리, 독공%증가, 물공마스터리(종류 2), 마공마스터리(종류 2)
+	int BUF_INC=48; int BUF_CRT=49;																					//(스킬) 증뎀버프, 크증뎀버프
+	public static final int DOUBLENUM = 15;						// 총 double형 스탯 개수
 	public static final int DOUBLENUM_START = 100;
 	///////////////////////////////////////
 	
@@ -43,27 +43,27 @@ public class Status {
 	{
 		statInfo = new AbstractStatusInfo[StatList.STATNUM];
 		int i;
-		int j=0;									// 배열 index 숫자
-		for(i=0; i<StatList.ELEMENTNUM; i++, j++)
-			statInfo[j] = new ElementInfo(false, 0);
+		for(i=0; i<StatList.ELEMENTNUM; i++)
+			statInfo[i] = new ElementInfo(false, 0);
 		
-		for(i=0; i<StatList.INTNUM; i++, j++)
-			statInfo[j] = new StatusInfo(0);
+		for(; i<StatList.ELEMENTNUM+StatList.INTNUM; i++)
+			statInfo[i] = new StatusInfo(0);
 		
-		for(i=0; i<StatList.DOUBLENUM; i++, j++)
-			statInfo[j] = new DoubleStatusInfo(0);
+		for(; i<StatList.STATNUM; i++)
+			statInfo[i] = new DoubleStatusInfo(0);
 	}
 	
 	public static void setStatHash()
 	{
-		statHash.put("화속성", StatList.ELEM_FIRE); statHash.put("화속", StatList.ELEM_FIRE);
-		statHash.put("수속성", StatList.ELEM_WATER); statHash.put("수속", StatList.ELEM_WATER);
-		statHash.put("명속성", StatList.ELEM_LIGHT); statHash.put("명속", StatList.ELEM_LIGHT);
-		statHash.put("암속성", StatList.ELEM_DARKNESS); statHash.put("암속", StatList.ELEM_DARKNESS);
+		statHash.put("화속성", StatList.ELEM_FIRE); statHash.put("화속", StatList.ELEM_FIRE); statHash.put("화", StatList.ELEM_FIRE);
+		statHash.put("수속성", StatList.ELEM_WATER); statHash.put("수속", StatList.ELEM_WATER); statHash.put("수", StatList.ELEM_WATER);
+		statHash.put("명속성", StatList.ELEM_LIGHT); statHash.put("명속", StatList.ELEM_LIGHT); statHash.put("명", StatList.ELEM_LIGHT);
+		statHash.put("암속성", StatList.ELEM_DARKNESS); statHash.put("암속", StatList.ELEM_DARKNESS); statHash.put("암", StatList.ELEM_DARKNESS);
 		
 		statHash.put("물공", StatList.WEP_PHY); statHash.put("무기물공", StatList.WEP_PHY);
 		statHash.put("마공", StatList.WEP_MAG); statHash.put("무기마공", StatList.WEP_MAG);
 		statHash.put("물리방무뎀", StatList.WEP_NODEF_PHY); statHash.put("마법방무뎀", StatList.WEP_NODEF_MAG);
+		statHash.put("물리방무", StatList.WEP_NODEF_PHY); statHash.put("마법방무", StatList.WEP_NODEF_MAG);
 		statHash.put("독공", StatList.WEP_IND); statHash.put("재련독공", StatList.WEP_IND_REFORGE);
 	
 		statHash.put("고정물방깍", StatList.DEF_DEC_FIXED_PHY); statHash.put("고정마방깍", StatList.DEF_DEC_FIXED_MAG);
@@ -111,29 +111,47 @@ public class Status {
 				publicInfo[i] = statInfo[i].getClone();
 		}
 		
-		public void setStat(int stat, int strength)	// 특정 스탯값 변경
+		public void setStat(int stat, int strength)	throws StatusTypeMismatch
 		{
-			if(publicInfo[stat] instanceof StatusInfo)
+			if(publicInfo[stat] instanceof StatusInfo || publicInfo[stat] instanceof ElementInfo)
 				((StatusInfo)publicInfo[stat]).str=strength;
-			else return; //print error
+			else throw new StatusTypeMismatch("Integer");
+		}
+		public void setStat(String stat, int strength) throws StatusTypeMismatch, UndefinedStatusKey
+		{
+			if(statHash.containsKey(stat)) setStat(statHash.get(stat), strength);
+			else throw new UndefinedStatusKey(stat);
 		}
 		
-		public void setDoubleStat(int stat, double strength)	// 특정 스탯값 변경
+		
+		public void setDoubleStat(int stat, double strength) throws StatusTypeMismatch
 		{
 			if(publicInfo[stat] instanceof DoubleStatusInfo)
 				((DoubleStatusInfo)publicInfo[stat]).str=strength;
-			else return; //print error
+			else throw new StatusTypeMismatch("Double");
+		}
+		public void setDoubleStat(String stat, double strength) throws StatusTypeMismatch, UndefinedStatusKey
+		{
+			if(statHash.containsKey(stat)) setDoubleStat(statHash.get(stat), strength);
+			else throw new UndefinedStatusKey(stat);
 		}
 		
-		public void setElementStat(int stat, int strength, boolean activated)	// 특정 속성값+속성부여여부 변경
+		
+		public void setElementStat(int stat, int strength, boolean activated) throws StatusTypeMismatch	// 특정 속성값+속성부여여부 변경
 		{
 			if(publicInfo[stat] instanceof ElementInfo){
 				((StatusInfo)publicInfo[stat]).str=strength;
 				ElementInfo temp = (ElementInfo)publicInfo[stat];
 				temp.hasElement=activated;
 			}
-			else; //Make Error
+			else throw new StatusTypeMismatch("Element");
 		}
+		public void setElementStat(String stat, int strength, boolean activated) throws StatusTypeMismatch, UndefinedStatusKey
+		{
+			if(statHash.containsKey(stat)) setElementStat(statHash.get(stat), strength, activated);
+			else throw new UndefinedStatusKey(stat);
+		}
+		
 		
 		public double getStat(int stat)
 		{
@@ -145,15 +163,27 @@ public class Status {
 			for(int i=0; i<StatList.STATNUM; i++)
 				publicInfo[i] = statInfo[i].getClone();
 		}
-		
-		public int statStringToIndex(String stat)
-		{
-			if(statHash.containsKey(stat)) return statHash.get(stat);
-			else return -1; //print error
-		}
 	}
-
 }
+
+@SuppressWarnings("serial")
+class StatusTypeMismatch extends Exception
+{
+	public StatusTypeMismatch(String targetType)
+	{
+		super("ERROR : Status Type Mismatch - Target Type : "+targetType);
+	}
+}
+
+@SuppressWarnings("serial")
+class UndefinedStatusKey extends Exception
+{
+	public UndefinedStatusKey(String key)
+	{
+		super("ERROR : Undefined Input for Status Key - "+key);
+	}
+}
+
 
 abstract class AbstractStatusInfo					// 스탯정보 저장 class
 {
