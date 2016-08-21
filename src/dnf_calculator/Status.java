@@ -51,6 +51,7 @@ public class Status {
 		
 		for(; i<StatList.STATNUM; i++)
 			statInfo[i] = new DoubleStatusInfo(0);
+		setStatHash();
 	}
 	
 	public static void setStatHash()
@@ -106,7 +107,7 @@ public class Status {
 		
 		public PublicStatus()						// 모든 스탯 장비값으로 초기화(outer class 장비)
 		{
-			publicInfo = new StatusInfo[StatList.STATNUM];
+			publicInfo = new AbstractStatusInfo[StatList.STATNUM];
 			for(int i=0; i<StatList.STATNUM; i++)
 				publicInfo[i] = statInfo[i].getClone();
 		}
@@ -153,9 +154,9 @@ public class Status {
 		}
 		
 		
-		public double getStat(int stat)
+		public double getStat(int stat) throws StatusTypeMismatch
 		{
-			return (double)(((StatusInfo)publicInfo[stat]).str);
+			return publicInfo[stat].getStatToDouble();
 		}
 		
 		public void renewStat()						// outer class값과 동기화 
@@ -185,9 +186,10 @@ class UndefinedStatusKey extends Exception
 }
 
 
-abstract class AbstractStatusInfo					// 스탯정보 저장 class
+abstract class AbstractStatusInfo 				// 스탯정보 저장 class
 {
 	abstract public AbstractStatusInfo getClone();
+	abstract public double getStatToDouble() throws StatusTypeMismatch;
 }
 
 class StatusInfo extends AbstractStatusInfo			// int형 스탯정보 저장 class
@@ -201,6 +203,7 @@ class StatusInfo extends AbstractStatusInfo			// int형 스탯정보 저장 clas
 	public void setInfo(int strength) { str=strength;}
 	
 	public StatusInfo getClone() {return new StatusInfo(str);}	// 복제
+	public double getStatToDouble() {return (double)str;}
 }
 
 class DoubleStatusInfo extends AbstractStatusInfo
@@ -214,6 +217,7 @@ class DoubleStatusInfo extends AbstractStatusInfo
 	public void setDoubleInfo(double strength) {str=strength;}
 	
 	public DoubleStatusInfo getClone() {return new DoubleStatusInfo(str);}
+	public double getStatToDouble() {return str;}
 }
 
 class ElementInfo extends StatusInfo				// 속성정보 저장 class
@@ -238,4 +242,5 @@ class ElementInfo extends StatusInfo				// 속성정보 저장 class
 	}
 	
 	public StatusInfo getClone() {return new ElementInfo(hasElement, str);}
+	public double getStatToDouble() {return super.getStatToDouble();}
 }

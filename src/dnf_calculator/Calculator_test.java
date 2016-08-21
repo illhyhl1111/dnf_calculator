@@ -25,23 +25,23 @@ public class Calculator_test {
 			publicStat.setStat("힘뻥", 10);
 			publicStat.setStat("증뎀", 60);
 			publicStat.setStat("크증뎀", 30);
-			publicStat.setStat("스증", 10);
+			publicStat.setDoubleStat("스증", 10.0);
 			publicStat.setStat("추뎀", 35);
 		
 			publicStat.setDoubleStat("증뎀버프", 224);
 			publicStat.setDoubleStat("크증뎀버프", 1);
 			publicStat.setDoubleStat("증뎀버프", 224);
 		
-			publicStat.setDoubleStat("화속추", 1);
-			publicStat.setDoubleStat("수속추", 2);
-			publicStat.setDoubleStat("명속추", 3);
-			publicStat.setDoubleStat("암속추", 4);
+			publicStat.setStat("화속추", 1);
+			publicStat.setStat("수속추", 2);
+			publicStat.setStat("명속추", 3);
+			publicStat.setStat("암속추", 4);
 		
-			publicStat.setDoubleStat("화속깍", 20);
-			publicStat.setDoubleStat("수속깍", 20);
-			publicStat.setDoubleStat("명속깍", 20);
-			publicStat.setDoubleStat("암속깍", 20);
-			publicStat.setDoubleStat("투함포항", 12);
+			publicStat.setStat("화속깍", 20);
+			publicStat.setStat("수속깍", 20);
+			publicStat.setStat("명속깍", 20);
+			publicStat.setStat("암속깍", 20);
+			publicStat.setStat("투함포항", 12);
 			
 			publicStat.setDoubleStat("물크", 80);
 			publicStat.setDoubleStat("백물크", 50);
@@ -63,7 +63,7 @@ public class Calculator_test {
 			object.setStat(Monster_StatList.TYPE, MonsterType.BOSS);
 			
 			long percentD=Calculator.percentDamage_physical(10000, object, character, 1);
-			long fixD=Calculator.fixedDamage_physical(100000, 2500, object, character, 1);
+			long fixD=Calculator.fixedDamage_physical(100000, 1000, object, character, 1);
 			
 			System.out.println("퍼뎀 : "+percentD);
 			System.out.println("고뎀 : "+fixD);
