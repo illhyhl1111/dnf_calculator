@@ -9,7 +9,7 @@ public class Calculator {
 		double dec_defence=(1-getPhysicalPercentDefence(character, object));							// 방어력에 의해 감소하는 비율
 		CalculateElement elementCal = new CalculateElement(object, stat);								// 각 속강별 데미지 계산
 		
-		double inc_strength=1+stat.getStat(StatList.STR)*stat.getStat(StatList.STR_INC)/250;								// 1+힘/250
+		double inc_strength=1+stat.getStat(StatList.STR)*(100.0+stat.getStat(StatList.STR_INC))/100.0/250;		// 1+힘*(100+힘뻥)/100/250
 		int inc_weapon1=(int)((stat.getStat(StatList.WEP_PHY)*(100+stat.getStat(StatList.MAST_PHY_2)))/100);				// [무기물공*(100+마스터리2)/100]
 		int inc_weapon2=(int)((inc_weapon1*(stat.getStat(StatList.MAST_PHY)+100))/100);										// [[무기물공*(100+마스터리2)/100]*(100+마스터리1)/100]
 		int defIgnore=(int)((stat.getStat(StatList.WEP_NODEF_PHY)*(100-object.getStat(Monster_StatList.DIFFICULTY)))/100);	// 방어무시데미지
@@ -43,7 +43,7 @@ public class Calculator {
 		double dec_defence=(1-getPhysicalPercentDefence(character, object));							// 방어력에 의해 감소하는 비율
 		CalculateElement elementCal = new CalculateElement(object, stat);								// 각 속강별 데미지 계산
 		
-		double inc_strength=1+stat.getStat(StatList.STR)*stat.getStat(StatList.STR_INC)/250;			// 1+힘/250
+		double inc_strength=1+stat.getStat(StatList.STR)*(100.0+stat.getStat(StatList.STR_INC))/100.0/250;		// 1+힘*(100+힘뻥)/100/250
 		int inc_indep=(int)(stat.getStat(StatList.WEP_IND)*(double)(100+stat.getStat(StatList.MAST_IND))/100
 				+(double)stat.getStat(StatList.WEP_IND_REFORGE));										// 독공*독공뻥+재련 
 		double frontATK=inc_strength*inc_indep*dec_defence*elementCal.get_inc_elem();					// 힘*독공*방어력*속강
@@ -76,7 +76,7 @@ public class Calculator {
 		double dec_defence=(1-getMagicalPercentDefence(character, object));							// 방어력에 의해 감소하는 비율
 		CalculateElement elementCal = new CalculateElement(object, stat);								// 각 속강별 데미지 계산
 		
-		double inc_strength=1+stat.getStat(StatList.INT)*stat.getStat(StatList.INT_INC)/250;									// 1+지능/250
+		double inc_strength=1+stat.getStat(StatList.INT)*(100.0+stat.getStat(StatList.INT_INC))/100.0/250;									// 1+지능/250
 		int inc_weapon1=(int)((stat.getStat(StatList.WEP_MAG)*(100+stat.getStat(StatList.MAST_MAG_2)))/100);					// [무기마공*(100+마스터리2)/100]
 		int inc_weapon2=(int)((inc_weapon1*(stat.getStat(StatList.MAST_MAG)+100))/100);											// [[무기마공*(100+마스터리2)/100]*(100+마스터리1)/100]
 		int defIgnore=(int)((stat.getStat(StatList.WEP_NODEF_MAG)*(100-object.getStat(Monster_StatList.DIFFICULTY)))/100);		// 방어무시데미지
@@ -109,8 +109,7 @@ public class Calculator {
 		Status.PublicStatus stat=character.finalStatus.new PublicStatus();
 		double dec_defence=(1-getMagicalPercentDefence(character, object));							// 방어력에 의해 감소하는 비율
 		CalculateElement elementCal = new CalculateElement(object, stat);								// 각 속강별 데미지 계산
-		
-		double inc_strength=1+stat.getStat(StatList.INT)*stat.getStat(StatList.INT_INC)/250;			// 1+지능/250
+		double inc_strength=1+stat.getStat(StatList.INT)*(stat.getStat(StatList.INT_INC))/100.0/250;			// 1+지능/250
 		int inc_indep=(int)(stat.getStat(StatList.WEP_IND)*(double)(100+stat.getStat(StatList.MAST_IND))/100
 				+(double)stat.getStat(StatList.WEP_IND_REFORGE));										// 독공*독공뻥+재련 
 		double frontATK=inc_strength*inc_indep*dec_defence*elementCal.get_inc_elem();					// 지능*독공*방어력*속강
@@ -163,7 +162,7 @@ public class Calculator {
 		if(avgCritical_add>100.0) avgCritical_add=100.0;
 		double inc_critical_add=((100.0-avgCritical_add)+avgCritical_add*1.5*(int)(100+stat.getStat(StatList.BUF_CRT))/100.0)/100.0;	// 추뎀크리 기댓값 적용
 		
-		inc_add=(double)add_whole*inc_critical_add;
+		inc_add=(double)add_whole*inc_critical_add*inc_counter;
 		
 		//main variable :: inc_add
 		///////////////////////////////
@@ -218,7 +217,7 @@ class CalculateElement
 		dmg_water=element_dmg(object, stat, StatList.ELEM_WATER);
 		dmg_light=element_dmg(object, stat, StatList.ELEM_LIGHT);
 		dmg_darkness=element_dmg(object, stat, StatList.ELEM_DARKNESS);
-		mode = getElement(dmg_fire, dmg_water, dmg_light, dmg_darkness);						// 적용 속성
+		mode = getElement(stat, dmg_fire, dmg_water, dmg_light, dmg_darkness);						// 적용 속성
 		
 		switch(mode)
 		{
@@ -252,32 +251,31 @@ class CalculateElement
 	
 	public static double element_dmg(Monster object, Status.PublicStatus stat, int element) throws StatusTypeMismatch
 	{
-		if(!((ElementInfo)stat.publicInfo[element]).hasElement) return -1.0;							// 해당 속성부여 없음
-		
 		int index = element-StatList.ELEM_FIRE;
 		double temp = ( 1.05+0.0045*(stat.getStat(element)+stat.getStat(StatList.ELEM_FIRE_DEC+index)-object.getStat(Monster_StatList.FIRE_RESIST+index) ) );
 					  // 1+0.05(속성부여)+0.0045*(속강-속저오라-몹속저)
+	
 		if(temp<0) return 0;
 		else return temp;
 	}
 	
-	public static int getElement(double fire, double water, double light, double darkness)
+	public static int getElement(Status.PublicStatus stat, double fire, double water, double light, double darkness)
 	{
 		int mode = -1;
 		double temp = -0.5;
-		if(temp<fire){
+		if(temp<fire && ((ElementInfo)stat.publicInfo[StatList.ELEM_FIRE]).hasElement){
 			temp=fire;
 			mode=StatList.ELEM_FIRE;
 		}
-		if(temp<water){
+		if(temp<water && ((ElementInfo)stat.publicInfo[StatList.ELEM_WATER]).hasElement){
 			temp=water;
 			mode=StatList.ELEM_WATER;
 		}
-		if(temp<light){
+		if(temp<light && ((ElementInfo)stat.publicInfo[StatList.ELEM_LIGHT]).hasElement){
 			temp=light;
 			mode=StatList.ELEM_LIGHT;
 		}
-		if(temp<darkness){
+		if(temp<darkness && ((ElementInfo)stat.publicInfo[StatList.ELEM_DARKNESS]).hasElement){
 			temp=darkness;
 			mode=StatList.ELEM_DARKNESS;
 		}
