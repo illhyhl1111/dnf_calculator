@@ -34,7 +34,6 @@ public class CalculatorUI {
 		
 			stat.setDoubleStat("증뎀버프", 224);
 			stat.setDoubleStat("크증뎀버프", 1);
-			stat.setDoubleStat("증뎀버프", 224);
 		
 			stat.setStat("화속추", 1);
 			stat.setStat("수속추", 2);
@@ -62,6 +61,7 @@ public class CalculatorUI {
 			object.setStat(Monster_StatList.DIFFICULTY, DefenceIgnorePenalty.ANTON_NOR);
 			object.setStat(Monster_StatList.FIRE_RESIST, 40);
 			object.setStat(Monster_StatList.DEFENSIVE_PHY, 135000);
+			object.setStat(Monster_StatList.DEFENSIVE_MAG, 135000);
 			object.setStat(Monster_StatList.LEVEL, 115);
 			object.setStat(Monster_StatList.TYPE, MonsterType.BOSS);
 			
@@ -178,7 +178,7 @@ class TextInputOnlyNumbers implements VerifyListener
         if(!isFloat || Character.isLetter(e.character))
             e.doit = false;
         	
-        if(newS.isEmpty()){
+        if(newS.isEmpty() || newS.equals("-")){
         	e.doit = true;
         }
     }
@@ -298,7 +298,7 @@ class InfoStatus extends StatusUI
 				infoStatusText[i] = new LabelAndText(infoStatusComposite, Status.infoStatOrder[i], "");
 				infoStatusText[i].composite.setLayoutData(statusGridData);
 				((Text) infoStatusText[i].input).addVerifyListener(floatFormat);
-				if(i==6){																					//독공
+				if(Status.infoStatOrder[i].equals("독립공격")){																//독공
 					infoStatusText[i].composite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 2, 1));
 					GridData textData = new GridData(SWT.RIGHT, SWT.TOP, true, false);
 					textData.grabExcessHorizontalSpace=true;
@@ -336,9 +336,9 @@ class InfoStatus extends StatusUI
 		try{
 			for(int i=0; i<Status.infoStatNum; i++)
 			{
-				if(i==5 || i==4) continue;
+				if(Status.infoStatOrder[i].equals("마을물공") || Status.infoStatOrder[i].equals("마을마공")) continue;
 				String temp = ((Text) infoStatusText[i].input).getText();
-				if(temp.isEmpty()) stat.setDoubleStat(Status.infoStatOrder[i], 0);
+				if(temp.isEmpty() || temp.equals("-")) stat.setDoubleStat(Status.infoStatOrder[i], 0);
 				else stat.setDoubleStat(Status.infoStatOrder[i], Double.parseDouble(temp));
 			}
 		}
@@ -362,7 +362,7 @@ class NonInfoStatus extends StatusUI
 		try{
 			infoStatusComposite = new Composite(parent, SWT.BORDER);
 			GridLayout infoLayout = new GridLayout(2, true);
-			infoLayout.verticalSpacing=2;
+			infoLayout.verticalSpacing=0;
 			infoStatusComposite.setLayout(infoLayout);
 			infoStatusText = new LabelAndInput[Status.nonInfoStatNum];
 			GridData statusGridData = new GridData(SWT.FILL, SWT.TOP, true, false);
@@ -421,7 +421,7 @@ class NonInfoStatus extends StatusUI
 				
 				else{
 					String temp = ((Text) infoStatusText[i].input).getText();
-					if(temp.isEmpty()) stat.setDoubleStat(Status.nonInfoStatOrder[i], 0);
+					if(temp.isEmpty() || temp.equals("-")) stat.setDoubleStat(Status.nonInfoStatOrder[i], 0);
 					else stat.setDoubleStat(Status.nonInfoStatOrder[i], Double.parseDouble(temp));
 				}
 			}

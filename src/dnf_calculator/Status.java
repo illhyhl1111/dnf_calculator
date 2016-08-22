@@ -65,7 +65,7 @@ public class Status {
 		"%물방깍_스킬", "%마방깍_스킬",
 		"크리저항감소", "투함포항"
 	};
-	public static final int nonInfoStatNum=34;
+	public static final int nonInfoStatNum=38;
 	
 	
 	public Status()									// 모든 스탯 0으로 초기화(디폴트 장비)
