@@ -4,8 +4,10 @@ import java.util.HashMap;
 interface StatList									// 스탯 종류에 붙는 고유한 식별번호
 {
 	int ELEM_FIRE=0; int  ELEM_WATER=1; int  ELEM_LIGHT=2; int  ELEM_DARKNESS=3;											// 화, 수, 명, 암속성
-	public static final int ELEMENTNUM = 4;							// 총 속성 개수
-	public static final int ELEMENTNUM_START = 0;					
+	
+	int ELEMENTNUM_START = 0;
+	int ELEMENTNUM_END = 3;
+	int ELEMENTNUM = ELEMENTNUM_END-ELEMENTNUM_START+1;					// 총 속성 개수
 	///////////////////////////////////////
 	
 	int WEP_PHY=4; int  WEP_MAG=5; int  WEP_NODEF_PHY=6; int  WEP_NODEF_MAG=7; int WEP_IND=8; int WEP_IND_REFORGE=9; 		// 무기물공, 무기마공, 방무물공, 방무마공, 독공, 재련독공
@@ -17,8 +19,10 @@ interface StatList									// 스탯 종류에 붙는 고유한 식별번호
 	int DAM_ADD_FIRE=26; int DAM_ADD_WATER=27; int DAM_ADD_LIGHT=28; int DAM_ADD_DARKNESS=29;						// 화속추뎀, 수속추뎀, 명속추뎀, 암속추뎀 (높은속성추뎀 필요)
 	int ELEM_FIRE_DEC=30; int ELEM_WATER_DEC=31; int ELEM_LIGHT_DEC=32; int ELEM_DARKNESS_DEC=33;					// 화속저, 수속저, 명속저, 암속저
 	int DAM_BUF=34;																									// 투함포 이그니스 공대버프
-	public static final int INTNUM = 31;						// 총 int형 스탯 개수
-	public static final int INTNUM_START = 10;
+	
+	int INTNUM_END = 34;
+	int INTNUM_START = 4;
+	int INTNUM = INTNUM_END-INTNUM_START+1;								// 총 int형 스탯 개수
 	///////////////////////////////////////
 	
 	int DAM_SKILL = 35;																								// 스증뎀합
@@ -26,8 +30,10 @@ interface StatList									// 스탯 종류에 붙는 고유한 식별번호
 	int CRT_PHY=38; int CRT_MAG=39; int CRT_LOW=40; int CRT_BACK_PHY=41; int CRT_BACK_MAG=42;						// 물크, 마크, 크리저항감소, 백물크, 백마크
 	int MAST_IND=43; int MAST_PHY=44; int MAST_MAG=45; int MAST_PHY_2=46; int MAST_MAG_2=47;						// 물공마스터리, 마공마스터리, 독공%증가, 물공마스터리(종류 2), 마공마스터리(종류 2)
 	int BUF_INC=48; int BUF_CRT=49;																					//(스킬) 증뎀버프, 크증뎀버프
-	public static final int DOUBLENUM = 15;						// 총 double형 스탯 개수
-	public static final int DOUBLENUM_START = 100;
+	
+	int DOUBLENUM_END = 49;
+	int DOUBLENUM_START = 35;
+	int DOUBLENUM = DOUBLENUM_END-DOUBLENUM_START+1;								// 총 int형 스탯 개수
 	///////////////////////////////////////
 	
 	public static final int STATNUM = ELEMENTNUM+INTNUM+DOUBLENUM;;							// 총 스탯 개수
