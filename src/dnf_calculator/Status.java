@@ -135,6 +135,30 @@ public class Status {
 			statInfo[i]=stat.publicInfo[i].getClone();
 	}
 	
+	public double getStat(int stat) throws StatusTypeMismatch
+	{
+		return statInfo[stat].getStatToDouble();
+	}
+	public double getStat(String stat) throws StatusTypeMismatch, UndefinedStatusKey
+	{
+		if(statHash.containsKey(stat)) return getStat(statHash.get(stat));
+		else throw new UndefinedStatusKey(stat);
+	}
+	
+	public boolean getEnabled(int stat) throws StatusTypeMismatch
+	{
+		if(statInfo[stat] instanceof ElementInfo){
+			ElementInfo temp = (ElementInfo)statInfo[stat];
+			return temp.hasElement;
+		}
+		else throw new StatusTypeMismatch("Element");
+	}
+	public boolean getEnabled(String stat) throws StatusTypeMismatch, UndefinedStatusKey
+	{
+		if(statHash.containsKey(stat)) return getEnabled(statHash.get(stat));
+		else throw new UndefinedStatusKey(stat);
+	}
+	
 	class PublicStatus								// private 참조를 위한 inner class. 모든 스탯 참조/변경 가능 
 	{
 		public AbstractStatusInfo[] publicInfo;
@@ -149,7 +173,7 @@ public class Status {
 		public void setStat(int stat, int strength)	throws StatusTypeMismatch
 		{
 			if(publicInfo[stat] instanceof StatusInfo || publicInfo[stat] instanceof ElementInfo)
-				((StatusInfo)publicInfo[stat]).str=strength;
+				((StatusInfo)publicInfo[stat]).setInfo(strength);
 			else throw new StatusTypeMismatch("Integer");
 		}
 		public void setStat(String stat, int strength) throws StatusTypeMismatch, UndefinedStatusKey
@@ -162,8 +186,9 @@ public class Status {
 		public void setDoubleStat(int stat, double strength) throws StatusTypeMismatch
 		{
 			if(publicInfo[stat] instanceof DoubleStatusInfo)
-				((DoubleStatusInfo)publicInfo[stat]).str=strength;
-			else if(publicInfo[stat] instanceof StatusInfo) ((StatusInfo)publicInfo[stat]).str=(int)strength;
+				((DoubleStatusInfo)publicInfo[stat]).setInfo(strength);
+			else if(publicInfo[stat] instanceof StatusInfo)
+				((StatusInfo)publicInfo[stat]).setInfo(strength);
 			else throw new StatusTypeMismatch("Double");
 		}
 		public void setDoubleStat(String stat, double strength) throws StatusTypeMismatch, UndefinedStatusKey
@@ -182,7 +207,7 @@ public class Status {
 			}
 			else throw new StatusTypeMismatch("Element");
 		}
-		public void setElementStat(int stat, boolean activated) throws StatusTypeMismatch	// 특정 속성값+속성부여여부 변경
+		public void setElementStat(int stat, boolean activated) throws StatusTypeMismatch	// 특정 속성부여여부 변경
 		{
 			if(publicInfo[stat] instanceof ElementInfo){
 				ElementInfo temp = (ElementInfo)publicInfo[stat];
@@ -209,6 +234,20 @@ public class Status {
 		public double getStat(String stat) throws StatusTypeMismatch, UndefinedStatusKey
 		{
 			if(statHash.containsKey(stat)) return getStat(statHash.get(stat));
+			else throw new UndefinedStatusKey(stat);
+		}
+		
+		public boolean getEnabled(int stat) throws StatusTypeMismatch
+		{
+			if(publicInfo[stat] instanceof ElementInfo){
+				ElementInfo temp = (ElementInfo)publicInfo[stat];
+				return temp.hasElement;
+			}
+			else throw new StatusTypeMismatch("Element");
+		}
+		public boolean getEnabled(String stat) throws StatusTypeMismatch, UndefinedStatusKey
+		{
+			if(statHash.containsKey(stat)) return getEnabled(statHash.get(stat));
 			else throw new UndefinedStatusKey(stat);
 		}
 		

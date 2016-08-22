@@ -132,7 +132,6 @@ class LabelAndCheckButton extends LabelAndInput
 		
 		input = new Button(composite, SWT.CHECK);
 		GridData buttonData = new GridData(SWT.LEFT, SWT.TOP, true, false);
-		buttonData.widthHint=20;
 		buttonData.heightHint=20;
 		((Button)input).setLayoutData(buttonData);
 		((Button)input).setText(ButtonString);
@@ -140,6 +139,7 @@ class LabelAndCheckButton extends LabelAndInput
 	
 	public void setInputEnable(boolean bool) { ((Button)input).setEnabled(bool); }
 	public void setTextString(String str) { ((Button)input).setText(str);}
+	public void setButtonCheck(boolean bool) { ((Button)input).setSelection(bool);}
 }
 
 class TextInputOnlyNumbers implements VerifyListener
@@ -165,8 +165,12 @@ class TextInputOnlyNumbers implements VerifyListener
 
         //System.out.println(newS);
 
-        if(!isFloat)
+        if(!isFloat || Character.isLetter(e.character))
             e.doit = false;
+        	
+        if(newS.isEmpty()){
+        	e.doit = true;
+        }
     }
 }
 
@@ -210,7 +214,6 @@ class StatusUI_Test{
 	          @Override
 	          public void widgetSelected(SelectionEvent e) {
 	        	  wholeStat.setStatus();
-  
 	              damageDisplay[0].setTextString(String.valueOf(Calculator.percentDamage_physical(skillPercent, object, character, 1)));
 	              damageDisplay[1].setTextString(String.valueOf(Calculator.fixedDamage_physical(skillFixedValue, usedIndepValue, object, character, 1)));
 	              damageDisplay[2].setTextString(String.valueOf(Calculator.percentDamage_magical(skillPercent, object, character, 1)));
@@ -308,7 +311,9 @@ class InfoStatus extends StatusUI
 			for(int i=0; i<Status.infoStatNum; i++)
 			{
 				if(i==5 || i==4) continue;
-				publicStat.setDoubleStat(Status.infoStatOrder[i], Double.parseDouble(((Text)infoStatusText[i].input).getText()));
+				String temp = ((Text) infoStatusText[i].input).getText();
+				if(temp.isEmpty()) publicStat.setDoubleStat(Status.nonInfoStatOrder[i], 0);
+				else publicStat.setDoubleStat(Status.nonInfoStatOrder[i], Double.parseDouble(temp));
 			}
 			stat.setStatus(publicStat);
 		}
@@ -344,6 +349,15 @@ class NonInfoStatus extends StatusUI
 					infoStatusText[i] = new LabelAndCheckButton(infoStatusComposite, Status.nonInfoStatOrder[i], "");
 					infoStatusText[i].composite.setLayoutData(statusGridData);
 					infoStatusText[i].setTextString("속성부여");
+					
+					if(Status.nonInfoStatOrder[i].equals("화속성부여"))
+						((LabelAndCheckButton)infoStatusText[i]).setButtonCheck(publicStat.getEnabled("화속성"));
+					if(Status.nonInfoStatOrder[i].equals("수속성부여"))
+						((LabelAndCheckButton)infoStatusText[i]).setButtonCheck(publicStat.getEnabled("수속성"));
+					if(Status.nonInfoStatOrder[i].equals("명속성부여"))
+						((LabelAndCheckButton)infoStatusText[i]).setButtonCheck(publicStat.getEnabled("명속성"));
+					if(Status.nonInfoStatOrder[i].equals("암속성부여"))
+						((LabelAndCheckButton)infoStatusText[i]).setButtonCheck(publicStat.getEnabled("암속성"));
 				}
 				else
 				{
@@ -377,8 +391,11 @@ class NonInfoStatus extends StatusUI
 				else if(Status.nonInfoStatOrder[i].equals("암속성부여"))
 					publicStat.setElementStat("암속성", ((Button)infoStatusText[i].input).getSelection());
 				
-				else
-					publicStat.setDoubleStat(Status.nonInfoStatOrder[i], Double.parseDouble(((Text) infoStatusText[i].input).getText()));
+				else{
+					String temp = ((Text) infoStatusText[i].input).getText();
+					if(temp.isEmpty()) publicStat.setDoubleStat(Status.nonInfoStatOrder[i], 0);
+					else publicStat.setDoubleStat(Status.nonInfoStatOrder[i], Double.parseDouble(temp));
+				}
 			}
 			stat.setStatus(publicStat);
 		}
