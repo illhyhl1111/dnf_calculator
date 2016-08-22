@@ -9,54 +9,52 @@ import org.eclipse.swt.widgets.*;
 
 public class CalculatorUI {
 	public static void main(String[] args) {
-		Status charStat = new Status();
-		Status.PublicStatus publicStat = charStat.new PublicStatus();
+		Status stat = new Status();
 		
 		try{
-			publicStat.setElementStat("화속", 250, true);
-			publicStat.setElementStat("수속", 120, true);
-			publicStat.setElementStat("암속", 300, false);
+			stat.setElementStat("화속", 250, true);
+			stat.setElementStat("수속", 120, true);
+			stat.setElementStat("암속", 300, false);
 		
-			publicStat.setStat("무기물공", 988+270+20+40+50+110+34);
-			publicStat.setStat("물리방무", 500);
-			publicStat.setStat("독공", 2350-449);
-			publicStat.setStat("재련독공", 449);
+			stat.setStat("무기물공", 988+270+20+40+50+110+34);
+			stat.setStat("물리방무", 500);
+			stat.setStat("독공", 2350-449);
+			stat.setStat("재련독공", 449);
 		
-			publicStat.setStat("고정물방깍", 12000);
-			publicStat.setDoubleStat("퍼물방깍_스킬", 27.0);
-			publicStat.setStat("퍼물방깍_템", 10);
+			stat.setStat("고정물방깍", 12000);
+			stat.setDoubleStat("퍼물방깍_스킬", 27.0);
+			stat.setStat("퍼물방깍_템", 10);
 		
-			publicStat.setStat("힘", 2780);
-			publicStat.setStat("힘뻥", 10);
-			publicStat.setStat("증뎀", 60);
-			publicStat.setStat("크증뎀", 30);
-			publicStat.setDoubleStat("스증", 10.0);
-			publicStat.setStat("추뎀", 35);
+			stat.setStat("힘", 2780);
+			stat.setStat("힘뻥", 10);
+			stat.setStat("증뎀", 60);
+			stat.setStat("크증뎀", 30);
+			stat.setDoubleStat("스증", 10.0);
+			stat.setStat("추뎀", 35);
 		
-			publicStat.setDoubleStat("증뎀버프", 224);
-			publicStat.setDoubleStat("크증뎀버프", 1);
-			publicStat.setDoubleStat("증뎀버프", 224);
+			stat.setDoubleStat("증뎀버프", 224);
+			stat.setDoubleStat("크증뎀버프", 1);
+			stat.setDoubleStat("증뎀버프", 224);
 		
-			publicStat.setStat("화속추", 1);
-			publicStat.setStat("수속추", 2);
-			publicStat.setStat("명속추", 3);
-			publicStat.setStat("암속추", 4);
+			stat.setStat("화속추", 1);
+			stat.setStat("수속추", 2);
+			stat.setStat("명속추", 3);
+			stat.setStat("암속추", 4);
 		
-			publicStat.setStat("화속깍", 20);
-			publicStat.setStat("수속깍", 20);
-			publicStat.setStat("명속깍", 20);
-			publicStat.setStat("암속깍", 20);
-			publicStat.setStat("투함포항", 12);
+			stat.setStat("화속깍", 20);
+			stat.setStat("수속깍", 20);
+			stat.setStat("명속깍", 20);
+			stat.setStat("암속깍", 20);
+			stat.setStat("투함포항", 12);
 			
-			publicStat.setDoubleStat("물크", 80);
-			publicStat.setDoubleStat("백물크", 50);
-			publicStat.setDoubleStat("크리저항", 5);
-			publicStat.setDoubleStat("물리마스터리", 20);
-			publicStat.setDoubleStat("독공뻥", 15);
-			publicStat.setDoubleStat("물리마스터리2", 1);
-			
-			charStat.setStatus(publicStat);
-			Char character = new Char(charStat, 86);
+			stat.setDoubleStat("물크", 80);
+			stat.setDoubleStat("백물크", 50);
+			stat.setDoubleStat("크리저항", 5);
+			stat.setDoubleStat("물리마스터리", 20);
+			stat.setDoubleStat("독공뻥", 15);
+			stat.setDoubleStat("물리마스터리2", 1);
+
+			Char character = new Char(stat, 86);
 			
 			Mon object = new Mon(new Status());
 			object.setBooleanStat(Monster_StatList.BACKATK, true);
@@ -100,6 +98,14 @@ abstract class LabelAndInput
 	public void setLabelString(String str) { label.setText(str);}
 	public abstract void setInputEnable(boolean bool);
 	public abstract void setTextString(String str);
+	public void setGridLayout(GridLayout layout)
+	{
+		composite.setLayout(layout);
+	}
+	public void setLabelData(GridData gridData)
+	{
+		label.setLayoutData(gridData);
+	}
 }
 
 class LabelAndText extends LabelAndInput
@@ -122,6 +128,10 @@ class LabelAndText extends LabelAndInput
 	
 	public void setInputEnable(boolean bool) { ((Text)input).setEnabled(bool); }
 	public void setTextString(String str) { ((Text)input).setText(str);}
+	public void setTextData(GridData gridData)
+	{
+		((Text)input).setLayoutData(gridData);
+	}
 }
 
 class LabelAndCheckButton extends LabelAndInput
@@ -263,7 +273,6 @@ class WholeStatus
 abstract class StatusUI
 {
 	Status stat;
-	Status.PublicStatus publicStat;
 	Composite infoStatusComposite;
 	LabelAndInput[] infoStatusText;
 	public abstract void setStatus(); 
@@ -275,10 +284,11 @@ class InfoStatus extends StatusUI
 	public InfoStatus(Composite parent, Status stat)
 	{
 		this.stat=stat;
-		publicStat = stat.new PublicStatus();
 		try{
 			infoStatusComposite = new Composite(parent, SWT.BORDER);
-			infoStatusComposite.setLayout(new GridLayout(2, true));
+			GridLayout infoLayout = new GridLayout(2, true);
+			infoLayout.horizontalSpacing=5;
+			infoStatusComposite.setLayout(infoLayout);
 			infoStatusText = new LabelAndInput[Status.infoStatNum];
 			GridData statusGridData = new GridData(SWT.FILL, SWT.TOP, true, false);
 			
@@ -288,16 +298,32 @@ class InfoStatus extends StatusUI
 				infoStatusText[i] = new LabelAndText(infoStatusComposite, Status.infoStatOrder[i], "");
 				infoStatusText[i].composite.setLayoutData(statusGridData);
 				((Text) infoStatusText[i].input).addVerifyListener(floatFormat);
-				if(i==6)																					//독공
+				if(i==6){																					//독공
 					infoStatusText[i].composite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 2, 1));
+					GridData textData = new GridData(SWT.RIGHT, SWT.TOP, true, false);
+					textData.grabExcessHorizontalSpace=true;
+					textData.minimumWidth=80;
+					textData.heightHint=20;;
+					((LabelAndText)infoStatusText[i]).setTextData(textData);
+				}
 			}
 			
-			for(i=0; i<4; i++) infoStatusText[i].setTextString(String.valueOf(publicStat.getStat(Status.infoStatOrder[i])));		//힘지체정
-			//infoStatusText[4].setTextString(String.valueOf(Calculator.physicalATK(this)));						//TODO, 마을물공
-			infoStatusText[4].setInputEnable(false);
-			//infoStatusText[5].setTextString(String.valueOf(Calculator.physicalATK(this)));						//TODO, 마을물공
-			infoStatusText[5].setInputEnable(false);
-			for(i=6; i<Status.infoStatNum; i++) infoStatusText[i].setTextString(String.valueOf(publicStat.getStat(Status.infoStatOrder[i])));
+			for(i=0; i<Status.infoStatNum; i++){
+				if(Status.infoStatOrder[i].equals("마을물공")){
+					//infoStatusText[i].setTextString(String.valueOf(Calculator.physicalATK(this)));						//TODO, 마을물공
+					infoStatusText[4].setInputEnable(false);
+				}
+				else if(Status.infoStatOrder[i].equals("마을마공")){
+					//infoStatusText[5].setTextString(String.valueOf(Calculator.physicalATK(this)));						//TODO, 마을물공
+					infoStatusText[i].setInputEnable(false);
+				}
+				else{	
+					String temp = String.valueOf(stat.getStat(Status.infoStatOrder[i]));
+					if(temp.contains(".0")) temp=temp.substring(0, temp.length()-2);
+					infoStatusText[i].setTextString(temp);
+				}
+			}
+			
 		}
 		catch(StatusTypeMismatch | UndefinedStatusKey e)
 		{
@@ -312,10 +338,9 @@ class InfoStatus extends StatusUI
 			{
 				if(i==5 || i==4) continue;
 				String temp = ((Text) infoStatusText[i].input).getText();
-				if(temp.isEmpty()) publicStat.setDoubleStat(Status.nonInfoStatOrder[i], 0);
-				else publicStat.setDoubleStat(Status.nonInfoStatOrder[i], Double.parseDouble(temp));
+				if(temp.isEmpty()) stat.setDoubleStat(Status.infoStatOrder[i], 0);
+				else stat.setDoubleStat(Status.infoStatOrder[i], Double.parseDouble(temp));
 			}
-			stat.setStatus(publicStat);
 		}
 		catch(StatusTypeMismatch | UndefinedStatusKey e)
 		{
@@ -334,10 +359,11 @@ class NonInfoStatus extends StatusUI
 	public NonInfoStatus(Composite parent, Status stat)
 	{
 		this.stat=stat;
-		publicStat = stat.new PublicStatus();
 		try{
 			infoStatusComposite = new Composite(parent, SWT.BORDER);
-			infoStatusComposite.setLayout(new GridLayout(2, true));
+			GridLayout infoLayout = new GridLayout(2, true);
+			infoLayout.verticalSpacing=2;
+			infoStatusComposite.setLayout(infoLayout);
 			infoStatusText = new LabelAndInput[Status.nonInfoStatNum];
 			GridData statusGridData = new GridData(SWT.FILL, SWT.TOP, true, false);
 			
@@ -351,20 +377,22 @@ class NonInfoStatus extends StatusUI
 					infoStatusText[i].setTextString("속성부여");
 					
 					if(Status.nonInfoStatOrder[i].equals("화속성부여"))
-						((LabelAndCheckButton)infoStatusText[i]).setButtonCheck(publicStat.getEnabled("화속성"));
+						((LabelAndCheckButton)infoStatusText[i]).setButtonCheck(stat.getEnabled("화속성"));
 					if(Status.nonInfoStatOrder[i].equals("수속성부여"))
-						((LabelAndCheckButton)infoStatusText[i]).setButtonCheck(publicStat.getEnabled("수속성"));
+						((LabelAndCheckButton)infoStatusText[i]).setButtonCheck(stat.getEnabled("수속성"));
 					if(Status.nonInfoStatOrder[i].equals("명속성부여"))
-						((LabelAndCheckButton)infoStatusText[i]).setButtonCheck(publicStat.getEnabled("명속성"));
+						((LabelAndCheckButton)infoStatusText[i]).setButtonCheck(stat.getEnabled("명속성"));
 					if(Status.nonInfoStatOrder[i].equals("암속성부여"))
-						((LabelAndCheckButton)infoStatusText[i]).setButtonCheck(publicStat.getEnabled("암속성"));
+						((LabelAndCheckButton)infoStatusText[i]).setButtonCheck(stat.getEnabled("암속성"));
 				}
 				else
 				{
 					infoStatusText[i] = new LabelAndText(infoStatusComposite, Status.nonInfoStatOrder[i], "");
 					infoStatusText[i].composite.setLayoutData(statusGridData);
 					((Text) infoStatusText[i].input).addVerifyListener(floatFormat);
-					infoStatusText[i].setTextString(String.valueOf(publicStat.getStat(Status.nonInfoStatOrder[i])));
+					String temp = String.valueOf(stat.getStat(Status.nonInfoStatOrder[i]));
+					if(temp.contains(".0")) temp=temp.substring(0, temp.length()-2);
+					infoStatusText[i].setTextString(temp);
 				}
 			}
 		}
@@ -380,24 +408,23 @@ class NonInfoStatus extends StatusUI
 			for(int i=0; i<Status.nonInfoStatNum; i++)
 			{
 				if(Status.nonInfoStatOrder[i].equals("화속성부여"))
-					publicStat.setElementStat("화속성", ((Button)infoStatusText[i].input).getSelection());
+					stat.setElementStat("화속성", ((Button)infoStatusText[i].input).getSelection());
 				
 				else if(Status.nonInfoStatOrder[i].equals("수속성부여"))
-					publicStat.setElementStat("수속성", ((Button)infoStatusText[i].input).getSelection());
+					stat.setElementStat("수속성", ((Button)infoStatusText[i].input).getSelection());
 				
 				else if(Status.nonInfoStatOrder[i].equals("명속성부여"))
-					publicStat.setElementStat("명속성", ((Button)infoStatusText[i].input).getSelection());
+					stat.setElementStat("명속성", ((Button)infoStatusText[i].input).getSelection());
 				
 				else if(Status.nonInfoStatOrder[i].equals("암속성부여"))
-					publicStat.setElementStat("암속성", ((Button)infoStatusText[i].input).getSelection());
+					stat.setElementStat("암속성", ((Button)infoStatusText[i].input).getSelection());
 				
 				else{
 					String temp = ((Text) infoStatusText[i].input).getText();
-					if(temp.isEmpty()) publicStat.setDoubleStat(Status.nonInfoStatOrder[i], 0);
-					else publicStat.setDoubleStat(Status.nonInfoStatOrder[i], Double.parseDouble(temp));
+					if(temp.isEmpty()) stat.setDoubleStat(Status.nonInfoStatOrder[i], 0);
+					else stat.setDoubleStat(Status.nonInfoStatOrder[i], Double.parseDouble(temp));
 				}
 			}
-			stat.setStatus(publicStat);
 		}
 		catch(StatusTypeMismatch | UndefinedStatusKey e)
 		{

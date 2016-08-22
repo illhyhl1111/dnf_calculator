@@ -5,52 +5,50 @@ public class Calculator_test {
 	public static void main(String[] args)
 	{
 		Status charStat = new Status();
-		Status.PublicStatus publicStat = charStat.new PublicStatus();
 		
 		try{
-			publicStat.setElementStat("화속", 250, true);
-			publicStat.setElementStat("수속", 120, true);
-			publicStat.setElementStat("암속", 300, false);
+			charStat.setElementStat("화속", 250, true);
+			charStat.setElementStat("수속", 120, true);
+			charStat.setElementStat("암속", 300, false);
 		
-			publicStat.setStat("무기물공", 988+270+20+40+50+110+34);
-			publicStat.setStat("물리방무", 500);
-			publicStat.setStat("독공", 2350-449);
-			publicStat.setStat("재련독공", 449);
+			charStat.setStat("무기물공", 988+270+20+40+50+110+34);
+			charStat.setStat("물리방무", 500);
+			charStat.setStat("독공", 2350-449);
+			charStat.setStat("재련독공", 449);
 		
-			publicStat.setStat("고정물방깍", 12000);
-			publicStat.setDoubleStat("퍼물방깍_스킬", 27.0);
-			publicStat.setStat("퍼물방깍_템", 10);
+			charStat.setStat("고정물방깍", 12000);
+			charStat.setDoubleStat("퍼물방깍_스킬", 27.0);
+			charStat.setStat("퍼물방깍_템", 10);
 		
-			publicStat.setStat("힘", 2780);
-			publicStat.setStat("힘뻥", 10);
-			publicStat.setStat("증뎀", 60);
-			publicStat.setStat("크증뎀", 30);
-			publicStat.setDoubleStat("스증", 10.0);
-			publicStat.setStat("추뎀", 35);
+			charStat.setStat("힘", 2780);
+			charStat.setStat("힘뻥", 10);
+			charStat.setStat("증뎀", 60);
+			charStat.setStat("크증뎀", 30);
+			charStat.setDoubleStat("스증", 10.0);
+			charStat.setStat("추뎀", 35);
 		
-			publicStat.setDoubleStat("증뎀버프", 224);
-			publicStat.setDoubleStat("크증뎀버프", 1);
-			publicStat.setDoubleStat("증뎀버프", 224);
+			charStat.setDoubleStat("증뎀버프", 224);
+			charStat.setDoubleStat("크증뎀버프", 1);
+			charStat.setDoubleStat("증뎀버프", 224);
 		
-			publicStat.setStat("화속추", 1);
-			publicStat.setStat("수속추", 2);
-			publicStat.setStat("명속추", 3);
-			publicStat.setStat("암속추", 4);
+			charStat.setStat("화속추", 1);
+			charStat.setStat("수속추", 2);
+			charStat.setStat("명속추", 3);
+			charStat.setStat("암속추", 4);
 		
-			publicStat.setStat("화속깍", 20);
-			publicStat.setStat("수속깍", 20);
-			publicStat.setStat("명속깍", 20);
-			publicStat.setStat("암속깍", 20);
-			publicStat.setStat("투함포항", 12);
+			charStat.setStat("화속깍", 20);
+			charStat.setStat("수속깍", 20);
+			charStat.setStat("명속깍", 20);
+			charStat.setStat("암속깍", 20);
+			charStat.setStat("투함포항", 12);
 			
-			publicStat.setDoubleStat("물크", 80);
-			publicStat.setDoubleStat("백물크", 50);
-			publicStat.setDoubleStat("크리저항", 5);
-			publicStat.setDoubleStat("물리마스터리", 20);
-			publicStat.setDoubleStat("독공뻥", 15);
-			publicStat.setDoubleStat("물리마스터리2", 1);
+			charStat.setDoubleStat("물크", 80);
+			charStat.setDoubleStat("백물크", 50);
+			charStat.setDoubleStat("크리저항", 5);
+			charStat.setDoubleStat("물리마스터리", 20);
+			charStat.setDoubleStat("독공뻥", 15);
+			charStat.setDoubleStat("물리마스터리2", 1);
 			
-			charStat.setStatus(publicStat);
 			Char character = new Char(charStat, 86);
 			
 			Mon object = new Mon(new Status());

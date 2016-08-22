@@ -6,7 +6,7 @@ public class Calculator {
 	{
 		//calculate with status
 		try{
-			Status.PublicStatus stat=character.finalStatus.new PublicStatus();
+			Status stat=character.finalStatus;
 			double dec_defence=(1-getPhysicalPercentDefence(character, object));							// 방어력에 의해 감소하는 비율
 			CalculateElement elementCal = new CalculateElement(object, stat);								// 각 속강별 데미지 계산
 			
@@ -47,7 +47,7 @@ public class Calculator {
 	{
 		//calculate with status
 		try{
-			Status.PublicStatus stat=character.finalStatus.new PublicStatus();
+			Status stat=character.finalStatus;
 			double dec_defence=(1-getPhysicalPercentDefence(character, object));							// 방어력에 의해 감소하는 비율
 			CalculateElement elementCal = new CalculateElement(object, stat);								// 각 속강별 데미지 계산
 			
@@ -86,7 +86,7 @@ public class Calculator {
 	{
 		//calculate with status
 		try{
-			Status.PublicStatus stat=character.finalStatus.new PublicStatus();
+			Status stat=character.finalStatus;
 			double dec_defence=(1-getMagicalPercentDefence(character, object));							// 방어력에 의해 감소하는 비율
 			CalculateElement elementCal = new CalculateElement(object, stat);								// 각 속강별 데미지 계산
 			
@@ -126,7 +126,7 @@ public class Calculator {
 	{
 		//calculate with status
 		try{
-			Status.PublicStatus stat=character.finalStatus.new PublicStatus();
+			Status stat=character.finalStatus;
 			double dec_defence=(1-getMagicalPercentDefence(character, object));							// 방어력에 의해 감소하는 비율
 			CalculateElement elementCal = new CalculateElement(object, stat);								// 각 속강별 데미지 계산
 			double inc_strength=1+stat.getStat(StatList.INT)*(stat.getStat(StatList.INT_INC))/100.0/250;			// 1+지능/250
@@ -160,7 +160,7 @@ public class Calculator {
 	{ return fixedDamage_magical(skillValue, usedIndepValue , object, character, 1); } 
 	
 	
-	public static long damage_enhancing_avg(Status.PublicStatus stat, Monster object, Char character, CalculateElement elementCal) throws StatusTypeMismatch  	// 속강증크증스증추뎀카운터투함포기타등등
+	public static long damage_enhancing_avg(Status stat, Monster object, Char character, CalculateElement elementCal) throws StatusTypeMismatch  	// 속강증크증스증추뎀카운터투함포기타등등
 	{
 		
 		double inc_damage=(100.0+stat.getStat(StatList.BUF_INC))/100.0;										// 증뎀버프
@@ -203,7 +203,7 @@ public class Calculator {
 	public static double getPhysicalPercentDefence(Char character, Monster object) throws StatusTypeMismatch							// 몹의 물리퍼센트 방어력 구하기
 	{
 		int level = character.level;
-		Status.PublicStatus stat=character.finalStatus.new PublicStatus();
+		Status stat=character.finalStatus;
 		
 		int fixedDef=object.getStat(Monster_StatList.DEFENSIVE_PHY);												// 기본방어력
 		fixedDef-=stat.getStat(StatList.DEF_DEC_FIXED_PHY);															// 기본방어력-고정방깍
@@ -216,7 +216,7 @@ public class Calculator {
 	public static double getMagicalPercentDefence(Char character, Monster object) throws StatusTypeMismatch			// 몹의 마법퍼센트 방어력 구하기
 	{
 		int level = character.level;
-		Status.PublicStatus stat=character.finalStatus.new PublicStatus();
+		Status stat=character.finalStatus;
 		
 		int fixedDef=object.getStat(Monster_StatList.DEFENSIVE_MAG);												// 기본방어력
 		fixedDef-=stat.getStat(StatList.DEF_DEC_FIXED_MAG);															// 기본방어력-고정방깍
@@ -236,7 +236,7 @@ class CalculateElement
 	private int mode;
 	private double inc_elem;																				// 속강항
 	
-	public CalculateElement(Monster object, Status.PublicStatus stat) throws StatusTypeMismatch
+	public CalculateElement(Monster object, Status stat) throws StatusTypeMismatch
 	{
 		dmg_fire=element_dmg(object, stat, StatList.ELEM_FIRE);
 		dmg_water=element_dmg(object, stat, StatList.ELEM_WATER);
@@ -274,7 +274,7 @@ class CalculateElement
 	public double get_inc_light() {return dmg_light;}
 	public double get_inc_darkness() {return dmg_darkness;}
 	
-	public static double element_dmg(Monster object, Status.PublicStatus stat, int element) throws StatusTypeMismatch
+	public static double element_dmg(Monster object, Status stat, int element) throws StatusTypeMismatch
 	{
 		int index = element-StatList.ELEM_FIRE;
 		double temp = ( 1.05+0.0045*(stat.getStat(element)+stat.getStat(StatList.ELEM_FIRE_DEC+index)-object.getStat(Monster_StatList.FIRE_RESIST+index) ) );
@@ -284,25 +284,31 @@ class CalculateElement
 		else return temp;
 	}
 	
-	public static int getElement(Status.PublicStatus stat, double fire, double water, double light, double darkness)
+	public static int getElement(Status stat, double fire, double water, double light, double darkness)
 	{
 		int mode = -1;
 		double temp = -0.5;
-		if(temp<fire && ((ElementInfo)stat.publicInfo[StatList.ELEM_FIRE]).hasElement){
-			temp=fire;
-			mode=StatList.ELEM_FIRE;
+		try{
+			if(temp<fire && (stat.getEnabled(StatList.ELEM_FIRE))){
+				temp=fire;
+				mode=StatList.ELEM_FIRE;
+			}
+			if(temp<water && (stat.getEnabled(StatList.ELEM_WATER))){
+				temp=water;
+				mode=StatList.ELEM_WATER;
+			}
+			if(temp<light && (stat.getEnabled(StatList.ELEM_LIGHT))){
+				temp=light;
+				mode=StatList.ELEM_LIGHT;
+			}
+			if(temp<darkness && (stat.getEnabled(StatList.ELEM_DARKNESS))){
+				temp=darkness;
+				mode=StatList.ELEM_DARKNESS;
+			}
 		}
-		if(temp<water && ((ElementInfo)stat.publicInfo[StatList.ELEM_WATER]).hasElement){
-			temp=water;
-			mode=StatList.ELEM_WATER;
-		}
-		if(temp<light && ((ElementInfo)stat.publicInfo[StatList.ELEM_LIGHT]).hasElement){
-			temp=light;
-			mode=StatList.ELEM_LIGHT;
-		}
-		if(temp<darkness && ((ElementInfo)stat.publicInfo[StatList.ELEM_DARKNESS]).hasElement){
-			temp=darkness;
-			mode=StatList.ELEM_DARKNESS;
+		catch(StatusTypeMismatch e)
+		{
+			e.printStackTrace();
 		}
 		
 		return mode;
