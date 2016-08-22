@@ -2,13 +2,10 @@ package dnf_calculator;
 
 public abstract class Monster {							// 피격자 class
 
-	public Status monster_status;
-
-	public AbstractStatusInfo[] monstInfo;
+	private AbstractStatusInfo[] monstInfo;
 	
 	public Monster(Status stat)								
 	{
-		monster_status=stat;
 		monstInfo = new AbstractStatusInfo[Monster_StatList.STATNUM];
 		int i;
 		for(i=0; i<Monster_StatList.BOOLNUM; i++)
@@ -75,12 +72,6 @@ class BooleanInfo extends AbstractStatusInfo			// boolean형 스탯정보 저장
 	boolean bool;										// private으로 바꿔야하지만 몰라 귀찮다 그냥 조심해야지
 	public BooleanInfo(boolean b)
 	{
-		super(false);
-		bool=b;
-	}
-	public BooleanInfo(boolean b, boolean valid_at_village)
-	{
-		super(valid_at_village);
 		bool=b;
 	}
 	

@@ -5,7 +5,7 @@ interface StatList									// 스탯 종류에 붙는 고유한 식별번호
 {
 	int ELEM_FIRE=0; int  ELEM_WATER=1; int  ELEM_LIGHT=2; int  ELEM_DARKNESS=3;											// 화, 수, 명, 암속성
 	public static final int ELEMENTNUM = 4;							// 총 속성 개수
-	public static final int ELEMENTNUM_START = 1;					
+	public static final int ELEMENTNUM_START = 0;					
 	///////////////////////////////////////
 	
 	int WEP_PHY=4; int  WEP_MAG=5; int  WEP_NODEF_PHY=6; int  WEP_NODEF_MAG=7; int WEP_IND=8; int WEP_IND_REFORGE=9; 		// 무기물공, 무기마공, 방무물공, 방무마공, 독공, 재련독공
@@ -232,27 +232,14 @@ class UndefinedStatusKey extends Exception
 
 abstract class AbstractStatusInfo 				// 스탯정보 저장 class
 {
-	private boolean validAtVillage;
-	AbstractStatusInfo(boolean valid)
-	{
-		validAtVillage = valid;
-	}
-	
 	abstract public double getStatToDouble() throws StatusTypeMismatch;
-	public boolean isVillageValid() {return validAtVillage;}
 }
 
 class StatusInfo extends AbstractStatusInfo			// int형 스탯정보 저장 class
 {
 	private int str;										// private으로 바꿔야하지만 몰라 귀찮다 그냥 조심해야지
 	public StatusInfo(int strength)
-	{
-		super(false);
-		str=strength;
-	}
-	public StatusInfo(int strength, boolean valid_at_village)
-	{
-		super(valid_at_village);
+	{	
 		str=strength;
 	}
 	
@@ -267,12 +254,6 @@ class DoubleStatusInfo extends AbstractStatusInfo
 	private double str;
 	public DoubleStatusInfo(int strength)
 	{
-		super(false);
-		str=strength;
-	}
-	public DoubleStatusInfo(int strength, boolean valid_at_village)
-	{
-		super(valid_at_village);
 		str=strength;
 	}
 	
