@@ -236,6 +236,66 @@ public class Calculator {
 		
 		return ((double)(fixedDef))/((double)(fixedDef+level*200));													// %방어력=고정방어력/(고정방어력+레벨*200)
 	}
+	
+	public static int getInfoStrength(Status stat)
+	{
+		try{
+			return (int)(stat.getStat("힘")*(100.0+stat.getStat("힘뻥"))/100.0);
+		}
+		catch(StatusTypeMismatch | UndefinedStatusKey e)
+		{
+			e.printStackTrace();
+			return -1;
+		}
+	}
+	public static int getInfoIntellegence(Status stat)
+	{
+		try{
+			return (int)(stat.getStat("지능")*(100.0+stat.getStat("지능"))/100.0);
+		}
+		catch(StatusTypeMismatch | UndefinedStatusKey e)
+		{
+			e.printStackTrace();
+			return -1;
+		}
+	}
+	public static int getInfoPhysicalATK(Status stat)
+	{
+		try{
+			int inc_weapon1=(int)((stat.getStat(StatList.WEP_PHY)*(100+stat.getStat(StatList.MAST_PHY_2)))/100);				// [무기물공*(100+마스터리2)/100]
+			int inc_weapon2=(int)((inc_weapon1*(stat.getStat(StatList.MAST_PHY)+100))/100);										// [[무기물공*(100+마스터리2)/100]*(100+마스터리1)/100]
+			return (int)(inc_weapon2*(1+getInfoStrength(stat)/250.0)+stat.getStat("물리방무"));
+		}
+		catch(StatusTypeMismatch | UndefinedStatusKey e)
+		{
+			e.printStackTrace();
+			return -1;
+		}
+	}
+	public static int getInfoMagicalATK(Status stat)
+	{
+		try{
+			int inc_weapon1=(int)((stat.getStat(StatList.WEP_MAG)*(100+stat.getStat(StatList.MAST_MAG_2)))/100);				// [무기마공*(100+마스터리2)/100]
+			int inc_weapon2=(int)((inc_weapon1*(stat.getStat(StatList.MAST_MAG)+100))/100);										// [[무기마공*(100+마스터리2)/100]*(100+마스터리1)/100]
+			return (int)(inc_weapon2*(1+getInfoStrength(stat)/250.0)+stat.getStat("마법방무"));
+		}
+		catch(StatusTypeMismatch | UndefinedStatusKey e)
+		{
+			e.printStackTrace();
+			return -1;
+		}
+	}
+	public static int getInfoIndependentATK(Status stat)
+	{
+		try{
+			return (int)(stat.getStat("독립공격")*(100.0+stat.getStat("독공뻥"))/100.0+stat.getStat("재련독공"));
+		}
+		catch(StatusTypeMismatch | UndefinedStatusKey e)
+		{
+			e.printStackTrace();
+			return -1;
+		}
+	}
 }
 
 class CalculateElement

@@ -23,7 +23,7 @@ public abstract class Monster {							// 피격자 class
 	public int getStat(int stat) throws StatusTypeMismatch
 	{
 		if(monstInfo[stat-Monster_StatList.STARTNUM] instanceof StatusInfo)
-			return ((StatusInfo)monstInfo[stat-Monster_StatList.STARTNUM]).str;
+			return (int)((StatusInfo)monstInfo[stat-Monster_StatList.STARTNUM]).getStatToDouble();
 		else throw new StatusTypeMismatch("Integer");
 	}
 	
@@ -37,7 +37,7 @@ public abstract class Monster {							// 피격자 class
 	public void setStat(int stat, int strength)	throws StatusTypeMismatch
 	{
 		if(monstInfo[stat-Monster_StatList.STARTNUM] instanceof StatusInfo)
-			((StatusInfo)monstInfo[stat-Monster_StatList.STARTNUM]).str=strength;
+			((StatusInfo)monstInfo[stat-Monster_StatList.STARTNUM]).setInfo(strength);
 		else throw new StatusTypeMismatch("Integer");
 	}
 	
@@ -75,6 +75,12 @@ class BooleanInfo extends AbstractStatusInfo			// boolean형 스탯정보 저장
 	boolean bool;										// private으로 바꿔야하지만 몰라 귀찮다 그냥 조심해야지
 	public BooleanInfo(boolean b)
 	{
+		super(false);
+		bool=b;
+	}
+	public BooleanInfo(boolean b, boolean valid_at_village)
+	{
+		super(valid_at_village);
 		bool=b;
 	}
 	

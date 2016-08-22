@@ -160,9 +160,9 @@ public class Status {
 	public void setElementStat(int stat, int strength, boolean activated) throws StatusTypeMismatch	// 특정 속성값+속성부여여부 변경
 	{
 		if(statInfo[stat] instanceof ElementInfo){
-			((StatusInfo)statInfo[stat]).str=strength;
+			((StatusInfo)statInfo[stat]).setInfo(strength);
 			ElementInfo temp = (ElementInfo)statInfo[stat];
-			temp.hasElement=activated;
+			temp.setElementInfo(activated);
 		}
 		else throw new StatusTypeMismatch("Element");
 	}
@@ -170,7 +170,7 @@ public class Status {
 	{
 		if(statInfo[stat] instanceof ElementInfo){
 			ElementInfo temp = (ElementInfo)statInfo[stat];
-			temp.hasElement=activated;
+			temp.setElementInfo(activated);
 		}
 		else throw new StatusTypeMismatch("Element");
 	}
@@ -200,7 +200,7 @@ public class Status {
 	{
 		if(statInfo[stat] instanceof ElementInfo){
 			ElementInfo temp = (ElementInfo)statInfo[stat];
-			return temp.hasElement;
+			return temp.getElementEnabled();
 		}
 		else throw new StatusTypeMismatch("Element");
 	}
@@ -232,14 +232,27 @@ class UndefinedStatusKey extends Exception
 
 abstract class AbstractStatusInfo 				// 스탯정보 저장 class
 {
+	private boolean validAtVillage;
+	AbstractStatusInfo(boolean valid)
+	{
+		validAtVillage = valid;
+	}
+	
 	abstract public double getStatToDouble() throws StatusTypeMismatch;
+	public boolean isVillageValid() {return validAtVillage;}
 }
 
 class StatusInfo extends AbstractStatusInfo			// int형 스탯정보 저장 class
 {
-	int str;										// private으로 바꿔야하지만 몰라 귀찮다 그냥 조심해야지
+	private int str;										// private으로 바꿔야하지만 몰라 귀찮다 그냥 조심해야지
 	public StatusInfo(int strength)
 	{
+		super(false);
+		str=strength;
+	}
+	public StatusInfo(int strength, boolean valid_at_village)
+	{
+		super(valid_at_village);
 		str=strength;
 	}
 	
@@ -251,9 +264,15 @@ class StatusInfo extends AbstractStatusInfo			// int형 스탯정보 저장 clas
 
 class DoubleStatusInfo extends AbstractStatusInfo
 {
-	double str;
-	public DoubleStatusInfo(double strength)
+	private double str;
+	public DoubleStatusInfo(int strength)
 	{
+		super(false);
+		str=strength;
+	}
+	public DoubleStatusInfo(int strength, boolean valid_at_village)
+	{
+		super(valid_at_village);
 		str=strength;
 	}
 	
@@ -265,7 +284,7 @@ class DoubleStatusInfo extends AbstractStatusInfo
 
 class ElementInfo extends StatusInfo				// 속성정보 저장 class
 {
-	boolean hasElement;
+	private boolean hasElement;
 	
 	public ElementInfo(boolean activated, int strength)
 	{
@@ -278,11 +297,16 @@ class ElementInfo extends StatusInfo				// 속성정보 저장 class
 		super.setInfo(strength);
 		hasElement=activated;
 	}
-	
 	public void setElementInfo(int strength)
 	{
 		super.setInfo(strength);
 	}
+	public void setElementInfo(boolean activated)
+	{
+		hasElement=activated;
+	}
+	
+	public boolean getElementEnabled() {return hasElement;}
 	
 	public double getStatToDouble() {return super.getStatToDouble();}
 }
