@@ -158,6 +158,11 @@ public class Status {
 		{
 			return publicInfo[stat].getStatToDouble();
 		}
+		public double getStat(String stat) throws StatusTypeMismatch, UndefinedStatusKey
+		{
+			if(statHash.containsKey(stat)) return getStat(statHash.get(stat));
+			else throw new UndefinedStatusKey(stat);
+		}
 		
 		public void renewStat()						// outer class값과 동기화 
 		{
