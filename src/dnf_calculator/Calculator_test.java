@@ -46,9 +46,9 @@ public class Calculator_test {
 			publicStat.setDoubleStat("물크", 80);
 			publicStat.setDoubleStat("백물크", 50);
 			publicStat.setDoubleStat("크리저항", 5);
-			publicStat.setDoubleStat("물공마스터리", 20);
+			publicStat.setDoubleStat("물리마스터리", 20);
 			publicStat.setDoubleStat("독공뻥", 15);
-			publicStat.setDoubleStat("물공마스터리2", 1);
+			publicStat.setDoubleStat("물리마스터리2", 1);
 			
 			charStat.setStatus(publicStat);
 			Char character = new Char(charStat, 86);

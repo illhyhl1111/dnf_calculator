@@ -23,7 +23,7 @@ interface StatList									// 스탯 종류에 붙는 고유한 식별번호
 	
 	int DAM_SKILL = 35;																								// 스증뎀합
 	int DEF_DEC_PERCENT_PHY_SKILL=36; int DEF_DEC_PERCENT_MAG_SKILL=37;												//(스킬) 퍼센트물방깍, 퍼센트마방깍
-	int CRT_PHY=38; int CRT_MAG=39; int CRT_LOW=40; int CRT_BACK_PHY=41; int CRT_BACK_MAG=42;		// 물크, 마크, 크리저항감소, 백물크, 백마크
+	int CRT_PHY=38; int CRT_MAG=39; int CRT_LOW=40; int CRT_BACK_PHY=41; int CRT_BACK_MAG=42;						// 물크, 마크, 크리저항감소, 백물크, 백마크
 	int MAST_IND=43; int MAST_PHY=44; int MAST_MAG=45; int MAST_PHY_2=46; int MAST_MAG_2=47;						// 물공마스터리, 마공마스터리, 독공%증가, 물공마스터리(종류 2), 마공마스터리(종류 2)
 	int BUF_INC=48; int BUF_CRT=49;																					//(스킬) 증뎀버프, 크증뎀버프
 	public static final int DOUBLENUM = 15;						// 총 double형 스탯 개수
@@ -38,6 +38,35 @@ public class Status {
 	
 	private AbstractStatusInfo[] statInfo;
 	public static HashMap<String, Integer> statHash = new HashMap<String, Integer>();
+	
+	public static final String[] infoStatOrder = new String[] {
+		"힘", "지능", "체력", "정신력", "마을물공", "마을마공", "독립공격", "물리크리티컬", "마법크리티컬",
+		"화속성강화", "수속성강화", "명속성강화", "암속성강화"};
+	public static final int infoStatNum=13;
+	
+	public static final String[] nonInfoStatOrder = new String[] {
+		"무기물공합", "물리방무뎀",
+		"무기마공합", "마법방무뎀", 
+		"재련독공수치", "독공뻥",
+		"힘 %증가", "지능 %증가",
+		"물리마스터리", "물리마스터리2",
+		"마법마스터리", "마법마스터리2",
+		"증뎀", "크증뎀",
+		"추뎀", "스증뎀",
+		"증뎀버프", "크증뎀버프",
+		"화속성부여", "수속성부여",
+		"명속성부여", "암속성부여",
+		"화속깍", "화추뎀",
+		"수속깍", "수추뎀",
+		"명속깍", "명추뎀",
+		"암속깍", "암추뎀",
+		"고정물방깍", "고정마방깍",
+		"%물방깍_템", "%마방깍_템",
+		"%물방깍_스킬", "%마방깍_스킬",
+		"크리저항감소", "투함포항"
+	};
+	public static final int nonInfoStatNum=34;
+	
 	
 	public Status()									// 모든 스탯 0으로 초기화(디폴트 장비)
 	{
@@ -56,23 +85,26 @@ public class Status {
 	
 	public static void setStatHash()
 	{
-		statHash.put("화속성", StatList.ELEM_FIRE); statHash.put("화속", StatList.ELEM_FIRE); statHash.put("화", StatList.ELEM_FIRE);
-		statHash.put("수속성", StatList.ELEM_WATER); statHash.put("수속", StatList.ELEM_WATER); statHash.put("수", StatList.ELEM_WATER);
-		statHash.put("명속성", StatList.ELEM_LIGHT); statHash.put("명속", StatList.ELEM_LIGHT); statHash.put("명", StatList.ELEM_LIGHT);
-		statHash.put("암속성", StatList.ELEM_DARKNESS); statHash.put("암속", StatList.ELEM_DARKNESS); statHash.put("암", StatList.ELEM_DARKNESS);
+		statHash.put("화속성강화", StatList.ELEM_FIRE); statHash.put("화속성", StatList.ELEM_FIRE); statHash.put("화속", StatList.ELEM_FIRE); statHash.put("화", StatList.ELEM_FIRE);
+		statHash.put("수속성강화", StatList.ELEM_WATER); statHash.put("수속성", StatList.ELEM_WATER); statHash.put("수속", StatList.ELEM_WATER); statHash.put("수", StatList.ELEM_WATER);
+		statHash.put("명속성강화", StatList.ELEM_LIGHT); statHash.put("명속성", StatList.ELEM_LIGHT); statHash.put("명속", StatList.ELEM_LIGHT); statHash.put("명", StatList.ELEM_LIGHT);
+		statHash.put("암속성강화", StatList.ELEM_DARKNESS); statHash.put("암속성", StatList.ELEM_DARKNESS); statHash.put("암속", StatList.ELEM_DARKNESS); statHash.put("암", StatList.ELEM_DARKNESS);
 		
-		statHash.put("물공", StatList.WEP_PHY); statHash.put("무기물공", StatList.WEP_PHY);
-		statHash.put("마공", StatList.WEP_MAG); statHash.put("무기마공", StatList.WEP_MAG);
+		statHash.put("물공", StatList.WEP_PHY); statHash.put("무기물공", StatList.WEP_PHY); statHash.put("무기물공합", StatList.WEP_PHY);
+		statHash.put("마공", StatList.WEP_MAG); statHash.put("무기마공", StatList.WEP_MAG); statHash.put("무기마공합", StatList.WEP_MAG);
 		statHash.put("물리방무뎀", StatList.WEP_NODEF_PHY); statHash.put("마법방무뎀", StatList.WEP_NODEF_MAG);
 		statHash.put("물리방무", StatList.WEP_NODEF_PHY); statHash.put("마법방무", StatList.WEP_NODEF_MAG);
-		statHash.put("독공", StatList.WEP_IND); statHash.put("재련독공", StatList.WEP_IND_REFORGE);
+		statHash.put("독공", StatList.WEP_IND); statHash.put("독립공격", StatList.WEP_IND);
+		statHash.put("재련독공", StatList.WEP_IND_REFORGE); statHash.put("재련독공수치", StatList.WEP_IND_REFORGE);
 	
 		statHash.put("고정물방깍", StatList.DEF_DEC_FIXED_PHY); statHash.put("고정마방깍", StatList.DEF_DEC_FIXED_MAG);
 		statHash.put("퍼물방깍_템", StatList.DEF_DEC_PERCENT_PHY_ITEM); statHash.put("퍼마방깍_템", StatList.DEF_DEC_PERCENT_MAG_ITEM);
+		statHash.put("%물방깍_템", StatList.DEF_DEC_PERCENT_PHY_ITEM); statHash.put("%마방깍_템", StatList.DEF_DEC_PERCENT_MAG_ITEM);
 		
 		statHash.put("힘", StatList.STR); statHash.put("지능", StatList.INT);
 		statHash.put("체력", StatList.STA); statHash.put("정신력", StatList.WILL);
 		statHash.put("힘뻥", StatList.STR_INC); statHash.put("지능뻥", StatList.INT_INC);
+		statHash.put("힘 %증가", StatList.STR_INC); statHash.put("지능 %증가", StatList.INT_INC);
 		
 		statHash.put("증뎀", StatList.DAM_INC); statHash.put("크증뎀", StatList.DAM_CRT); statHash.put("추뎀", StatList.DAM_ADD);
 		statHash.put("증뎀버프", StatList.BUF_INC); statHash.put("크증버프", StatList.BUF_CRT); statHash.put("크증뎀버프", StatList.BUF_CRT);
@@ -89,10 +121,12 @@ public class Status {
 		statHash.put("버프식증뎀", StatList.DAM_BUF); statHash.put("투함포항", StatList.DAM_BUF);
 		
 		statHash.put("퍼물방깍_스킬", StatList.DEF_DEC_PERCENT_PHY_SKILL); statHash.put("퍼마방깍_스킬", StatList.DEF_DEC_PERCENT_MAG_SKILL);
-		statHash.put("물크", StatList.CRT_PHY); statHash.put("마크", StatList.CRT_MAG); statHash.put("크리저항", StatList.CRT_LOW);
+		statHash.put("%물방깍_스킬", StatList.DEF_DEC_PERCENT_PHY_SKILL); statHash.put("%마방깍_스킬", StatList.DEF_DEC_PERCENT_MAG_SKILL);
+		statHash.put("물크", StatList.CRT_PHY); statHash.put("마크", StatList.CRT_MAG); statHash.put("크리저항", StatList.CRT_LOW); statHash.put("크리저항감소", StatList.CRT_LOW);
+		statHash.put("물리크리티컬", StatList.CRT_PHY); statHash.put("마법크리티컬", StatList.CRT_MAG);
 		statHash.put("백물크", StatList.CRT_BACK_PHY); statHash.put("백마크", StatList.CRT_BACK_MAG);
-		statHash.put("물공마스터리", StatList.MAST_PHY); statHash.put("마공마스터리", StatList.MAST_MAG); statHash.put("독공뻥", StatList.MAST_IND);
-		statHash.put("물공마스터리2", StatList.MAST_PHY_2); statHash.put("마공마스터리2", StatList.MAST_MAG_2);
+		statHash.put("물리마스터리", StatList.MAST_PHY); statHash.put("마법마스터리", StatList.MAST_MAG); statHash.put("독공뻥", StatList.MAST_IND);
+		statHash.put("물리마스터리2", StatList.MAST_PHY_2); statHash.put("마법마스터리2", StatList.MAST_MAG_2);
 	}
 	
 	public void setStatus(PublicStatus stat)		// 스탯을 inner class값으로 변경
@@ -103,7 +137,7 @@ public class Status {
 	
 	class PublicStatus								// private 참조를 위한 inner class. 모든 스탯 참조/변경 가능 
 	{
-		public AbstractStatusInfo[] publicInfo;  
+		public AbstractStatusInfo[] publicInfo;
 		
 		public PublicStatus()						// 모든 스탯 장비값으로 초기화(outer class 장비)
 		{
@@ -129,6 +163,7 @@ public class Status {
 		{
 			if(publicInfo[stat] instanceof DoubleStatusInfo)
 				((DoubleStatusInfo)publicInfo[stat]).str=strength;
+			else if(publicInfo[stat] instanceof StatusInfo) ((StatusInfo)publicInfo[stat]).str=(int)strength;
 			else throw new StatusTypeMismatch("Double");
 		}
 		public void setDoubleStat(String stat, double strength) throws StatusTypeMismatch, UndefinedStatusKey
@@ -147,9 +182,22 @@ public class Status {
 			}
 			else throw new StatusTypeMismatch("Element");
 		}
+		public void setElementStat(int stat, boolean activated) throws StatusTypeMismatch	// 특정 속성값+속성부여여부 변경
+		{
+			if(publicInfo[stat] instanceof ElementInfo){
+				ElementInfo temp = (ElementInfo)publicInfo[stat];
+				temp.hasElement=activated;
+			}
+			else throw new StatusTypeMismatch("Element");
+		}
 		public void setElementStat(String stat, int strength, boolean activated) throws StatusTypeMismatch, UndefinedStatusKey
 		{
 			if(statHash.containsKey(stat)) setElementStat(statHash.get(stat), strength, activated);
+			else throw new UndefinedStatusKey(stat);
+		}
+		public void setElementStat(String stat, boolean activated) throws StatusTypeMismatch, UndefinedStatusKey
+		{
+			if(statHash.containsKey(stat)) setElementStat(statHash.get(stat), activated);
 			else throw new UndefinedStatusKey(stat);
 		}
 		
@@ -206,6 +254,7 @@ class StatusInfo extends AbstractStatusInfo			// int형 스탯정보 저장 clas
 	}
 	
 	public void setInfo(int strength) { str=strength;}
+	public void setInfo(double strength) { str=(int)strength;}
 	
 	public StatusInfo getClone() {return new StatusInfo(str);}	// 복제
 	public double getStatToDouble() {return (double)str;}
@@ -219,7 +268,8 @@ class DoubleStatusInfo extends AbstractStatusInfo
 		str=strength;
 	}
 	
-	public void setDoubleInfo(double strength) {str=strength;}
+	public void setInfo(int strength) { str=strength;}
+	public void setInfo(double strength) {str=strength;}
 	
 	public DoubleStatusInfo getClone() {return new DoubleStatusInfo(str);}
 	public double getStatToDouble() {return str;}

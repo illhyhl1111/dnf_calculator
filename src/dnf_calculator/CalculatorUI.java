@@ -1,5 +1,7 @@
 package dnf_calculator;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.VerifyListener;
+import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.*;
@@ -49,9 +51,9 @@ public class CalculatorUI {
 			publicStat.setDoubleStat("물크", 80);
 			publicStat.setDoubleStat("백물크", 50);
 			publicStat.setDoubleStat("크리저항", 5);
-			publicStat.setDoubleStat("물공마스터리", 20);
+			publicStat.setDoubleStat("물리마스터리", 20);
 			publicStat.setDoubleStat("독공뻥", 15);
-			publicStat.setDoubleStat("물공마스터리2", 1);
+			publicStat.setDoubleStat("물리마스터리2", 1);
 			
 			charStat.setStatus(publicStat);
 			Char character = new Char(charStat, 86);
@@ -65,7 +67,7 @@ public class CalculatorUI {
 			object.setStat(Monster_StatList.LEVEL, 115);
 			object.setStat(Monster_StatList.TYPE, MonsterType.BOSS);
 			
-			StatusUI.openStatusUI(10000, 100000, 1000, object, character, 1);
+			StatusUI_Test.openStatusUI(10000, 100000, 1000, object, character, 1);
 		}
 		catch(StatusTypeMismatch | UndefinedStatusKey e)
 		{
@@ -74,13 +76,13 @@ public class CalculatorUI {
 	}
 }
 
-class LabelAndText
+abstract class LabelAndInput
 {
 	Label label;
-	Text text;
 	Composite composite;
+	Widget input;
 	
-	public LabelAndText(Composite parent, String LabelString, String TextString)
+	public LabelAndInput(Composite parent, String LabelString)
 	{
 		composite = new Composite(parent, SWT.NONE);
 		GridLayout compositeLayout = new GridLayout();
@@ -88,32 +90,87 @@ class LabelAndText
 		composite.setLayout(compositeLayout);
 		
 		label = new Label(composite, SWT.NONE);
-		GridData labelData = new GridData(SWT.LEFT, SWT.TOP, false, false);
+		GridData labelData = new GridData(SWT.LEFT, SWT.TOP, true, false);
 		labelData.grabExcessHorizontalSpace=true;
 		labelData.minimumWidth=80;
 		labelData.heightHint=20;
 		label.setLayoutData(labelData);
-		label.setAlignment(SWT.RIGHT);
+		label.setText(LabelString);
+	}
+	public void setLabelString(String str) { label.setText(str);}
+	public abstract void setInputEnable(boolean bool);
+	public abstract void setTextString(String str);
+}
+
+class LabelAndText extends LabelAndInput
+{
+	
+	public LabelAndText(Composite parent, String LabelString, String TextString)
+	{
+		super(parent, LabelString);
 		
-		text = new Text(composite, SWT.NONE);
-		GridData textData = new GridData(SWT.LEFT, SWT.TOP, false, false);
+		input = new Text(composite, SWT.RIGHT);
+		GridData textData = new GridData(SWT.LEFT, SWT.TOP, true, false);
 		textData.grabExcessHorizontalSpace=true;
 		textData.minimumWidth=80;
 		textData.heightHint=20;;
-		text.setLayoutData(textData);
-		
-		label.setText(LabelString);
-		text.setText(TextString);
+		((Text)input).setLayoutData(textData);
+		((Text)input).setText(TextString);
 		//text.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
         //text.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
 	}
 	
-	public void setTextEnable(boolean bool) { text.setEnabled(bool); }
-	public void setTextString(String str) { text.setText(str);}
-	public void setLabelString(String str) { label.setText(str);}
+	public void setInputEnable(boolean bool) { ((Text)input).setEnabled(bool); }
+	public void setTextString(String str) { ((Text)input).setText(str);}
 }
 
-class StatusUI{
+class LabelAndCheckButton extends LabelAndInput
+{
+	public LabelAndCheckButton(Composite parent, String LabelString, String ButtonString)
+	{
+		super(parent, LabelString);
+		
+		input = new Button(composite, SWT.CHECK);
+		GridData buttonData = new GridData(SWT.LEFT, SWT.TOP, true, false);
+		buttonData.widthHint=20;
+		buttonData.heightHint=20;
+		((Button)input).setLayoutData(buttonData);
+		((Button)input).setText(ButtonString);
+	}
+	
+	public void setInputEnable(boolean bool) { ((Button)input).setEnabled(bool); }
+	public void setTextString(String str) { ((Button)input).setText(str);}
+}
+
+class TextInputOnlyNumbers implements VerifyListener
+{
+	@Override
+    public void verifyText(VerifyEvent e) {
+
+        Text text = (Text)e.getSource();
+
+        // get old text and create new text by using the VerifyEvent.text
+        final String oldS = text.getText();
+        String newS = oldS.substring(0, e.start) + e.text + oldS.substring(e.end);
+
+        boolean isFloat = true;
+        try
+        {
+            Float.parseFloat(newS);
+        }
+        catch(NumberFormatException ex)
+        {
+            isFloat = false;
+        }
+
+        //System.out.println(newS);
+
+        if(!isFloat)
+            e.doit = false;
+    }
+}
+
+class StatusUI_Test{
 	
 	public static void openStatusUI(int skillPercent, int skillFixedValue, int usedIndepValue, Monster object, Char character, int mode) throws StatusTypeMismatch
 	{	
@@ -133,48 +190,33 @@ class StatusUI{
         shellLayout.pack=true;	
         shell.setLayout(shellLayout);
         
-        Composite statComposite = new Composite(shell, SWT.BORDER);
-        RowData statCompoiteGridData = new RowData();
-	    statComposite.setLayoutData(statCompoiteGridData);
-	    statComposite.setLayout(new GridLayout(1, false));
-        
-        LabelAndText[] statusDisplay = new LabelAndText[10];
-       
-        statusDisplay[0] = new LabelAndText(statComposite, "힘", "2000");
-        statusDisplay[1] = new LabelAndText(statComposite, "힘", "2001");
-        statusDisplay[2] = new LabelAndText(statComposite, "힘", "2002");
-        statusDisplay[3] = new LabelAndText(statComposite, "힘", "2003");
-        statusDisplay[4] = new LabelAndText(statComposite, "힘", "2004");
-        statusDisplay[5] = new LabelAndText(statComposite, "힘", "2005");
-        statusDisplay[6] = new LabelAndText(statComposite, "힘", "2006");
-        statusDisplay[7] = new LabelAndText(statComposite, "힘", "2007");
-        statusDisplay[8] = new LabelAndText(statComposite, "힘", "2008");
-        statusDisplay[9] = new LabelAndText(statComposite, "힘", "2009");
+        WholeStatus wholeStat = new WholeStatus(shell, character.finalStatus); 
       
         Button button = new Button(shell, SWT.PUSH);
 	    button.setText("Press Me");
 	    
 	    LabelAndText[] damageDisplay = new LabelAndText[4];
 	    damageDisplay[0] = new LabelAndText(shell, "물리퍼센트데미지 -", "");
-	    damageDisplay[0].setTextEnable(false);
+	    damageDisplay[0].setInputEnable(false);
 	    damageDisplay[1] = new LabelAndText(shell, "물리고정데미지 -", "");
-	    damageDisplay[1].setTextEnable(false);
+	    damageDisplay[1].setInputEnable(false);
 	    damageDisplay[2] = new LabelAndText(shell, "마법퍼센트데미지 -", "");
-	    damageDisplay[2].setTextEnable(false);
+	    damageDisplay[2].setInputEnable(false);
 	    damageDisplay[3] = new LabelAndText(shell, "마법고정데미지 -", "");
-	    damageDisplay[3].setTextEnable(false);
+	    damageDisplay[3].setInputEnable(false);
 	    
 	    button.setLayoutData(new RowData(100, 40));
 	    button.addSelectionListener(new SelectionAdapter() {
 	          @Override
 	          public void widgetSelected(SelectionEvent e) {
+	        	  wholeStat.setStatus();
+  
 	              damageDisplay[0].setTextString(String.valueOf(Calculator.percentDamage_physical(skillPercent, object, character, 1)));
 	              damageDisplay[1].setTextString(String.valueOf(Calculator.fixedDamage_physical(skillFixedValue, usedIndepValue, object, character, 1)));
 	              damageDisplay[2].setTextString(String.valueOf(Calculator.percentDamage_magical(skillPercent, object, character, 1)));
 	              damageDisplay[3].setTextString(String.valueOf(Calculator.fixedDamage_magical(skillFixedValue, usedIndepValue, object, character, 1)));
 	          }
 	        }); 
-	    
 	    
         
         // set widgets size to their preferred size
@@ -186,4 +228,168 @@ class StatusUI{
         }
         display.dispose();
     }
+}
+
+class WholeStatus
+{
+	InfoStatus infoStat;
+	NonInfoStatus nonInfoStat;
+	Composite wholeStatusComposite;
+	public WholeStatus(Composite parent, Status stat)
+	{
+		wholeStatusComposite = new Composite(parent, SWT.BORDER);
+		RowLayout wholeLayout = new RowLayout();
+		wholeLayout.spacing=10;
+		wholeLayout.wrap=false;
+		wholeLayout.pack=true;
+		wholeStatusComposite.setLayout(wholeLayout);
+		
+		infoStat = new InfoStatus(wholeStatusComposite, stat);
+		nonInfoStat = new NonInfoStatus(wholeStatusComposite, stat);
+	}
+	
+	public Composite getComposite() {return wholeStatusComposite;}
+	public void setStatus()
+	{
+		infoStat.setStatus();
+		nonInfoStat.setStatus();
+	}
+}
+
+
+abstract class StatusUI
+{
+	Status stat;
+	Status.PublicStatus publicStat;
+	Composite infoStatusComposite;
+	LabelAndInput[] infoStatusText;
+	public abstract void setStatus(); 
+	public Composite getComposite() {return infoStatusComposite;}
+}
+
+class InfoStatus extends StatusUI
+{
+	public InfoStatus(Composite parent, Status stat)
+	{
+		this.stat=stat;
+		publicStat = stat.new PublicStatus();
+		try{
+			infoStatusComposite = new Composite(parent, SWT.BORDER);
+			infoStatusComposite.setLayout(new GridLayout(2, true));
+			infoStatusText = new LabelAndInput[Status.infoStatNum];
+			GridData statusGridData = new GridData(SWT.FILL, SWT.TOP, true, false);
+			
+			int i;
+			TextInputOnlyNumbers floatFormat = new TextInputOnlyNumbers();
+			for(i=0; i<Status.infoStatNum; i++){
+				infoStatusText[i] = new LabelAndText(infoStatusComposite, Status.infoStatOrder[i], "");
+				infoStatusText[i].composite.setLayoutData(statusGridData);
+				((Text) infoStatusText[i].input).addVerifyListener(floatFormat);
+				if(i==6)																					//독공
+					infoStatusText[i].composite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 2, 1));
+			}
+			
+			for(i=0; i<4; i++) infoStatusText[i].setTextString(String.valueOf(publicStat.getStat(Status.infoStatOrder[i])));		//힘지체정
+			//infoStatusText[4].setTextString(String.valueOf(Calculator.physicalATK(this)));						//TODO, 마을물공
+			infoStatusText[4].setInputEnable(false);
+			//infoStatusText[5].setTextString(String.valueOf(Calculator.physicalATK(this)));						//TODO, 마을물공
+			infoStatusText[5].setInputEnable(false);
+			for(i=6; i<Status.infoStatNum; i++) infoStatusText[i].setTextString(String.valueOf(publicStat.getStat(Status.infoStatOrder[i])));
+		}
+		catch(StatusTypeMismatch | UndefinedStatusKey e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public void setStatus()
+	{
+		try{
+			for(int i=0; i<Status.infoStatNum; i++)
+			{
+				if(i==5 || i==4) continue;
+				publicStat.setDoubleStat(Status.infoStatOrder[i], Double.parseDouble(((Text)infoStatusText[i].input).getText()));
+			}
+			stat.setStatus(publicStat);
+		}
+		catch(StatusTypeMismatch | UndefinedStatusKey e)
+		{
+			e.printStackTrace();
+		}
+		catch(NumberFormatException e)
+		{
+			System.out.println("Parsing Error(to Double)");
+			e.printStackTrace();
+		}
+	}
+}
+
+class NonInfoStatus extends StatusUI
+{	
+	public NonInfoStatus(Composite parent, Status stat)
+	{
+		this.stat=stat;
+		publicStat = stat.new PublicStatus();
+		try{
+			infoStatusComposite = new Composite(parent, SWT.BORDER);
+			infoStatusComposite.setLayout(new GridLayout(2, true));
+			infoStatusText = new LabelAndInput[Status.nonInfoStatNum];
+			GridData statusGridData = new GridData(SWT.FILL, SWT.TOP, true, false);
+			
+			int i;
+			TextInputOnlyNumbers floatFormat = new TextInputOnlyNumbers();
+			for(i=0; i<Status.nonInfoStatNum; i++){
+				if(Status.nonInfoStatOrder[i].contains("속성부여"))
+				{
+					infoStatusText[i] = new LabelAndCheckButton(infoStatusComposite, Status.nonInfoStatOrder[i], "");
+					infoStatusText[i].composite.setLayoutData(statusGridData);
+					infoStatusText[i].setTextString("속성부여");
+				}
+				else
+				{
+					infoStatusText[i] = new LabelAndText(infoStatusComposite, Status.nonInfoStatOrder[i], "");
+					infoStatusText[i].composite.setLayoutData(statusGridData);
+					((Text) infoStatusText[i].input).addVerifyListener(floatFormat);
+					infoStatusText[i].setTextString(String.valueOf(publicStat.getStat(Status.nonInfoStatOrder[i])));
+				}
+			}
+		}
+		catch(StatusTypeMismatch | UndefinedStatusKey e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public void setStatus()
+	{
+		try{
+			for(int i=0; i<Status.nonInfoStatNum; i++)
+			{
+				if(Status.nonInfoStatOrder[i].equals("화속성부여"))
+					publicStat.setElementStat("화속성", ((Button)infoStatusText[i].input).getSelection());
+				
+				else if(Status.nonInfoStatOrder[i].equals("수속성부여"))
+					publicStat.setElementStat("수속성", ((Button)infoStatusText[i].input).getSelection());
+				
+				else if(Status.nonInfoStatOrder[i].equals("명속성부여"))
+					publicStat.setElementStat("명속성", ((Button)infoStatusText[i].input).getSelection());
+				
+				else if(Status.nonInfoStatOrder[i].equals("암속성부여"))
+					publicStat.setElementStat("암속성", ((Button)infoStatusText[i].input).getSelection());
+				
+				else
+					publicStat.setDoubleStat(Status.nonInfoStatOrder[i], Double.parseDouble(((Text) infoStatusText[i].input).getText()));
+			}
+			stat.setStatus(publicStat);
+		}
+		catch(StatusTypeMismatch | UndefinedStatusKey e)
+		{
+			e.printStackTrace();
+		}
+		catch(NumberFormatException e)
+		{
+			System.out.println("Parsing Error(to Double)");
+			e.printStackTrace();
+		}
+	}
 }
