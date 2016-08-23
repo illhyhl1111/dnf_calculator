@@ -6,38 +6,45 @@ interface StatList									// 스탯 종류에 붙는 고유한 식별번호
 	int ELEM_FIRE=0; int  ELEM_WATER=1; int  ELEM_LIGHT=2; int  ELEM_DARKNESS=3;											// 화, 수, 명, 암속성
 	
 	int ELEMENTNUM_START = 0;
-	int ELEMENTNUM_END = 3;
-	int ELEMENTNUM = ELEMENTNUM_END-ELEMENTNUM_START+1;					// 총 속성 개수
+	int ELEMENTNUM = 4;														// 총 속성 개수
+	int ELEMENTNUM_END = ELEMENTNUM_START+ELEMENTNUM-1;
 	///////////////////////////////////////
 	
-	int WEP_PHY=4; int  WEP_MAG=5; int  WEP_NODEF_PHY=6; int  WEP_NODEF_MAG=7; int WEP_IND=8; int WEP_IND_REFORGE=9; 		// 무기물공, 무기마공, 방무물공, 방무마공, 독공, 재련독공
-	int DEF_DEC_FIXED_PHY=10; int  DEF_DEC_PERCENT_PHY_ITEM=11; int DEF_DEC_FIXED_MAG=12; int DEF_DEC_PERCENT_MAG_ITEM=13;		// 고정물방깍, (아이템)퍼센트물방깍, 고정마방깍, (아이템)퍼센트마방깍
-	int STR=14; int INT=15; int STA=16; int WILL=17;																// 힘, 지능, 체력, 정신력
-	int STR_INC=18; int INT_INC=19;																					// 힘%증가, 지능%증가
-	int DAM_INC=20; int  DAM_CRT=21; int  DAM_ADD=22; 																// 증뎀, 크증뎀, 추뎀합
-	int DAM_INC_BACK=23; int DAM_CRT_BACK=24; int DAM_ADD_BACK=25;													//(조건부) 백어택 증뎀, 백어택 크증뎀, 백어택 추뎀
-	int DAM_ADD_FIRE=26; int DAM_ADD_WATER=27; int DAM_ADD_LIGHT=28; int DAM_ADD_DARKNESS=29;						// 화속추뎀, 수속추뎀, 명속추뎀, 암속추뎀 (높은속성추뎀 필요)
-	int ELEM_FIRE_DEC=30; int ELEM_WATER_DEC=31; int ELEM_LIGHT_DEC=32; int ELEM_DARKNESS_DEC=33;					// 화속저, 수속저, 명속저, 암속저
-	int DAM_BUF=34;																									// 투함포 이그니스 공대버프
+	int INTNUM_START = ELEMENTNUM_END+1;
 	
-	int INTNUM_END = 34;
-	int INTNUM_START = 4;
-	int INTNUM = INTNUM_END-INTNUM_START+1;								// 총 int형 스탯 개수
+	int WEP_PHY=INTNUM_START+0; int WEP_MAG=INTNUM_START+1; int  WEP_NODEF_PHY=INTNUM_START+2; int WEP_NODEF_MAG=INTNUM_START+3;	// 무기물공, 무기마공, 방무물공, 방무마공
+	int WEP_IND=INTNUM_START+4; int WEP_IND_REFORGE=INTNUM_START+5; 																//독공, 재련독공
+	int DEF_DEC_FIXED_PHY=INTNUM_START+6; int  DEF_DEC_PERCENT_PHY_ITEM=INTNUM_START+7;												// 고정물방깍, (아이템)퍼센트물방깍,
+	int DEF_DEC_FIXED_MAG=INTNUM_START+8; int DEF_DEC_PERCENT_MAG_ITEM=INTNUM_START+9;												// 고정마방깍, (아이템)퍼센트마방깍
+	int STR=INTNUM_START+10; int INT=INTNUM_START+11; int STA=INTNUM_START+12; int WILL=INTNUM_START+13;							// 힘, 지능, 체력, 정신력
+	int STR_INC=INTNUM_START+14; int INT_INC=INTNUM_START+15;																		// 힘%증가, 지능%증가
+	int DAM_INC=INTNUM_START+16; int  DAM_CRT=INTNUM_START+17; int  DAM_ADD=INTNUM_START+18; 										// 증뎀, 크증뎀, 추뎀합
+	int DAM_INC_BACK=INTNUM_START+19; int DAM_CRT_BACK=INTNUM_START+20; int DAM_ADD_BACK=INTNUM_START+21;							//(조건부) 백어택 증뎀, 백어택 크증뎀, 백어택 추뎀
+	int DAM_ADD_FIRE=INTNUM_START+22; int DAM_ADD_WATER=INTNUM_START+23;
+	int DAM_ADD_LIGHT=INTNUM_START+24; int DAM_ADD_DARKNESS=INTNUM_START+25;														// 화속추뎀, 수속추뎀, 명속추뎀, 암속추뎀 (높은속성추뎀 필요)
+	int ELEM_FIRE_DEC=INTNUM_START+26; int ELEM_WATER_DEC=INTNUM_START+27;
+	int ELEM_LIGHT_DEC=INTNUM_START+28; int ELEM_DARKNESS_DEC=INTNUM_START+29;														// 화속저, 수속저, 명속저, 암속저
+	int DAM_BUF=INTNUM_START+30;																									// 투함포 이그니스 공대버프
+	
+	int INTNUM = 31;								// 총 int형 스탯 개수
+	int INTNUM_END = INTNUM_START+INTNUM-1;
 	///////////////////////////////////////
 	
-	int DAM_SKILL = 35;																								// 스증뎀합
-	int DEF_DEC_PERCENT_PHY_SKILL=36; int DEF_DEC_PERCENT_MAG_SKILL=37;												//(스킬) 퍼센트물방깍, 퍼센트마방깍
-	int CRT_PHY=38; int CRT_MAG=39; int CRT_LOW=40; int CRT_BACK_PHY=41; int CRT_BACK_MAG=42;						// 물크, 마크, 크리저항감소, 백물크, 백마크
-	int MAST_IND=43; int MAST_PHY=44; int MAST_MAG=45; int MAST_PHY_2=46; int MAST_MAG_2=47;						// 물공마스터리, 마공마스터리, 독공%증가, 물공마스터리(종류 2), 마공마스터리(종류 2)
-	int BUF_INC=48; int BUF_CRT=49;																					//(스킬) 증뎀버프, 크증뎀버프
+	int DOUBLENUM_START = INTNUM_END+1;
 	
-	int DOUBLENUM_END = 49;
-	int DOUBLENUM_START = 35;
-	int DOUBLENUM = DOUBLENUM_END-DOUBLENUM_START+1;								// 총 int형 스탯 개수
+	int DAM_SKILL =DOUBLENUM_START+0;																				// 스증뎀합
+	int DEF_DEC_PERCENT_PHY_SKILL=DOUBLENUM_START+1; int DEF_DEC_PERCENT_MAG_SKILL=DOUBLENUM_START+2;				//(스킬) 퍼센트물방깍, 퍼센트마방깍
+	int CRT_PHY=DOUBLENUM_START+3; int CRT_MAG=DOUBLENUM_START+4; int CRT_LOW=DOUBLENUM_START+5;
+	int CRT_BACK_PHY=DOUBLENUM_START+6; int CRT_BACK_MAG=DOUBLENUM_START+7;											// 물크, 마크, 크리저항감소, 백물크, 백마크
+	int MAST_IND=DOUBLENUM_START+8; int MAST_PHY=DOUBLENUM_START+9; int MAST_MAG=DOUBLENUM_START+10;				// 물공마스터리, 마공마스터리, 독공%증가
+	int MAST_PHY_2=DOUBLENUM_START+11; int MAST_MAG_2=DOUBLENUM_START+12;											//물공마스터리(종류 2), 마공마스터리(종류 2)
+	int BUF_INC=DOUBLENUM_START+13; int BUF_CRT=DOUBLENUM_START+14;													//(스킬) 증뎀버프, 크증뎀버프
+	
+	int DOUBLENUM = 15;														// 총 double형 스탯 개수
+	int DOUBLENUM_END = DOUBLENUM_START+DOUBLENUM-1;
 	///////////////////////////////////////
 	
-	public static final int STATNUM = ELEMENTNUM+INTNUM+DOUBLENUM;;							// 총 스탯 개수
-	
+	int STATNUM = ELEMENTNUM+INTNUM+DOUBLENUM;								// 총 스탯 개수
 }
 
 public class Status {
@@ -137,9 +144,7 @@ public class Status {
 	
 	public void setStat(int stat, int strength)	throws StatusTypeMismatch
 	{
-		if(statInfo[stat] instanceof StatusInfo || statInfo[stat] instanceof ElementInfo)
-			((StatusInfo)statInfo[stat]).setInfo(strength);
-		else throw new StatusTypeMismatch("Integer");
+		statInfo[stat].setInfo(strength);
 	}
 	public void setStat(String stat, int strength) throws StatusTypeMismatch, UndefinedStatusKey
 	{
@@ -150,11 +155,7 @@ public class Status {
 	
 	public void setDoubleStat(int stat, double strength) throws StatusTypeMismatch
 	{
-		if(statInfo[stat] instanceof DoubleStatusInfo)
-			((DoubleStatusInfo)statInfo[stat]).setInfo(strength);
-		else if(statInfo[stat] instanceof StatusInfo)
-			((StatusInfo)statInfo[stat]).setInfo(strength);
-		else throw new StatusTypeMismatch("Double");
+		statInfo[stat].setInfo(strength);
 	}
 	public void setDoubleStat(String stat, double strength) throws StatusTypeMismatch, UndefinedStatusKey
 	{
@@ -166,19 +167,14 @@ public class Status {
 	public void setElementStat(int stat, int strength, boolean activated) throws StatusTypeMismatch	// 특정 속성값+속성부여여부 변경
 	{
 		if(statInfo[stat] instanceof ElementInfo){
-			((StatusInfo)statInfo[stat]).setInfo(strength);
 			ElementInfo temp = (ElementInfo)statInfo[stat];
-			temp.setElementInfo(activated);
+			temp.setElementInfo(activated, strength);
 		}
 		else throw new StatusTypeMismatch("Element");
 	}
 	public void setElementStat(int stat, boolean activated) throws StatusTypeMismatch	// 특정 속성부여여부 변경
 	{
-		if(statInfo[stat] instanceof ElementInfo){
-			ElementInfo temp = (ElementInfo)statInfo[stat];
-			temp.setElementInfo(activated);
-		}
-		else throw new StatusTypeMismatch("Element");
+		statInfo[stat].setInfo(activated);
 	}
 	public void setElementStat(String stat, int strength, boolean activated) throws StatusTypeMismatch, UndefinedStatusKey
 	{
@@ -215,6 +211,38 @@ public class Status {
 		if(statHash.containsKey(stat)) return getEnabled(statHash.get(stat));
 		else throw new UndefinedStatusKey(stat);
 	}
+	
+	public void addStat(int statNum, AbstractStatusInfo stat2)
+	{
+		AbstractStatusInfo stat1 = statInfo[statNum];
+		try{
+			switch(statNum)
+			{
+				case StatList.ELEM_FIRE: case StatList.ELEM_WATER:									//속성항
+				case StatList.ELEM_LIGHT: case StatList.ELEM_DARKNESS:
+					stat1.setInfo(((ElementInfo)stat1).getElementEnabled() && ((ElementInfo)stat2).getElementEnabled());
+					stat1.setInfo(stat1.getStatToDouble()+stat2.getStatToDouble());
+					break;
+					
+				case StatList.DAM_INC: case StatList.DAM_CRT:										//중첩불가항
+				case StatList.DAM_INC_BACK: case StatList.DAM_CRT_BACK:
+					if(stat2.getStatToDouble()>stat1.getStatToDouble()) stat1.setInfo(stat2.getStatToDouble()); 
+					break;
+					
+				case StatList.DAM_SKILL: case StatList.BUF_INC: case StatList.BUF_CRT:				//복리중첩항
+					double temp1=100.0+stat1.getStatToDouble();
+					double temp2=100.0+stat2.getStatToDouble();
+					stat1.setInfo(temp1*temp2/100-100);
+					break;
+					
+				default:																			//단리중첩항
+					stat1.setInfo(stat1.getStatToDouble()+stat2.getStatToDouble());
+			}
+		}
+		catch(StatusTypeMismatch e){
+			e.printStackTrace();
+		}
+	}
 }
 
 @SuppressWarnings("serial")
@@ -233,67 +261,4 @@ class UndefinedStatusKey extends Exception
 	{
 		super("ERROR : Undefined Input for Status Key - "+key);
 	}
-}
-
-
-abstract class AbstractStatusInfo 				// 스탯정보 저장 class
-{
-	abstract public double getStatToDouble() throws StatusTypeMismatch;
-}
-
-class StatusInfo extends AbstractStatusInfo			// int형 스탯정보 저장 class
-{
-	private int str;										// private으로 바꿔야하지만 몰라 귀찮다 그냥 조심해야지
-	public StatusInfo(int strength)
-	{	
-		str=strength;
-	}
-	
-	public void setInfo(int strength) { str=strength;}
-	public void setInfo(double strength) { str=(int)strength;}
-	
-	public double getStatToDouble() {return (double)str;}
-}
-
-class DoubleStatusInfo extends AbstractStatusInfo
-{
-	private double str;
-	public DoubleStatusInfo(int strength)
-	{
-		str=strength;
-	}
-	
-	public void setInfo(int strength) { str=strength;}
-	public void setInfo(double strength) {str=strength;}
-	
-	public double getStatToDouble() {return str;}
-}
-
-class ElementInfo extends StatusInfo				// 속성정보 저장 class
-{
-	private boolean hasElement;
-	
-	public ElementInfo(boolean activated, int strength)
-	{
-		super(strength);
-		hasElement=activated;
-	}
-	
-	public void setElementInfo(boolean activated, int strength)
-	{
-		super.setInfo(strength);
-		hasElement=activated;
-	}
-	public void setElementInfo(int strength)
-	{
-		super.setInfo(strength);
-	}
-	public void setElementInfo(boolean activated)
-	{
-		hasElement=activated;
-	}
-	
-	public boolean getElementEnabled() {return hasElement;}
-	
-	public double getStatToDouble() {return super.getStatToDouble();}
 }

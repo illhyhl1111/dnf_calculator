@@ -22,8 +22,8 @@ public class StatusList {
 		}
 	}
 	
-	private LinkedList<StatusAndName> statList;
-	private Iterator<StatusAndName> iter;
+	public LinkedList<StatusAndName> statList;
+	public Iterator<StatusAndName> iter;
 	
 	public StatusList(){
 		statList = new LinkedList<StatusAndName>();
@@ -51,7 +51,7 @@ public class StatusList {
 		{
 			StatusAndName tempElement = iter.next();
 			//TODO
-			stat.addDoubleStat(tempElement.name, tempElement.stat);
+			stat.addStat(tempElement.name, tempElement.stat);
 		}
 	}
 }
@@ -72,5 +72,16 @@ class VillageStatusList extends StatusList
 		super();
 	}
 	
-	//TODO implement changeStat
+	public void changeStat(int name, AbstractStatusInfo stat)
+	{
+		while(iter.hasNext())
+		{
+			StatusAndName tempElement = iter.next();
+			if(tempElement.name==name){
+				tempElement.stat=stat;
+				break;
+			}
+		}
+		addStatList(name, stat);
+	}
 }

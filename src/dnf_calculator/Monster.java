@@ -66,19 +66,3 @@ interface Monster_StatList
 	
 	int STARTNUM=1000; int STATNUM=12;	int BOOLNUM=2;		//StatList와 겹치지 않는 시작번호, 스탯개수, bool형 스탯 개수
 }
-
-class BooleanInfo extends AbstractStatusInfo			// boolean형 스탯정보 저장 class
-{
-	boolean bool;										// private으로 바꿔야하지만 몰라 귀찮다 그냥 조심해야지
-	public BooleanInfo(boolean b)
-	{
-		bool=b;
-	}
-	
-	public void setInfo(boolean b) { bool=b;}
-	
-	public BooleanInfo getClone() {return new BooleanInfo(bool);}	// 복제
-	public double getStatToDouble() throws StatusTypeMismatch {
-		throw new StatusTypeMismatch("Boolean");
-	}
-}
