@@ -2,25 +2,25 @@ package dnf_calculator;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-public class StatusList {
+class StatusAndName
+{
+	int name;
+	AbstractStatusInfo stat;
 	
-	class StatusAndName
+	public StatusAndName(int name, AbstractStatusInfo stat)
 	{
-		int name;
-		AbstractStatusInfo stat;
-		
-		public StatusAndName(int name, AbstractStatusInfo stat)
-		{
-			this.name=name;
-			this.stat=stat;
-		}
-		public StatusAndName(String name, AbstractStatusInfo stat) throws UndefinedStatusKey
-		{
-			this.stat=stat;
-			if(Status.statHash.containsKey(stat)) this.name = Status.statHash.get(name);
-			else throw new UndefinedStatusKey(name);
-		}
+		this.name=name;
+		this.stat=stat;
 	}
+	public StatusAndName(String name, AbstractStatusInfo stat) throws UndefinedStatusKey
+	{
+		this.stat=stat;
+		if(Status.statHash.containsKey(stat)) this.name = Status.statHash.get(name);
+		else throw new UndefinedStatusKey(name);
+	}
+}
+
+public class StatusList {
 	
 	public LinkedList<StatusAndName> statList;
 	public Iterator<StatusAndName> iter;
@@ -50,7 +50,6 @@ public class StatusList {
 		while(iter.hasNext())
 		{
 			StatusAndName tempElement = iter.next();
-			//TODO
 			stat.addStat(tempElement.name, tempElement.stat);
 		}
 	}
@@ -62,7 +61,6 @@ class DungeonStatusList extends StatusList
 	{
 		super();
 	}
-
 }
 
 class VillageStatusList extends StatusList

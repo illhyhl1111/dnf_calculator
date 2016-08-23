@@ -20,6 +20,7 @@ class StatusInfo extends AbstractStatusInfo			// int형 스탯정보 저장 clas
 	public void setInfo(double strength) { str=(int)strength;}
 	public void setInfo(boolean bool) throws StatusTypeMismatch { throw new StatusTypeMismatch("Boolean->Integer");}
 	public double getStatToDouble() {return (double)str;}
+	
 }
 
 class DoubleStatusInfo extends AbstractStatusInfo
