@@ -1,6 +1,5 @@
 package dnf_calculator;
 import java.util.HashSet;
-import java.util.Iterator;
 
 public class ItemList {												// 기본 아이템 파일 제작 (유저 디자인과는 분리된 파일)
 	
@@ -47,14 +46,21 @@ public class ItemList {												// 기본 아이템 파일 제작 (유저 디
 		temp.dStat.addStatList("고정물방깍", new StatusInfo(12000));
 		temp.dStat.addStatList("고정마방깍", new StatusInfo(12000));
 		equipList.add(temp);
-	}
 
+		//증적
+		temp = new Equipment("탐식의 증적", null, Item_Rarity.EPIC, Equip_part.AIDEQUIPMENT, Equip_type.NONE);
+		temp.vStat.addStatList("힘", new StatusInfo(128));
+		temp.vStat.addStatList("지능", new StatusInfo(128));
+		temp.vStat.addStatList("무기물공", new StatusInfo(110));
+		temp.vStat.addStatList("무기마공", new StatusInfo(110));
+		temp.vStat.addStatList("독공", new StatusInfo(149));
+		equipList.add(temp);
+	}
 }
 
 class GetItem
 {
 	static HashSet<Equipment> equipList;
-	static Iterator<Equipment> equipIter;
 	static boolean readed=false;
 	
 	public static void readFile()
@@ -63,22 +69,15 @@ class GetItem
 		
 		//read file
 		equipList = (new ItemList()).equipList;
-		equipIter = equipList.iterator();
-	}
-	
-	private static Item findItem(String name, Iterator<? extends Item> iter) throws ItemFileNotFounded
-	{
-		while(iter.hasNext()){
-			Item temp = iter.next();
-			if(temp.getName().equals(name)) return temp;
-		}
-		throw new ItemFileNotFounded(name);	
+		readed=true;
 	}
 	
 	public static Equipment getEquipment(String name) throws ItemFileNotReaded, ItemFileNotFounded
 	{
 		if(!readed) throw new ItemFileNotReaded();
-		return (Equipment)findItem(name, equipIter);
+		for(Equipment e : equipList)
+			if(e.getName().equals(name)) return e;
+		throw new ItemFileNotFounded(name);
 	}
 }
 
@@ -96,6 +95,6 @@ class ItemFileNotFounded extends Exception
 {
 	public ItemFileNotFounded(String str)
 	{
-		super(str+" not found");
+		super(str+" - not found");
 	}
 }

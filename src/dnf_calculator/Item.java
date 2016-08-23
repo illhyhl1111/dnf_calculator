@@ -23,6 +23,8 @@ public abstract class Item implements Cloneable
 		name="이름없음";
 		icon=null; 			//TODO
 		rarity=Item_Rarity.NONE;
+		vStat = new VillageStatusList();
+		dStat = new DungeonStatusList();
 	}
 	
 	public String getName() { return name;}
@@ -37,6 +39,14 @@ public abstract class Item implements Cloneable
 	public Object clone() throws CloneNotSupportedException
 	{
 		return super.clone();
+	}
+	
+	@Override
+	public boolean equals(Object o)
+	{
+		if(o instanceof Item)
+			if(name.equals(((Item) o).name)) return true;
+		return false;
 	}
 }
 
@@ -67,7 +77,7 @@ class Equipment extends Item
 	public Equipment(Equip_part part) {
 		super();
 		this.part=part;
-		type = Equip_type.FABRIC;
+		type = Equip_type.NONE;
 	}
 }
 
@@ -190,7 +200,7 @@ enum Equip_part implements Equipable
 
 enum Equip_type
 {
-	FABRIC, LEATHER, MAIL, HEAVY, PLATE;
+	FABRIC, LEATHER, MAIL, HEAVY, PLATE, NONE;
 }
 
 interface Equipable

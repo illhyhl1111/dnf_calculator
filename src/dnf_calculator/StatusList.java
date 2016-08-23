@@ -1,5 +1,4 @@
 package dnf_calculator;
-import java.util.Iterator;
 import java.util.LinkedList;
 
 class StatusAndName
@@ -15,7 +14,7 @@ class StatusAndName
 	public StatusAndName(String name, AbstractStatusInfo stat) throws UndefinedStatusKey
 	{
 		this.stat=stat;
-		if(Status.statHash.containsKey(stat)) this.name = Status.statHash.get(name);
+		if(Status.getStatHash().containsKey(name)) this.name = Status.getStatHash().get(name);
 		else throw new UndefinedStatusKey(name);
 	}
 }
@@ -23,11 +22,9 @@ class StatusAndName
 public class StatusList {
 	
 	public LinkedList<StatusAndName> statList;
-	public Iterator<StatusAndName> iter;
 	
 	public StatusList(){
 		statList = new LinkedList<StatusAndName>();
-		iter = statList.iterator();
 	}
 	
 	public void addStatList(int name, AbstractStatusInfo addStat)
@@ -47,11 +44,8 @@ public class StatusList {
 	
 	public void addListToStat(Status stat)
 	{
-		while(iter.hasNext())
-		{
-			StatusAndName tempElement = iter.next();
-			stat.addStat(tempElement.name, tempElement.stat);
-		}
+		for(StatusAndName s : statList)
+			stat.addStat(s.name, s.stat);
 	}
 }
 
@@ -72,14 +66,11 @@ class VillageStatusList extends StatusList
 	
 	public void changeStat(int name, AbstractStatusInfo stat)
 	{
-		while(iter.hasNext())
-		{
-			StatusAndName tempElement = iter.next();
-			if(tempElement.name==name){
-				tempElement.stat=stat;
+		for(StatusAndName s : statList)
+			if(s.name==name){
+				s.stat=stat;
 				break;
 			}
-		}
 		addStatList(name, stat);
 	}
 }

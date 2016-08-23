@@ -1,11 +1,16 @@
 package dnf_calculator;
 
-public abstract class AbstractStatusInfo 				// 스탯정보 저장 class
+public abstract class AbstractStatusInfo implements Cloneable				// 스탯정보 저장 class
 {
 	abstract public double getStatToDouble() throws StatusTypeMismatch;
 	abstract public void setInfo(int strength) throws StatusTypeMismatch;
 	abstract public void setInfo(double strength) throws StatusTypeMismatch;
 	abstract public void setInfo(boolean bool) throws StatusTypeMismatch;
+	@Override
+	public Object clone() throws CloneNotSupportedException 
+	{
+		return super.clone();
+	}
 }
 
 class StatusInfo extends AbstractStatusInfo			// int형 스탯정보 저장 class

@@ -50,7 +50,8 @@ interface StatList									// 스탯 종류에 붙는 고유한 식별번호
 public class Status implements Cloneable {
 	
 	private AbstractStatusInfo[] statInfo;
-	public static HashMap<String, Integer> statHash = new HashMap<String, Integer>();
+	private static HashMap<String, Integer> statHash = new HashMap<String, Integer>();
+	private static boolean statHashsetted = false;
 	
 	public static final String[] infoStatOrder = new String[] {
 		"힘", "지능", "체력", "정신력", "마을물공", "마을마공", "독립공격", "물리크리티컬", "마법크리티컬",
@@ -93,7 +94,12 @@ public class Status implements Cloneable {
 		
 		for(; i<StatList.STATNUM; i++)
 			statInfo[i] = new DoubleStatusInfo(0);
-		setStatHash();
+	}
+	
+	public static HashMap<String, Integer> getStatHash()
+	{
+		if(!statHashsetted) setStatHash();
+		return statHash;
 	}
 	
 	public static void setStatHash()
@@ -140,6 +146,8 @@ public class Status implements Cloneable {
 		statHash.put("백물크", StatList.CRT_BACK_PHY); statHash.put("백마크", StatList.CRT_BACK_MAG);
 		statHash.put("물리마스터리", StatList.MAST_PHY); statHash.put("마법마스터리", StatList.MAST_MAG); statHash.put("독공뻥", StatList.MAST_IND);
 		statHash.put("물리마스터리2", StatList.MAST_PHY_2); statHash.put("마법마스터리2", StatList.MAST_MAG_2);
+		
+		statHashsetted=true;
 	}
 	
 	public void setStat(int stat, int strength)	throws StatusTypeMismatch
@@ -247,7 +255,11 @@ public class Status implements Cloneable {
 	@Override
 	public Object clone() throws CloneNotSupportedException
 	{
-		return super.clone();
+		Status temp = (Status)super.clone();
+		temp.statInfo = (AbstractStatusInfo[])this.statInfo.clone();
+		for(int i=0; i<StatList.STATNUM; i++)
+			statInfo[i] = (AbstractStatusInfo)this.statInfo[i].clone();
+		return temp;
 	}
 }
 

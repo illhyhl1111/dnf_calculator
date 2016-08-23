@@ -57,7 +57,7 @@ class Characters
 		else if(item instanceof Creature) creature = (Creature)item;
 		else if(item instanceof Title) title = (Title)item;
 		
-		// 스탯계산
+		setStatus();
 	}
 	
 	public void unequip(Item item)
@@ -79,19 +79,20 @@ class Characters
 		}
 		else if(item instanceof Creature) creature = new Creature();
 		else if(item instanceof Title) title = new Title();
-		// 스탯계산
+		
+		setStatus();
 	}
 	
 	public void setStatus()
 	{
 		villageStatus = new Status();
 		for(Equipment e : equipmentList.values())
-			e.vStat.addListToStat(villageStatus);
+			e.vStat.addListToStat(villageStatus);	
 		try
 		{
 			dungeonStatus = (Status)villageStatus.clone();
-			for(Avatar a : avatarList.values())
-				a.dStat.addListToStat(dungeonStatus);
+			for(Equipment e : equipmentList.values())
+				e.dStat.addListToStat(dungeonStatus);
 		}
 		catch(CloneNotSupportedException e)
 		{

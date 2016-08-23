@@ -9,51 +9,16 @@ import org.eclipse.swt.widgets.*;
 
 public class CalculatorUI {
 	public static void main(String[] args) {
-		Status stat = new Status();
-		
-		try{
-			stat.setElementStat("화속", 250, true);
-			stat.setElementStat("수속", 120, true);
-			stat.setElementStat("암속", 300, false);
-		
-			stat.setStat("무기물공", 988+270+20+40+50+110+34);
-			stat.setStat("물리방무", 500);
-			stat.setStat("독공", 2350-449);
-			stat.setStat("재련독공", 449);
-		
-			stat.setStat("고정물방깍", 12000);
-			stat.setDoubleStat("퍼물방깍_스킬", 27.0);
-			stat.setStat("퍼물방깍_템", 10);
-		
-			stat.setStat("힘", 2780);
-			stat.setStat("힘뻥", 10);
-			stat.setStat("증뎀", 60);
-			stat.setStat("크증뎀", 30);
-			stat.setDoubleStat("스증", 10.0);
-			stat.setStat("추뎀", 35);
-		
-			stat.setDoubleStat("증뎀버프", 224);
-			stat.setDoubleStat("크증뎀버프", 1);
-		
-			stat.setStat("화속추", 1);
-			stat.setStat("수속추", 2);
-			stat.setStat("명속추", 3);
-			stat.setStat("암속추", 4);
-		
-			stat.setStat("화속깍", 20);
-			stat.setStat("수속깍", 20);
-			stat.setStat("명속깍", 20);
-			stat.setStat("암속깍", 20);
-			stat.setStat("투함포항", 12);
-			
-			stat.setDoubleStat("물크", 80);
-			stat.setDoubleStat("백물크", 50);
-			stat.setDoubleStat("크리저항", 5);
-			stat.setDoubleStat("물리마스터리", 20);
-			stat.setDoubleStat("독공뻥", 15);
-			stat.setDoubleStat("물리마스터리2", 1);
 
-			TempChar character = new TempChar(stat, 86);
+		try{
+			GetItem.readFile();
+			Characters character = new Characters(86);
+			character.equip(GetItem.getEquipment("타란튤라 상의"));
+			character.equip(GetItem.getEquipment("킹바분 하의"));
+			character.equip(GetItem.getEquipment("골리앗 버드이터 어깨"));
+			character.equip(GetItem.getEquipment("로즈헤어 벨트"));
+			character.equip(GetItem.getEquipment("인디언 오너멘탈 신발"));
+			character.equip(GetItem.getEquipment("탐식의 증적"));
 			
 			Mon object = new Mon(new Status());
 			object.setBooleanStat(Monster_StatList.BACKATK, true);
@@ -65,9 +30,10 @@ public class CalculatorUI {
 			object.setStat(Monster_StatList.LEVEL, 115);
 			object.setStat(Monster_StatList.TYPE, MonsterType.BOSS);
 			
-			StatusUI_Test.openStatusUI(10000, 100000, 1000, object, character, 1);
+			StatusUI_Test.openStatusUI(10000, 100000, 1000, object, character, 1, false);
+			StatusUI_Test.openStatusUI(10000, 100000, 1000, object, character, 1, true);
 		}
-		catch(StatusTypeMismatch | UndefinedStatusKey e)
+		catch(StatusTypeMismatch | ItemFileNotReaded | ItemFileNotFounded e)
 		{
 			e.printStackTrace();
 		}
@@ -186,12 +152,14 @@ class TextInputOnlyNumbers implements VerifyListener
 
 class StatusUI_Test{
 	
-	public static void openStatusUI(int skillPercent, int skillFixedValue, int usedIndepValue, Monster object, TempChar character, int mode) throws StatusTypeMismatch
+	public static void openStatusUI(int skillPercent, int skillFixedValue, int usedIndepValue,
+			Monster object, Characters character, int mode, boolean dungeon) throws StatusTypeMismatch
 	{	
         Display display = new Display();
 
         Shell shell = new Shell(display);
-        shell.setText("스탯 계산");
+        if(dungeon) shell.setText("스탯 계산 - 던전 스탯");
+        else shell.setText("스탯 계산 - 마을 스탯");
         
         // the layout manager handle the layout
         // of the widgets in the container
@@ -204,7 +172,9 @@ class StatusUI_Test{
         shellLayout.pack=true;	
         shell.setLayout(shellLayout);
         
-        WholeStatus wholeStat = new WholeStatus(shell, character.villageStatus); 
+        WholeStatus wholeStat;
+        if(dungeon) wholeStat = new WholeStatus(shell, character.dungeonStatus);
+        else wholeStat = new WholeStatus(shell, character.villageStatus);
       
         Button button = new Button(shell, SWT.PUSH);
 	    button.setText("Press Me");
