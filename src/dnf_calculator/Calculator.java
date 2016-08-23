@@ -2,11 +2,11 @@ package dnf_calculator;
 
 public class Calculator {
 	
-	public static long percentDamage_physical(int skillPercent, Monster object, Char character, int mode)
+	public static long percentDamage_physical(int skillPercent, Monster object, Characters character, int mode)
 	{
 		//calculate with status
 		try{
-			Status stat=character.finalStatus;
+			Status stat=character.villageStatus;
 			double dec_defence=(1-getPhysicalPercentDefence(character, object));							// 방어력에 의해 감소하는 비율
 			if(dec_defence>1) dec_defence=1.0;
 			CalculateElement elementCal = new CalculateElement(object, stat);								// 각 속강별 데미지 계산
@@ -41,15 +41,15 @@ public class Calculator {
 			return -1;
 		}
 	}
-	public static long percentDamage_physical(int skillPercent, Monster object, Char character)
+	public static long percentDamage_physical(int skillPercent, Monster object, Characters character)
 	{ return percentDamage_physical(skillPercent, object, character, 1); }
 	
 	
-	public static long fixedDamage_physical(int skillValue, int usedIndepValue , Monster object, Char character, int mode)
+	public static long fixedDamage_physical(int skillValue, int usedIndepValue , Monster object, Characters character, int mode)
 	{
 		//calculate with status
 		try{
-			Status stat=character.finalStatus;
+			Status stat=character.villageStatus;
 			double dec_defence=(1-getPhysicalPercentDefence(character, object));							// 방어력에 의해 감소하는 비율
 			if(dec_defence>1) dec_defence=1.0;
 			CalculateElement elementCal = new CalculateElement(object, stat);								// 각 속강별 데미지 계산
@@ -82,15 +82,15 @@ public class Calculator {
 			return -1;
 		}
 	}
-	public static long fixedDamage_physical(int skillValue, int usedIndepValue , Monster object, Char character)
+	public static long fixedDamage_physical(int skillValue, int usedIndepValue , Monster object, Characters character)
 	{ return fixedDamage_physical(skillValue, usedIndepValue , object, character, 1); }
 	
 	
-	public static long percentDamage_magical(int skillPercent, Monster object, Char character, int mode)
+	public static long percentDamage_magical(int skillPercent, Monster object, Characters character, int mode)
 	{
 		//calculate with status
 		try{
-			Status stat=character.finalStatus;
+			Status stat=character.villageStatus;
 			double dec_defence=(1-getMagicalPercentDefence(character, object));							// 방어력에 의해 감소하는 비율
 			if(dec_defence>1) dec_defence=1.0;
 			CalculateElement elementCal = new CalculateElement(object, stat);								// 각 속강별 데미지 계산
@@ -124,15 +124,15 @@ public class Calculator {
 			return -1;
 		}
 	}
-	public static long percentDamage_magical(int skillPercent, Monster object, Char character)
+	public static long percentDamage_magical(int skillPercent, Monster object, Characters character)
 	{ return percentDamage_magical(skillPercent, object, character, 1); } 
 	
 	
-	public static long fixedDamage_magical(int skillValue, int usedIndepValue , Monster object, Char character, int mode)
+	public static long fixedDamage_magical(int skillValue, int usedIndepValue , Monster object, Characters character, int mode)
 	{
 		//calculate with status
 		try{
-			Status stat=character.finalStatus;
+			Status stat=character.villageStatus;
 			double dec_defence=(1-getMagicalPercentDefence(character, object));							// 방어력에 의해 감소하는 비율
 			if(dec_defence>1) dec_defence=1.0;
 			CalculateElement elementCal = new CalculateElement(object, stat);								// 각 속강별 데미지 계산
@@ -165,11 +165,11 @@ public class Calculator {
 			return -1;
 		}
 	}
-	public static long fixedDamage_magical(int skillValue, int usedIndepValue , Monster object, Char character)
+	public static long fixedDamage_magical(int skillValue, int usedIndepValue , Monster object, Characters character)
 	{ return fixedDamage_magical(skillValue, usedIndepValue , object, character, 1); } 
 	
 	
-	public static double damage_enhancing_avg(Status stat, Monster object, Char character, CalculateElement elementCal) throws StatusTypeMismatch  	// 속강증크증스증추뎀카운터투함포기타등등
+	public static double damage_enhancing_avg(Status stat, Monster object, Characters character, CalculateElement elementCal) throws StatusTypeMismatch  	// 속강증크증스증추뎀카운터투함포기타등등
 	{
 		double inc_damage=(100.0+stat.getStat(StatList.BUF_INC))/100.0;										// 증뎀버프
 		if(object.getBool(Monster_StatList.BACKATK) && stat.getStat(StatList.DAM_INC_BACK)>stat.getStat(StatList.DAM_INC))
@@ -209,10 +209,10 @@ public class Calculator {
 		return (double)(inc_damage*inc_counter*inc_add*inc_skill*inc_buf);
 	}
 	
-	public static double getPhysicalPercentDefence(Char character, Monster object) throws StatusTypeMismatch							// 몹의 물리퍼센트 방어력 구하기
+	public static double getPhysicalPercentDefence(Characters character, Monster object) throws StatusTypeMismatch							// 몹의 물리퍼센트 방어력 구하기
 	{
 		int level = character.level;
-		Status stat=character.finalStatus;
+		Status stat=character.villageStatus;
 		
 		int fixedDef=object.getStat(Monster_StatList.DEFENSIVE_PHY);												// 기본방어력
 		fixedDef-=stat.getStat(StatList.DEF_DEC_FIXED_PHY);															// 기본방어력-고정방깍
@@ -223,10 +223,10 @@ public class Calculator {
 		return ((double)(fixedDef))/((double)(fixedDef+level*200));													// %방어력=고정방어력/(고정방어력+레벨*200)
 	}
 	
-	public static double getMagicalPercentDefence(Char character, Monster object) throws StatusTypeMismatch			// 몹의 마법퍼센트 방어력 구하기
+	public static double getMagicalPercentDefence(Characters character, Monster object) throws StatusTypeMismatch			// 몹의 마법퍼센트 방어력 구하기
 	{
 		int level = character.level;
-		Status stat=character.finalStatus;
+		Status stat=character.villageStatus;
 		
 		int fixedDef=object.getStat(Monster_StatList.DEFENSIVE_MAG);												// 기본방어력
 		fixedDef-=stat.getStat(StatList.DEF_DEC_FIXED_MAG);															// 기본방어력-고정방깍
@@ -383,17 +383,5 @@ class CalculateElement
 		}
 		
 		return mode;
-	}
-}
-
-class Char
-{
-	Status finalStatus;
-	int level;
-	
-	public Char(Status stat, int lev)
-	{
-		finalStatus=stat;
-		level=lev;
 	}
 }

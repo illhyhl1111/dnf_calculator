@@ -53,7 +53,7 @@ public class CalculatorUI {
 			stat.setDoubleStat("독공뻥", 15);
 			stat.setDoubleStat("물리마스터리2", 1);
 
-			Char character = new Char(stat, 86);
+			Characters character = new Characters(stat, 86);
 			
 			Mon object = new Mon(new Status());
 			object.setBooleanStat(Monster_StatList.BACKATK, true);
@@ -186,7 +186,7 @@ class TextInputOnlyNumbers implements VerifyListener
 
 class StatusUI_Test{
 	
-	public static void openStatusUI(int skillPercent, int skillFixedValue, int usedIndepValue, Monster object, Char character, int mode) throws StatusTypeMismatch
+	public static void openStatusUI(int skillPercent, int skillFixedValue, int usedIndepValue, Monster object, Characters character, int mode) throws StatusTypeMismatch
 	{	
         Display display = new Display();
 
@@ -204,7 +204,7 @@ class StatusUI_Test{
         shellLayout.pack=true;	
         shell.setLayout(shellLayout);
         
-        WholeStatus wholeStat = new WholeStatus(shell, character.finalStatus); 
+        WholeStatus wholeStat = new WholeStatus(shell, character.villageStatus); 
       
         Button button = new Button(shell, SWT.PUSH);
 	    button.setText("Press Me");
