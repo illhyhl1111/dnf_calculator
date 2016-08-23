@@ -47,7 +47,7 @@ interface StatList									// 스탯 종류에 붙는 고유한 식별번호
 	int STATNUM = ELEMENTNUM+INTNUM+DOUBLENUM;								// 총 스탯 개수
 }
 
-public class Status {
+public class Status implements Cloneable {
 	
 	private AbstractStatusInfo[] statInfo;
 	public static HashMap<String, Integer> statHash = new HashMap<String, Integer>();
@@ -242,6 +242,12 @@ public class Status {
 		catch(StatusTypeMismatch e){
 			e.printStackTrace();
 		}
+	}
+	
+	@Override
+	public Object clone() throws CloneNotSupportedException
+	{
+		return super.clone();
 	}
 }
 

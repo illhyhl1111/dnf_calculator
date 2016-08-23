@@ -49,7 +49,7 @@ public class Calculator_test {
 			charStat.setDoubleStat("독공뻥", 15);
 			charStat.setDoubleStat("물리마스터리2", 1);
 			
-			Char character = new Char(charStat, 86);
+			TempChar character = new TempChar(charStat, 86);
 			
 			Mon object = new Mon(new Status());
 			object.setBooleanStat(Monster_StatList.BACKATK, true);
@@ -80,4 +80,15 @@ class Mon extends Monster
 		super(stat);
 	}
 	
+}
+
+class TempChar
+{
+	Status villageStatus;
+	int level;
+	public TempChar(Status stat, int lev)
+	{
+		villageStatus=stat;
+		level=lev;
+	}
 }

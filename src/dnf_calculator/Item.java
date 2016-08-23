@@ -18,6 +18,12 @@ public abstract class Item implements Cloneable
 		vStat = new VillageStatusList();
 		dStat = new DungeonStatusList();
 	}
+	public Item()
+	{
+		name="이름없음";
+		icon=null; 			//TODO
+		rarity=Item_Rarity.NONE;
+	}
 	
 	public Object clone() throws CloneNotSupportedException
 	{
@@ -43,10 +49,13 @@ class Equipment extends Item
 		this.card=card;
 		this.setName=setName;
 	}
-	
 	public Equipment(String name, Image icon, Item_Rarity rarity, Equip_part part)
 	{
 		this(name, icon, rarity, part, Dimension_stat.NONE, 0, new Card("없음", null, Item_Rarity.NONE, AddOn.NONE), SetName.NONE);
+	}
+	public Equipment(Equip_part part) {
+		super();
+		this.part=part;
 	}
 }
 
@@ -69,6 +78,10 @@ class Avatar extends Item
 		super(name, icon, rarity);
 		this.part=part;
 	}
+	public Avatar(Avatar_part part) {
+		super();
+		this.part=part;
+	}
 }
 
 class Creature extends Item
@@ -77,6 +90,7 @@ class Creature extends Item
 	{
 		super(name, icon, rarity);
 	}
+	public Creature(){ super();}
 }
 
 class Title extends Item
@@ -85,6 +99,7 @@ class Title extends Item
 	{
 		super(name, icon, rarity);
 	}
+	public Title(){ super();}
 }
 
 class Consumeable extends Item
@@ -92,6 +107,15 @@ class Consumeable extends Item
 	public Consumeable(String name, Image icon, Item_Rarity rarity)
 	{
 		super(name, icon, rarity);
+	}
+	public Consumeable(){ super();}
+	
+	@Override
+	public boolean equals(Object o)
+	{
+		if(o instanceof Consumeable)
+			if(this.name.equals(((Consumeable) o).name)) return true;
+		return false;
 	}
 }
 
@@ -121,7 +145,7 @@ enum AddOn
 	ROBE, WEAPON, TITLE, RED_GREEN, YELLOW_BLUE, MULTIPLE_COLOR
 }
 
-enum Avatar_part
+enum Avatar_part implements Equipable
 {
 	CAP, HAIR, EARRING, SHOULDER, COAT, BELT, PANTS, SHOES, SKIN, AURA
 }
@@ -147,7 +171,11 @@ enum Item_Rarity
 	NONE, COMMON, UNCOMMON, RARE, CHRONICLE, UNIQUE, LEGENDARY, EPIC;
 }
 
-enum Equip_part
+enum Equip_part implements Equipable
 {
 	ROBE, TROUSER, SHOULDER, BELT, SHOES, NECKLESS, BRACELET, RING, EARRING, AIDEQUIPMENT, MAGICSTONE;
+}
+
+interface Equipable
+{
 }
