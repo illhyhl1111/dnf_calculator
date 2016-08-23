@@ -4,11 +4,11 @@ import org.eclipse.swt.graphics.Image;
 
 public abstract class Item implements Cloneable
 {
-	String name;										//이름
-	Image icon;											//아이콘
-	Item_Rarity rarity;								//희귀도
-	VillageStatusList vStat;							//마을스탯
-	DungeonStatusList dStat;							//인던스탯
+	private String name;										//이름
+	private	Image icon;											//아이콘
+	private Item_Rarity rarity;									//희귀도
+	VillageStatusList vStat;									//마을스탯
+	DungeonStatusList dStat;									//인던스탯
 	
 	public Item(String name, Image icon, Item_Rarity rarity)
 	{
@@ -25,6 +25,15 @@ public abstract class Item implements Cloneable
 		rarity=Item_Rarity.NONE;
 	}
 	
+	public String getName() { return name;}
+	public void setName(String name) { this.name = name;}
+	
+	public Image getIcon() { return icon;}
+	public void setIcon(Image icon) { this.icon = icon;}
+	
+	public Item_Rarity getRarity() { return rarity;}
+	public void setRarity(Item_Rarity rarity) { this.rarity = rarity;}
+	
 	public Object clone() throws CloneNotSupportedException
 	{
 		return super.clone();
@@ -38,9 +47,10 @@ class Equipment extends Item
 	int reinforce;										//강화수치
 	Card card;											//보주
 	SetName setName;									//셋옵이름
+	Equip_type type;									//재질
 	
 	public Equipment(String name, Image icon,Item_Rarity rarity, Equip_part part, Dimension_stat dimStat,
-			int reinforce, Card card, SetName setName)
+			int reinforce, Card card, SetName setName, Equip_type type)
 	{	
 		super(name, icon, rarity);
 		this.part=part;
@@ -48,14 +58,16 @@ class Equipment extends Item
 		this.reinforce=reinforce;
 		this.card=card;
 		this.setName=setName;
+		this.type=type;
 	}
-	public Equipment(String name, Image icon, Item_Rarity rarity, Equip_part part)
+	public Equipment(String name, Image icon, Item_Rarity rarity, Equip_part part, Equip_type type)
 	{
-		this(name, icon, rarity, part, Dimension_stat.NONE, 0, new Card("없음", null, Item_Rarity.NONE, AddOn.NONE), SetName.NONE);
+		this(name, icon, rarity, part, Dimension_stat.NONE, 0, new Card("없음", null, Item_Rarity.NONE, AddOn.NONE), SetName.NONE, type);
 	}
 	public Equipment(Equip_part part) {
 		super();
 		this.part=part;
+		type = Equip_type.FABRIC;
 	}
 }
 
@@ -114,7 +126,7 @@ class Consumeable extends Item
 	public boolean equals(Object o)
 	{
 		if(o instanceof Consumeable)
-			if(this.name.equals(((Consumeable) o).name)) return true;
+			if(this.getName().equals(((Consumeable) o).getName())) return true;
 		return false;
 	}
 }
@@ -174,6 +186,11 @@ enum Item_Rarity
 enum Equip_part implements Equipable
 {
 	ROBE, TROUSER, SHOULDER, BELT, SHOES, NECKLESS, BRACELET, RING, EARRING, AIDEQUIPMENT, MAGICSTONE;
+}
+
+enum Equip_type
+{
+	FABRIC, LEATHER, MAIL, HEAVY, PLATE;
 }
 
 interface Equipable
