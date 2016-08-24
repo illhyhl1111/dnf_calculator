@@ -1,11 +1,17 @@
-package dnf_calculator;
-import java.util.LinkedList;
-import java.util.HashMap;
+package dnf_class;
 
-class Characters
+import java.util.HashMap;
+import java.util.LinkedList;
+
+import dnf_InterfacesAndExceptions.Avatar_part;
+import dnf_InterfacesAndExceptions.Equip_part;
+import dnf_InterfacesAndExceptions.JobList;
+import dnf_calculator.Status;
+
+public class Characters
 {
-	Status villageStatus;														//마을스탯
-	Status dungeonStatus;														//인던스탯
+	public Status villageStatus;														//마을스탯
+	public Status dungeonStatus;														//인던스탯
 	HashMap<Equip_part, Equipment> equipmentList;
 	static final int EQUIPNUM=11;
 	HashMap<Avatar_part, Avatar> avatarList;
@@ -13,7 +19,7 @@ class Characters
 	Creature creature;
 	Title title;
 	LinkedList<Consumeable> doping;
-	int level;
+	private int level;
 	JobList job;
 	//LinkedList<PassiveSkill> passive;											//TODO
 	
@@ -30,7 +36,7 @@ class Characters
 		creature = new Creature();
 		title = new Title();
 		doping = new LinkedList<Consumeable>();
-		this.level=level;
+		this.setLevel(level);
 		job = JobList.UNIMPLEMENTED;
 		//passive = new LinkedList<PassiveSkill>();								//TODO
 		
@@ -86,22 +92,20 @@ class Characters
 	public void setStatus()
 	{
 		villageStatus = new Status();
+		dungeonStatus = new Status();
 		for(Equipment e : equipmentList.values())
-			e.vStat.addListToStat(villageStatus);	
-		try
 		{
-			dungeonStatus = (Status)villageStatus.clone();
-			for(Equipment e : equipmentList.values())
-				e.dStat.addListToStat(dungeonStatus);
-		}
-		catch(CloneNotSupportedException e)
-		{
-			e.printStackTrace();
+			e.vStat.addListToStat(villageStatus);
+			e.vStat.addListToStat(dungeonStatus);
+			e.dStat.addListToStat(dungeonStatus);
 		}
 	}
-}
 
-enum JobList
-{
-	UNIMPLEMENTED
+	public int getLevel() {
+		return level;
+	}
+
+	public void setLevel(int level) {
+		this.level = level;
+	}
 }

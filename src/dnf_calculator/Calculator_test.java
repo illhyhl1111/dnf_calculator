@@ -1,5 +1,12 @@
 package dnf_calculator;
 
+import dnf_InterfacesAndExceptions.DefenceIgnorePenalty;
+import dnf_InterfacesAndExceptions.MonsterType;
+import dnf_InterfacesAndExceptions.Monster_StatList;
+import dnf_InterfacesAndExceptions.StatusTypeMismatch;
+import dnf_InterfacesAndExceptions.UndefinedStatusKey;
+import dnf_class.Monster;
+
 public class Calculator_test {
 
 	public static void main(String[] args)
@@ -51,7 +58,7 @@ public class Calculator_test {
 			
 			TempChar character = new TempChar(charStat, 86);
 			
-			Mon object = new Mon(new Status());
+			Monster object = new Monster(new Status());
 			object.setBooleanStat(Monster_StatList.BACKATK, true);
 			object.setBooleanStat(Monster_StatList.COUNTER, true);
 			object.setStat(Monster_StatList.DIFFICULTY, DefenceIgnorePenalty.ANTON_NOR);
@@ -72,14 +79,6 @@ public class Calculator_test {
 		}
 		
 	}
-}
-
-class Mon extends Monster
-{
-	public Mon(Status stat) {
-		super(stat);
-	}
-	
 }
 
 class TempChar

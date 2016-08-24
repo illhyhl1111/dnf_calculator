@@ -1,6 +1,14 @@
-package dnf_calculator;
+package dnf_class;
 
-public abstract class Monster {							// 피격자 class
+import dnf_calculator.AbstractStatusInfo;
+import dnf_calculator.BooleanInfo;
+import dnf_InterfacesAndExceptions.MonsterType;
+import dnf_InterfacesAndExceptions.Monster_StatList;
+import dnf_calculator.Status;
+import dnf_calculator.StatusInfo;
+import dnf_InterfacesAndExceptions.StatusTypeMismatch;
+
+public class Monster {							// 피격자 class
 
 	private AbstractStatusInfo[] monstInfo;
 	
@@ -27,7 +35,7 @@ public abstract class Monster {							// 피격자 class
 	public boolean getBool(int stat) throws StatusTypeMismatch
 	{
 		if(monstInfo[stat-Monster_StatList.STARTNUM] instanceof BooleanInfo)
-			return ((BooleanInfo)monstInfo[stat-Monster_StatList.STARTNUM]).bool;
+			return ((BooleanInfo)monstInfo[stat-Monster_StatList.STARTNUM]).getBooleanStat();
 		else throw new StatusTypeMismatch("Boolean");
 	}
 	
@@ -41,28 +49,7 @@ public abstract class Monster {							// 피격자 class
 	public void setBooleanStat(int stat, boolean bool)	throws StatusTypeMismatch
 	{
 		if(monstInfo[stat-Monster_StatList.STARTNUM] instanceof BooleanInfo)
-			((BooleanInfo)monstInfo[stat-Monster_StatList.STARTNUM]).bool=bool;
+			((BooleanInfo)monstInfo[stat-Monster_StatList.STARTNUM]).setBooleanStat(bool);
 		else throw new StatusTypeMismatch("Boolean");
 	}
-}
-
-interface DefenceIgnorePenalty
-{
-	int NORMAL=0; int EXPERT=10; int MASTER=20; int KING=40; int SLAYER=60; int ANTON_RAID=33; int ANTON_NOR=33;	// 난이도에 따른 방무패널티
-}
-
-interface MonsterType
-{
-	int NORMAL=100; int NAMED=75; int BOSS=50;											// 몹 등급에 따른 아이템퍼방깍 패널티 
-}
-
-interface Monster_StatList
-{
-	int COUNTER=1000; int BACKATK=1001;																		//카운터여부, 백어택여부
-	int FIRE_RESIST=1002; int WATER_RESIST=1003; int LIGHT_RESIST=1004; int DARKNESS_RESIST=1005;			// 화속저, 수속저, 명속저, 암속저
-	int DIFFICULTY=1006; int HP=1007; 																		// 난이도, 체력, 
-	int DEFENSIVE_PHY=1008; int DEFENSIVE_MAG=1009;															// 물방, 마방
-	int LEVEL=1010;	int TYPE=1011;																			// 몹 레벨, 등급
-	
-	int STARTNUM=1000; int STATNUM=12;	int BOOLNUM=2;		//StatList와 겹치지 않는 시작번호, 스탯개수, bool형 스탯 개수
 }
