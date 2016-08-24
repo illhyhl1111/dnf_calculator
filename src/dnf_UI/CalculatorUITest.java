@@ -19,21 +19,21 @@ import dnf_calculator.Calculator;
 import dnf_calculator.Status;
 import dnf_class.Characters;
 import dnf_class.Monster;
-import dnf_infomation.GetItem;
+import dnf_infomation.GetItemDictionary;
 
 
 public class CalculatorUITest {
 	public static void main(String[] args) {
 
 		try{
-			GetItem.readFile();
+			GetItemDictionary.readFile();
 			Characters character = new Characters(86);
-			character.equip(GetItem.getEquipment("타란튤라 상의"));
-			character.equip(GetItem.getEquipment("킹바분 하의"));
-			character.equip(GetItem.getEquipment("골리앗 버드이터 어깨"));
-			character.equip(GetItem.getEquipment("로즈헤어 벨트"));
-			character.equip(GetItem.getEquipment("인디언 오너멘탈 신발"));
-			character.equip(GetItem.getEquipment("탐식의 증적"));
+			character.equip(GetItemDictionary.getEquipment("타란튤라 상의"));
+			character.equip(GetItemDictionary.getEquipment("킹바분 하의"));
+			character.equip(GetItemDictionary.getEquipment("골리앗 버드이터 어깨"));
+			character.equip(GetItemDictionary.getEquipment("로즈헤어 벨트"));
+			character.equip(GetItemDictionary.getEquipment("인디언 오너멘탈 신발"));
+			character.equip(GetItemDictionary.getEquipment("탐식의 증적"));
 			
 			Monster object = new Monster(new Status());
 			object.setBooleanStat(Monster_StatList.BACKATK, true);

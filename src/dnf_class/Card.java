@@ -5,7 +5,8 @@ import org.eclipse.swt.graphics.Image;
 import dnf_InterfacesAndExceptions.AddOn;
 import dnf_InterfacesAndExceptions.Item_rarity;
 
-public class Card extends Item
+@SuppressWarnings("serial")
+public class Card extends Item implements java.io.Serializable
 {
 	AddOn type;
 	public Card(String name, Image icon, Item_rarity rarity, AddOn type)

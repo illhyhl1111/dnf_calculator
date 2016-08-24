@@ -9,6 +9,7 @@ import dnf_InterfacesAndExceptions.Equip_type;
 import dnf_InterfacesAndExceptions.Item_rarity;
 import dnf_InterfacesAndExceptions.SetName;
 
+@SuppressWarnings("serial")
 public class Equipment extends Item
 {
 	Equip_part part;									//부위
@@ -37,5 +38,14 @@ public class Equipment extends Item
 		super();
 		this.part=part;
 		type = Equip_type.NONE;
+	}
+	
+	@Override
+	public String toString()
+	{
+		String out;
+		out = "name : " + super.getName() +"\nrarity : "+super.getRarity()+"\nreinforce : "+reinforce+"\ntype : "+type.toString();
+		out += "\npart : "+part.toString()+"\ntype : "+type.toString()+"\n\n";
+		return out;
 	}
 }

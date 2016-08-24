@@ -38,7 +38,7 @@ class EquipInfo_fighter {
 	}
 }
 
-class EquipInfo_gunner {
+class EquipInfo_gun {
 	
 	public static void getInfo(HashSet<Equipment> equipList)
 	{

@@ -1,5 +1,6 @@
 package dnf_calculator;
 
+@SuppressWarnings("serial")
 public class VillageStatusList extends StatusList
 {
 	public VillageStatusList()

@@ -1,8 +1,10 @@
 package dnf_calculator;
 import java.util.LinkedList;
+
 import dnf_InterfacesAndExceptions.UndefinedStatusKey;
 
-public class StatusList {
+@SuppressWarnings("serial")
+public class StatusList implements java.io.Serializable {
 	
 	public LinkedList<StatusAndName> statList;
 	
