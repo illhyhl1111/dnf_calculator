@@ -1,28 +1,24 @@
 package dnf_infomation;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.util.HashSet;
 
 import dnf_class.Equipment;
 
 public class IOTest {
 	@SuppressWarnings("unchecked")
-	public static void main(String[] args)
+	public static void main(String[] args) throws IOException
 	{
 		try{
 			HashSet<Equipment> equipList = new HashSet<Equipment>();
 			
-			EquipInfo_sword.getInfo(equipList);
-			EquipInfo_fighter.getInfo(equipList);
-			EquipInfo_gun.getInfo(equipList);
-			EquipInfo_mage.getInfo(equipList);
-			EquipInfo_priest.getInfo(equipList);
-			EquipInfo_thief.getInfo(equipList);
-			EquipInfo_lance.getInfo(equipList);
+			//EquipInfo_sword.getInfo(equipList);
+			//EquipInfo_fighter.getInfo(equipList);
+			WeaponInfo_gun.getInfo(equipList);
+			//EquipInfo_mage.getInfo(equipList);
+			//EquipInfo_priest.getInfo(equipList);
+			//EquipInfo_thief.getInfo(equipList);
+			//EquipInfo_lance.getInfo(equipList);
 			
 			EquipInfo_fabric.getInfo(equipList);
 			EquipInfo_leather.getInfo(equipList);

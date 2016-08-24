@@ -11,6 +11,7 @@ import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 public class Monster {							// 피격자 class
 
 	private AbstractStatusInfo[] monstInfo;
+	public Item monsterFeature;
 	
 	public Monster(Status stat)								
 	{
@@ -23,6 +24,7 @@ public class Monster {							// 피격자 class
 			monstInfo[i] = new StatusInfo(0);
 		
 		monstInfo[Monster_StatList.TYPE-Monster_StatList.STARTNUM] = new StatusInfo(MonsterType.NORMAL);
+		monsterFeature = new Item();
 	}
 	
 	public int getStat(int stat) throws StatusTypeMismatch

@@ -7,6 +7,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
 
+
+import dnf_calculator.Calculator;
 import dnf_calculator.Status;
 import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 import dnf_InterfacesAndExceptions.UndefinedStatusKey;
@@ -51,11 +53,11 @@ public class InfoStatus extends StatusUI
 			
 			for(i=0; i<Status.infoStatNum; i++){
 				if(Status.infoStatOrder[i].equals("마을물공")){
-					//infoStatusText[i].setTextString(String.valueOf(Calculator.physicalATK(this)));						//TODO, 마을물공
+					infoStatusText[i].setTextString(String.valueOf(Calculator.getInfoPhysicalATK(stat)));						//TODO, 마을물공
 					infoStatusText[4].setInputEnable(false);
 				}
 				else if(Status.infoStatOrder[i].equals("마을마공")){
-					//infoStatusText[5].setTextString(String.valueOf(Calculator.physicalATK(this)));						//TODO, 마을물공
+					infoStatusText[5].setTextString(String.valueOf(Calculator.getInfoMagicalATK(stat)));						//TODO, 마을물공
 					infoStatusText[i].setInputEnable(false);
 				}
 				else{	

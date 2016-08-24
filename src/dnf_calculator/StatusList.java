@@ -40,6 +40,20 @@ public class StatusList implements java.io.Serializable {
 			e.printStackTrace();
 		}
 	}
+	public void addStatList(int name, AbstractStatusInfo addStat, boolean changeable, boolean enableable)
+	{
+		statList.add(new StatusAndName(name, addStat, changeable, enableable));
+	}
+	public void addStatList(String name, AbstractStatusInfo addStat, boolean changeable, boolean enableable)
+	{
+		try{
+			statList.add(new StatusAndName(name, addStat, changeable, enableable));
+		}
+		catch(UndefinedStatusKey e)
+		{
+			e.printStackTrace();
+		}
+	}
 	
 	public void changeStat(int name, AbstractStatusInfo stat)
 	{

@@ -6,7 +6,7 @@ import dnf_calculator.StatusList;
 import dnf_InterfacesAndExceptions.Item_rarity;
 
 @SuppressWarnings("serial")
-public abstract class Item implements Cloneable, java.io.Serializable
+public class Item implements Cloneable, java.io.Serializable
 {
 	private String name;										//이름
 	private	Image icon;											//아이콘

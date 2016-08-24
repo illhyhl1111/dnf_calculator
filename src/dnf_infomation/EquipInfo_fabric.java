@@ -61,33 +61,33 @@ public class EquipInfo_fabric {
 		//불마상의, 마나번
 		temp = new Equipment("마나 번 로브", null, Item_rarity.EPIC, Equip_part.ROBE, type, SetName.BURNINGSPELL);
 		temp.vStat.addStatList("지능", new StatusInfo(51), true);
-		temp.dStat.addStatList("마공마스터리", new StatusInfo(15), true);
-		temp.dStat.addStatList("독공뻥", new StatusInfo(15), true);
+		temp.dStat.addStatList("마법마스터리", new StatusInfo(15), false, true);
+		temp.dStat.addStatList("독공뻥", new StatusInfo(15), false, true);
 		equipList.add(temp);
 		
 		//불마하의
 		temp = new Equipment("매직 번 트라우저", null, Item_rarity.EPIC, Equip_part.TROUSER, type, SetName.BURNINGSPELL);
 		temp.vStat.addStatList("지능", new StatusInfo(48), true);
-		temp.dStat.addStatList("크증뎀", new StatusInfo(15), true);		//TODO 마공크증뎀
+		temp.dStat.addStatList("크증뎀", new StatusInfo(15), false, true);
 		equipList.add(temp);
 		
 		//불마어깨, 스펠번
 		temp = new Equipment("스펠 번 숄더 패드", null, Item_rarity.EPIC, Equip_part.SHOULDER, type, SetName.BURNINGSPELL);
 		temp.vStat.addStatList("지능", new StatusInfo(41), true);
-		temp.dStat.addStatList("마공마스터리", new StatusInfo(12), true);
-		temp.dStat.addStatList("독공뻥", new StatusInfo(12), true);
+		temp.dStat.addStatList("마법마스터리", new StatusInfo(12), false, true);
+		temp.dStat.addStatList("독공뻥", new StatusInfo(12), false, true);
 		equipList.add(temp);
 		
 		//불마벨트
 		temp = new Equipment("엘리멘탈 번 새쉬", null, Item_rarity.EPIC, Equip_part.BELT, type, SetName.BURNINGSPELL);
 		temp.vStat.addStatList("지능", new StatusInfo(31), true);
-		temp.dStat.addStatList("마크", new DoubleStatusInfo(20), true);
+		temp.dStat.addStatList("마크", new DoubleStatusInfo(20), false, true);
 		equipList.add(temp);
 		
 		//불마신발, 소울번
 		temp = new Equipment("소울 번 슈즈", null, Item_rarity.EPIC, Equip_part.SHOES, type, SetName.BURNINGSPELL);
 		temp.vStat.addStatList("지능", new StatusInfo(31), true);
-		temp.dStat.addStatList("모속", new ElementInfo(20), true);
+		temp.dStat.addStatList("모속", new ElementInfo(20), false, true);
 		equipList.add(temp);
 		
 		
@@ -97,7 +97,7 @@ public class EquipInfo_fabric {
 		temp.vStat.addStatList("지능", new StatusInfo(51), true);
 		temp.vStat.addStatList("수속", new ElementInfo(12), true);
 		temp.vStat.addStatList("마크", new DoubleStatusInfo(5));
-		temp.dStat.addStatList("수속저", new StatusInfo(44), true);
+		temp.dStat.addStatList("수속깍", new StatusInfo(44), false, true);
 		equipList.add(temp);
 		
 		//플드랍
@@ -105,7 +105,7 @@ public class EquipInfo_fabric {
 		temp.vStat.addStatList("지능", new StatusInfo(51), true);
 		temp.vStat.addStatList("화속", new ElementInfo(12), true);
 		temp.vStat.addStatList("마크", new DoubleStatusInfo(5));
-		temp.dStat.addStatList("화속저", new StatusInfo(44), true);
+		temp.dStat.addStatList("화속깍", new StatusInfo(44), false, true);
 		equipList.add(temp);
 		
 		//레디숄, 레이숄
@@ -113,7 +113,7 @@ public class EquipInfo_fabric {
 		temp.vStat.addStatList("지능", new StatusInfo(85), true);
 		temp.vStat.addStatList("명속", new ElementInfo(12), true);
 		temp.vStat.addStatList("마크", new DoubleStatusInfo(5));
-		temp.dStat.addStatList("명속저", new StatusInfo(44), true);
+		temp.dStat.addStatList("명속깍", new StatusInfo(44), false, true);
 		equipList.add(temp);
 		
 		//닼로새쉬
@@ -121,7 +121,7 @@ public class EquipInfo_fabric {
 		temp.vStat.addStatList("지능", new StatusInfo(75), true);
 		temp.vStat.addStatList("암속", new ElementInfo(12), true);
 		temp.vStat.addStatList("마크", new DoubleStatusInfo(5));
-		temp.dStat.addStatList("암속저", new StatusInfo(44), true);
+		temp.dStat.addStatList("암속깍", new StatusInfo(44), false, true);
 		equipList.add(temp);
 		
 		//페다슈, 페이스다운

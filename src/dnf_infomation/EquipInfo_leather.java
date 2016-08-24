@@ -41,8 +41,8 @@ public class EquipInfo_leather {
 		temp = new Equipment("날렵한 카멜레온 가죽 숄더", null, Item_rarity.EPIC, Equip_part.SHOULDER, type, SetName.CHAMELEON);
 		temp.vStat.addStatList("힘", new StatusInfo(32), true);
 		temp.vStat.addStatList("지능", new StatusInfo(32), true);
-		temp.dStat.addStatList("물크", new DoubleStatusInfo(10), true);
-		temp.dStat.addStatList("마크", new DoubleStatusInfo(10), true);
+		temp.dStat.addStatList("물크", new DoubleStatusInfo(10), false, true);
+		temp.dStat.addStatList("마크", new DoubleStatusInfo(10), false, true);
 		equipList.add(temp);
 		
 		//카멜벨트
@@ -93,8 +93,8 @@ public class EquipInfo_leather {
 		temp = new Equipment("택틱컬 치프 신발", null, Item_rarity.EPIC, Equip_part.SHOES, type, SetName.TACTICAL);
 		temp.vStat.addStatList("힘", new StatusInfo(58), true);
 		temp.vStat.addStatList("지능", new StatusInfo(58), true);
-		temp.dStat.addStatList("힘", new StatusInfo(120), true);
-		temp.dStat.addStatList("지능", new StatusInfo(120), true);
+		temp.dStat.addStatList("힘", new StatusInfo(120));
+		temp.dStat.addStatList("지능", new StatusInfo(120));
 		equipList.add(temp);
 		
 		
@@ -119,25 +119,25 @@ public class EquipInfo_leather {
 		temp.vStat.addStatList("지능", new StatusInfo(67), true);
 		temp.vStat.addStatList("물크", new DoubleStatusInfo(5));
 		temp.vStat.addStatList("마크", new DoubleStatusInfo(5));
-		temp.dStat.addStatList("물크", new DoubleStatusInfo(10), true);
-		temp.dStat.addStatList("마크", new DoubleStatusInfo(10), true);
+		temp.dStat.addStatList("물크", new DoubleStatusInfo(10), false, true);
+		temp.dStat.addStatList("마크", new DoubleStatusInfo(10), false, true);
 		equipList.add(temp);
 		
 		//암살벨트
 		temp = new Equipment("죽음의 장막 벨트", null, Item_rarity.EPIC, Equip_part.BELT, type, SetName.ASSASSIN);
 		temp.vStat.addStatList("힘", new StatusInfo(58), true);
 		temp.vStat.addStatList("지능", new StatusInfo(58), true);
-		temp.dStat.addStatList("물공", new StatusInfo(100), true);
-		temp.dStat.addStatList("마공", new StatusInfo(100), true);
-		temp.dStat.addStatList("독공", new StatusInfo(100), true);
+		temp.dStat.addStatList("물공", new StatusInfo(100), false, true);
+		temp.dStat.addStatList("마공", new StatusInfo(100), false, true);
+		temp.dStat.addStatList("독공", new StatusInfo(100), false, true);
 		equipList.add(temp);
 		
 		//암살신발, 황천신
 		temp = new Equipment("황천의 바람 신발", null, Item_rarity.EPIC, Equip_part.SHOES, type, SetName.ASSASSIN);
 		temp.vStat.addStatList("힘", new StatusInfo(58), true);
 		temp.vStat.addStatList("지능", new StatusInfo(58), true);
-		temp.dStat.addStatList("모속", new ElementInfo(8), true);
-		temp.dStat.addStatList("모속", new ElementInfo(8), true);
+		temp.dStat.addStatList("모속", new ElementInfo(8), false, true);
+		temp.dStat.addStatList("모속", new ElementInfo(8), false, true);
 		equipList.add(temp);
 	}
 }

@@ -64,40 +64,40 @@ public class EquipInfo_heavy {
 		temp = new Equipment("타란튤라 상의", null, Item_rarity.EPIC, Equip_part.ROBE, Equip_type.HEAVY, SetName.SPIDERQUEEN); 
 		temp.vStat.addStatList("힘", new StatusInfo(200), true);
 		temp.vStat.addStatList("지능", new StatusInfo(188), true);
-		temp.dStat.addStatList("고정물방깍", new StatusInfo(12000), true);
-		temp.dStat.addStatList("고정마방깍", new StatusInfo(12000), true);
+		temp.dStat.addStatList("고정물방깍", new StatusInfo(12000), false, true);
+		temp.dStat.addStatList("고정마방깍", new StatusInfo(12000), false, true);
 		equipList.add(temp);
 		
 		//거미하의
 		temp = new Equipment("킹바분 하의", null, Item_rarity.EPIC, Equip_part.TROUSER, Equip_type.HEAVY, SetName.SPIDERQUEEN);
 		temp.vStat.addStatList("힘", new StatusInfo(200), true);
 		temp.vStat.addStatList("지능", new StatusInfo(188), true);
-		temp.dStat.addStatList("고정물방깍", new StatusInfo(12000), true);
-		temp.dStat.addStatList("고정마방깍", new StatusInfo(12000), true);
+		temp.dStat.addStatList("고정물방깍", new StatusInfo(12000), false, true);
+		temp.dStat.addStatList("고정마방깍", new StatusInfo(12000), false, true);
 		equipList.add(temp);
 		
 		//거미어깨
 		temp = new Equipment("골리앗 버드이터 어깨", null, Item_rarity.EPIC, Equip_part.SHOULDER, Equip_type.HEAVY, SetName.SPIDERQUEEN);
 		temp.vStat.addStatList("힘", new StatusInfo(147), true);
 		temp.vStat.addStatList("지능", new StatusInfo(138), true);
-		temp.dStat.addStatList("고정물방깍", new StatusInfo(12000), true);
-		temp.dStat.addStatList("고정마방깍", new StatusInfo(12000), true);
+		temp.dStat.addStatList("고정물방깍", new StatusInfo(12000), false, true);
+		temp.dStat.addStatList("고정마방깍", new StatusInfo(12000), false, true);
 		equipList.add(temp);
 		
 		//거미벨트
 		temp = new Equipment("로즈헤어 벨트", null, Item_rarity.EPIC, Equip_part.BELT, Equip_type.HEAVY, SetName.SPIDERQUEEN);
 		temp.vStat.addStatList("힘", new StatusInfo(138), true);
 		temp.vStat.addStatList("지능", new StatusInfo(130), true);
-		temp.dStat.addStatList("고정물방깍", new StatusInfo(12000), true);
-		temp.dStat.addStatList("고정마방깍", new StatusInfo(12000), true);
+		temp.dStat.addStatList("고정물방깍", new StatusInfo(12000), false, true);
+		temp.dStat.addStatList("고정마방깍", new StatusInfo(12000), false, true);
 		equipList.add(temp);
 			
 		//거미신발
 		temp = new Equipment("인디언 오너멘탈 신발", null, Item_rarity.EPIC, Equip_part.SHOES, Equip_type.HEAVY, SetName.SPIDERQUEEN);
 		temp.vStat.addStatList("힘", new StatusInfo(138), true);
 		temp.vStat.addStatList("지능", new StatusInfo(130), true);
-		temp.dStat.addStatList("고정물방깍", new StatusInfo(12000), true);
-		temp.dStat.addStatList("고정마방깍", new StatusInfo(12000), true);
+		temp.dStat.addStatList("고정물방깍", new StatusInfo(12000), false, true);
+		temp.dStat.addStatList("고정마방깍", new StatusInfo(12000), false, true);
 		equipList.add(temp);
 		
 		/////금계
@@ -105,7 +105,7 @@ public class EquipInfo_heavy {
 		temp = new Equipment("피의 맹약 상의", null, Item_rarity.EPIC, Equip_part.ROBE, Equip_type.HEAVY, SetName.FORBIDDENCONTRACT); 
 		temp.vStat.addStatList("힘", new StatusInfo(266), true);
 		temp.vStat.addStatList("지능", new StatusInfo(254), true);
-		temp.dStat.addStatList("힘", new StatusInfo(200), true);
+		temp.dStat.addStatList("힘", new StatusInfo(200), true, true);
 		equipList.add(temp);
 		
 		//금계하의, 서약하의
@@ -114,8 +114,8 @@ public class EquipInfo_heavy {
 		temp.vStat.addStatList("지능", new StatusInfo(34), true);
 		temp.vStat.addStatList("물크", new DoubleStatusInfo(15));
 		temp.vStat.addStatList("마크", new DoubleStatusInfo(15));
-		temp.dStat.addStatList("물크", new DoubleStatusInfo(20), true);
-		temp.dStat.addStatList("마크", new DoubleStatusInfo(20), true);
+		temp.dStat.addStatList("물크", new DoubleStatusInfo(20), true, true);
+		temp.dStat.addStatList("마크", new DoubleStatusInfo(20), true, true);
 		equipList.add(temp);
 		
 		//금계어깨, 마계숄
@@ -129,9 +129,9 @@ public class EquipInfo_heavy {
 		temp = new Equipment("체력의 협약 벨트", null, Item_rarity.EPIC, Equip_part.BELT, Equip_type.HEAVY, SetName.FORBIDDENCONTRACT);
 		temp.vStat.addStatList("힘", new StatusInfo(28), true);
 		temp.vStat.addStatList("지능", new StatusInfo(20), true);
-		temp.dStat.addStatList("물공", new StatusInfo(100), true);
-		temp.dStat.addStatList("마공", new StatusInfo(100), true);
-		temp.dStat.addStatList("독공", new StatusInfo(100), true);
+		temp.dStat.addStatList("물공", new StatusInfo(100), false, true);
+		temp.dStat.addStatList("마공", new StatusInfo(100), false, true);
+		temp.dStat.addStatList("독공", new StatusInfo(100), false, true);
 		equipList.add(temp);
 			
 		//금계신발, 피조부츠

@@ -10,6 +10,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import dnf_InterfacesAndExceptions.DefenceIgnorePenalty;
+import dnf_InterfacesAndExceptions.JobList;
 import dnf_InterfacesAndExceptions.MonsterType;
 import dnf_InterfacesAndExceptions.Monster_StatList;
 import dnf_InterfacesAndExceptions.StatusTypeMismatch;
@@ -27,13 +28,20 @@ public class CalculatorUITest {
 
 		try{
 			GetItemDictionary.readFile();
-			Characters character = new Characters(86);
+			Characters character = new Characters(86, JobList.LAUNCHER_F);
+			character.equip(GetItemDictionary.getEquipment("우요의 황금 캐넌"));
+			
 			character.equip(GetItemDictionary.getEquipment("타란튤라 상의"));
 			character.equip(GetItemDictionary.getEquipment("킹바분 하의"));
 			character.equip(GetItemDictionary.getEquipment("골리앗 버드이터 어깨"));
 			character.equip(GetItemDictionary.getEquipment("로즈헤어 벨트"));
 			character.equip(GetItemDictionary.getEquipment("인디언 오너멘탈 신발"));
 			character.equip(GetItemDictionary.getEquipment("탐식의 증적"));
+			
+			character.equip(GetItemDictionary.getEquipment("무한한 탐식의 형상"));
+			character.equip(GetItemDictionary.getEquipment("필리르 - 꺼지지 않는 화염"));
+			character.equip(GetItemDictionary.getEquipment("무한한 탐식의 잔재"));
+			character.equip(GetItemDictionary.getEquipment("탐식의 근원"));
 			
 			Monster object = new Monster(new Status());
 			object.setBooleanStat(Monster_StatList.BACKATK, true);

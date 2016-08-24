@@ -105,7 +105,7 @@ public class Status implements Cloneable {
 		statHash.put("물리마스터리", StatList.MAST_PHY); statHash.put("마법마스터리", StatList.MAST_MAG); statHash.put("독공뻥", StatList.MAST_IND);
 		statHash.put("물리마스터리2", StatList.MAST_PHY_2); statHash.put("마법마스터리2", StatList.MAST_MAG_2);
 		
-		statHash.put("모속성", StatList.ELEM_ALL); statHash.put("모속", StatList.ELEM_ALL);
+		statHash.put("모속강", StatList.ELEM_ALL); statHash.put("모속", StatList.ELEM_ALL);
 		
 		statHashsetted=true;
 	}
@@ -194,7 +194,7 @@ public class Status implements Cloneable {
 			{
 				case StatList.ELEM_FIRE: case StatList.ELEM_WATER:									//속성항
 				case StatList.ELEM_LIGHT: case StatList.ELEM_DARKNESS:
-					stat1.setInfo(((ElementInfo)stat1).getElementEnabled() && ((ElementInfo)stat2).getElementEnabled());
+					stat1.setInfo(((ElementInfo)stat1).getElementEnabled() || ((ElementInfo)stat2).getElementEnabled());
 					stat1.setInfo(stat1.getStatToDouble()+stat2.getStatToDouble());
 					break;
 					
