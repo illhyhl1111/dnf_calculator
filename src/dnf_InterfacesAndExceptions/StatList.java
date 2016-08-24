@@ -24,8 +24,9 @@ public interface StatList									// 스탯 종류에 붙는 고유한 식별번
 	int ELEM_FIRE_DEC=INTNUM_START+26; int ELEM_WATER_DEC=INTNUM_START+27;
 	int ELEM_LIGHT_DEC=INTNUM_START+28; int ELEM_DARKNESS_DEC=INTNUM_START+29;														// 화속저, 수속저, 명속저, 암속저
 	int DAM_BUF=INTNUM_START+30;																									// 투함포 이그니스 공대버프
+	int ELEM_ALL=INTNUM_START+31;																									// 모속강
 	
-	int INTNUM = 31;								// 총 int형 스탯 개수
+	int INTNUM = 32;								// 총 int형 스탯 개수
 	int INTNUM_END = INTNUM_START+INTNUM-1;
 	///////////////////////////////////////
 	

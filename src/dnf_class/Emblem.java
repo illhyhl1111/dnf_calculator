@@ -5,6 +5,7 @@ import org.eclipse.swt.graphics.Image;
 import dnf_InterfacesAndExceptions.AddOn;
 import dnf_InterfacesAndExceptions.Item_rarity;
 
+@SuppressWarnings("serial")
 public class Emblem extends Item
 {
 	AddOn type;

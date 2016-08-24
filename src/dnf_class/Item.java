@@ -2,33 +2,33 @@ package dnf_class;
 
 import org.eclipse.swt.graphics.Image;
 
-import dnf_calculator.DungeonStatusList;
+import dnf_calculator.StatusList;
 import dnf_InterfacesAndExceptions.Item_rarity;
-import dnf_calculator.VillageStatusList;
 
-public abstract class Item implements Cloneable
+@SuppressWarnings("serial")
+public abstract class Item implements Cloneable, java.io.Serializable
 {
 	private String name;										//이름
 	private	Image icon;											//아이콘
 	private Item_rarity rarity;									//희귀도
-	public VillageStatusList vStat;								//마을스탯
-	public DungeonStatusList dStat;								//인던스탯
+	public StatusList vStat;									//마을스탯
+	public StatusList dStat;									//인던스탯
 	
 	public Item(String name, Image icon, Item_rarity rarity)
 	{
 		this.name=name;
 		this.icon=icon;
 		this.rarity=rarity;
-		vStat = new VillageStatusList();
-		dStat = new DungeonStatusList();
+		vStat = new StatusList();
+		dStat = new StatusList();
 	}
 	public Item()
 	{
 		name="이름없음";
 		icon=null; 			//TODO
 		rarity=Item_rarity.NONE;
-		vStat = new VillageStatusList();
-		dStat = new DungeonStatusList();
+		vStat = new StatusList();
+		dStat = new StatusList();
 	}
 	
 	public String getName() { return name;}

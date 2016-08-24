@@ -55,8 +55,8 @@ public class CalculateElement
 	public static double element_dmg(Monster object, Status stat, int element) throws StatusTypeMismatch
 	{
 		int index = element-StatList.ELEM_FIRE;
-		double temp = ( 1.05+0.0045*(stat.getStat(element)+stat.getStat(StatList.ELEM_FIRE_DEC+index)-object.getStat(Monster_StatList.FIRE_RESIST+index) ) );
-					  // 1+0.05(속성부여)+0.0045*(속강-속저오라-몹속저)
+		double temp = ( 1.05+0.0045*(stat.getStat(element)+stat.getStat(StatList.ELEM_ALL)+stat.getStat(StatList.ELEM_FIRE_DEC+index)-object.getStat(Monster_StatList.FIRE_RESIST+index) ) );
+					  // 1+0.05(속성부여)+0.0045*(속강+모속강-속저오라-몹속저)
 	
 		if(temp<0) return 0;
 		else return temp;

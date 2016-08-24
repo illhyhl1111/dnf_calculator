@@ -34,6 +34,10 @@ public class Equipment extends Item
 	{
 		this(name, icon, rarity, part, Dimension_stat.NONE, 0, new Card("없음", null, Item_rarity.NONE, AddOn.NONE), SetName.NONE, type);
 	}
+	public Equipment(String name, Image icon, Item_rarity rarity, Equip_part part, Equip_type type, SetName setName)
+	{
+		this(name, icon, rarity, part, Dimension_stat.NONE, 0, new Card("없음", null, Item_rarity.NONE, AddOn.NONE), setName, type);
+	}
 	public Equipment(Equip_part part) {
 		super();
 		this.part=part;

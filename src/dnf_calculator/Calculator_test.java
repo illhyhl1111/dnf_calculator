@@ -6,6 +6,7 @@ import dnf_InterfacesAndExceptions.Monster_StatList;
 import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 import dnf_InterfacesAndExceptions.UndefinedStatusKey;
 import dnf_class.Monster;
+import dnf_class.Characters;
 
 public class Calculator_test {
 
@@ -56,7 +57,8 @@ public class Calculator_test {
 			charStat.setDoubleStat("독공뻥", 15);
 			charStat.setDoubleStat("물리마스터리2", 1);
 			
-			TempChar character = new TempChar(charStat, 86);
+			Characters character = new Characters(86);
+			character.villageStatus=charStat;
 			
 			Monster object = new Monster(new Status());
 			object.setBooleanStat(Monster_StatList.BACKATK, true);

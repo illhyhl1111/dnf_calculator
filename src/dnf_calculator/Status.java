@@ -105,6 +105,8 @@ public class Status implements Cloneable {
 		statHash.put("물리마스터리", StatList.MAST_PHY); statHash.put("마법마스터리", StatList.MAST_MAG); statHash.put("독공뻥", StatList.MAST_IND);
 		statHash.put("물리마스터리2", StatList.MAST_PHY_2); statHash.put("마법마스터리2", StatList.MAST_MAG_2);
 		
+		statHash.put("모속성", StatList.ELEM_ALL); statHash.put("모속", StatList.ELEM_ALL);
+		
 		statHashsetted=true;
 	}
 	
@@ -114,6 +116,7 @@ public class Status implements Cloneable {
 	}
 	public void setStat(String stat, int strength) throws StatusTypeMismatch, UndefinedStatusKey
 	{
+		if(!statHashsetted) setStatHash();
 		if(statHash.containsKey(stat)) setStat(statHash.get(stat), strength);
 		else throw new UndefinedStatusKey(stat);
 	}
@@ -125,6 +128,7 @@ public class Status implements Cloneable {
 	}
 	public void setDoubleStat(String stat, double strength) throws StatusTypeMismatch, UndefinedStatusKey
 	{
+		if(!statHashsetted) setStatHash();
 		if(statHash.containsKey(stat)) setDoubleStat(statHash.get(stat), strength);
 		else throw new UndefinedStatusKey(stat);
 	}
@@ -144,11 +148,13 @@ public class Status implements Cloneable {
 	}
 	public void setElementStat(String stat, int strength, boolean activated) throws StatusTypeMismatch, UndefinedStatusKey
 	{
+		if(!statHashsetted) setStatHash();
 		if(statHash.containsKey(stat)) setElementStat(statHash.get(stat), strength, activated);
 		else throw new UndefinedStatusKey(stat);
 	}
 	public void setElementStat(String stat, boolean activated) throws StatusTypeMismatch, UndefinedStatusKey
 	{
+		if(!statHashsetted) setStatHash();
 		if(statHash.containsKey(stat)) setElementStat(statHash.get(stat), activated);
 		else throw new UndefinedStatusKey(stat);
 	}
@@ -160,6 +166,7 @@ public class Status implements Cloneable {
 	}
 	public double getStat(String stat) throws StatusTypeMismatch, UndefinedStatusKey
 	{
+		if(!statHashsetted) setStatHash();
 		if(statHash.containsKey(stat)) return getStat(statHash.get(stat));
 		else throw new UndefinedStatusKey(stat);
 	}
@@ -174,6 +181,7 @@ public class Status implements Cloneable {
 	}
 	public boolean getEnabled(String stat) throws StatusTypeMismatch, UndefinedStatusKey
 	{
+		if(!statHashsetted) setStatHash();
 		if(statHash.containsKey(stat)) return getEnabled(statHash.get(stat));
 		else throw new UndefinedStatusKey(stat);
 	}

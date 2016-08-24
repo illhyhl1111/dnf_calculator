@@ -4,7 +4,15 @@ import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 
 public class DoubleStatusInfo extends AbstractStatusInfo
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4391339946726397345L;
 	private double str;
+	public DoubleStatusInfo(double strength)
+	{
+		str=strength;
+	}
 	public DoubleStatusInfo(int strength)
 	{
 		str=strength;

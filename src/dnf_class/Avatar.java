@@ -5,6 +5,7 @@ import org.eclipse.swt.graphics.Image;
 import dnf_InterfacesAndExceptions.Avatar_part;
 import dnf_InterfacesAndExceptions.Item_rarity;
 
+@SuppressWarnings("serial")
 public class Avatar extends Item
 {
 	Avatar_part part;

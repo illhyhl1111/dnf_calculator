@@ -5,6 +5,10 @@ import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 
 public class StatusInfo extends AbstractStatusInfo			// int형 스탯정보 저장 class
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2025655576575273141L;
 	private int str;										// private으로 바꿔야하지만 몰라 귀찮다 그냥 조심해야지
 	public StatusInfo(int strength)
 	{	
