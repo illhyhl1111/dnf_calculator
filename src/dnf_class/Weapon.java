@@ -33,6 +33,7 @@ public class Weapon extends Equipment{
 	public Weapon() {
 		super(Equip_part.WEAPON);
 		this.weaponType=Weapon_detailType.NONE;
+		reforge=0;
 	}
 	
 	public boolean enabled(JobList job)

@@ -100,7 +100,18 @@ public class Characters
 	
 	public void unequip(Item item)
 	{
-		if(item instanceof Equipment)
+		if(item instanceof Weapon){
+			Weapon weapon = (Weapon)item;
+			this.weapon = new Weapon();
+			
+			if(weapon.setName!=SetName.NONE){								//세트아이템
+				if(setOptionList.get(weapon.setName)==1)
+					setOptionList.remove(weapon.setName);
+				else setOptionList.replace(weapon.setName, setOptionList.get(weapon.setName)-1);		//이미 등록된 셋옵 -> 1 감소
+			}
+		}
+		
+		else if(item instanceof Equipment)
 		{
 			Equipment equipment = (Equipment)item; 
 			Equip_part part = equipment.part;

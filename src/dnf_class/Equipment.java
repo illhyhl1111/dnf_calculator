@@ -40,6 +40,10 @@ public class Equipment extends Item
 		super();
 		this.part=part;
 		type = Equip_type.NONE;
+		setName=SetName.NONE;
+		card = new Card("없음", null, Item_rarity.NONE, AddOn.NONE);
+		reinforce=0;
+		dimStat=Dimension_stat.NONE;
 	}
 	
 	@Override

@@ -12,4 +12,10 @@ public class Card extends Item implements java.io.Serializable
 		super(name, icon, rarity);
 		this.type=type;
 	}
+	
+	public Card()
+	{
+		super("카드없음", null, Item_rarity.NONE);
+		type = AddOn.NONE;
+	}
 }

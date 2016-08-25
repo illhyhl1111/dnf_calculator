@@ -1,5 +1,6 @@
 package dnf_InterfacesAndExceptions;
 
 public interface ImageSize {
-	int BUTTON_SIZE=40;
+	int INFO_BUTTON_SIZE=40;
+	int INVENTORY_BUTTON_SIZE=40;
 }

@@ -22,9 +22,13 @@ public class Avatar extends Item
 	{
 		super(name, icon, rarity);
 		this.part=part;
+		emblem1 = new Emblem();
+		emblem2 = new Emblem();
 	}
 	public Avatar(Avatar_part part) {
 		super();
 		this.part=part;
+		emblem1 = new Emblem();
+		emblem2 = new Emblem();
 	}
 }

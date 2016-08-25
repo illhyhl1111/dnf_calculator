@@ -61,7 +61,7 @@ public class LabelAndText extends LabelAndInput
 	}
 	
 	public void setInputEnable(boolean bool) { ((Text)input).setEnabled(bool); }
-	public void setTextString(String str) { ((Text)input).setText(str);}
+	public void setTextString(String str) {((Text)input).setText(str);}
 	public void setTextData(GridData gridData)
 	{
 		((Text)input).setLayoutData(gridData);

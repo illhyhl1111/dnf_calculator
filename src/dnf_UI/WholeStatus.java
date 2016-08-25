@@ -5,13 +5,14 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 
 import dnf_calculator.Status;
+import dnf_class.Characters;
 
 public class WholeStatus
 {
 	private InfoStatus infoStat;
 	private NonInfoStatus nonInfoStat;
 	private Composite wholeStatusComposite;
-	public WholeStatus(Composite parent, Status stat)
+	public WholeStatus(Composite parent, Characters character, boolean isDungeon)
 	{
 		wholeStatusComposite = new Composite(parent, SWT.BORDER);
 		RowLayout wholeLayout = new RowLayout();
@@ -20,8 +21,8 @@ public class WholeStatus
 		wholeLayout.pack=true;
 		wholeStatusComposite.setLayout(wholeLayout);
 		
-		infoStat = new InfoStatus(wholeStatusComposite, stat);
-		nonInfoStat = new NonInfoStatus(wholeStatusComposite, stat);
+		infoStat = new InfoStatus(wholeStatusComposite, character, isDungeon);
+		nonInfoStat = new NonInfoStatus(wholeStatusComposite, character, isDungeon);
 	}
 	
 	public Composite getComposite() {return wholeStatusComposite;}

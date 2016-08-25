@@ -12,4 +12,8 @@ public class Emblem extends Item
 		super(name, icon, rarity);
 		this.type=type;
 	}
+	public Emblem() {
+		super("엠블렘 없음", null, Item_rarity.NONE);
+		type = AddOn.NONE;
+	}
 }

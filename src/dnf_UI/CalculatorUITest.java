@@ -62,8 +62,10 @@ public class CalculatorUITest {
 	        shell.setText("인포창");
 	        shell.setLayout(new RowLayout(SWT.VERTICAL));
 	        
-	        UserItemInfo test = new UserItemInfo(shell, character);
-	        Inventory test2 = new Inventory(shell, GetItemDictionary.itemDictionary.getAllItemList());
+	        UserInfo itemInfo;
+	        Inventory inventory;
+	        itemInfo  = new UserInfo(shell, character);
+	        inventory = new Inventory(shell, GetItemDictionary.itemDictionary.getAllItemList(), character, itemInfo);
 	        
 	        shell.pack();
 	        shell.open();
@@ -103,8 +105,7 @@ class StatusUI_Test{
         shell.setLayout(shellLayout);
         
         WholeStatus wholeStat;
-        if(dungeon) wholeStat = new WholeStatus(shell, character.dungeonStatus);
-        else wholeStat = new WholeStatus(shell, character.villageStatus);
+        wholeStat = new WholeStatus(shell, character, dungeon);
       
         Button button = new Button(shell, SWT.PUSH);
 	    button.setText("Press Me");
