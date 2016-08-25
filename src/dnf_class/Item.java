@@ -1,7 +1,5 @@
 package dnf_class;
 
-import org.eclipse.swt.graphics.Image;
-
 import dnf_calculator.StatusList;
 import dnf_InterfacesAndExceptions.Item_rarity;
 
@@ -9,15 +7,15 @@ import dnf_InterfacesAndExceptions.Item_rarity;
 public class Item implements Cloneable, java.io.Serializable
 {
 	private String name;										//이름
-	private	Image icon;											//아이콘
+	private	String iconAddress;									//아이콘
 	private Item_rarity rarity;									//희귀도
 	public StatusList vStat;									//마을스탯
 	public StatusList dStat;									//인던스탯
 	
-	public Item(String name, Image icon, Item_rarity rarity)
+	public Item(String name, String icon, Item_rarity rarity)
 	{
 		this.name=name;
-		this.icon=icon;
+		iconAddress=icon;
 		this.rarity=rarity;
 		vStat = new StatusList();
 		dStat = new StatusList();
@@ -25,7 +23,7 @@ public class Item implements Cloneable, java.io.Serializable
 	public Item()
 	{
 		name="이름없음";
-		icon=null; 			//TODO
+		iconAddress="image\\default.png";
 		rarity=Item_rarity.NONE;
 		vStat = new StatusList();
 		dStat = new StatusList();
@@ -34,8 +32,8 @@ public class Item implements Cloneable, java.io.Serializable
 	public String getName() { return name;}
 	public void setName(String name) { this.name = name;}
 	
-	public Image getIcon() { return icon;}
-	public void setIcon(Image icon) { this.icon = icon;}
+	public String getIcon() { return iconAddress;}
+	public void setIcon(String icon) { iconAddress = icon;}
 	
 	public Item_rarity getRarity() { return rarity;}
 	public void setRarity(Item_rarity rarity) { this.rarity = rarity;}

@@ -8,9 +8,9 @@ import dnf_calculator.Status;
 
 public class WholeStatus
 {
-	InfoStatus infoStat;
-	NonInfoStatus nonInfoStat;
-	Composite wholeStatusComposite;
+	private InfoStatus infoStat;
+	private NonInfoStatus nonInfoStat;
+	private Composite wholeStatusComposite;
 	public WholeStatus(Composite parent, Status stat)
 	{
 		wholeStatusComposite = new Composite(parent, SWT.BORDER);

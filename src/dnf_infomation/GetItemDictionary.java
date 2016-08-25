@@ -11,7 +11,7 @@ import dnf_InterfacesAndExceptions.SetName;
 
 public class GetItemDictionary
 {
-	static ItemDictionary itemDictionary;
+	public static ItemDictionary itemDictionary;
 	static boolean readed=false;
 
 	public static void readFile()

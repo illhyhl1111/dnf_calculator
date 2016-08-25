@@ -27,6 +27,7 @@ public class CalculatorUITest {
 	public static void main(String[] args) {
 
 		try{
+
 			GetItemDictionary.readFile();
 			Characters character = new Characters(86, JobList.LAUNCHER_F);
 			character.equip(GetItemDictionary.getEquipment("우요의 황금 캐넌"));
@@ -52,9 +53,25 @@ public class CalculatorUITest {
 			object.setStat(Monster_StatList.DEFENSIVE_MAG, 135000);
 			object.setStat(Monster_StatList.LEVEL, 115);
 			object.setStat(Monster_StatList.TYPE, MonsterType.BOSS);
-			
-			StatusUI_Test.openStatusUI(10000, 100000, 1000, object, character, 1, false);
-			StatusUI_Test.openStatusUI(10000, 100000, 1000, object, character, 1, true);
+
+			//StatusUI_Test.openStatusUI(10000, 100000, 1000, object, character, 1, false);
+			//StatusUI_Test.openStatusUI(10000, 100000, 1000, object, character, 1, true);
+			Display display = new Display();
+
+	        Shell shell = new Shell(display);
+	        shell.setText("인포창");
+	        shell.setLayout(new RowLayout(SWT.VERTICAL));
+	        
+	        UserItemInfo test = new UserItemInfo(shell, character);
+	        Inventory test2 = new Inventory(shell, GetItemDictionary.itemDictionary.getAllItemList());
+	        
+	        shell.pack();
+	        shell.open();
+	        while (!shell.isDisposed()) {
+	            if (!display.readAndDispatch())
+	                display.sleep();
+	        }
+	        display.dispose();
 		}
 		catch(StatusTypeMismatch | ItemFileNotReaded | ItemFileNotFounded e)
 		{

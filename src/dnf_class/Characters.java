@@ -18,22 +18,23 @@ public class Characters
 {
 	public Status villageStatus;														//마을스탯
 	public Status dungeonStatus;														//인던스탯
-	HashMap<Equip_part, Equipment> equipmentList;
+	private HashMap<Equip_part, Equipment> equipmentList;
 	static final int EQUIPNUM=11;
-	Weapon weapon;
-	HashMap<Avatar_part, Avatar> avatarList;
+	private Weapon weapon;
+	private HashMap<Avatar_part, Avatar> avatarList;
 	static final int AVATARNUM=10;
 	
-	HashMap<SetName, Integer> setOptionList;
-	Creature creature;
-	Title title;
-	LinkedList<Consumeable> doping;
+	private HashMap<SetName, Integer> setOptionList;
+	private Creature creature;
+	private Title title;
+	private LinkedList<Consumeable> doping;
 	private int level;
 	private final JobList job;
 	private final Character_type characterType;
 	
-	//LinkedList<PassiveSkill> passive;											//TODO
+	String charImageAddress;
 	
+	//LinkedList<PassiveSkill> passive;											//TODO
 
 	public Characters(int level, JobList job)
 	{
@@ -167,8 +168,18 @@ public class Characters
 
 	public int getLevel() { return level; }
 	public void setLevel(int level) { this.level = level; }	
-	
 	public JobList getJob() { return job; }
-	
 	public Character_type getCharType() { return characterType; }
+	public String getCharImageAddress() {return charImageAddress;}
+	public void setCharImageAddress(String charImageAddress) {this.charImageAddress = charImageAddress;}
+	public HashMap<Equip_part, Equipment> getEquipmentList() {return equipmentList;}
+	public HashMap<Avatar_part, Avatar> getAvatarList() {return avatarList;}
+	public HashMap<SetName, Integer> getSetOptionList() {return setOptionList;}
+	public Creature getCreature() {return creature;}
+	public Title getTitle() {return title;}
+	public LinkedList<Consumeable> getDoping() {return doping;}
+	public Weapon getWeapon() {return weapon;}
+	public void setWeapon(Weapon weapon) {this.weapon = weapon;}
+	public void setCreature(Creature creature) {this.creature = creature;}
+	public void setTitle(Title title) {this.title = title;}
 }

@@ -1,6 +1,7 @@
 package dnf_infomation;
 
 import java.util.HashSet;
+import java.util.LinkedList;
 
 import dnf_class.Equipment;
 import dnf_class.Item;
@@ -12,9 +13,9 @@ public class ItemDictionary implements java.io.Serializable
 	 * 
 	 */
 	private static final long serialVersionUID = -4213722159864758338L;
-	HashSet<Equipment> equipList;
-	HashSet<SetOption> setOptionList;
-	HashSet<Item> etcList;
+	public HashSet<Equipment> equipList;
+	public HashSet<SetOption> setOptionList;
+	//public HashSet<Item> etcList;
 	
 	public ItemDictionary() 
 	{
@@ -42,5 +43,15 @@ public class ItemDictionary implements java.io.Serializable
 		
 		setOptionList = new HashSet<SetOption>();
 		SetOptionInfo.getInfo(setOptionList);
+	}
+	
+	public LinkedList<Item> getAllItemList()
+	{
+		LinkedList<Item> list = new LinkedList<Item>();
+		for(Equipment e : equipList)
+			list.add(e);
+		//for(Item e : etcList)
+			//list.add(e);
+		return list;
 	}
 }

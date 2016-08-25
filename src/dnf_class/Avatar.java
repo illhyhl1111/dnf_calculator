@@ -1,7 +1,5 @@
 package dnf_class;
 
-import org.eclipse.swt.graphics.Image;
-
 import dnf_InterfacesAndExceptions.Avatar_part;
 import dnf_InterfacesAndExceptions.Item_rarity;
 
@@ -12,7 +10,7 @@ public class Avatar extends Item
 	Emblem emblem1;
 	Emblem emblem2;
 	
-	public Avatar(String name, Image icon, Item_rarity rarity, Avatar_part part, Emblem emblem1, Emblem emblem2)
+	public Avatar(String name, String icon, Item_rarity rarity, Avatar_part part, Emblem emblem1, Emblem emblem2)
 	{
 		super(name, icon, rarity);
 		this.part=part;
@@ -20,7 +18,7 @@ public class Avatar extends Item
 		this.emblem2=emblem2;
 	}
 	
-	public Avatar(String name, Image icon, Item_rarity rarity, Avatar_part part)
+	public Avatar(String name, String icon, Item_rarity rarity, Avatar_part part)
 	{
 		super(name, icon, rarity);
 		this.part=part;

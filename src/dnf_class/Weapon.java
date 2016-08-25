@@ -1,7 +1,5 @@
 package dnf_class;
 
-import org.eclipse.swt.graphics.Image;
-
 import dnf_InterfacesAndExceptions.AddOn;
 import dnf_InterfacesAndExceptions.Dimension_stat;
 import dnf_InterfacesAndExceptions.Equip_part;
@@ -21,14 +19,14 @@ public class Weapon extends Equipment{
 	Weapon_detailType weaponType;
 	int reforge;
 	
-	public Weapon(String name, Image icon,Item_rarity rarity, Dimension_stat dimStat, 
+	public Weapon(String name, String icon,Item_rarity rarity, Dimension_stat dimStat, 
 			int reinforce, Card card, SetName setName, Weapon_detailType weaponType, int reforge)
 	{	
 		super(name, icon, rarity, Equip_part.WEAPON, dimStat, reinforce, card, setName, Equip_type.NONE);
 		this.weaponType =weaponType;
 		this.reforge=reforge;
 	}
-	public Weapon(String name, Image icon, Item_rarity rarity, Weapon_detailType weaponType)
+	public Weapon(String name, String icon, Item_rarity rarity, Weapon_detailType weaponType)
 	{
 		this(name, icon, rarity, Dimension_stat.NONE, 0, new Card("없음", null, Item_rarity.NONE, AddOn.NONE), SetName.NONE, weaponType, 0);
 	}

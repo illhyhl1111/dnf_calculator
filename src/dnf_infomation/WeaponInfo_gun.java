@@ -15,15 +15,17 @@ public class WeaponInfo_gun {
 		Weapon temp;
 		Item_rarity rarity;
 		Weapon_detailType type;
+		String image;
 		
 		//////////에픽
 		rarity = Item_rarity.EPIC;
 
 		/////캐넌
 		type = Weapon_detailType.GUN_HCANON;
+		image = "image\\sprite_item_new_equipment_01_weapon_gunner_hcannon\\hcannon.img\\";
 		
 		//우요
-		temp = new Weapon("우요의 황금 캐넌", null, rarity, type);
+		temp = new Weapon("우요의 황금 캐넌", image+"우요캐넌.png", rarity, type);
 		temp.vStat.addStatList("힘", new StatusInfo(107), true);
 		temp.vStat.addStatList("물공", new StatusInfo(1154), true);
 		temp.vStat.addStatList("마공", new StatusInfo(692), true);
@@ -37,9 +39,10 @@ public class WeaponInfo_gun {
 		
 		/////리볼버
 		type = Weapon_detailType.GUN_REVOLVER;
+		image = "image\\sprite_item_new_equipment_01_weapon_gunner_revolver\\revolver.img\\";
 		
 		//로오레
-		temp = new Weapon("로드 오브 레인저", null, rarity, type);
+		temp = new Weapon("로드 오브 레인저", image+"로오레.png", rarity, type);
 		temp.vStat.addStatList("힘", new StatusInfo(72), true);
 		temp.vStat.addStatList("물공", new StatusInfo(988), true);
 		temp.vStat.addStatList("마공", new StatusInfo(831), true);

@@ -12,9 +12,9 @@ public class Status implements Cloneable {
 	private static boolean statHashsetted = false;
 	
 	public static final String[] infoStatOrder = new String[] {
-		"힘", "지능", "체력", "정신력", "마을물공", "마을마공", "독립공격", "물리크리티컬", "마법크리티컬",
+		"힘", "지능", "마을물공", "마을마공", "독립공격", "물리크리티컬", "마법크리티컬",
 		"화속성강화", "수속성강화", "명속성강화", "암속성강화"};
-	public static final int infoStatNum=13;
+	public static final int infoStatNum=11;
 	
 	public static final String[] nonInfoStatOrder = new String[] {
 		"무기물공합", "물리방무뎀",
