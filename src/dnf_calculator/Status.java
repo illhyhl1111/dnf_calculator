@@ -17,10 +17,11 @@ public class Status implements Cloneable {
 	public static final int infoStatNum=11;
 	
 	public static final String[] nonInfoStatOrder = new String[] {
+		"힘", "힘 %증가",
+		"지능", "지능 %증가",
 		"무기물공합", "물리방무뎀",
 		"무기마공합", "마법방무뎀", 
 		"재련독공수치", "독공뻥",
-		"힘 %증가", "지능 %증가",
 		"물리마스터리", "물리마스터리2",
 		"마법마스터리", "마법마스터리2",
 		"증뎀", "크증뎀",
@@ -37,7 +38,7 @@ public class Status implements Cloneable {
 		"%물방깍_스킬", "%마방깍_스킬",
 		"크리저항감소", "투함포항"
 	};
-	public static final int nonInfoStatNum=38;
+	public static final int nonInfoStatNum=nonInfoStatOrder.length;
 	
 	
 	public Status()									// 모든 스탯 0으로 초기화(디폴트 장비)

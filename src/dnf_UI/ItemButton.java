@@ -16,23 +16,14 @@ public class ItemButton {
 	private int imageSize_x;
 	private int imageSize_y;
 	
-	public ItemButton(Composite parent, Item item)
-	{
-		this.parent=parent;
-		this.item=item;
-		button = new Button(parent, SWT.PUSH);
-		if(item.getIcon()==null) button.setImage(new Image(parent.getDisplay(), "image\\default.png"));
-		else button.setImage(new Image(parent.getDisplay(), item.getIcon()));
-	}
 	public ItemButton(Composite parent, Item item, int x, int y)
 	{
 		this.parent=parent;
 		this.item=item;
-		button = new Button(parent, SWT.PUSH);
-		if(item.getIcon()==null) button.setImage(resizeImage(new Image(parent.getDisplay(), "image\\default.png"), x, y, parent));
-		else button.setImage(resizeImage(new Image(parent.getDisplay(), item.getIcon()), x, y, parent));
 		imageSize_x=x;
 		imageSize_y=y;
+		button = new Button(parent, SWT.PUSH);
+		renewImage();
 	}
 	
 	public static Image resizeImage(Image image, int x, int y, Composite parent)
@@ -41,11 +32,20 @@ public class ItemButton {
 		data = data.scaledTo(x, y);
 		return new Image(parent.getDisplay(), data);
 	}
-	public static Image resizeToButtonSize(Image image, Button button)
+	public static Image resizeToButtonSize(Image image, Button button, Composite parent)
 	{
 		ImageData data = image.getImageData();
 		data = data.scaledTo(button.getSize().x, button.getSize().y);
-		return new Image(Display.getDefault(), data);
+		return new Image(parent.getDisplay(), data);
+	}
+	
+	public void renewImage()
+	{
+		if(button.getImage()!=null) button.getImage().dispose();
+		Image image;
+		if(item.getIcon()==null) image = new Image(parent.getDisplay(), "image\\default.png");
+		else image = new Image(parent.getDisplay(), item.getIcon());
+		button.setImage(ItemButton.resizeImage(image, imageSize_x, imageSize_y, parent));
 	}
 
 	public Button getButton() {
@@ -82,5 +82,5 @@ public class ItemButton {
 	}
 	public void setImageSize_x(int imageSize_x) {
 		this.imageSize_x = imageSize_x;
-	}	
+	}
 }

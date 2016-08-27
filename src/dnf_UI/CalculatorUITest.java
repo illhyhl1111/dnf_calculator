@@ -7,6 +7,8 @@ import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 import dnf_InterfacesAndExceptions.DefenceIgnorePenalty;
@@ -60,12 +62,26 @@ public class CalculatorUITest {
 
 	        Shell shell = new Shell(display);
 	        shell.setText("인포창");
-	        shell.setLayout(new RowLayout(SWT.VERTICAL));
+	        RowLayout layout = new RowLayout(SWT.VERTICAL);
+	        layout.wrap=false;
+	        shell.setLayout(layout);
 	        
-	        UserInfo itemInfo;
-	        Inventory inventory;
-	        itemInfo  = new UserInfo(shell, character);
-	        inventory = new Inventory(shell, GetItemDictionary.itemDictionary.getAllItemList(), character, itemInfo);
+	        UserInfo itemInfo = new UserInfo(shell, character);
+	        Inventory inventory = new Inventory(shell, GetItemDictionary.itemDictionary.getAllItemList(), character, itemInfo); 
+	        Vault vault = new Vault(shell, GetItemDictionary.itemDictionary.getAllItemList(), inventory);
+	        display.addFilter(SWT.KeyDown, new Listener() {
+	            @Override
+	            public void handleEvent(Event event) {
+	                char c = event.character;
+	                System.out.println(c);
+	                if(c=='i'){
+	                	if(vault.getShell()==null)
+	                		vault.open();
+	                	else
+	                		vault.close();
+	                }
+	            }
+	        });
 	        
 	        shell.pack();
 	        shell.open();

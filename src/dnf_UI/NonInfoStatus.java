@@ -128,6 +128,7 @@ public class NonInfoStatus extends StatusUI
 					if(temp.contains(".0")) temp=temp.substring(0, temp.length()-2);
 					infoStatusText[i].setTextString(temp);
 				}
+				infoStatusText[i].setInputEnable(false);
 			}
 		}
 		catch(StatusTypeMismatch | UndefinedStatusKey e)

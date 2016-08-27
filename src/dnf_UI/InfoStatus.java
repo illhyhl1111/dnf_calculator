@@ -92,18 +92,29 @@ public class InfoStatus extends StatusUI
 			else stat = character.villageStatus;
 			for(int i=0; i<Status.infoStatNum; i++){
 				if(Status.infoStatOrder[i].equals("마을물공")){
-					infoStatusText[i].setTextString(String.valueOf(Calculator.getInfoPhysicalATK(stat)));						//TODO, 마을물공
-					infoStatusText[i].setInputEnable(false);
+					infoStatusText[i].setTextString(String.valueOf(Calculator.getInfoPhysicalATK(stat)));
 				}
 				else if(Status.infoStatOrder[i].equals("마을마공")){
-					infoStatusText[i].setTextString(String.valueOf(Calculator.getInfoMagicalATK(stat)));						//TODO, 마을물공
-					infoStatusText[i].setInputEnable(false);
+					infoStatusText[i].setTextString(String.valueOf(Calculator.getInfoMagicalATK(stat)));
+				}
+				else if(Status.infoStatOrder[i].equals("힘")){
+					infoStatusText[i].setTextString(String.valueOf(Calculator.getInfoStrength(stat)));
+				}
+				else if(Status.infoStatOrder[i].equals("지능")){
+					infoStatusText[i].setTextString(String.valueOf(Calculator.getInfoIntellegence(stat)));
+				}
+				else if(Status.infoStatOrder[i].equals("독립공격")){
+					infoStatusText[i].setTextString(String.valueOf(Calculator.getInfoIndependentATK(stat)));
+				}
+				else if(Status.infoStatOrder[i].contains("속성강화")){
+					infoStatusText[i].setTextString(String.valueOf(Calculator.getInfoElementReinforce(stat, Status.infoStatOrder[i])));
 				}
 				else{	
 					String temp = String.valueOf(stat.getStat(Status.infoStatOrder[i]));
 					if(temp.contains(".0")) temp=temp.substring(0, temp.length()-2);
-					infoStatusText[i].setTextString(temp);
+					infoStatusText[i].setTextString(temp);				
 				}
+				infoStatusText[i].setInputEnable(false);
 			}
 		}
 		catch(StatusTypeMismatch | UndefinedStatusKey e)

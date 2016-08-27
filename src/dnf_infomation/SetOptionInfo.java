@@ -30,5 +30,9 @@ public class SetOptionInfo {
 		temp.vStat.addStatList("물크", new DoubleStatusInfo(10));
 		temp.vStat.addStatList("마크", new DoubleStatusInfo(10));
 		equipList.add(temp);
+		
+		//금계
+		temp = new SetOption("금지된 계약 세트", SetName.FORBIDDENCONTRACT, 5);
+		equipList.add(temp);
 	}
 }

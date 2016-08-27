@@ -1,15 +1,21 @@
 package dnf_UI;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 import dnf_InterfacesAndExceptions.Equip_part;
-import dnf_InterfacesAndExceptions.ImageSize;
+import dnf_InterfacesAndExceptions.InterfaceSize;
 import dnf_class.Characters;
 
 class UserItemInfo {
@@ -24,10 +30,10 @@ class UserItemInfo {
 	{
 		this.character=character;
 		itemInfoComposite = new Composite(parent, SWT.BORDER);
-		RowLayout wholeLayout = new RowLayout();
-		wholeLayout.spacing=10;
-		wholeLayout.wrap=false;
-		wholeLayout.pack=true;
+		FillLayout wholeLayout = new FillLayout();
+		wholeLayout.marginWidth=0;
+		//wholeLayout.wrap=false;
+		//wholeLayout.pack=true;
 		itemInfoComposite.setLayout(wholeLayout);
 		
 		//TODO itemInfoComposite.setBackgroundImage(배경그림);
@@ -49,7 +55,7 @@ class UserItemInfo {
 
 		itemButtonList = new ItemButton[ITEMNUM];
 
-		int BUTTON_SIZE = ImageSize.INFO_BUTTON_SIZE;
+		int BUTTON_SIZE = InterfaceSize.INFO_BUTTON_SIZE;
 		itemButtonList[0] = new ItemButton(leftItemInfoComposite, character.getEquipmentList().get(Equip_part.SHOULDER), BUTTON_SIZE, BUTTON_SIZE);
 		itemButtonList[1] = new ItemButton(leftItemInfoComposite, character.getEquipmentList().get(Equip_part.ROBE), BUTTON_SIZE, BUTTON_SIZE);
 		itemButtonList[2] = new ItemButton(leftItemInfoComposite, character.getEquipmentList().get(Equip_part.TROUSER), BUTTON_SIZE, BUTTON_SIZE);
@@ -112,29 +118,75 @@ class UserItemInfo {
 public class UserInfo
 {
 	UserItemInfo userItemInfo;
+	Composite selectModeComposite;
 	InfoStatus infoStatus;
 	NonInfoStatus nonInfoStatus;
 	private Composite userInfoComposite;
+	private boolean dungeonMode = false;
 	
 	public UserInfo(Composite parent, Characters character){
 		userInfoComposite = new Composite(parent, SWT.BORDER);
-		//userInfoComposite.setLayout(new RowLayout());
+		userInfoComposite.setLayout(new FormLayout());
+		
+		int interval = InterfaceSize.USER_INFO_INTERVAL;
 
 		userItemInfo = new UserItemInfo(userInfoComposite, character, this);
-		userItemInfo.getComposite().setBounds(0, 0, 380, 160);
-		
-		infoStatus = new InfoStatus(userInfoComposite, character, true);
-		infoStatus.getComposite().setBounds(0, 170, 380, 220);
-		
-		
-		nonInfoStatus = new NonInfoStatus(userInfoComposite, character, true);
-		nonInfoStatus.getComposite().setBounds(390, 0, 400, 160+10+220);
-		nonInfoStatus.getComposite().addListener(SWT.MouseDown, new Listener() {
+		userItemInfo.getComposite().setLayoutData(new FormData(InterfaceSize.USER_INFO_ITEM_SIZE_X, InterfaceSize.USER_INFO_ITEM_SIZE_Y));
+		/*userItemInfo.getComposite().addListener(SWT.MouseDown, new Listener() {
 	         @Override
 	         public void handleEvent(Event e) {
 	        	 System.out.println("Mouse Down (button: " + e.button + " x: " + e.x + " y: " + e.y + ")");
 	         }
-	     });
+	     });*/
+		
+		selectModeComposite = new Composite (userInfoComposite, SWT.BORDER | SWT.NO_RADIO_GROUP);
+		selectModeComposite.setLayout (new GridLayout(2, true));
+		Listener radioGroup = event -> {
+			Control [] children = selectModeComposite.getChildren ();
+			for (int j=0; j<children.length; j++) {
+				Control child = children [j];
+				if (child instanceof Button) {
+					Button button1 = (Button) child;
+					if ((button1.getStyle() & SWT.RADIO) != 0) button1.setSelection (false);
+				}
+			}
+			Button button2 = (Button) event.widget;
+			button2.setSelection (true);
+			if(button2.getText().equals("마을인포")) dungeonMode=false;
+			else dungeonMode=true;
+			nonInfoStatus.isDungeon=dungeonMode;
+			infoStatus.isDungeon=dungeonMode;
+			infoStatus.renew();
+			nonInfoStatus.renew();
+		};
+		
+		FormData selectModeData = new FormData(InterfaceSize.USER_STAT_MODE_SIZE_X, InterfaceSize.USER_STAT_MODE_SIZE_Y);
+		selectModeData.top = new FormAttachment(userItemInfo.getComposite(), interval);
+		selectModeComposite.setLayoutData(selectModeData);
+		
+		Button setVillageMode = new Button (selectModeComposite, SWT.RADIO);
+		setVillageMode.setText("마을인포");
+		setVillageMode.addListener(SWT.Selection, radioGroup);
+		GridData gridData = new GridData();
+		gridData.horizontalAlignment = GridData.CENTER;
+		gridData.grabExcessHorizontalSpace = true;
+		setVillageMode.setLayoutData(gridData);
+		setVillageMode.setSelection (true);
+		
+		Button setDungeonMode = new Button (selectModeComposite, SWT.RADIO);
+		setDungeonMode.setText("던전인포");
+		setDungeonMode.addListener(SWT.Selection, radioGroup);
+		setDungeonMode.setLayoutData(gridData);
+		
+		infoStatus = new InfoStatus(userInfoComposite, character, dungeonMode);
+		FormData infoStatusData = new FormData(InterfaceSize.USER_INFO_STAT_SIZE_X, InterfaceSize.USER_INFO_STAT_SIZE_Y);
+		infoStatusData.top = new FormAttachment(selectModeComposite, interval);
+		infoStatus.getComposite().setLayoutData(infoStatusData);
+		
+		nonInfoStatus = new NonInfoStatus(userInfoComposite, character, dungeonMode);
+		FormData nonInfoStatusData = new FormData(InterfaceSize.USER_INFO_NONSTAT_SIZE_X, InterfaceSize.USER_INFO_NONSTAT_SIZE_Y);
+		nonInfoStatusData.left = new FormAttachment(userItemInfo.getComposite(), interval);
+		nonInfoStatus.getComposite().setLayoutData(nonInfoStatusData);
 	}
 	
 	public void renew()

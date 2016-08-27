@@ -258,7 +258,7 @@ public class Calculator {
 	public static int getInfoIntellegence(Status stat)
 	{
 		try{
-			return (int)(stat.getStat("지능")*(100.0+stat.getStat("지능"))/100.0);
+			return (int)(stat.getStat("지능")*(100.0+stat.getStat("지능뻥"))/100.0);
 		}
 		catch(StatusTypeMismatch | UndefinedStatusKey e)
 		{
@@ -304,5 +304,19 @@ public class Calculator {
 		}
 	}
 	
-	//TODO 모속강
+	public static int getInfoElementReinforce(Status stat, String element)
+	{
+		try{
+			if(element.equals("화속성강화")) return (int)(stat.getStat("화속")+stat.getStat("모속강"));
+			else if(element.equals("수속성강화")) return (int)(stat.getStat("수속")+stat.getStat("모속강"));
+			else if(element.equals("명속성강화")) return (int)(stat.getStat("명속")+stat.getStat("모속강"));
+			else if(element.equals("암속성강화")) return (int)(stat.getStat("암속")+stat.getStat("모속강"));
+			else return -1;
+		}
+		catch(StatusTypeMismatch | UndefinedStatusKey e)
+		{
+			e.printStackTrace();
+			return -1;
+		}
+	}
 }
