@@ -5,7 +5,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 
 import dnf_class.Item;
 
@@ -15,13 +14,15 @@ public class ItemButton {
 	private Composite parent;
 	private int imageSize_x;
 	private int imageSize_y;
+	boolean enabled;
 	
-	public ItemButton(Composite parent, Item item, int x, int y)
+	public ItemButton(Composite parent, Item item, int x, int y, boolean enabled)
 	{
 		this.parent=parent;
 		this.item=item;
 		imageSize_x=x;
 		imageSize_y=y;
+		this.enabled=enabled;
 		button = new Button(parent, SWT.PUSH);
 		renewImage();
 	}
@@ -43,7 +44,7 @@ public class ItemButton {
 	{
 		if(button.getImage()!=null) button.getImage().dispose();
 		Image image;
-		if(item.getIcon()==null) image = new Image(parent.getDisplay(), "image\\default.png");
+		if(item.getIcon()==null || !enabled) image = new Image(parent.getDisplay(), "image\\default.png");
 		else image = new Image(parent.getDisplay(), item.getIcon());
 		button.setImage(ItemButton.resizeImage(image, imageSize_x, imageSize_y, parent));
 	}

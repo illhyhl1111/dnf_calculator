@@ -66,9 +66,14 @@ public class CalculatorUITest {
 	        layout.wrap=false;
 	        shell.setLayout(layout);
 	        
-	        UserInfo itemInfo = new UserInfo(shell, character);
-	        Inventory inventory = new Inventory(shell, GetItemDictionary.itemDictionary.getAllItemList(), character, itemInfo); 
-	        Vault vault = new Vault(shell, GetItemDictionary.itemDictionary.getAllItemList(), inventory);
+	        UserInfo itemInfo;
+	        Inventory inventory; 
+	        Vault vault;
+	        itemInfo = new UserInfo(shell, character);
+	        inventory = new Inventory(shell, GetItemDictionary.itemDictionary.getAllItemList(), character, itemInfo);
+	        vault = new Vault(shell, GetItemDictionary.itemDictionary.getAllItemList(), inventory);
+	        inventory.setListener(vault);
+	        
 	        display.addFilter(SWT.KeyDown, new Listener() {
 	            @Override
 	            public void handleEvent(Event event) {

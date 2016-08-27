@@ -10,12 +10,12 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 import dnf_InterfacesAndExceptions.InterfaceSize;
+import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_class.Item;
 
 public class Vault extends Dialog {
@@ -61,24 +61,31 @@ public class Vault extends Dialog {
 		
 		int index=0;
 		for(Item i : itemList){
-			vault[index] = new ItemButton(vaultComposite, i, InterfaceSize.INVENTORY_BUTTON_SIZE, InterfaceSize.INVENTORY_BUTTON_SIZE);
+			vault[index] = new ItemButton(vaultComposite, i, InterfaceSize.INVENTORY_BUTTON_SIZE, InterfaceSize.INVENTORY_BUTTON_SIZE, true);
 			if(!i.getName().equals("이름없음"))
 			{
 				vault[index].getButton().addListener(SWT.MouseDown, new Listener() {
-			         @Override
-			         public void handleEvent(Event e) {
-			        	 if(e.button==3){
-			        		 //TODO
-			        	 }
+					@Override
+			        public void handleEvent(Event e) {
+						if(e.button==3){
+							try{
+								ItemButton temp = inventory.getItem(i.getName());
+								temp.enabled=true;
+								temp.renewImage();
+							}
+							catch(ItemNotFoundedException e1){
+								e1.printStackTrace();
+							}
+						}
 			        	 //System.out.println("Mouse Down (button: " + e.button + " x: " + e.x + " y: " + e.y + ")");
-			         }
-			     });
+			        }
+			    });
 			}
 			index++;
 		}
 		
 		for(; index<vaultSize; index++)
-			vault[index] = new ItemButton(vaultComposite, new Item(), InterfaceSize.INVENTORY_BUTTON_SIZE, InterfaceSize.INVENTORY_BUTTON_SIZE);
+			vault[index] = new ItemButton(vaultComposite, new Item(), InterfaceSize.INVENTORY_BUTTON_SIZE, InterfaceSize.INVENTORY_BUTTON_SIZE, false);
 		
 		scrollComposite.setContent(vaultComposite);
 		vaultComposite.setSize(vaultComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
@@ -97,5 +104,27 @@ public class Vault extends Dialog {
 	@Override
 	protected Point getInitialSize() {
 	    return new Point(vaultComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT).x+50, InterfaceSize.VAULT_SIZE_Y);
+	}
+	
+	@Override
+	protected void createButtonsForButtonBar(final Composite parent)
+	{ 
+	  GridLayout layout = (GridLayout)parent.getLayout();
+	  layout.marginHeight = 0;
+	}
+	
+	@Override
+	protected void setShellStyle(int newShellStyle) {           
+	    super.setShellStyle(SWT.CLOSE | SWT.MODELESS| SWT.BORDER | SWT.TITLE);
+	    setBlockOnOpen(false);
+	}
+	
+	public ItemButton getItem(String name) throws ItemNotFoundedException
+	{
+		for(ItemButton i : vault)
+		{
+			if(i.getItem().getName().equals(name)) return i;
+		}
+		throw new ItemNotFoundedException(name);
 	}
 }
