@@ -3,7 +3,9 @@ package dnf_UI;
 import java.util.LinkedList;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -23,12 +25,15 @@ public class Inventory {
 	Vault vault;
 	Characters character;
 	UserInfo userInfo;
+	Composite parent;
+	Composite itemInfo;
 	
 	public Inventory(Composite parent, LinkedList<Item> itemList, Characters character, UserInfo userInfo)
 	{
 		this.itemList=itemList;
 		this.character=character;
 		this.userInfo=userInfo;
+		this.parent=parent;
 		inventoryComposite = new Composite(parent, SWT.BORDER);
 		GridLayout inventoryLayout = new GridLayout(inventoryCol, true);
 		inventoryLayout.horizontalSpacing=0;
@@ -43,15 +48,24 @@ public class Inventory {
 	public void setListener(Vault vault)
 	{
 		int index=0;
+		inventoryList[0] = new ItemButton(inventoryComposite, new Item(), InterfaceSize.INVENTORY_BUTTON_SIZE, InterfaceSize.INVENTORY_BUTTON_SIZE, false);
+		Point buttonS = inventoryList[0].getButton().computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		inventoryList[0].getButton().dispose();
+		Integer userY=userInfo.getComposite().computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+		
 		for(Item i : itemList){
 			inventoryList[index] = new ItemButton(inventoryComposite, i, InterfaceSize.INVENTORY_BUTTON_SIZE, InterfaceSize.INVENTORY_BUTTON_SIZE, false);
 			if(!i.getName().equals("이름없음"))
 			{
 				Integer indexBox = index;
+				Integer x0 = (index%inventoryCol)*buttonS.x;
+				Integer y0 = (int)(index/inventoryCol)*buttonS.y+userY;
+				
+				// add MouseDown Event - equip
 				inventoryList[index].getButton().addListener(SWT.MouseDown, new Listener() {
 			         @Override
 			         public void handleEvent(Event e) {
-			        	 if(e.button==3 || inventoryList[indexBox].enabled){
+			        	 if(e.button==3 && inventoryList[indexBox].enabled){
 			        		 if(vault.getShell()==null){
 			        			 character.equip(i);
 			        			 userInfo.renew();
@@ -59,9 +73,50 @@ public class Inventory {
 			        		 else{
 			        			 inventoryList[indexBox].enabled=false;
 			        			 inventoryList[indexBox].renewImage();
+			        			 //TODO 장착된 아이템을 창고에 넣을때 장착해제
 			        		 }
 			        	 }
 			        	 //System.out.println("Mouse Down (button: " + e.button + " x: " + e.x + " y: " + e.y + ")");
+			         }
+			     });
+				
+				// add MouseEnter Event - make composite
+				inventoryList[index].getButton().addListener(SWT.MouseEnter, new Listener() {
+			         @Override
+			         public void handleEvent(Event e) {
+			        	 if(inventoryList[indexBox].enabled){
+			        		 System.out.println("Mouse Entered "+i.getName());
+			        		 itemInfo = new Composite(parent, SWT.BORDER);
+			        		 itemInfo.setLayout(new RowLayout(SWT.VERTICAL));
+			        		 inventoryList[indexBox].setItemInfoComposite(itemInfo);
+			        		 itemInfo.setBounds((e.x+x0), (e.y+y0-300),  500,  300);
+			        		 itemInfo.moveAbove(inventoryComposite);
+			        		 itemInfo.moveAbove(userInfo.getComposite());
+			        	 }
+			         }
+			     });
+				
+				// add MouseExit Event - dispose composite
+				inventoryList[index].getButton().addListener(SWT.MouseExit, new Listener() {
+			         @Override
+			         public void handleEvent(Event e) {
+			        	 if(inventoryList[indexBox].enabled){
+			        		 System.out.println("Mouse Exited "+i.getName());
+			        		 itemInfo.dispose();
+			        	 }
+			         }
+			     });
+				
+				// add MouseMove Event - move composite
+				inventoryList[index].getButton().addListener(SWT.MouseMove, new Listener() {
+			         @Override
+			         public void handleEvent(Event e) {
+			        	 if(inventoryList[indexBox].enabled){
+			        		 //System.out.println("Mouse Move (button: " + e.button + " x: " + (e.x+x0) + " y: " + (e.y+y0) + ")");
+			        		 itemInfo.setLocation((e.x+x0), (e.y+y0-300));
+			        		 itemInfo.moveAbove(inventoryComposite);
+			        		 itemInfo.moveAbove(userInfo.getComposite());
+			        	 }
 			         }
 			     });
 			}

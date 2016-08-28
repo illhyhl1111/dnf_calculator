@@ -48,6 +48,13 @@ public class ItemButton {
 		else image = new Image(parent.getDisplay(), item.getIcon());
 		button.setImage(ItemButton.resizeImage(image, imageSize_x, imageSize_y, parent));
 	}
+	
+	public void setItemInfoComposite(Composite itemInfo)
+	{
+		LabelAndText name = new LabelAndText(itemInfo, "이름", item.getName());
+		name.setInputEnable(false);
+	}
+	
 
 	public Button getButton() {
 		return button;

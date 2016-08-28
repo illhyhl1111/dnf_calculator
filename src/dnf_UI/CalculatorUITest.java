@@ -3,6 +3,9 @@ package dnf_UI;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
@@ -62,9 +65,9 @@ public class CalculatorUITest {
 
 	        Shell shell = new Shell(display);
 	        shell.setText("인포창");
-	        RowLayout layout = new RowLayout(SWT.VERTICAL);
-	        layout.wrap=false;
-	        shell.setLayout(layout);
+	        //RowLayout layout = new RowLayout(SWT.VERTICAL);
+	        //layout.wrap=false;
+	        shell.setLayout(new FormLayout());
 	        
 	        UserInfo itemInfo;
 	        Inventory inventory; 
@@ -73,6 +76,11 @@ public class CalculatorUITest {
 	        inventory = new Inventory(shell, GetItemDictionary.itemDictionary.getAllItemList(), character, itemInfo);
 	        vault = new Vault(shell, GetItemDictionary.itemDictionary.getAllItemList(), inventory);
 	        inventory.setListener(vault);
+	        
+	        itemInfo.getComposite().setLayoutData(new FormData());
+	        FormData inventoryData = new FormData();
+	        inventoryData.top = new FormAttachment(itemInfo.getComposite(), 5);
+	        inventory.getComposite().setLayoutData(inventoryData);
 	        
 	        display.addFilter(SWT.KeyDown, new Listener() {
 	            @Override
