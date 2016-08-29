@@ -3,9 +3,10 @@ package dnf_InterfacesAndExceptions;
 public interface StatList									// 스탯 종류에 붙는 고유한 식별번호
 {
 	int ELEM_FIRE=0; int  ELEM_WATER=1; int  ELEM_LIGHT=2; int  ELEM_DARKNESS=3;											// 화, 수, 명, 암속성
+	int ELEM_ALL=4;																											// 모속성
 	
 	int ELEMENTNUM_START = 0;
-	int ELEMENTNUM = 4;														// 총 속성 개수
+	int ELEMENTNUM = 5;														// 총 속성 개수
 	int ELEMENTNUM_END = ELEMENTNUM_START+ELEMENTNUM-1;
 	///////////////////////////////////////
 	
@@ -24,9 +25,8 @@ public interface StatList									// 스탯 종류에 붙는 고유한 식별번
 	int ELEM_FIRE_DEC=INTNUM_START+26; int ELEM_WATER_DEC=INTNUM_START+27;
 	int ELEM_LIGHT_DEC=INTNUM_START+28; int ELEM_DARKNESS_DEC=INTNUM_START+29;														// 화속저, 수속저, 명속저, 암속저
 	int DAM_BUF=INTNUM_START+30;																									// 투함포 이그니스 공대버프
-	int ELEM_ALL=INTNUM_START+31;																									// 모속강
 	
-	int INTNUM = 32;								// 총 int형 스탯 개수
+	int INTNUM = 31;								// 총 int형 스탯 개수
 	int INTNUM_END = INTNUM_START+INTNUM-1;
 	///////////////////////////////////////
 	

@@ -50,4 +50,7 @@ public class Item implements Cloneable, java.io.Serializable
 			if(name.equals(((Item) o).name)) return true;
 		return false;
 	}
+	
+	public String getTypeName() { return "아이템";}
+	public String getTypeName2() { return null;} 
 }

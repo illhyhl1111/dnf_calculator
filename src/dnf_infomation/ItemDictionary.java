@@ -1,5 +1,8 @@
 package dnf_infomation;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.HashSet;
 import java.util.LinkedList;
 
@@ -53,5 +56,22 @@ public class ItemDictionary implements java.io.Serializable
 		//for(Item e : etcList)
 			//list.add(e);
 		return list;
+	}
+}
+
+class SaveItemDictionary {
+	public static void main(String[] args)
+	{
+		try{
+			ItemDictionary itemDic = new ItemDictionary();
+			
+			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("ItemDictionary.dfd"));
+			out.writeObject(itemDic);
+			out.close();
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 }

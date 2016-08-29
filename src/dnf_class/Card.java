@@ -18,4 +18,7 @@ public class Card extends Item implements java.io.Serializable
 		super("카드없음", null, Item_rarity.NONE);
 		type = AddOn.NONE;
 	}
+	
+	@Override
+	public String getTypeName() { return "보주";}
 }

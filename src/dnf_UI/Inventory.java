@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -26,7 +25,13 @@ public class Inventory {
 	Characters character;
 	UserInfo userInfo;
 	Composite parent;
-	Composite itemInfo;
+	private Composite itemInfo;
+	private Point itemInfoSize;
+	private Composite setInfo;
+	private Point setInfoSize;
+	private Integer X0;
+	private Integer Y0;
+	private Boolean hasSetOption;
 	
 	public Inventory(Composite parent, LinkedList<Item> itemList, Characters character, UserInfo userInfo)
 	{
@@ -55,11 +60,12 @@ public class Inventory {
 		
 		for(Item i : itemList){
 			inventoryList[index] = new ItemButton(inventoryComposite, i, InterfaceSize.INVENTORY_BUTTON_SIZE, InterfaceSize.INVENTORY_BUTTON_SIZE, false);
+			
 			if(!i.getName().equals("이름없음"))
 			{
 				Integer indexBox = index;
-				Integer x0 = (index%inventoryCol)*buttonS.x;
-				Integer y0 = (int)(index/inventoryCol)*buttonS.y+userY;
+				Integer xButton = (index%inventoryCol)*buttonS.x+2;
+				Integer yButton = (int)(index/inventoryCol)*buttonS.y+userY+8;
 				
 				// add MouseDown Event - equip
 				inventoryList[index].getButton().addListener(SWT.MouseDown, new Listener() {
@@ -73,7 +79,11 @@ public class Inventory {
 			        		 else{
 			        			 inventoryList[indexBox].enabled=false;
 			        			 inventoryList[indexBox].renewImage();
-			        			 //TODO 장착된 아이템을 창고에 넣을때 장착해제
+			        			 if(userInfo.userItemInfo.equiped(i)){
+			        				 character.unequip(i);
+			        				 userInfo.renew();
+			        				 if(!itemInfo.isDisposed()) itemInfo.dispose();
+			        			 }
 			        		 }
 			        	 }
 			        	 //System.out.println("Mouse Down (button: " + e.button + " x: " + e.x + " y: " + e.y + ")");
@@ -85,13 +95,36 @@ public class Inventory {
 			         @Override
 			         public void handleEvent(Event e) {
 			        	 if(inventoryList[indexBox].enabled){
-			        		 System.out.println("Mouse Entered "+i.getName());
+			        		 //System.out.println("Mouse Entered "+i.getName());
 			        		 itemInfo = new Composite(parent, SWT.BORDER);
-			        		 itemInfo.setLayout(new RowLayout(SWT.VERTICAL));
+			        		 GridLayout layout = new GridLayout(1, false);
+			        		 layout.verticalSpacing=3;
+			        		 itemInfo.setLayout(layout);
 			        		 inventoryList[indexBox].setItemInfoComposite(itemInfo);
-			        		 itemInfo.setBounds((e.x+x0), (e.y+y0-300),  500,  300);
-			        		 itemInfo.moveAbove(inventoryComposite);
-			        		 itemInfo.moveAbove(userInfo.getComposite());
+			        		 itemInfoSize = itemInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			        		 itemInfo.moveAbove(null);
+			        		 
+			        		 boolean hasSet = inventoryList[indexBox].hasSetOption();
+			        		 hasSetOption = hasSet;
+			        		 if(hasSet){
+			        			 setInfo = new Composite(parent, SWT.BORDER);
+			        			 setInfo.setLayout(layout);
+				        		 inventoryList[indexBox].setSetInfoComposite(setInfo);
+				        		 setInfoSize = setInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+				        		 setInfo.moveAbove(null);
+			        		 }
+			        		 
+			        		 int x0;
+			        		 int y0 = yButton-itemInfoSize.y-5;
+			        		 if(hasSet)
+			        			 x0 = xButton-InterfaceSize.ITEM_INFO_SIZE-InterfaceSize.SET_INFO_SIZE-5-InterfaceSize.SET_ITEM_INTERVAL;
+			        		 else x0 = xButton-InterfaceSize.ITEM_INFO_SIZE-5;
+			        		 if(x0<0) x0 = xButton+5;
+			        		 if(y0<0) y0 = yButton+5;
+			        		 itemInfo.setBounds((e.x+x0), (e.y+y0), InterfaceSize.ITEM_INFO_SIZE, itemInfoSize.y);
+			        		 if(hasSet) setInfo.setBounds((e.x+x0+InterfaceSize.SET_ITEM_INTERVAL+InterfaceSize.ITEM_INFO_SIZE), (e.y+y0), InterfaceSize.SET_INFO_SIZE, setInfoSize.y);
+			        		 X0=x0;
+			        		 Y0=y0;
 			        	 }
 			         }
 			     });
@@ -100,9 +133,10 @@ public class Inventory {
 				inventoryList[index].getButton().addListener(SWT.MouseExit, new Listener() {
 			         @Override
 			         public void handleEvent(Event e) {
-			        	 if(inventoryList[indexBox].enabled){
-			        		 System.out.println("Mouse Exited "+i.getName());
+			        	 if(inventoryList[indexBox].enabled && !itemInfo.isDisposed()){
+			        		 //System.out.println("Mouse Exited "+i.getName());
 			        		 itemInfo.dispose();
+			        		 if(hasSetOption) setInfo.dispose();
 			        	 }
 			         }
 			     });
@@ -111,11 +145,10 @@ public class Inventory {
 				inventoryList[index].getButton().addListener(SWT.MouseMove, new Listener() {
 			         @Override
 			         public void handleEvent(Event e) {
-			        	 if(inventoryList[indexBox].enabled){
+			        	 if(inventoryList[indexBox].enabled && !itemInfo.isDisposed()){
 			        		 //System.out.println("Mouse Move (button: " + e.button + " x: " + (e.x+x0) + " y: " + (e.y+y0) + ")");
-			        		 itemInfo.setLocation((e.x+x0), (e.y+y0-300));
-			        		 itemInfo.moveAbove(inventoryComposite);
-			        		 itemInfo.moveAbove(userInfo.getComposite());
+			        		 itemInfo.setLocation((e.x+X0), (e.y+Y0));
+			        		 if(hasSetOption) setInfo.setLocation((e.x+X0+InterfaceSize.SET_ITEM_INTERVAL+InterfaceSize.ITEM_INFO_SIZE), (e.y+Y0));
 			        	 }
 			         }
 			     });

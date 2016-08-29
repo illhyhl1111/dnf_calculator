@@ -16,4 +16,7 @@ public class Emblem extends Item
 		super("엠블렘 없음", null, Item_rarity.NONE);
 		type = AddOn.NONE;
 	}
+	
+	@Override
+	public String getTypeName() { return "엠블렘";}
 }

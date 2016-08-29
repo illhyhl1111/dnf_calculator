@@ -27,6 +27,13 @@ public class Vault extends Dialog {
 	private Composite vaultComposite;
 	private ScrolledComposite scrollComposite;
 	Inventory inventory;
+	private Composite itemInfo;
+	private Point itemInfoSize;
+	private Composite setInfo;
+	private Point setInfoSize;
+	private Integer X0;
+	private Integer Y0;
+	private Boolean hasSetOption;
 	
 	public Vault(Shell parent, LinkedList<Item> itemList, Inventory inventory)
 	{
@@ -60,10 +67,20 @@ public class Vault extends Dialog {
 		vault = new ItemButton[vaultSize];
 		
 		int index=0;
+		vault[0] = new ItemButton(vaultComposite, new Item(), InterfaceSize.INVENTORY_BUTTON_SIZE, InterfaceSize.INVENTORY_BUTTON_SIZE, false);
+		Point buttonS = vault[0].getButton().computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		vault[0].getButton().dispose();
+		
 		for(Item i : itemList){
 			vault[index] = new ItemButton(vaultComposite, i, InterfaceSize.INVENTORY_BUTTON_SIZE, InterfaceSize.INVENTORY_BUTTON_SIZE, true);
+			
+			Integer indexBox = index;
+			Integer xButton = (index%vaultCol)*buttonS.x+15;
+			Integer yButton = (int)(index/vaultCol)*buttonS.y+17;
+			
 			if(!i.getName().equals("이름없음"))
 			{
+				// add MouseDown Event - get item - inventory to vault
 				vault[index].getButton().addListener(SWT.MouseDown, new Listener() {
 					@Override
 			        public void handleEvent(Event e) {
@@ -80,8 +97,73 @@ public class Vault extends Dialog {
 			        	 //System.out.println("Mouse Down (button: " + e.button + " x: " + e.x + " y: " + e.y + ")");
 			        }
 			    });
+				
+				// add MouseEnvet Event - make composite
+				vault[index].getButton().addListener(SWT.MouseEnter, new Listener() {
+			         @Override
+			         public void handleEvent(Event e) {
+			        	 if(vault[indexBox].enabled){
+			        		 //System.out.println("Mouse Entered "+i.getName());
+			        		 itemInfo = new Composite(parent, SWT.BORDER);
+			        		 GridLayout layout = new GridLayout(1, false);
+			        		 layout.verticalSpacing=3;
+			        		 itemInfo.setLayout(layout);
+			        		 vault[indexBox].setItemInfoComposite(itemInfo);
+			        		 itemInfoSize = itemInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			        		 itemInfo.moveAbove(null);
+			        		 
+			        		 boolean hasSet = vault[indexBox].hasSetOption();
+			        		 hasSetOption = hasSet;
+			        		 if(hasSet){
+			        			 setInfo = new Composite(parent, SWT.BORDER);
+			        			 setInfo.setLayout(layout);
+			        			 vault[indexBox].setSetInfoComposite(setInfo);
+				        		 setInfoSize = setInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+				        		 setInfo.moveAbove(null);
+			        		 }
+			        		 
+			        		 int x0;
+			        		 int y0 = yButton-itemInfoSize.y-5;
+			        		 if(hasSet)
+			        			 x0 = xButton-InterfaceSize.ITEM_INFO_SIZE-InterfaceSize.SET_INFO_SIZE-5-InterfaceSize.SET_ITEM_INTERVAL;
+			        		 else x0 = xButton-InterfaceSize.ITEM_INFO_SIZE-5;
+			        		 if(x0<0) x0 = xButton+5;
+			        		 if(y0<0) y0 = yButton+5;
+			        		 itemInfo.setBounds((e.x+x0), (e.y+y0), InterfaceSize.ITEM_INFO_SIZE, itemInfoSize.y);
+			        		 if(hasSet) setInfo.setBounds((e.x+x0+InterfaceSize.SET_ITEM_INTERVAL+InterfaceSize.ITEM_INFO_SIZE), (e.y+y0), InterfaceSize.SET_INFO_SIZE, setInfoSize.y);
+			        		 X0=x0;
+			        		 Y0=y0;
+			        	 }
+			         }
+			     });
+				
+				// add MouseExit Event - dispose composite
+				vault[index].getButton().addListener(SWT.MouseExit, new Listener() {
+			         @Override
+			         public void handleEvent(Event e) {
+			        	 if(vault[indexBox].enabled){
+			        		 if(!itemInfo.isDisposed()){
+			        			 itemInfo.dispose();
+			        			 if(hasSetOption) setInfo.dispose();
+			        		 }
+			        	 }
+			         }
+			     });
+				
+				// add MouseMove Event - move composite
+				vault[index].getButton().addListener(SWT.MouseMove, new Listener() {
+			         @Override
+			         public void handleEvent(Event e) {
+			        	 if(vault[indexBox].enabled){
+			        		 if(!itemInfo.isDisposed()){
+				        		 itemInfo.setLocation((e.x+X0), (e.y+Y0));
+				        		 if(hasSetOption) setInfo.setLocation((e.x+X0+InterfaceSize.SET_ITEM_INTERVAL+InterfaceSize.ITEM_INFO_SIZE), (e.y+Y0));
+			        		 }
+			        	 }
+			         }
+			     });			
+				index++;
 			}
-			index++;
 		}
 		
 		for(; index<vaultSize; index++)

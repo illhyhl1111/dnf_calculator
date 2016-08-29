@@ -18,4 +18,7 @@ public class Consumeable extends Item
 			if(this.getName().equals(((Consumeable) o).getName())) return true;
 		return false;
 	}
+	
+	@Override
+	public String getTypeName() { return "소모품";}
 }

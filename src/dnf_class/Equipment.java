@@ -10,12 +10,12 @@ import dnf_InterfacesAndExceptions.SetName;
 @SuppressWarnings("serial")
 public class Equipment extends Item
 {
-	Equip_part part;									//부위
-	Dimension_stat dimStat;								//차원작
-	int reinforce;										//강화수치
-	Card card;											//보주
-	SetName setName;									//셋옵이름
-	Equip_type type;									//재질
+	public Equip_part part;									//부위
+	public Dimension_stat dimStat;							//차원작
+	public int reinforce;									//강화수치
+	public Card card;										//보주
+	public SetName setName;									//셋옵이름
+	public Equip_type type;									//재질
 	
 	public Equipment(String name, String icon,Item_rarity rarity, Equip_part part, Dimension_stat dimStat,
 			int reinforce, Card card, SetName setName, Equip_type type)
@@ -53,5 +53,14 @@ public class Equipment extends Item
 		out = "name : " + super.getName() +"\nrarity : "+super.getRarity()+"\nreinforce : "+reinforce+"\ntype : "+type.toString();
 		out += "\npart : "+part.toString()+"\ntype : "+type.toString()+"\n\n";
 		return out;
+	}
+	
+	@Override
+	public String getTypeName() { return part.getName();}
+	@Override
+	public String getTypeName2()
+	{
+		if(type.getName().equals("없음")) return null;
+		else return type.getName();
 	}
 }

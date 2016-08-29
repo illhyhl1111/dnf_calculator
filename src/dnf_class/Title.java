@@ -10,4 +10,7 @@ public class Title extends Item
 		super(name, icon, rarity);
 	}
 	public Title(){ super();}
+	
+	@Override
+	public String getTypeName() { return "칭호";}
 }

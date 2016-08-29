@@ -10,4 +10,7 @@ public class Creature extends Item
 		super(name, icon, rarity);
 	}
 	public Creature(){ super();}
+	
+	@Override
+	public String getTypeName() { return "크리쳐";}
 }

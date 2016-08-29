@@ -1,6 +1,7 @@
 package dnf_UI;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -16,6 +17,7 @@ import org.eclipse.swt.widgets.Listener;
 import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.InterfaceSize;
 import dnf_class.Characters;
+import dnf_class.Item;
 
 class UserItemInfo {
 	private Composite itemInfoComposite;
@@ -24,6 +26,11 @@ class UserItemInfo {
 	private ItemButton[] itemButtonList;
 	private static int ITEMNUM=12;
 	private Characters character;
+	private Composite itemInfo;
+	private Point itemInfoSize;
+	private Composite setInfo;
+	private Point setInfoSize;
+	private Boolean hasSetOption;
 	
 	public UserItemInfo(Composite parent, Characters character, UserInfo superInfo)
 	{
@@ -68,8 +75,18 @@ class UserItemInfo {
 		itemButtonList[9] = new ItemButton(rightItemInfoComposite, character.getEquipmentList().get(Equip_part.NECKLACE), BUTTON_SIZE, BUTTON_SIZE, true);
 		itemButtonList[10] = new ItemButton(rightItemInfoComposite, character.getEquipmentList().get(Equip_part.MAGICSTONE), BUTTON_SIZE, BUTTON_SIZE, true);
 		itemButtonList[11] = new ItemButton(rightItemInfoComposite, character.getEquipmentList().get(Equip_part.RING), BUTTON_SIZE, BUTTON_SIZE, true);
+		
+		Point buttonS = itemButtonList[0].getButton().computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		buttonS.x+=3; buttonS.y+=3;
 		for(int i=0; i<ITEMNUM; i++)
 		{
+			Integer x0;
+			if(i>5) x0 = InterfaceSize.USER_INFO_ITEM_SIZE_X-2*buttonS.x+(i%2)*buttonS.x-3;
+			else x0 = (i%2)*buttonS.x+10;
+			Integer y0 = (int)((i/2)%3)*buttonS.y+10;
+			Integer indexBox = i;
+			
+			// add MouseDown Event - unequip
 			ItemButton temp = itemButtonList[i];
 			itemButtonList[i].getButton().addListener(SWT.MouseDown, new Listener() {
 		         @Override
@@ -79,6 +96,59 @@ class UserItemInfo {
 		        		 superInfo.renew();
 		        	 }
 		        	 //System.out.println("Mouse Down (button: " + e.button + " x: " + e.x + " y: " + e.y + ")");
+		         }
+		     });
+			
+			// add MouseEnter Event - make composite
+			itemButtonList[i].getButton().addListener(SWT.MouseEnter, new Listener() {
+		         @Override
+		         public void handleEvent(Event e) {
+		        	 if(itemButtonList[indexBox].enabled){
+		        		 //System.out.println("Mouse Entered "+i.getName());
+		        		 itemInfo = new Composite(parent, SWT.BORDER);
+		        		 GridLayout layout = new GridLayout(1, false);
+		        		 layout.verticalSpacing=3;
+		        		 itemInfo.setLayout(layout);
+		        		 itemButtonList[indexBox].setItemInfoComposite(itemInfo);
+		        		 itemInfoSize = itemInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		        		 itemInfo.setBounds((e.x+x0), (e.y+y0), InterfaceSize.ITEM_INFO_SIZE, itemInfoSize.y);
+		        		 itemInfo.moveAbove(null);
+		        		 
+		        		 boolean hasSet = itemButtonList[indexBox].hasSetOption();
+		        		 hasSetOption = hasSet;
+		        		 if(hasSet){
+		        			 setInfo = new Composite(parent, SWT.BORDER);
+		        			 setInfo.setLayout(layout);
+		        			 itemButtonList[indexBox].setSetInfoComposite(setInfo);
+			        		 setInfoSize = setInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			        		 setInfo.moveAbove(null);
+			        		 setInfo.setBounds((e.x+x0+InterfaceSize.SET_ITEM_INTERVAL+InterfaceSize.ITEM_INFO_SIZE), (e.y+y0), InterfaceSize.SET_INFO_SIZE, setInfoSize.y);
+		        		 }
+		        	 }
+		         }
+		     });
+			
+			// add MouseExit Event - dispose composite
+			itemButtonList[i].getButton().addListener(SWT.MouseExit, new Listener() {
+		         @Override
+		         public void handleEvent(Event e) {
+		        	 if(itemButtonList[indexBox].enabled){
+		        		 //System.out.println("Mouse Exited "+i.getName());
+		        		 itemInfo.dispose();
+		        		 if(hasSetOption) setInfo.dispose();
+		        	 }
+		         }
+		     });
+			
+			// add MouseMove Event - move composite
+			itemButtonList[i].getButton().addListener(SWT.MouseMove, new Listener() {
+		         @Override
+		         public void handleEvent(Event e) {
+		        	 if(itemButtonList[indexBox].enabled && !itemInfo.isDisposed()){
+		        		 //System.out.println("Mouse Move (button: " + e.button + " x: " + (e.x+x0) + " y: " + (e.y+y0) + ")");
+		        		 itemInfo.setLocation((e.x+x0), (e.y+y0));
+		        		 if(hasSetOption) setInfo.setLocation((e.x+x0+InterfaceSize.SET_ITEM_INTERVAL+InterfaceSize.ITEM_INFO_SIZE), (e.y+y0));
+		        	 }
 		         }
 		     });
 		}
@@ -111,6 +181,13 @@ class UserItemInfo {
 	}
 	
 	public Composite getComposite() {return itemInfoComposite;}
+	
+	public boolean equiped(Item item)
+	{
+		for(ItemButton i : itemButtonList)
+			if(i.getItem().getName().equals(item.getName())) return true;
+		return false;
+	}
 }
 
 

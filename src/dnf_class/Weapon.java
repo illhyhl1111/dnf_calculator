@@ -16,8 +16,8 @@ public class Weapon extends Equipment{
 	 */
 	private static final long serialVersionUID = -2317758055158333589L;
 
-	Weapon_detailType weaponType;
-	int reforge;
+	public Weapon_detailType weaponType;
+	public int reforge;
 	
 	public Weapon(String name, String icon,Item_rarity rarity, Dimension_stat dimStat, 
 			int reinforce, Card card, SetName setName, Weapon_detailType weaponType, int reforge)
@@ -40,4 +40,9 @@ public class Weapon extends Equipment{
 	{
 		return weaponType.enabled(job);
 	}
+	
+	@Override
+	public String getTypeName() { return part.getName();}
+	@Override
+	public String getTypeName2() { return weaponType.getName();}
 }

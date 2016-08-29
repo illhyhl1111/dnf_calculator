@@ -31,4 +31,7 @@ public class Avatar extends Item
 		emblem1 = new Emblem();
 		emblem2 = new Emblem();
 	}
+	
+	@Override
+	public String getTypeName() { return part.getName();}
 }
