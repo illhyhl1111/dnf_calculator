@@ -1,6 +1,5 @@
 package dnf_UI;
 
-import java.util.LinkedList;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -27,7 +26,6 @@ import dnf_calculator.Status;
 import dnf_class.Characters;
 import dnf_class.Monster;
 import dnf_infomation.GetItemDictionary;
-import dnf_infomation.ItemDictionary;
 
 
 public class CalculatorUITest {
@@ -51,21 +49,20 @@ public class CalculatorUITest {
 	        UserInfo itemInfo;
 	        Inventory inventory; 
 	        Vault vault;
-			ItemDictionary userItemList = (ItemDictionary) GetItemDictionary.itemDictionary.clone();
 			
-			character.equip(userItemList.getEquipment("우요의 황금 캐넌"));
+			character.equip(character.userItemList.getEquipment("우요의 황금 캐넌"));
 			
-			character.equip(userItemList.getEquipment("타란튤라 상의"));
-			character.equip(userItemList.getEquipment("킹바분 하의"));
-			character.equip(userItemList.getEquipment("골리앗 버드이터 어깨"));
-			character.equip(userItemList.getEquipment("로즈헤어 벨트"));
-			character.equip(userItemList.getEquipment("인디언 오너멘탈 신발"));
-			character.equip(userItemList.getEquipment("탐식의 증적"));
+			character.equip(character.userItemList.getEquipment("타란튤라 상의"));
+			character.equip(character.userItemList.getEquipment("킹바분 하의"));
+			character.equip(character.userItemList.getEquipment("골리앗 버드이터 어깨"));
+			character.equip(character.userItemList.getEquipment("로즈헤어 벨트"));
+			character.equip(character.userItemList.getEquipment("인디언 오너멘탈 신발"));
+			character.equip(character.userItemList.getEquipment("탐식의 증적"));
 			
-			character.equip(userItemList.getEquipment("무한한 탐식의 형상"));
-			character.equip(userItemList.getEquipment("필리르 - 꺼지지 않는 화염"));
-			character.equip(userItemList.getEquipment("무한한 탐식의 잔재"));
-			character.equip(userItemList.getEquipment("탐식의 근원"));
+			character.equip(character.userItemList.getEquipment("무한한 탐식의 형상"));
+			character.equip(character.userItemList.getEquipment("필리르 - 꺼지지 않는 화염"));
+			character.equip(character.userItemList.getEquipment("무한한 탐식의 잔재"));
+			character.equip(character.userItemList.getEquipment("탐식의 근원"));
 			
 			Monster object = new Monster(new Status());
 			object.setBooleanStat(Monster_StatList.BACKATK, true);
@@ -78,7 +75,7 @@ public class CalculatorUITest {
 			object.setStat(Monster_StatList.TYPE, MonsterType.BOSS);
 	        
 	        itemInfo = new UserInfo(shell, character);
-	        inventory = new Inventory(shell, userItemList, character, itemInfo);
+	        inventory = new Inventory(shell, character, itemInfo);
 	        vault = new Vault(shell, GetItemDictionary.itemDictionary.getAllItemList(), inventory);
 	        inventory.setListener(vault);
 	        

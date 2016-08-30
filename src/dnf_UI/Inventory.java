@@ -12,14 +12,14 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 import dnf_InterfacesAndExceptions.InterfaceSize;
+import dnf_InterfacesAndExceptions.ItemFileNotFounded;
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
+import dnf_InterfacesAndExceptions.SetName;
 import dnf_class.Characters;
 import dnf_class.Equipment;
 import dnf_class.Item;
-import dnf_infomation.ItemDictionary;
 
 public class Inventory {
-	ItemDictionary itemDictionary;
 	LinkedList<Item> itemList;
 	ItemButton[] inventoryList;
 	final static int inventoryCol = 15;
@@ -38,10 +38,9 @@ public class Inventory {
 	private Integer Y0;
 	private Boolean hasSetOption;
 	
-	public Inventory(Composite parent, ItemDictionary itemDictionary, Characters character, UserInfo userInfo)
+	public Inventory(Composite parent, Characters character, UserInfo userInfo)
 	{
-		this.itemDictionary=itemDictionary;
-		this.itemList=itemDictionary.getAllItemList();
+		this.itemList=character.userItemList.getAllItemList();
 		this.character=character;
 		this.userInfo=userInfo;
 		this.parent=parent;
@@ -99,14 +98,29 @@ public class Inventory {
 			        	 }
 			        	 else if(e.button==1 && inventoryList[indexBox].enabled)
 			        	 {
-			        		ChangeItemStatus temp = new ChangeItemStatus((Shell)parent, inventoryList[indexBox].getItem());
-							//save = (Item) inventoryList[indexBox].getItem().clone();
-							if (Window.OK == temp.open()) {
-								inventoryList[indexBox].setItem(temp.item);
-								character.unequip(i);
-								character.equip(i);
+			        		ChangeItemStatus changeItem = new ChangeItemStatus((Shell)parent, inventoryList[indexBox].getItem(), inventoryList[indexBox].hasSetOption());
+			        		int result = changeItem.open();
+							if (Window.OK == result) {
+								inventoryList[indexBox].setItem(changeItem.item);
+								if(userInfo.userItemInfo.equiped(i)) character.setStatus();
+								userInfo.renew();
 							}
-			        		userInfo.renew();
+							else if(result == 2)
+							{
+							//if(inventoryList[indexBox].hasSetOption()){
+								SetName setName = ((Equipment)inventoryList[indexBox].getItem()).setName;
+								ChangeSetOptionStatus changeSet = new ChangeSetOptionStatus((Shell)parent, setName, character.userItemList);
+								if (Window.OK == changeSet.open()) {
+									try {
+										character.userItemList.setSetOptions(setName, changeSet.setOption);
+										inventoryList[indexBox].setItem(changeItem.item);
+										if(userInfo.userItemInfo.equiped(i)) character.setStatus();
+										userInfo.renew();
+									} catch (ItemFileNotFounded e1) {
+										e1.printStackTrace();
+									}				
+								}
+							}
 			        	 }
 			        	 //System.out.println("Mouse Down (button: " + e.button + " x: " + e.x + " y: " + e.y + ")");
 			         }
@@ -131,7 +145,11 @@ public class Inventory {
 			        		 if(hasSet){
 			        			 setInfo = new Composite(parent, SWT.BORDER);
 			        			 setInfo.setLayout(layout);
-				        		 inventoryList[indexBox].setSetInfoComposite(setInfo, character.getSetOptionList().get( ((Equipment)inventoryList[indexBox].getItem()).setName ));
+			        			 int setNum;
+			        			 if(character.getSetOptionList().get( ((Equipment)inventoryList[indexBox].getItem()).setName)==null) setNum=0;
+			        			 else setNum=character.getSetOptionList().get( ((Equipment)inventoryList[indexBox].getItem()).setName );
+			        			 
+				        		 inventoryList[indexBox].setSetInfoComposite(setInfo, setNum, character.userItemList);
 				        		 setInfoSize = setInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 				        		 setInfo.moveAbove(null);
 			        		 }

@@ -1,6 +1,5 @@
 package dnf_UI;
 
-import java.util.Collections;
 import java.util.LinkedList;
 
 import org.eclipse.swt.SWT;
@@ -15,13 +14,12 @@ import dnf_InterfacesAndExceptions.SetName;
 import dnf_InterfacesAndExceptions.StatList;
 import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 import dnf_InterfacesAndExceptions.ItemFileNotFounded;
-import dnf_InterfacesAndExceptions.ItemFileNotReaded;
 import dnf_calculator.ElementInfo;
 import dnf_calculator.StatusAndName;
 import dnf_class.Equipment;
 import dnf_class.Item;
 import dnf_class.SetOption;
-import dnf_infomation.GetItemDictionary;
+import dnf_infomation.ItemDictionary;
 
 public class ItemButton {
 	private Button button;
@@ -70,7 +68,7 @@ public class ItemButton {
 		else return true;
 	}
 	
-	public void setSetInfoComposite(Composite itemInfo, int setNum)
+	public void setSetInfoComposite(Composite itemInfo, int setNum, ItemDictionary itemDictionary)
 	{
 		Label name = new Label(itemInfo, SWT.WRAP);
 		Equipment equipment = (Equipment)item; 
@@ -81,8 +79,7 @@ public class ItemButton {
 		
 		try
 		{
-			LinkedList<SetOption> setOptionList = GetItemDictionary.getSetOptions(equipment.setName);
-			Collections.sort(setOptionList);
+			LinkedList<SetOption> setOptionList = itemDictionary.getSetOptions(equipment.setName);
 			
 			for(SetOption s : setOptionList)
 			{
@@ -131,7 +128,7 @@ public class ItemButton {
 		catch (StatusTypeMismatch e) {
 			e.printStackTrace();
 		}
-		catch (ItemFileNotReaded | ItemFileNotFounded e) {
+		catch (ItemFileNotFounded e) {
 			e.printStackTrace();
 		}
 	}
@@ -221,7 +218,9 @@ public class ItemButton {
 					else stat.setText(name+strength);
 				}
 				else stat.setText(StatusAndName.getStatHash().get(s.name)+strength);
-				stat.setEnabled(enable);
+				stat.setEnabled(enable && s.enabled);
+				if(!s.enabled)
+					stat.setText(stat.getText()+"(옵션 꺼짐)");
 			}
 		}
 		
@@ -243,7 +242,9 @@ public class ItemButton {
 				stat.setText(" 무기에 암속성 부여");
 				break;
 			}
-			stat.setEnabled(enable);
+			stat.setEnabled(enable && s.enabled);
+			if(!s.enabled)
+				stat.setText(stat.getText()+"(옵션 꺼짐)");
 		}
 	}
 

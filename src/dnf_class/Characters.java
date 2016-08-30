@@ -13,6 +13,7 @@ import dnf_InterfacesAndExceptions.JobList;
 import dnf_InterfacesAndExceptions.SetName;
 import dnf_calculator.Status;
 import dnf_infomation.GetItemDictionary;
+import dnf_infomation.ItemDictionary;
 
 public class Characters
 {
@@ -31,6 +32,8 @@ public class Characters
 	private int level;
 	private final JobList job;
 	private final Character_type characterType;
+	
+	public ItemDictionary userItemList;
 	
 	String charImageAddress;
 	
@@ -60,12 +63,21 @@ public class Characters
 		
 		villageStatus = new Status();
 		dungeonStatus = new Status();
+		
+		userItemList = (ItemDictionary) GetItemDictionary.itemDictionary.clone();
 	}
 
 	
 	public void equip(Item item)
 	{
 		if(item instanceof Weapon){
+			
+			if(weapon.setName!=SetName.NONE){								//세트아이템
+				if(setOptionList.get(weapon.setName)==1)
+					setOptionList.remove(weapon.setName);
+				else setOptionList.replace(weapon.setName, setOptionList.get(weapon.setName)-1);		//이미 등록된 셋옵 -> 1 감소
+			}
+			
 			Weapon temp = (Weapon)item;
 			if(temp.enabled(job)) weapon=temp;
 			else System.out.println("장착불가");
@@ -74,6 +86,14 @@ public class Characters
 		else if(item instanceof Equipment){
 			Equipment equipment = (Equipment)item; 
 			Equip_part part = equipment.part;
+			
+			if(equipmentList.get(part).setName!=SetName.NONE){								//세트아이템
+				if(setOptionList.get(equipmentList.get(part).setName)==1)
+					setOptionList.remove(equipmentList.get(part).setName);
+				else 
+					setOptionList.replace(equipmentList.get(part).setName, setOptionList.get(equipmentList.get(part).setName)-1);		//이미 등록된 셋옵 -> 1 감소
+			}
+			
 			equipmentList.replace(part, equipment);
 			
 			if(equipment.setName!=SetName.NONE){								//세트아이템
@@ -120,7 +140,8 @@ public class Characters
 			if(equipment.setName!=SetName.NONE){								//세트아이템
 				if(setOptionList.get(equipment.setName)==1)
 					setOptionList.remove(equipment.setName);
-				else setOptionList.replace(equipment.setName, setOptionList.get(equipment.setName)-1);		//이미 등록된 셋옵 -> 1 감소
+				else 
+					setOptionList.replace(equipment.setName, setOptionList.get(equipment.setName)-1);		//이미 등록된 셋옵 -> 1 감소
 			}
 		}
 		else if(item instanceof Avatar){
@@ -159,13 +180,13 @@ public class Characters
 		for(Entry<SetName,Integer> e : setOptionList.entrySet())				//setOptionList(셋옵목록)에 포함된 모든 셋옵 e에 대해
 		{
 			try {
-				LinkedList<SetOption> candidates = GetItemDictionary.getSetOptions(e.getKey());		//e에 해당되는 셋옵 목록 - candidates
+				LinkedList<SetOption> candidates = userItemList.getSetOptions(e.getKey());		//e에 해당되는 셋옵 목록 - candidates
 				for(SetOption s : candidates)
 				{
 					if(s.isEnabled(e.getValue())) statUpdate(s);									//셋옵에 요구되는 장착수를 넘었을 때 셋옵 스탯 더하기
 				}
 			} 
-			catch (ItemFileNotFounded | ItemFileNotReaded e1) {
+			catch (ItemFileNotFounded e1) {
 				e1.printStackTrace();
 			}
 			

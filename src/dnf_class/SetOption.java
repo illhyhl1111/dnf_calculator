@@ -26,6 +26,12 @@ public class SetOption extends Item implements Comparable<SetOption>{
 	
 	public SetName getSetName() { return setName;}
 	
+	public void changeOption(SetOption target)
+	{
+		vStat = target.vStat;
+		dStat = target.dStat;
+	}
+	
 	@Override
 	public boolean equals(Object o) {
         if (!(o instanceof SetOption))

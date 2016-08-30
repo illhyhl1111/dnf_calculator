@@ -1,6 +1,7 @@
 package dnf_UI;
 
 import java.util.AbstractMap;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map.Entry;
@@ -21,47 +22,37 @@ import org.eclipse.swt.widgets.Text;
 
 import dnf_InterfacesAndExceptions.ItemFileNotFounded;
 import dnf_InterfacesAndExceptions.ItemFileNotReaded;
+import dnf_InterfacesAndExceptions.SetName;
 import dnf_InterfacesAndExceptions.StatList;
 import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 import dnf_calculator.ElementInfo;
 import dnf_calculator.StatusAndName;
-import dnf_class.Equipment;
-import dnf_class.Item;
+import dnf_class.SetOption;
 import dnf_infomation.GetItemDictionary;
+import dnf_infomation.ItemDictionary;
 
-class Wrapper {
-	private Text text;
-	private Button button;
-	    
-    public Wrapper(Text text, Button button) {
-       this.text=text;
-       this.button = button;
-    }
-
-    public Text getText() { return this.text; }
-    public Button getButton() { return this.button; }
-}
-
-public class ChangeItemStatus extends Dialog{
-	public Item item;
-	private Item originalItem;
+public class ChangeSetOptionStatus extends Dialog{
+	public LinkedList<SetOption> setOption;
+	private LinkedList<SetOption> originalSet;
 	private Composite composite;
-	private LinkedList<Entry<Integer, Wrapper>> vStatEntry;
-	private LinkedList<Entry<Integer, Wrapper>> dStatEntry;
-	private boolean hasSet;
+	private HashMap<Integer, LinkedList<Entry<Integer, Wrapper>>> vStatEntry;		//순서대로 세트숫자, 해당세트의 각 스탯, 해당스탯, 해당스텟의 변경사항
+	private HashMap<Integer, LinkedList<Entry<Integer, Wrapper>>> dStatEntry;
+	ItemDictionary itemDictionary;
 	
-	public ChangeItemStatus(Shell parent, Item item, boolean hasSet)
+	public ChangeSetOptionStatus(Shell parent, SetName setName, ItemDictionary itemDictionary)
 	{
 		super(parent);
-		this.item=item;
-		this.hasSet=hasSet;
+		this.itemDictionary=itemDictionary;
 		try {
-			originalItem=GetItemDictionary.getEquipment(item.getName());
-		} catch (ItemFileNotReaded | ItemFileNotFounded e) {
+			this.setOption=itemDictionary.getSetOptions(setName);
+			originalSet=GetItemDictionary.getSetOptions(setName);
+		} catch (ItemFileNotFounded e1) {
+			e1.printStackTrace();
+		} catch (ItemFileNotReaded e) {
 			e.printStackTrace();
 		}
-		vStatEntry = new LinkedList<Entry<Integer, Wrapper>>();
-		dStatEntry = new LinkedList<Entry<Integer, Wrapper>>();
+		vStatEntry = new HashMap<Integer, LinkedList<Entry<Integer, Wrapper>>>();
+		dStatEntry = new HashMap<Integer, LinkedList<Entry<Integer, Wrapper>>>();
 	}
 	
 	@Override
@@ -74,68 +65,48 @@ public class ChangeItemStatus extends Dialog{
 		layout.verticalSpacing=3;
 		composite.setLayout(layout);
 		
-		Label stat = new Label(composite, SWT.WRAP);
-		String temp = item.getName();
-		if(item instanceof Equipment && ((Equipment)item).reinforce!=0) temp = "+"+((Equipment)item).reinforce+" "+temp;
-		stat.setText(temp);
-		stat.setLayoutData(new GridData(SWT.LEFT, SWT.TOP,false, false, 4, 1));
-		
-		Label rarity = new Label(composite, SWT.WRAP);
-		rarity.setText(item.getRarity().getName());
-		rarity.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false, 4, 1));
-		
-		//Color nameColor = new Color(composite.getDisplay());
-		switch(item.getRarity())
-		{
-		case EPIC:
-			stat.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_DARK_YELLOW));
-			rarity.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_DARK_YELLOW));
-			break;
-		case UNIQUE:
-			stat.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_MAGENTA));
-			rarity.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_MAGENTA));
-			break;
-		case LEGENDARY:
-			stat.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_DARK_GREEN));
-			rarity.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_DARK_GREEN));
-			break;
-			
-		default:
-		}
-		
-		Label type = new Label(composite, SWT.WRAP);
-		type.setText(item.getTypeName());
-		type.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false, 4, 1));
-		if(item.getTypeName2()!=null)
-		{
-			type = new Label(composite, SWT.WRAP);
-			type.setText(item.getTypeName2());
-			type.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false, 4, 1));
-		}
-		
-		stat = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
-		stat.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 4, 1));
+		Label option;
 		
 		try
 		{
-			Iterator<StatusAndName> maxS = originalItem.vStat.statList.iterator();
-			for(StatusAndName s : item.vStat.statList){
-				Entry<Integer, Wrapper> entry = new AbstractMap.SimpleEntry<Integer, Wrapper>(s.name, setText(composite, s, maxS.next()));
-				vStatEntry.add(entry);
-			}
+			Iterator<SetOption> iterator = originalSet.iterator();
 			
-			if(!item.dStat.statList.isEmpty())
+			for(SetOption set : setOption)													//해당 숫자의 세트옵션(3세트옵, 5세트옵, ..)
 			{
-				stat = new Label(composite, SWT.WRAP);
-				stat.setText("\n――――――던전 입장 시 적용――――――\n\n");
-				stat.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, true, false, 4, 1));
+				int requireNum=set.requireNum;												//필요 세트 숫자
+				SetOption set2= iterator.next();											//비교 세트옵션
+				LinkedList<Entry<Integer, Wrapper>> vStatList = new LinkedList<Entry<Integer, Wrapper>>();			//HashMap에 변경정보 저장
+				vStatEntry.put(requireNum, vStatList);
 				
-				maxS = originalItem.dStat.statList.iterator();
-				for(StatusAndName s : item.dStat.statList){
-					Entry<Integer, Wrapper> entry = new AbstractMap.SimpleEntry<Integer, Wrapper>(s.name, setText(composite, s, maxS.next()));
-					dStatEntry.add(entry);
+				option = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
+				option.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 4, 1));
+				
+				option = new Label(composite, SWT.WRAP);
+				option.setText("["+set.requireNum+"]세트 효과");
+				option.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_GREEN));
+				option.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 4, 1));
+				
+				Iterator<StatusAndName> maxS = set2.vStat.statList.iterator();
+				for(StatusAndName statName : set.vStat.statList){
+					Entry<Integer, Wrapper> entry = new AbstractMap.SimpleEntry<Integer, Wrapper>(statName.name, setText(composite, statName, maxS.next()));
+					vStatList.add(entry);
 				}
-			}
+				if(!set2.dStat.statList.isEmpty())
+				{
+					option = new Label(composite, SWT.WRAP);
+					option.setText("\n――――――던전 입장 시 적용――――――\n\n");
+					option.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, true, false, 4, 1));
+					
+					LinkedList<Entry<Integer, Wrapper>> dStatList = new LinkedList<Entry<Integer, Wrapper>>();			//HashMap에 변경정보 저장
+					dStatEntry.put(requireNum, dStatList);
+					
+					maxS = set2.dStat.statList.iterator();
+					for(StatusAndName statName : set.dStat.statList){
+						Entry<Integer, Wrapper> entry = new AbstractMap.SimpleEntry<Integer, Wrapper>(statName.name, setText(composite, statName, maxS.next()));
+						dStatList.add(entry);
+					}
+				}
+			}			
 		}
 		catch (StatusTypeMismatch e) {
 			e.printStackTrace();
@@ -266,41 +237,7 @@ public class ChangeItemStatus extends Dialog{
 	@Override
 	protected void configureShell(Shell newShell) {
 	    super.configureShell(newShell);
-	    newShell.setText("아이템 능력치 변경");
-	}
-	
-	@Override
-	protected Control createButtonBar(final Composite parent)
-	{
-	    final Composite buttonBar = new Composite(parent, SWT.NONE);
-
-	    final GridLayout layout = new GridLayout();
-	    layout.numColumns = 2;
-	    layout.makeColumnsEqualWidth = false;
-	    layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
-	    buttonBar.setLayout(layout);
-
-	    final GridData data = new GridData(SWT.FILL, SWT.BOTTOM, true, false);
-	    data.grabExcessHorizontalSpace = true;
-	    data.grabExcessVerticalSpace = false;
-	    buttonBar.setLayoutData(data);
-
-	    buttonBar.setFont(parent.getFont());
-
-	    // place a button on the left
-	    if(hasSet){
-		    final Button leftButton = createButton(buttonBar, 2, "세트옵션 변경", false);
-		    leftButton.setText("세트옵션 변경");
-	
-		    final GridData leftButtonData = new GridData(SWT.LEFT, SWT.CENTER, true, true);
-		    leftButton.setLayoutData(leftButtonData);
-	    }
-
-	    // add the dialog's button bar to the right
-	    final Control buttonControl = super.createButtonBar(buttonBar);
-	    buttonControl.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false));
-
-	    return buttonBar;
+	    newShell.setText("세트옵션 능력치 변경");
 	}
 	
 	@Override
@@ -311,20 +248,18 @@ public class ChangeItemStatus extends Dialog{
 	
 	@Override
 	protected void okPressed() {
-		for(Entry<Integer, Wrapper> e : vStatEntry)
-			if(e.getValue()!=null)
-				item.vStat.changeStat(e.getKey(), Double.valueOf(e.getValue().getText().getText()), e.getValue().getButton().getSelection());
-				
-		for(Entry<Integer, Wrapper> e : dStatEntry)
-			if(e.getValue()!=null)
-				item.dStat.changeStat(e.getKey(), Double.valueOf(e.getValue().getText().getText()), e.getValue().getButton().getSelection());
+		for(SetOption s : setOption)													//각 세트옵션(3셋옵, 5셋옵)
+		{
+			for(Entry<Integer, Wrapper> e : vStatEntry.get(s.requireNum))				//for each - 해당 숫자에 해당되는 마을옵션리스트
+				if(e.getValue()!=null)
+					s.vStat.changeStat(e.getKey(), Double.valueOf(e.getValue().getText().getText()), e.getValue().getButton().getSelection());
+			
+			for(Entry<Integer, Wrapper> e : dStatEntry.get(s.requireNum))				//for each - 해당 숫자에 해당되는 던전옵션리스트
+				if(e.getValue()!=null)
+					s.dStat.changeStat(e.getKey(), Double.valueOf(e.getValue().getText().getText()), e.getValue().getButton().getSelection());
+		}
+		
 	    super.okPressed();
-	}
-	
-	protected void buttonPressed(int buttonId) {
-	    setReturnCode(buttonId);
-	    if(buttonId==IDialogConstants.OK_ID) okPressed(); 
-	    close();
 	}
 
 	/*@Override

@@ -125,7 +125,7 @@ class UserItemInfo {
 		        		 if(hasSet){
 		        			 setInfo = new Composite(parent, SWT.BORDER);
 		        			 setInfo.setLayout(layout);
-		        			 itemButtonList[indexBox].setSetInfoComposite(setInfo, character.getSetOptionList().get( ((Equipment)itemButtonList[indexBox].getItem()).setName ));
+		        			 itemButtonList[indexBox].setSetInfoComposite(setInfo, character.getSetOptionList().get( ((Equipment)itemButtonList[indexBox].getItem()).setName ), character.userItemList);
 			        		 setInfoSize = setInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			        		 setInfo.moveAbove(null);
 			        		 setInfo.setBounds((e.x+x0+InterfaceSize.SET_ITEM_INTERVAL+InterfaceSize.ITEM_INFO_SIZE), (e.y+y0), InterfaceSize.SET_INFO_SIZE, setInfoSize.y);

@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 
@@ -77,7 +78,21 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 			if(s.getSetName()==setName) temp.add(s);
 		
 		if(temp.isEmpty()) throw new ItemFileNotFounded(setName.toString());
+		Collections.sort(temp);
 		return temp;
+	}
+	
+	public void setSetOptions(SetName setName, LinkedList<SetOption> list) throws ItemFileNotFounded
+	{
+		for(SetOption s : setOptionList)
+		{
+			if(s.getSetName()==setName){
+				for(SetOption s2 : list){
+					if(s2.requireNum==s.requireNum) s.changeOption(s2);
+					break;
+				}
+			}
+		}
 	}
 	
 	public boolean addEquipment(Equipment equipment)

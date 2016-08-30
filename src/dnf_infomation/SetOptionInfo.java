@@ -20,7 +20,7 @@ public class SetOptionInfo {
 		//거미
 		temp = new SetOption("거미 여왕의 숨결 세트", SetName.SPIDERQUEEN, 4);
 		temp.dStat.addStatList("고정물방깍", new StatusInfo(-12000));
-		temp.dStat.addStatList("고정마방깍", new StatusInfo(-12000), true);
+		temp.dStat.addStatList("고정마방깍", new StatusInfo(-12000));
 		equipList.add(temp);
 		
 		temp = new SetOption("거미 여왕의 숨결 세트", SetName.SPIDERQUEEN, 5);
