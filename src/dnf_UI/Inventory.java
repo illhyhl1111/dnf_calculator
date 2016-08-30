@@ -2,19 +2,24 @@ package dnf_UI;
 
 import java.util.LinkedList;
 
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 
 import dnf_InterfacesAndExceptions.InterfaceSize;
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_class.Characters;
+import dnf_class.Equipment;
 import dnf_class.Item;
+import dnf_infomation.ItemDictionary;
 
 public class Inventory {
+	ItemDictionary itemDictionary;
 	LinkedList<Item> itemList;
 	ItemButton[] inventoryList;
 	final static int inventoryCol = 15;
@@ -33,9 +38,10 @@ public class Inventory {
 	private Integer Y0;
 	private Boolean hasSetOption;
 	
-	public Inventory(Composite parent, LinkedList<Item> itemList, Characters character, UserInfo userInfo)
+	public Inventory(Composite parent, ItemDictionary itemDictionary, Characters character, UserInfo userInfo)
 	{
-		this.itemList=itemList;
+		this.itemDictionary=itemDictionary;
+		this.itemList=itemDictionary.getAllItemList();
 		this.character=character;
 		this.userInfo=userInfo;
 		this.parent=parent;
@@ -84,7 +90,23 @@ public class Inventory {
 			        				 userInfo.renew();
 			        				 if(!itemInfo.isDisposed()) itemInfo.dispose();
 			        			 }
+			        			 if(itemInfo!=null && !itemInfo.isDisposed()){
+					        		 //System.out.println("Mouse Exited "+i.getName());
+					        		 itemInfo.dispose();
+					        		 if(hasSetOption) setInfo.dispose();
+					        	 }
 			        		 }
+			        	 }
+			        	 else if(e.button==1 && inventoryList[indexBox].enabled)
+			        	 {
+			        		ChangeItemStatus temp = new ChangeItemStatus((Shell)parent, inventoryList[indexBox].getItem());
+							//save = (Item) inventoryList[indexBox].getItem().clone();
+							if (Window.OK == temp.open()) {
+								inventoryList[indexBox].setItem(temp.item);
+								character.unequip(i);
+								character.equip(i);
+							}
+			        		userInfo.renew();
 			        	 }
 			        	 //System.out.println("Mouse Down (button: " + e.button + " x: " + e.x + " y: " + e.y + ")");
 			         }
@@ -109,7 +131,7 @@ public class Inventory {
 			        		 if(hasSet){
 			        			 setInfo = new Composite(parent, SWT.BORDER);
 			        			 setInfo.setLayout(layout);
-				        		 inventoryList[indexBox].setSetInfoComposite(setInfo);
+				        		 inventoryList[indexBox].setSetInfoComposite(setInfo, character.getSetOptionList().get( ((Equipment)inventoryList[indexBox].getItem()).setName ));
 				        		 setInfoSize = setInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 				        		 setInfo.moveAbove(null);
 			        		 }

@@ -1,10 +1,11 @@
 package dnf_calculator;
 import java.util.LinkedList;
 
+import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 import dnf_InterfacesAndExceptions.UndefinedStatusKey;
 
 @SuppressWarnings("serial")
-public class StatusList implements java.io.Serializable {
+public class StatusList implements java.io.Serializable, Cloneable {
 	
 	public LinkedList<StatusAndName> statList;
 	
@@ -64,6 +65,21 @@ public class StatusList implements java.io.Serializable {
 			}
 		addStatList(name, stat);
 	}
+	public void changeStat(int name, double stat, boolean enable)
+	{
+		for(StatusAndName s : statList)
+			if(s.name==name){
+				if(s.changeable)
+					try {
+						s.stat.setInfo(stat);
+					} catch (StatusTypeMismatch e) {
+						e.printStackTrace();
+					}
+				if(s.enableable)
+					s.enabled=enable;
+				break;
+			}
+	}
 	
 	public boolean findChangeable(int name)
 	{
@@ -78,6 +94,18 @@ public class StatusList implements java.io.Serializable {
 	public void addListToStat(Status stat)
 	{
 		for(StatusAndName s : statList)
-			stat.addStat(s.name, s.stat);
+			if(s.enabled) stat.addStat(s.name, s.stat);
+	}
+	
+	@Override
+	public Object clone() throws CloneNotSupportedException
+	{
+		StatusList temp = (StatusList) super.clone();
+		temp.statList = new LinkedList<StatusAndName>();
+		for(StatusAndName s : statList)
+		{
+			temp.statList.add((StatusAndName)s.clone());
+		}
+		return temp;
 	}
 }

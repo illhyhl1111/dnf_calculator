@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Listener;
 import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.InterfaceSize;
 import dnf_class.Characters;
+import dnf_class.Equipment;
 import dnf_class.Item;
 
 class UserItemInfo {
@@ -94,6 +95,11 @@ class UserItemInfo {
 		        	 if(e.button==3){
 		        		 character.unequip(temp.getItem());
 		        		 superInfo.renew();
+		        		 if(itemInfo!=null && !itemInfo.isDisposed()){
+			        		 //System.out.println("Mouse Exited "+i.getName());
+			        		 itemInfo.dispose();
+			        		 if(hasSetOption) setInfo.dispose();
+			        	 }
 		        	 }
 		        	 //System.out.println("Mouse Down (button: " + e.button + " x: " + e.x + " y: " + e.y + ")");
 		         }
@@ -119,7 +125,7 @@ class UserItemInfo {
 		        		 if(hasSet){
 		        			 setInfo = new Composite(parent, SWT.BORDER);
 		        			 setInfo.setLayout(layout);
-		        			 itemButtonList[indexBox].setSetInfoComposite(setInfo);
+		        			 itemButtonList[indexBox].setSetInfoComposite(setInfo, character.getSetOptionList().get( ((Equipment)itemButtonList[indexBox].getItem()).setName ));
 			        		 setInfoSize = setInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			        		 setInfo.moveAbove(null);
 			        		 setInfo.setBounds((e.x+x0+InterfaceSize.SET_ITEM_INTERVAL+InterfaceSize.ITEM_INFO_SIZE), (e.y+y0), InterfaceSize.SET_INFO_SIZE, setInfoSize.y);
@@ -132,10 +138,10 @@ class UserItemInfo {
 			itemButtonList[i].getButton().addListener(SWT.MouseExit, new Listener() {
 		         @Override
 		         public void handleEvent(Event e) {
-		        	 if(itemButtonList[indexBox].enabled){
+		        	 if(itemButtonList[indexBox].enabled && itemInfo !=null){
 		        		 //System.out.println("Mouse Exited "+i.getName());
 		        		 itemInfo.dispose();
-		        		 if(hasSetOption) setInfo.dispose();
+		        		 if(hasSetOption && setInfo!=null) setInfo.dispose();
 		        	 }
 		         }
 		     });
@@ -144,7 +150,7 @@ class UserItemInfo {
 			itemButtonList[i].getButton().addListener(SWT.MouseMove, new Listener() {
 		         @Override
 		         public void handleEvent(Event e) {
-		        	 if(itemButtonList[indexBox].enabled && !itemInfo.isDisposed()){
+		        	 if(itemButtonList[indexBox].enabled && itemInfo!=null && !itemInfo.isDisposed()){
 		        		 //System.out.println("Mouse Move (button: " + e.button + " x: " + (e.x+x0) + " y: " + (e.y+y0) + ")");
 		        		 itemInfo.setLocation((e.x+x0), (e.y+y0));
 		        		 if(hasSetOption) setInfo.setLocation((e.x+x0+InterfaceSize.SET_ITEM_INTERVAL+InterfaceSize.ITEM_INFO_SIZE), (e.y+y0));

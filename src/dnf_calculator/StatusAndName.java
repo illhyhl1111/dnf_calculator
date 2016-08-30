@@ -6,12 +6,13 @@ import dnf_InterfacesAndExceptions.StatList;
 import dnf_InterfacesAndExceptions.UndefinedStatusKey;
 
 @SuppressWarnings("serial")
-public class StatusAndName implements java.io.Serializable
+public class StatusAndName implements java.io.Serializable, Cloneable
 {
 	public int name;
 	public AbstractStatusInfo stat;
 	public boolean changeable;
 	public boolean enableable;
+	public boolean enabled;
 	private static HashMap<Integer, String> reverseHash = new HashMap<Integer, String>();
 	private static boolean reverseHashsetted = false;
 	
@@ -21,12 +22,14 @@ public class StatusAndName implements java.io.Serializable
 		this.stat=stat;
 		changeable=false;
 		enableable=false;
+		enabled=true;
 	}
 	public StatusAndName(String name, AbstractStatusInfo stat) throws UndefinedStatusKey
 	{
 		this.stat=stat;
 		changeable=false;
 		enableable=false;
+		enabled=true;
 		if(Status.getStatHash().containsKey(name)) this.name = Status.getStatHash().get(name);
 		else throw new UndefinedStatusKey(name);
 	}
@@ -36,12 +39,14 @@ public class StatusAndName implements java.io.Serializable
 		this.stat=stat;
 		this.changeable=changeable;
 		enableable=false;
+		enabled=true;
 	}
 	public StatusAndName(String name, AbstractStatusInfo stat, boolean changeable) throws UndefinedStatusKey
 	{
 		this.stat=stat;
 		this.changeable=changeable;
 		enableable=false;
+		enabled=true;
 		if(Status.getStatHash().containsKey(name)) this.name = Status.getStatHash().get(name);
 		else throw new UndefinedStatusKey(name);
 	}
@@ -51,12 +56,14 @@ public class StatusAndName implements java.io.Serializable
 		this.stat=stat;
 		this.changeable=changeable;
 		this.enableable=enableable;
+		enabled=true;
 	}
 	public StatusAndName(String name, AbstractStatusInfo stat, boolean changeable, boolean enableable) throws UndefinedStatusKey
 	{
 		this.stat=stat;
 		this.changeable=changeable;
 		this.enableable=enableable;
+		enabled=true;
 		if(Status.getStatHash().containsKey(name)) this.name = Status.getStatHash().get(name);
 		else throw new UndefinedStatusKey(name);
 	}
@@ -102,5 +109,13 @@ public class StatusAndName implements java.io.Serializable
 		reverseHash.put(StatList.BUF_INC, "데미지 증가 버프(%) +"); reverseHash.put(StatList.BUF_CRT, "크리티컬 데미지 증가 버프(%) +");
 		
 		reverseHashsetted=true;
+	}
+	
+	@Override
+	public Object clone() throws CloneNotSupportedException
+	{
+		StatusAndName temp = (StatusAndName) super.clone();
+		temp.stat = (AbstractStatusInfo) stat.clone();
+		return temp;
 	}
 }

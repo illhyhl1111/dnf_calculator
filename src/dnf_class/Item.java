@@ -22,7 +22,7 @@ public class Item implements Cloneable, java.io.Serializable
 	}
 	public Item()
 	{
-		name="이름없음";
+		name="없음";
 		iconAddress="image\\default.png";
 		rarity=Item_rarity.NONE;
 		vStat = new StatusList();
@@ -38,16 +38,20 @@ public class Item implements Cloneable, java.io.Serializable
 	public Item_rarity getRarity() { return rarity;}
 	public void setRarity(Item_rarity rarity) { this.rarity = rarity;}
 	
+	@Override
 	public Object clone() throws CloneNotSupportedException
 	{
-		return super.clone();
+		Item temp = (Item) super.clone();
+		temp.vStat = (StatusList) vStat.clone();
+		temp.dStat = (StatusList) dStat.clone();
+		return temp;
 	}
 	
 	@Override
 	public boolean equals(Object o)
 	{
 		if(o instanceof Item)
-			if(name.equals(((Item) o).name)) return true;
+			if(name.equals(((Item) o).getName()) ) return true;
 		return false;
 	}
 	

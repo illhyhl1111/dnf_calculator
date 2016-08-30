@@ -1,5 +1,8 @@
 package dnf_UI;
 
+import java.util.Collections;
+import java.util.LinkedList;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
@@ -11,10 +14,14 @@ import org.eclipse.swt.widgets.Label;
 import dnf_InterfacesAndExceptions.SetName;
 import dnf_InterfacesAndExceptions.StatList;
 import dnf_InterfacesAndExceptions.StatusTypeMismatch;
+import dnf_InterfacesAndExceptions.ItemFileNotFounded;
+import dnf_InterfacesAndExceptions.ItemFileNotReaded;
 import dnf_calculator.ElementInfo;
 import dnf_calculator.StatusAndName;
 import dnf_class.Equipment;
 import dnf_class.Item;
+import dnf_class.SetOption;
+import dnf_infomation.GetItemDictionary;
 
 public class ItemButton {
 	private Button button;
@@ -63,10 +70,70 @@ public class ItemButton {
 		else return true;
 	}
 	
-	public void setSetInfoComposite(Composite itemInfo)
+	public void setSetInfoComposite(Composite itemInfo, int setNum)
 	{
 		Label name = new Label(itemInfo, SWT.WRAP);
-		name.setText("안녕");
+		Equipment equipment = (Equipment)item; 
+		name.setText(equipment.setName.getName());
+		name.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_GREEN));
+		
+		Label option;
+		
+		try
+		{
+			LinkedList<SetOption> setOptionList = GetItemDictionary.getSetOptions(equipment.setName);
+			Collections.sort(setOptionList);
+			
+			for(SetOption s : setOptionList)
+			{
+				if(s.isEnabled(setNum))
+				{
+					option = new Label(itemInfo, SWT.SEPARATOR | SWT.HORIZONTAL);
+					option.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 4, 1));
+					
+					option = new Label(itemInfo, SWT.WRAP);
+					option.setText("["+s.requireNum+"]세트 효과");
+					option.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_GREEN));
+					
+					for(StatusAndName s2 : s.vStat.statList)
+						setText(itemInfo, s2);
+					if(!item.dStat.statList.isEmpty())
+					{
+						option = new Label(itemInfo, SWT.WRAP);
+						option.setText("\n――――――던전 입장 시 적용――――――\n\n");
+						for(StatusAndName s2 : s.dStat.statList)
+							setText(itemInfo, s2);
+					}
+				}
+				
+				else
+				{
+					option = new Label(itemInfo, SWT.SEPARATOR | SWT.HORIZONTAL);
+					option.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 4, 1));
+					
+					option = new Label(itemInfo, SWT.WRAP);
+					option.setText("["+s.requireNum+"]세트 효과");
+					option.setEnabled(false);
+					
+					for(StatusAndName s2 : s.vStat.statList)
+						setText(itemInfo, s2, false);
+					if(!item.dStat.statList.isEmpty())
+					{
+						option = new Label(itemInfo, SWT.WRAP);
+						option.setText("\n――――――던전 입장 시 적용――――――\n\n");
+						option.setEnabled(false);
+						for(StatusAndName s2 : s.dStat.statList)
+							setText(itemInfo, s2, false);
+					}
+				}
+			}			
+		}
+		catch (StatusTypeMismatch e) {
+			e.printStackTrace();
+		}
+		catch (ItemFileNotReaded | ItemFileNotFounded e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void setItemInfoComposite(Composite itemInfo)
@@ -109,8 +176,8 @@ public class ItemButton {
 			type.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, true, false));
 		}
 		
-		stat = new Label(itemInfo, SWT.WRAP);
-		stat.setText("――――――――――――――――――――\n");
+		stat = new Label(itemInfo, SWT.SEPARATOR | SWT.HORIZONTAL);
+		stat.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 4, 1));
 		
 		try
 		{
@@ -132,12 +199,31 @@ public class ItemButton {
 	
 	public void setText(Composite itemInfo, StatusAndName s) throws StatusTypeMismatch
 	{
+		setText(itemInfo, s, true);
+	}
+	
+	public void setText(Composite itemInfo, StatusAndName s, boolean enable) throws StatusTypeMismatch
+	{
 		String strength;
 		Label stat;
+		
 		strength = String.valueOf(s.stat.getStatToDouble());
-		if(strength.contains(".0")) strength=strength.substring(0, strength.length()-2); 
-		stat = new Label(itemInfo, SWT.WRAP);
-		stat.setText(StatusAndName.getStatHash().get(s.name)+strength);
+		if(s.stat instanceof ElementInfo && strength.equals("0.0"));
+		else{
+			if(strength.contains(".0")){
+				strength=strength.substring(0, strength.length()-2);
+				stat = new Label(itemInfo, SWT.WRAP);
+				
+				if(strength.contains("-")){
+					String name = StatusAndName.getStatHash().get(s.name);
+					if(name.contains("+")) stat.setText(name.substring(0, name.length()-1)+strength);
+					else if(name.contains("-")) stat.setText(name.substring(0, name.length()-1)+"+"+strength.substring(1, strength.length()));
+					else stat.setText(name+strength);
+				}
+				else stat.setText(StatusAndName.getStatHash().get(s.name)+strength);
+				stat.setEnabled(enable);
+			}
+		}
 		
 		if(s.stat instanceof ElementInfo && ((ElementInfo)s.stat).getElementEnabled()==true)
 		{
@@ -157,6 +243,7 @@ public class ItemButton {
 				stat.setText(" 무기에 암속성 부여");
 				break;
 			}
+			stat.setEnabled(enable);
 		}
 	}
 

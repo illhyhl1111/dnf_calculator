@@ -117,7 +117,7 @@ public class Vault extends Dialog {
 			        		 if(hasSet){
 			        			 setInfo = new Composite(parent, SWT.BORDER);
 			        			 setInfo.setLayout(layout);
-			        			 vault[indexBox].setSetInfoComposite(setInfo);
+			        			 vault[indexBox].setSetInfoComposite(setInfo, 0);
 				        		 setInfoSize = setInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 				        		 setInfo.moveAbove(null);
 			        		 }
@@ -142,7 +142,7 @@ public class Vault extends Dialog {
 			         @Override
 			         public void handleEvent(Event e) {
 			        	 if(vault[indexBox].enabled){
-			        		 if(!itemInfo.isDisposed()){
+			        		 if(itemInfo!=null && !itemInfo.isDisposed()){
 			        			 itemInfo.dispose();
 			        			 if(hasSetOption) setInfo.dispose();
 			        		 }
@@ -155,7 +155,7 @@ public class Vault extends Dialog {
 			         @Override
 			         public void handleEvent(Event e) {
 			        	 if(vault[indexBox].enabled){
-			        		 if(!itemInfo.isDisposed()){
+			        		 if(itemInfo!=null && !itemInfo.isDisposed()){
 				        		 itemInfo.setLocation((e.x+X0), (e.y+Y0));
 				        		 if(hasSetOption) setInfo.setLocation((e.x+X0+InterfaceSize.SET_ITEM_INTERVAL+InterfaceSize.ITEM_INFO_SIZE), (e.y+Y0));
 			        		 }
@@ -199,6 +199,11 @@ public class Vault extends Dialog {
 	protected void setShellStyle(int newShellStyle) {           
 	    super.setShellStyle(SWT.CLOSE | SWT.MODELESS| SWT.BORDER | SWT.TITLE);
 	    setBlockOnOpen(false);
+	}
+	
+	@Override
+	protected boolean isResizable() {
+	    return true;
 	}
 	
 	public ItemButton getItem(String name) throws ItemNotFoundedException

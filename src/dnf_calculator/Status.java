@@ -107,7 +107,7 @@ public class Status implements Cloneable {
 		statHash.put("물리마스터리2", StatList.MAST_PHY_2); statHash.put("마법마스터리2", StatList.MAST_MAG_2);
 		
 		statHash.put("모속강", StatList.ELEM_ALL); statHash.put("모속", StatList.ELEM_ALL);
-		
+
 		statHashsetted=true;
 	}
 	

@@ -1,16 +1,21 @@
 package dnf_infomation;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashSet;
 import java.util.LinkedList;
 
+import dnf_InterfacesAndExceptions.ItemFileNotFounded;
+import dnf_InterfacesAndExceptions.SetName;
 import dnf_class.Equipment;
 import dnf_class.Item;
 import dnf_class.SetOption;
 
-public class ItemDictionary implements java.io.Serializable 
+public class ItemDictionary implements java.io.Serializable, Cloneable
 {
 	/**
 	 * 
@@ -56,6 +61,58 @@ public class ItemDictionary implements java.io.Serializable
 		//for(Item e : etcList)
 			//list.add(e);
 		return list;
+	}
+		
+	public Equipment getEquipment(String name) throws ItemFileNotFounded
+	{
+		for(Equipment e : equipList)
+			if(e.getName().equals(name)) return e;
+		throw new ItemFileNotFounded(name);
+	}
+	
+	public LinkedList<SetOption> getSetOptions(SetName setName) throws ItemFileNotFounded
+	{
+		LinkedList<SetOption> temp = new LinkedList<SetOption>();
+		for(SetOption s : setOptionList)
+			if(s.getSetName()==setName) temp.add(s);
+		
+		if(temp.isEmpty()) throw new ItemFileNotFounded(setName.toString());
+		return temp;
+	}
+	
+	public boolean addEquipment(Equipment equipment)
+	{
+		for(Equipment e : equipList)
+			if(e.getName().equals(equipment.getName())){
+				return false;
+			}
+		equipList.add(equipment);
+		return true;
+	}
+	
+	@Override
+	public Object clone()
+	{
+		ItemDictionary itemDictionary;
+		try{
+			ObjectInputStream in = new ObjectInputStream(new FileInputStream("ItemDictionary.dfd"));
+			Object temp = in.readObject();
+
+			itemDictionary = (ItemDictionary)temp;
+			in.close();
+			return itemDictionary;
+		}
+		catch(FileNotFoundException e)
+		{	
+			itemDictionary = new ItemDictionary();
+			SaveItemDictionary.main(null);
+			return itemDictionary;
+		}
+		catch(IOException | ClassNotFoundException e)
+		{
+			e.printStackTrace();
+			return null;
+		}
 	}
 }
 

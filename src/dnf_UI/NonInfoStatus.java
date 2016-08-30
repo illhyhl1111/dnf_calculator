@@ -44,7 +44,7 @@ public class NonInfoStatus extends StatusUI
 		GridData statusGridData = new GridData(SWT.FILL, SWT.TOP, true, false);
 		
 		int i;
-		TextInputOnlyNumbers floatFormat = new TextInputOnlyNumbers();
+		//TextInputOnlyNumbers floatFormat = new TextInputOnlyNumbers();
 		for(i=0; i<Status.nonInfoStatNum; i++){
 			if(Status.nonInfoStatOrder[i].contains("속성부여"))
 			{
@@ -56,7 +56,7 @@ public class NonInfoStatus extends StatusUI
 			{
 				infoStatusText[i] = new LabelAndText(infoStatusComposite, Status.nonInfoStatOrder[i], "");
 				infoStatusText[i].composite.setLayoutData(statusGridData);
-				((Text) infoStatusText[i].input).addVerifyListener(floatFormat);
+				//((Text) infoStatusText[i].input).addVerifyListener(floatFormat);
 			}
 		}
 		renew();

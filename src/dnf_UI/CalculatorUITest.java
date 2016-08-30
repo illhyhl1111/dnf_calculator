@@ -1,5 +1,7 @@
 package dnf_UI;
 
+import java.util.LinkedList;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -19,13 +21,13 @@ import dnf_InterfacesAndExceptions.JobList;
 import dnf_InterfacesAndExceptions.MonsterType;
 import dnf_InterfacesAndExceptions.Monster_StatList;
 import dnf_InterfacesAndExceptions.StatusTypeMismatch;
-import dnf_InterfacesAndExceptions.ItemFileNotReaded;
 import dnf_InterfacesAndExceptions.ItemFileNotFounded;
 import dnf_calculator.Calculator;
 import dnf_calculator.Status;
 import dnf_class.Characters;
 import dnf_class.Monster;
 import dnf_infomation.GetItemDictionary;
+import dnf_infomation.ItemDictionary;
 
 
 public class CalculatorUITest {
@@ -35,29 +37,6 @@ public class CalculatorUITest {
 
 			GetItemDictionary.readFile();
 			Characters character = new Characters(86, JobList.LAUNCHER_F);
-			character.equip(GetItemDictionary.getEquipment("우요의 황금 캐넌"));
-			
-			character.equip(GetItemDictionary.getEquipment("타란튤라 상의"));
-			character.equip(GetItemDictionary.getEquipment("킹바분 하의"));
-			character.equip(GetItemDictionary.getEquipment("골리앗 버드이터 어깨"));
-			character.equip(GetItemDictionary.getEquipment("로즈헤어 벨트"));
-			character.equip(GetItemDictionary.getEquipment("인디언 오너멘탈 신발"));
-			character.equip(GetItemDictionary.getEquipment("탐식의 증적"));
-			
-			character.equip(GetItemDictionary.getEquipment("무한한 탐식의 형상"));
-			character.equip(GetItemDictionary.getEquipment("필리르 - 꺼지지 않는 화염"));
-			character.equip(GetItemDictionary.getEquipment("무한한 탐식의 잔재"));
-			character.equip(GetItemDictionary.getEquipment("탐식의 근원"));
-			
-			Monster object = new Monster(new Status());
-			object.setBooleanStat(Monster_StatList.BACKATK, true);
-			object.setBooleanStat(Monster_StatList.COUNTER, true);
-			object.setStat(Monster_StatList.DIFFICULTY, DefenceIgnorePenalty.ANTON_NOR);
-			object.setStat(Monster_StatList.FIRE_RESIST, 40);
-			object.setStat(Monster_StatList.DEFENSIVE_PHY, 135000);
-			object.setStat(Monster_StatList.DEFENSIVE_MAG, 135000);
-			object.setStat(Monster_StatList.LEVEL, 115);
-			object.setStat(Monster_StatList.TYPE, MonsterType.BOSS);
 
 			//StatusUI_Test.openStatusUI(10000, 100000, 1000, object, character, 1, false);
 			//StatusUI_Test.openStatusUI(10000, 100000, 1000, object, character, 1, true);
@@ -72,10 +51,37 @@ public class CalculatorUITest {
 	        UserInfo itemInfo;
 	        Inventory inventory; 
 	        Vault vault;
+			ItemDictionary userItemList = (ItemDictionary) GetItemDictionary.itemDictionary.clone();
+			
+			character.equip(userItemList.getEquipment("우요의 황금 캐넌"));
+			
+			character.equip(userItemList.getEquipment("타란튤라 상의"));
+			character.equip(userItemList.getEquipment("킹바분 하의"));
+			character.equip(userItemList.getEquipment("골리앗 버드이터 어깨"));
+			character.equip(userItemList.getEquipment("로즈헤어 벨트"));
+			character.equip(userItemList.getEquipment("인디언 오너멘탈 신발"));
+			character.equip(userItemList.getEquipment("탐식의 증적"));
+			
+			character.equip(userItemList.getEquipment("무한한 탐식의 형상"));
+			character.equip(userItemList.getEquipment("필리르 - 꺼지지 않는 화염"));
+			character.equip(userItemList.getEquipment("무한한 탐식의 잔재"));
+			character.equip(userItemList.getEquipment("탐식의 근원"));
+			
+			Monster object = new Monster(new Status());
+			object.setBooleanStat(Monster_StatList.BACKATK, true);
+			object.setBooleanStat(Monster_StatList.COUNTER, true);
+			object.setStat(Monster_StatList.DIFFICULTY, DefenceIgnorePenalty.ANTON_NOR);
+			object.setStat(Monster_StatList.FIRE_RESIST, 40);
+			object.setStat(Monster_StatList.DEFENSIVE_PHY, 135000);
+			object.setStat(Monster_StatList.DEFENSIVE_MAG, 135000);
+			object.setStat(Monster_StatList.LEVEL, 115);
+			object.setStat(Monster_StatList.TYPE, MonsterType.BOSS);
+	        
 	        itemInfo = new UserInfo(shell, character);
-	        inventory = new Inventory(shell, GetItemDictionary.itemDictionary.getAllItemList(), character, itemInfo);
+	        inventory = new Inventory(shell, userItemList, character, itemInfo);
 	        vault = new Vault(shell, GetItemDictionary.itemDictionary.getAllItemList(), inventory);
 	        inventory.setListener(vault);
+	        
 	        
 	        itemInfo.getComposite().setLayoutData(new FormData());
 	        FormData inventoryData = new FormData();
@@ -104,7 +110,7 @@ public class CalculatorUITest {
 	        }
 	        display.dispose();
 		}
-		catch(StatusTypeMismatch | ItemFileNotReaded | ItemFileNotFounded e)
+		catch(StatusTypeMismatch | ItemFileNotFounded e)
 		{
 			e.printStackTrace();
 		}

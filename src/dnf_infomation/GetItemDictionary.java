@@ -42,21 +42,13 @@ public class GetItemDictionary
 	public static Equipment getEquipment(String name) throws ItemFileNotReaded, ItemFileNotFounded
 	{
 		if(!readed) throw new ItemFileNotReaded();
-		for(Equipment e : itemDictionary.equipList)
-			if(e.getName().equals(name)) return e;
-		throw new ItemFileNotFounded(name);
+		return itemDictionary.getEquipment(name);
 	}
 	
 	public static LinkedList<SetOption> getSetOptions(SetName setName) throws ItemFileNotReaded, ItemFileNotFounded
 	{
 		if(!readed) throw new ItemFileNotReaded();
-		
-		LinkedList<SetOption> temp = new LinkedList<SetOption>();
-		for(SetOption s : itemDictionary.setOptionList)
-			if(s.getSetName()==setName) temp.add(s);
-		
-		if(temp.isEmpty()) throw new ItemFileNotFounded(setName.toString());
-		return temp;
+		return itemDictionary.getSetOptions(setName);
 	}
 	
 }

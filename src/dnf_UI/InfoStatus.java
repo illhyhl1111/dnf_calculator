@@ -40,11 +40,11 @@ public class InfoStatus extends StatusUI
 		GridData statusGridData = new GridData(SWT.FILL, SWT.TOP, true, false);
 		
 		int i;
-		TextInputOnlyNumbers floatFormat = new TextInputOnlyNumbers();
+		//TextInputOnlyNumbers floatFormat = new TextInputOnlyNumbers();
 		for(i=0; i<Status.infoStatNum; i++){
 			infoStatusText[i] = new LabelAndText(infoStatusComposite, Status.infoStatOrder[i], "");
 			infoStatusText[i].composite.setLayoutData(statusGridData);
-			((Text) infoStatusText[i].input).addVerifyListener(floatFormat);
+			//((Text) infoStatusText[i].input).addVerifyListener(floatFormat);
 			
 			if(Status.infoStatOrder[i].equals("독립공격")){																//독공
 				infoStatusText[i].composite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 2, 1));

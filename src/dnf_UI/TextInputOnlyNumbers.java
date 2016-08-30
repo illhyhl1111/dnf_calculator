@@ -6,6 +6,16 @@ import org.eclipse.swt.widgets.Text;
 
 public class TextInputOnlyNumbers implements VerifyListener
 {
+	int max;
+	TextInputOnlyNumbers(int max)
+	{
+		this.max=max;
+	}
+	TextInputOnlyNumbers()
+	{
+		this.max=Integer.MAX_VALUE;
+	}
+	
 	@Override
     public void verifyText(VerifyEvent e) {
 
@@ -32,6 +42,10 @@ public class TextInputOnlyNumbers implements VerifyListener
         	
         if(newS.isEmpty() || newS.equals("-")){
         	e.doit = true;
+        }
+        else if(Float.valueOf(newS)>max){
+        	e.doit = false;
+        	((Text)e.widget).setText(String.valueOf(max));
         }
     }
 }

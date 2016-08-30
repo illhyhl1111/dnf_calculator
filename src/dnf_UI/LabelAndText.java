@@ -13,9 +13,11 @@ abstract class LabelAndInput
 	Label label;
 	Composite composite;
 	Widget input;
+	Composite parent;
 	
 	public LabelAndInput(Composite parent, String LabelString)
 	{
+		this.parent=parent;
 		composite = new Composite(parent, SWT.NONE);
 		GridLayout compositeLayout = new GridLayout();
 		compositeLayout.numColumns=2;
@@ -53,14 +55,17 @@ public class LabelAndText extends LabelAndInput
 		GridData textData = new GridData(SWT.LEFT, SWT.TOP, true, false);
 		textData.grabExcessHorizontalSpace=true;
 		textData.minimumWidth=80;
-		textData.heightHint=20;;
+		textData.heightHint=20;
 		((Text)input).setLayoutData(textData);
 		((Text)input).setText(TextString);
 		//text.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
         //text.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
 	}
 	
-	public void setInputEnable(boolean bool) { ((Text)input).setEnabled(bool); }
+	public void setInputEnable(boolean bool) {
+		((Text)input).setEnabled(bool);
+		if(!bool) ((Text)input).setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+	}
 	public void setTextString(String str) {((Text)input).setText(str);}
 	public void setTextData(GridData gridData)
 	{
