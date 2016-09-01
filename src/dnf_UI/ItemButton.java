@@ -10,6 +10,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
+import dnf_InterfacesAndExceptions.Dimension_stat;
 import dnf_InterfacesAndExceptions.SetName;
 import dnf_InterfacesAndExceptions.StatList;
 import dnf_InterfacesAndExceptions.StatusTypeMismatch;
@@ -71,7 +72,7 @@ public class ItemButton {
 	public void setSetInfoComposite(Composite itemInfo, int setNum, ItemDictionary itemDictionary)
 	{
 		Label name = new Label(itemInfo, SWT.WRAP);
-		Equipment equipment = (Equipment)item; 
+		Equipment equipment = (Equipment)item;
 		name.setText(equipment.setName.getName());
 		name.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_GREEN));
 		
@@ -134,10 +135,10 @@ public class ItemButton {
 	}
 	
 	public void setItemInfoComposite(Composite itemInfo)
-	{
+	{	
 		Label stat = new Label(itemInfo, SWT.WRAP);
 		String temp = item.getName();
-		if(item instanceof Equipment && ((Equipment)item).reinforce!=0) temp = "+"+((Equipment)item).reinforce+" "+temp;
+		if(item instanceof Equipment && ((Equipment)item).getReinforce()!=0) temp = "+"+((Equipment)item).getReinforce()+" "+temp;
 		stat.setText(temp);
 		
 		Label rarity = new Label(itemInfo, SWT.WRAP);
@@ -172,13 +173,65 @@ public class ItemButton {
 			type.setText(item.getTypeName2());
 			type.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, true, false));
 		}
-		
-		stat = new Label(itemInfo, SWT.SEPARATOR | SWT.HORIZONTAL);
-		stat.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 4, 1));
+		if(item instanceof Equipment){
+			type = new Label(itemInfo, SWT.WRAP);
+			type.setText(String.valueOf("레벨제한 "+ ((Equipment)item).level) );
+			type.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, true, false));
+		}
 		
 		try
 		{
-			for(StatusAndName s : item.vStat.statList)
+			StatusAndName dimStat;
+			StatusAndName phyIgnStat;
+			StatusAndName magIgnStat;
+			StatusAndName aidStat;
+			
+			try{
+				dimStat = item.vStat.statList.get(item.getDimStatIndex());
+				
+				if(((Equipment)item).getDimentionStat()!=Dimension_stat.NONE){
+					stat = new Label(itemInfo, SWT.WRAP);
+					stat.setText(" 차원의 "+StatusAndName.getStatHash().get(dimStat.name)+String.valueOf((int)dimStat.stat.getStatToDouble()));
+					stat.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_MAGENTA));
+				}
+			} catch(IndexOutOfBoundsException e){
+				dimStat=null;
+			}
+			
+			try{
+				phyIgnStat = item.vStat.statList.get(item.getIgnIndex());
+				magIgnStat = item.vStat.statList.get(item.getIgnIndex()+1);
+				
+				if(((Equipment)item).getReinforce()!=0){
+					stat = new Label(itemInfo, SWT.WRAP);
+					stat.setText(StatusAndName.getStatHash().get(phyIgnStat.name)+String.valueOf((int)phyIgnStat.stat.getStatToDouble()));
+					stat.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLUE));
+					
+					stat = new Label(itemInfo, SWT.WRAP);
+					stat.setText(StatusAndName.getStatHash().get(magIgnStat.name)+String.valueOf((int)magIgnStat.stat.getStatToDouble()));
+					stat.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLUE));
+				}
+			} catch(IndexOutOfBoundsException e){
+				phyIgnStat=null;
+				magIgnStat=null;
+			}
+			
+			try{
+				aidStat = item.vStat.statList.get(item.getAidStatIndex());
+				
+				if(((Equipment)item).getReinforce()!=0){
+					stat = new Label(itemInfo, SWT.WRAP);
+					stat.setText(" 힘,지능,체력,정신력 +"+String.valueOf((int)aidStat.stat.getStatToDouble()));
+					stat.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLUE));
+				}
+			} catch(IndexOutOfBoundsException e){
+				aidStat=null;
+			}
+			
+			stat = new Label(itemInfo, SWT.SEPARATOR | SWT.HORIZONTAL);
+			stat.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 4, 1));
+			
+			for(StatusAndName s : item.vStat.statList.subList(item.getItemStatIndex(), item.vStat.statList.size()))
 				setText(itemInfo, s);
 			
 			if(!item.dStat.statList.isEmpty())

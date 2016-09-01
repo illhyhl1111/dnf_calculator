@@ -56,5 +56,10 @@ public class Item implements Cloneable, java.io.Serializable
 	}
 	
 	public String getTypeName() { return "아이템";}
-	public String getTypeName2() { return null;} 
+	public String getTypeName2() { return null;}
+	
+	public int getAidStatIndex() { return -1;}
+	public int getDimStatIndex(){ return -1;}
+	public int getIgnIndex(){ return -1;}
+	public int getItemStatIndex() { return 0;}
 }

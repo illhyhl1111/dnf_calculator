@@ -17,12 +17,15 @@ class EquipInfo_aidEquipment {
 		String image ="image\\sprite_item_new_equipment_10_support\\support.img\\";
 		Equip_part part = Equip_part.AIDEQUIPMENT;
 		Equip_type type = Equip_type.NONE;
+		int level;
 		
 		//////////에픽
 		rarity = Item_rarity.EPIC;
 		
+		///85제
+		level=85;
 		//증적
-		temp = new Equipment("탐식의 증적", image+"증적.png", rarity, part, type);
+		temp = new Equipment("탐식의 증적", image+"증적.png", rarity, part, type, level);
 		temp.vStat.addStatList("힘", new StatusInfo(128), true);
 		temp.vStat.addStatList("지능", new StatusInfo(128), true);
 		temp.vStat.addStatList("무기물공", new StatusInfo(110), true);
@@ -40,12 +43,15 @@ class EquipInfo_magicStone {
 		String image ="image\\sprite_item_new_equipment_11_magicstone\\magicstone.img\\";
 		Equip_part part = Equip_part.MAGICSTONE;
 		Equip_type type = Equip_type.NONE;
+		int level;
 		
 		//////////에픽
 		rarity = Item_rarity.EPIC;
 		
+		///85제
+		level=85;
 		//근원
-		temp = new Equipment("탐식의 근원", image+"근원.png", rarity, part, type);
+		temp = new Equipment("탐식의 근원", image+"근원.png", rarity, part, type, level);
 		temp.vStat.addStatList("힘", new StatusInfo(61), true);
 		temp.vStat.addStatList("지능", new StatusInfo(61), true);
 		temp.vStat.addStatList("모속강", new StatusInfo(45));

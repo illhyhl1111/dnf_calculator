@@ -12,7 +12,7 @@ public class EquipInfo_mail {
 	public static void getInfo(HashSet<Equipment> equipList)
 	{
 		//증적
-		Equipment temp = new Equipment("ㄴㄷ구", null, Item_rarity.EPIC, Equip_part.AIDEQUIPMENT, Equip_type.NONE);
+		Equipment temp = new Equipment("ㄴㄷ구", null, Item_rarity.EPIC, Equip_part.AIDEQUIPMENT, Equip_type.NONE, 85);
 		temp.vStat.addStatList("힘", new StatusInfo(128));
 		temp.vStat.addStatList("지능", new StatusInfo(128));
 		temp.vStat.addStatList("무기물공", new StatusInfo(110));

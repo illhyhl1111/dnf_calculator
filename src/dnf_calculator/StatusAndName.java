@@ -87,7 +87,7 @@ public class StatusAndName implements java.io.Serializable, Cloneable
 		reverseHash.put(StatList.DEF_DEC_PERCENT_MAG_ITEM, "적 마법방어력(%) -"); reverseHash.put(StatList.DEF_DEC_PERCENT_PHY_ITEM, "적 물리방어력(%) -");
 		
 		reverseHash.put(StatList.STR, "힘 +"); reverseHash.put(StatList.INT, "지능 +");
-		reverseHash.put(StatList.STA, "정신력 +"); reverseHash.put(StatList.WILL, "체력 +");
+		reverseHash.put(StatList.STA, "체력 +"); reverseHash.put(StatList.WILL, "정신력 +");
 		reverseHash.put(StatList.STR_INC, "힘 %증가 +"); reverseHash.put(StatList.INT_INC, "지능 %증가 +");
 		
 		reverseHash.put(StatList.DAM_INC, "데미지 증가(%) +"); reverseHash.put(StatList.DAM_CRT, "크리티컬 데미지 증가(%) +"); reverseHash.put(StatList.DAM_ADD, "추가 데미지(%) +");
@@ -117,5 +117,18 @@ public class StatusAndName implements java.io.Serializable, Cloneable
 		StatusAndName temp = (StatusAndName) super.clone();
 		temp.stat = (AbstractStatusInfo) stat.clone();
 		return temp;
+	}
+	
+	@Override
+	public boolean equals(Object o)
+	{
+		if(o==null) return false;
+		if(o instanceof StatusAndName)
+			return (name==((StatusAndName) o).name);
+		if(o instanceof Integer)
+			return (name==(int)o);
+		if(o instanceof String)
+			return (name==Status.getStatHash().get((String)o));
+		return false;
 	}
 }

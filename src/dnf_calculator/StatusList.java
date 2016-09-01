@@ -56,29 +56,22 @@ public class StatusList implements java.io.Serializable, Cloneable {
 		}
 	}
 	
-	public void changeStat(int name, AbstractStatusInfo stat)
+	public void changeStat(int order, AbstractStatusInfo stat)
 	{
-		for(StatusAndName s : statList)
-			if(s.name==name){
-				if(s.changeable) s.stat=stat;
-				break;
-			}
-		addStatList(name, stat);
+		StatusAndName temp = statList.get(order);
+			if(temp.changeable) temp.stat=stat;
 	}
-	public void changeStat(int name, double stat, boolean enable)
+	public void changeStat(int order, double stat, boolean enable)
 	{
-		for(StatusAndName s : statList)
-			if(s.name==name){
-				if(s.changeable)
-					try {
-						s.stat.setInfo(stat);
-					} catch (StatusTypeMismatch e) {
-						e.printStackTrace();
-					}
-				if(s.enableable)
-					s.enabled=enable;
-				break;
+		StatusAndName temp = statList.get(order);
+		if(temp.changeable)
+			try {
+				temp.stat.setInfo(stat);
+			} catch (StatusTypeMismatch e) {
+				e.printStackTrace();
 			}
+		if(temp.enableable)
+			temp.enabled=enable;
 	}
 	
 	public boolean findChangeable(int name)

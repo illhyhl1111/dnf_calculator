@@ -7,7 +7,10 @@ import dnf_class.Equipment;
 import dnf_class.SetOption;
 import dnf_InterfacesAndExceptions.ItemFileNotFounded;
 import dnf_InterfacesAndExceptions.ItemFileNotReaded;
+import dnf_InterfacesAndExceptions.Item_rarity;
 import dnf_InterfacesAndExceptions.SetName;
+import dnf_InterfacesAndExceptions.UnknownInformationException;
+import dnf_InterfacesAndExceptions.Weapon_detailType;
 
 public class GetItemDictionary
 {
@@ -51,4 +54,23 @@ public class GetItemDictionary
 		return itemDictionary.getSetOptions(setName);
 	}
 	
+	public static int getDimensionInfo (int num, Item_rarity rarity, int level) throws UnknownInformationException
+	{
+		return ReinforceInfo.getDimensionInfo(num, rarity, level);
+	}
+	
+	public static int getReinforceAidInfo (int num, Item_rarity rarity, int level) throws UnknownInformationException
+	{
+		return ReinforceInfo.getAidStatInfo(num, rarity, level);
+	}
+	
+	public static int getReinforceInfo_phy (int num, Item_rarity rarity, int level, Weapon_detailType type) throws UnknownInformationException
+	{
+		return ReinforceInfo.getReinforceWeaponInfo_phy(num, rarity, level, type);
+	}
+	
+	public static int getReinforceInfo_mag (int num, Item_rarity rarity, int level, Weapon_detailType type) throws UnknownInformationException
+	{
+		return ReinforceInfo.getReinforceWeaponInfo_mag(num, rarity, level, type);
+	}
 }

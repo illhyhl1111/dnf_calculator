@@ -11,7 +11,10 @@ import java.util.HashSet;
 import java.util.LinkedList;
 
 import dnf_InterfacesAndExceptions.ItemFileNotFounded;
+import dnf_InterfacesAndExceptions.Item_rarity;
 import dnf_InterfacesAndExceptions.SetName;
+import dnf_InterfacesAndExceptions.UnknownInformationException;
+import dnf_InterfacesAndExceptions.Weapon_detailType;
 import dnf_class.Equipment;
 import dnf_class.Item;
 import dnf_class.SetOption;
