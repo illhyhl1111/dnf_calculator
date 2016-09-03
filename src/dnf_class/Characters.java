@@ -67,41 +67,43 @@ public class Characters
 		userItemList = (ItemDictionary) GetItemDictionary.itemDictionary.clone();
 	}
 
+	private void addSet(Equipment equipment)
+	{
+		if(equipment.setName!=SetName.NONE){								//세트아이템
+			if(setOptionList.containsKey(equipment.setName))				
+				setOptionList.replace(equipment.setName, setOptionList.get(equipment.setName)+1);		//이미 등록된 셋옵 -> 1 추가
+			else setOptionList.put(equipment.setName, 1);												//셋옵 등록
+		}
+	}
+	
+	private void subtractSet(Equipment equipment)
+	{
+		if(equipment.setName!=SetName.NONE){								//세트아이템
+			if(setOptionList.get(equipment.setName)==1)
+				setOptionList.remove(equipment.setName);
+			else 
+				setOptionList.replace(equipment.setName, setOptionList.get(equipment.setName)-1);		//이미 등록된 셋옵 -> 1 감소
+		}
+	}
 	
 	public void equip(Item item)
 	{
 		if(item instanceof Weapon){
-			
-			if(weapon.setName!=SetName.NONE){								//세트아이템
-				if(setOptionList.get(weapon.setName)==1)
-					setOptionList.remove(weapon.setName);
-				else setOptionList.replace(weapon.setName, setOptionList.get(weapon.setName)-1);		//이미 등록된 셋옵 -> 1 감소
-			}
-			
 			Weapon temp = (Weapon)item;
+			subtractSet(weapon);
+		
 			if(temp.enabled(job)) weapon=temp;
 			else System.out.println("장착불가");
+			
+			addSet(temp);
 		}
 		
 		else if(item instanceof Equipment){
 			Equipment equipment = (Equipment)item; 
-			Equip_part part = equipment.part;
 			
-			if(equipmentList.get(part).setName!=SetName.NONE){								//세트아이템
-				if(setOptionList.get(equipmentList.get(part).setName)==1)
-					setOptionList.remove(equipmentList.get(part).setName);
-				else 
-					setOptionList.replace(equipmentList.get(part).setName, setOptionList.get(equipmentList.get(part).setName)-1);		//이미 등록된 셋옵 -> 1 감소
-			}
-			
-			equipmentList.replace(part, equipment);
-			
-			if(equipment.setName!=SetName.NONE){								//세트아이템
-				if(setOptionList.containsKey(equipment.setName))				
-					setOptionList.replace(equipment.setName, setOptionList.get(equipment.setName)+1);		//이미 등록된 셋옵 -> 1 추가
-				else setOptionList.put(equipment.setName, 1);												//셋옵 등록
-			}
-				
+			subtractSet(equipmentList.get(equipment.part));
+			equipmentList.replace(equipment.part, equipment);
+			addSet(equipment);
 		}
 		else if(item instanceof Avatar){
 			Avatar avatar = (Avatar)item; 
@@ -123,12 +125,7 @@ public class Characters
 		if(item instanceof Weapon){
 			Weapon weapon = (Weapon)item;
 			this.weapon = new Weapon();
-			
-			if(weapon.setName!=SetName.NONE){								//세트아이템
-				if(setOptionList.get(weapon.setName)==1)
-					setOptionList.remove(weapon.setName);
-				else setOptionList.replace(weapon.setName, setOptionList.get(weapon.setName)-1);		//이미 등록된 셋옵 -> 1 감소
-			}
+			subtractSet(weapon);
 		}
 		
 		else if(item instanceof Equipment)
@@ -137,12 +134,7 @@ public class Characters
 			Equip_part part = equipment.part;
 			equipmentList.replace(part, new Equipment(part));
 			
-			if(equipment.setName!=SetName.NONE){								//세트아이템
-				if(setOptionList.get(equipment.setName)==1)
-					setOptionList.remove(equipment.setName);
-				else 
-					setOptionList.replace(equipment.setName, setOptionList.get(equipment.setName)-1);		//이미 등록된 셋옵 -> 1 감소
-			}
+			subtractSet(equipment);
 		}
 		else if(item instanceof Avatar){
 			Avatar avatar = (Avatar)item; 
@@ -165,6 +157,12 @@ public class Characters
 		
 		item.vStat.addListToStat(dungeonStatus);
 		item.dStat.addListToStat(dungeonStatus);
+		
+		if(item instanceof Equipment)
+			statUpdate(((Equipment) item).getCard());
+		else if(item instanceof Title)
+			statUpdate(((Title) item).getCard());
+		//TODO 아바타
 	}
 	
 	public void setStatus()

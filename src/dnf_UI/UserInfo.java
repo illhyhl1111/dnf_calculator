@@ -205,8 +205,10 @@ public class UserInfo
 	NonInfoStatus nonInfoStatus;
 	private Composite userInfoComposite;
 	private boolean dungeonMode = false;
+	private Characters character;
 	
 	public UserInfo(Composite parent, Characters character){
+		this.character=character;
 		userInfoComposite = new Composite(parent, SWT.BORDER);
 		userInfoComposite.setLayout(new FormLayout());
 		
@@ -273,6 +275,7 @@ public class UserInfo
 	
 	public void renew()
 	{
+		character.setStatus();
 		userItemInfo.renew();
 		infoStatus.renew();
 		nonInfoStatus.renew();

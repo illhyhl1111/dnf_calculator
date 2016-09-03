@@ -2,8 +2,15 @@ package dnf_UI;
 
 import java.util.LinkedList;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DropTarget;
+import org.eclipse.swt.dnd.DropTargetAdapter;
+import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -15,16 +22,18 @@ import dnf_InterfacesAndExceptions.InterfaceSize;
 import dnf_InterfacesAndExceptions.ItemFileNotFounded;
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_InterfacesAndExceptions.SetName;
+import dnf_class.Card;
 import dnf_class.Characters;
 import dnf_class.Equipment;
 import dnf_class.Item;
+import dnf_class.Title;
 
 public class Inventory {
 	LinkedList<Item> itemList;
 	ItemButton[] inventoryList;
-	final static int inventoryCol = 15;
-	final static int inventoryRow = 5;
-	final static int inventorySize = inventoryCol*inventoryRow;
+	final static int inventoryCol=15;
+	final static int inventoryRow=5;
+	final static int inventorySize=inventoryCol*inventoryRow;
 	private Composite inventoryComposite;
 	Vault vault;
 	Characters character;
@@ -44,6 +53,7 @@ public class Inventory {
 		this.character=character;
 		this.userInfo=userInfo;
 		this.parent=parent;
+		
 		inventoryComposite = new Composite(parent, SWT.BORDER);
 		GridLayout inventoryLayout = new GridLayout(inventoryCol, true);
 		inventoryLayout.horizontalSpacing=0;
@@ -64,10 +74,13 @@ public class Inventory {
 		Integer userY=userInfo.getComposite().computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
 		
 		for(Item i : itemList){
-			inventoryList[index] = new ItemButton(inventoryComposite, i, InterfaceSize.INVENTORY_BUTTON_SIZE, InterfaceSize.INVENTORY_BUTTON_SIZE, false);
+			inventoryList[index] =
+					new ItemButton(inventoryComposite, i, InterfaceSize.INVENTORY_BUTTON_SIZE, InterfaceSize.INVENTORY_BUTTON_SIZE, false);
 			
 			if(!i.getName().equals("이름없음"))
 			{
+				setDrop(inventoryList[index]);
+				
 				Integer indexBox = index;
 				Integer xButton = (index%inventoryCol)*buttonS.x+2;
 				Integer yButton = (int)(index/inventoryCol)*buttonS.y+userY+8;
@@ -102,7 +115,6 @@ public class Inventory {
 			        		int result = changeItem.open();
 							if (Window.OK == result) {
 								inventoryList[indexBox].setItem(changeItem.item);
-								if(userInfo.userItemInfo.equiped(i)) character.setStatus();
 								userInfo.renew();
 							}
 							else if(result == 2)
@@ -114,7 +126,6 @@ public class Inventory {
 									try {
 										character.userItemList.setSetOptions(setName, changeSet.setOption);
 										inventoryList[indexBox].setItem(changeItem.item);
-										if(userInfo.userItemInfo.equiped(i)) character.setStatus();
 										userInfo.renew();
 									} catch (ItemFileNotFounded e1) {
 										e1.printStackTrace();
@@ -209,5 +220,53 @@ public class Inventory {
 			if(i.getItem().getName().equals(name)) return i;
 		}
 		throw new ItemNotFoundedException(name);
+	}
+
+	public void setDrop(final ItemButton itemButton) {
+
+		Transfer[] types = new Transfer[] { TextTransfer.getInstance() };
+		int operations = DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK;
+
+		DropTarget target = new DropTarget(itemButton.getButton(), operations);
+		target.setTransfer(types);
+		target.addDropListener(new DropTargetAdapter() {
+			public void drop(DropTargetEvent event) {
+
+				if (event.data == null) {
+					event.detail = DND.DROP_NONE;
+					return;
+				}
+				else if(event.data instanceof String){
+					if (itemButton.getItem() instanceof Equipment) {
+						try {
+							Card card = character.userItemList.getCard((String)event.data);
+							boolean succeed = ((Equipment)itemButton.getItem()).setCard(card);
+							if(succeed){
+								userInfo.renew();
+								MessageDialog dialog = new MessageDialog(parent.getShell(), "성☆공", null,
+									    "마법부여에 성공하였습니다!\n\n보주 : "+(String)event.data+"\n아이템 : "+itemButton.getItem().getName(),
+									    MessageDialog.INFORMATION, new String[] { "ㅇㅋ" }, 0);
+								dialog.open();
+							}
+							else{
+								MessageDialog dialog = new MessageDialog(parent.getShell(), "실★패", null,
+									    "마법부여에 실패하였습니다\n\n보주 : "+(String)event.data+"\n가능한 장비 부위 : "+card.getPartToString(),
+									    MessageDialog.ERROR, new String[] { "납득" }, 0);
+								dialog.open();
+							}
+						} catch (ItemFileNotFounded e) {
+							e.printStackTrace();
+						}
+					}
+					if (itemButton.getItem() instanceof Title) {
+						try {
+							((Title)itemButton.getItem()).setCard(character.userItemList.getCard((String)event.data));
+						} catch (ItemFileNotFounded e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+		});
 	}
 }

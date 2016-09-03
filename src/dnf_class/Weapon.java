@@ -34,7 +34,7 @@ public class Weapon extends Equipment{
 	}
 	public Weapon(String name, String icon, Item_rarity rarity, Weapon_detailType weaponType, int level)
 	{
-		this(name, icon, rarity, new Card("없음", null, Item_rarity.NONE, AddOn.NONE), SetName.NONE, weaponType, level, 0);
+		this(name, icon, rarity, new Card("없음", null, Item_rarity.NONE), SetName.NONE, weaponType, level, 0);
 	}
 	public Weapon() {
 		super(Equip_part.WEAPON);

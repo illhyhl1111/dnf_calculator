@@ -3,6 +3,7 @@ package dnf_infomation;
 import java.io.*;
 import java.util.LinkedList;
 
+import dnf_class.Card;
 import dnf_class.Equipment;
 import dnf_class.SetOption;
 import dnf_InterfacesAndExceptions.ItemFileNotFounded;
@@ -46,6 +47,12 @@ public class GetItemDictionary
 	{
 		if(!readed) throw new ItemFileNotReaded();
 		return itemDictionary.getEquipment(name);
+	}
+	
+	public static Card getCard(String name) throws ItemFileNotReaded, ItemFileNotFounded
+	{
+		if(!readed) throw new ItemFileNotReaded();
+		return itemDictionary.getCard(name);
 	}
 	
 	public static LinkedList<SetOption> getSetOptions(SetName setName) throws ItemFileNotReaded, ItemFileNotFounded

@@ -49,6 +49,7 @@ public class CalculatorUITest {
 	        UserInfo itemInfo;
 	        Inventory inventory; 
 	        Vault vault;
+	        SubInventory subInventory;
 			
 			character.equip(character.userItemList.getEquipment("우요의 황금 캐넌"));
 			
@@ -78,18 +79,25 @@ public class CalculatorUITest {
 	        inventory = new Inventory(shell, character, itemInfo);
 	        vault = new Vault(shell, GetItemDictionary.itemDictionary.getAllItemList(), inventory);
 	        inventory.setListener(vault);
+	        subInventory = new SubInventory(shell, character, itemInfo, inventory);
+	        subInventory.setListener();
 	        
 	        
 	        itemInfo.getComposite().setLayoutData(new FormData());
+	        
 	        FormData inventoryData = new FormData();
 	        inventoryData.top = new FormAttachment(itemInfo.getComposite(), 5);
 	        inventory.getComposite().setLayoutData(inventoryData);
+	        
+	        FormData subInventoryData = new FormData();
+	        subInventoryData.top = new FormAttachment(inventory.getComposite(), 20);
+	        subInventory.getComposite().setLayoutData(subInventoryData);
 	        
 	        display.addFilter(SWT.KeyDown, new Listener() {
 	            @Override
 	            public void handleEvent(Event event) {
 	                char c = event.character;
-	                System.out.println(c);
+	                //System.out.println(c);
 	                if(c=='i'){
 	                	if(vault.getShell()==null)
 	                		vault.open();

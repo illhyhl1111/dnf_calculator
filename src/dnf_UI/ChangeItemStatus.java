@@ -6,9 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 
-
-
-
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
@@ -28,8 +25,6 @@ import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
 
-
-
 import dnf_InterfacesAndExceptions.Dimension_stat;
 import dnf_InterfacesAndExceptions.ItemFileNotFounded;
 import dnf_InterfacesAndExceptions.ItemFileNotReaded;
@@ -38,6 +33,7 @@ import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 import dnf_InterfacesAndExceptions.UnknownInformationException;
 import dnf_calculator.ElementInfo;
 import dnf_calculator.StatusAndName;
+import dnf_class.Card;
 import dnf_class.Equipment;
 import dnf_class.Item;
 import dnf_class.Weapon;
@@ -81,7 +77,8 @@ public class ChangeItemStatus extends Dialog{
 		this.item=item;
 		this.hasSet=hasSet;
 		try {
-			originalItem=GetItemDictionary.getEquipment(item.getName());
+			if(item instanceof Equipment) originalItem=GetItemDictionary.getEquipment(item.getName());
+			else if(item instanceof Card) originalItem=GetItemDictionary.getCard(item.getName());
 		} catch (ItemFileNotReaded | ItemFileNotFounded e) {
 			e.printStackTrace();
 		}

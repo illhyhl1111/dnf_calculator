@@ -19,7 +19,7 @@ public class Equipment extends Item
 	public final Equip_part part;							//부위
 	private Dimension_stat dimStat;							//차원작
 	private int reinforce;									//강화수치
-	public Card card;										//보주
+	private Card card;										//보주
 	public final SetName setName;							//셋옵이름
 	public final Equip_type type;							//재질
 	public final int level;									//레벨
@@ -54,18 +54,18 @@ public class Equipment extends Item
 	}
 	public Equipment(String name, String icon, Item_rarity rarity, Equip_part part, Equip_type type, int level)
 	{
-		this(name, icon, rarity, part, new Card("없음", null, Item_rarity.NONE, AddOn.NONE), SetName.NONE, type, level);
+		this(name, icon, rarity, part, new Card("없음", null, Item_rarity.NONE), SetName.NONE, type, level);
 	}
 	public Equipment(String name, String icon, Item_rarity rarity, Equip_part part, Equip_type type, SetName setName, int level)
 	{
-		this(name, icon, rarity, part, new Card("없음", null, Item_rarity.NONE, AddOn.NONE), setName, type, level);
+		this(name, icon, rarity, part, new Card("없음", null, Item_rarity.NONE), setName, type, level);
 	}
 	public Equipment(Equip_part part) {
 		super();
 		this.part=part;
 		type = Equip_type.NONE;
 		setName=SetName.NONE;
-		card = new Card("없음", null, Item_rarity.NONE, AddOn.NONE);
+		card = new Card("없음", null, Item_rarity.NONE);
 		level=0;
 		
 		vStat.addStatList(StatList.NONE, new StatusInfo(0));
@@ -209,5 +209,15 @@ public class Equipment extends Item
 	}
 	public int getReinforce() {
 		return reinforce;
+	}
+	public Card getCard() {
+		return card;
+	}
+	public boolean setCard(Card card) {
+		if(card.available(this)){
+			this.card=card;
+			return true;
+		}
+		return false;
 	}
 }

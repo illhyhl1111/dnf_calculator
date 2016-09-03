@@ -15,6 +15,7 @@ import dnf_InterfacesAndExceptions.Item_rarity;
 import dnf_InterfacesAndExceptions.SetName;
 import dnf_InterfacesAndExceptions.UnknownInformationException;
 import dnf_InterfacesAndExceptions.Weapon_detailType;
+import dnf_class.Card;
 import dnf_class.Equipment;
 import dnf_class.Item;
 import dnf_class.SetOption;
@@ -27,7 +28,7 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 	private static final long serialVersionUID = -4213722159864758338L;
 	public HashSet<Equipment> equipList;
 	public HashSet<SetOption> setOptionList;
-	//public HashSet<Item> etcList;
+	public HashSet<Card> cardList;
 	
 	public ItemDictionary() 
 	{
@@ -55,12 +56,23 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 		
 		setOptionList = new HashSet<SetOption>();
 		SetOptionInfo.getInfo(setOptionList);
+		
+		cardList = new HashSet<Card>();
+		CardInfo.getInfo(cardList);
 	}
 	
 	public LinkedList<Item> getAllItemList()
 	{
 		LinkedList<Item> list = new LinkedList<Item>();
 		for(Equipment e : equipList)
+			list.add(e);
+		return list;
+	}
+	
+	public LinkedList<Item> getAllCardList()
+	{
+		LinkedList<Item> list = new LinkedList<Item>();
+		for(Card e : cardList)
 			list.add(e);
 		//for(Item e : etcList)
 			//list.add(e);
@@ -70,6 +82,13 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 	public Equipment getEquipment(String name) throws ItemFileNotFounded
 	{
 		for(Equipment e : equipList)
+			if(e.getName().equals(name)) return e;
+		throw new ItemFileNotFounded(name);
+	}
+	
+	public Card getCard(String name) throws ItemFileNotFounded
+	{
+		for(Card e : cardList)
 			if(e.getName().equals(name)) return e;
 		throw new ItemFileNotFounded(name);
 	}

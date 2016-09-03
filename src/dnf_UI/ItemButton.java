@@ -3,6 +3,7 @@ package dnf_UI;
 import java.util.LinkedList;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.layout.GridData;
@@ -17,9 +18,11 @@ import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 import dnf_InterfacesAndExceptions.ItemFileNotFounded;
 import dnf_calculator.ElementInfo;
 import dnf_calculator.StatusAndName;
+import dnf_class.Card;
 import dnf_class.Equipment;
 import dnf_class.Item;
 import dnf_class.SetOption;
+import dnf_class.Title;
 import dnf_infomation.ItemDictionary;
 
 public class ItemButton {
@@ -87,41 +90,41 @@ public class ItemButton {
 				if(s.isEnabled(setNum))
 				{
 					option = new Label(itemInfo, SWT.SEPARATOR | SWT.HORIZONTAL);
-					option.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 4, 1));
+					option.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 					
 					option = new Label(itemInfo, SWT.WRAP);
 					option.setText("["+s.requireNum+"]세트 효과");
 					option.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_GREEN));
 					
 					for(StatusAndName s2 : s.vStat.statList)
-						setText(itemInfo, s2);
+						setText(itemInfo, s2, itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 					if(!item.dStat.statList.isEmpty())
 					{
 						option = new Label(itemInfo, SWT.WRAP);
 						option.setText("\n――――――던전 입장 시 적용――――――\n\n");
 						for(StatusAndName s2 : s.dStat.statList)
-							setText(itemInfo, s2);
+							setText(itemInfo, s2, itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 					}
 				}
 				
 				else
 				{
 					option = new Label(itemInfo, SWT.SEPARATOR | SWT.HORIZONTAL);
-					option.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 4, 1));
+					option.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 					
 					option = new Label(itemInfo, SWT.WRAP);
 					option.setText("["+s.requireNum+"]세트 효과");
 					option.setEnabled(false);
 					
 					for(StatusAndName s2 : s.vStat.statList)
-						setText(itemInfo, s2, false);
+						setText(itemInfo, s2, false, itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 					if(!item.dStat.statList.isEmpty())
 					{
 						option = new Label(itemInfo, SWT.WRAP);
 						option.setText("\n――――――던전 입장 시 적용――――――\n\n");
 						option.setEnabled(false);
 						for(StatusAndName s2 : s.dStat.statList)
-							setText(itemInfo, s2, false);
+							setText(itemInfo, s2, false, itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 					}
 				}
 			}			
@@ -229,17 +232,45 @@ public class ItemButton {
 			}
 			
 			stat = new Label(itemInfo, SWT.SEPARATOR | SWT.HORIZONTAL);
-			stat.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 4, 1));
+			stat.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+			
+			if(item instanceof Card)
+			{
+				stat = new Label(itemInfo, SWT.WRAP);
+				stat.setText(((Card) item).getPartToString());
+			}
 			
 			for(StatusAndName s : item.vStat.statList.subList(item.getItemStatIndex(), item.vStat.statList.size()))
-				setText(itemInfo, s);
+				setText(itemInfo, s, itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 			
 			if(!item.dStat.statList.isEmpty())
 			{
 				stat = new Label(itemInfo, SWT.WRAP);
 				stat.setText("\n――――――던전 입장 시 적용――――――\n\n");
 				for(StatusAndName s : item.dStat.statList)
-					setText(itemInfo, s);
+					setText(itemInfo, s, itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+			}
+			
+			if(item instanceof Equipment || item instanceof Title)
+			{
+				Card card=null;
+				if(item instanceof Equipment) card = ((Equipment) item).getCard();
+				else if(item instanceof Title) card = ((Title) item).getCard();
+					
+				stat = new Label(itemInfo, SWT.WRAP);
+				stat.setText("");
+
+				for(StatusAndName s : card.vStat.statList)
+					setText(itemInfo, s, itemInfo.getDisplay().getSystemColor(SWT.COLOR_GREEN));
+				
+				if(!card.dStat.statList.isEmpty())
+				{
+					stat = new Label(itemInfo, SWT.WRAP);
+					stat.setText("\n――――――던전 입장 시 적용――――――\n\n");
+					stat.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_GREEN));
+					for(StatusAndName s : card.dStat.statList)
+						setText(itemInfo, s, itemInfo.getDisplay().getSystemColor(SWT.COLOR_GREEN));
+				}
 			}
 		}
 		catch (StatusTypeMismatch e) {
@@ -247,12 +278,12 @@ public class ItemButton {
 		}
 	}
 	
-	public void setText(Composite itemInfo, StatusAndName s) throws StatusTypeMismatch
+	public void setText(Composite itemInfo, StatusAndName s, Color textColor) throws StatusTypeMismatch
 	{
-		setText(itemInfo, s, true);
+		setText(itemInfo, s, true, textColor);
 	}
 	
-	public void setText(Composite itemInfo, StatusAndName s, boolean enable) throws StatusTypeMismatch
+	public void setText(Composite itemInfo, StatusAndName s, boolean enable, Color textColor) throws StatusTypeMismatch
 	{
 		String strength;
 		Label stat;
@@ -274,6 +305,8 @@ public class ItemButton {
 				stat.setEnabled(enable && s.enabled);
 				if(!s.enabled)
 					stat.setText(stat.getText()+"(옵션 꺼짐)");
+				
+				stat.setForeground(textColor);
 			}
 		}
 		
@@ -298,6 +331,8 @@ public class ItemButton {
 			stat.setEnabled(enable && s.enabled);
 			if(!s.enabled)
 				stat.setText(stat.getText()+"(옵션 꺼짐)");
+			
+			stat.setForeground(textColor);
 		}
 	}
 
