@@ -23,9 +23,14 @@ public class Title extends Item
 	@Override
 	public String getTypeName() { return "칭호";}
 	
+	@Override
 	public Card getCard() {
 		return card;
 	}
+	
+	@Override
+	public Equip_part getPart() {return part;}
+	
 	public boolean setCard(Card card) {
 		if(card.available(this)){
 			this.card=card;

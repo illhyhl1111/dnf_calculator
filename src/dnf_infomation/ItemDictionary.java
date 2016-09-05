@@ -11,10 +11,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 
 import dnf_InterfacesAndExceptions.ItemFileNotFounded;
-import dnf_InterfacesAndExceptions.Item_rarity;
 import dnf_InterfacesAndExceptions.SetName;
-import dnf_InterfacesAndExceptions.UnknownInformationException;
-import dnf_InterfacesAndExceptions.Weapon_detailType;
 import dnf_class.Card;
 import dnf_class.Equipment;
 import dnf_class.Item;
@@ -53,6 +50,7 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 		EquipInfo_ring.getInfo(equipList);
 		EquipInfo_aidEquipment.getInfo(equipList);
 		EquipInfo_magicStone.getInfo(equipList);
+		EquipInfo_earring.getInfo(equipList);
 		
 		setOptionList = new HashSet<SetOption>();
 		SetOptionInfo.getInfo(setOptionList);
@@ -61,9 +59,9 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 		CardInfo.getInfo(cardList);
 	}
 	
-	public LinkedList<Item> getAllItemList()
+	public LinkedList<Equipment> getAllEquipmentList()
 	{
-		LinkedList<Item> list = new LinkedList<Item>();
+		LinkedList<Equipment> list = new LinkedList<Equipment>();
 		for(Equipment e : equipList)
 			list.add(e);
 		return list;

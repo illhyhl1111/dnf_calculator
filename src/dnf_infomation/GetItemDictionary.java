@@ -80,4 +80,9 @@ public class GetItemDictionary
 	{
 		return ReinforceInfo.getReinforceWeaponInfo_mag(num, rarity, level, type);
 	}
+	
+	public static int[] getReinforceEarringInfo (int num, Item_rarity rarity, int level) throws UnknownInformationException
+	{
+		return ReinforceInfo.getEarringStatInfo(num, rarity, level);
+	}
 }

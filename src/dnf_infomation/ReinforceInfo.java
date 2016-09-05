@@ -41,6 +41,15 @@ public class ReinforceInfo {
 		return num;
 	}
 	
+	public static int[] getEarringStatInfo(int num, Item_rarity rarity, int level) throws UnknownInformationException
+	{
+		int atk, indep;
+		atk=num*2;
+		indep=(int)(atk*11/10.0);
+	
+		return new int[] {atk, indep};
+	}
+	
 	public static int getDimensionInfo(int num, Item_rarity rarity, int level) throws UnknownInformationException
 	{
 		int temp=-1;
@@ -61,7 +70,7 @@ public class ReinforceInfo {
 			else if(level==70) temp=Chronicle70Dim[num];
 			break;
 		default:
-			break;
+			if(num==0) temp=3;			//TODO
 		}
 		
 		if(temp==-1) throw new UnknownInformationException();

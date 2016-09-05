@@ -2,6 +2,7 @@ package dnf_UI;
 
 import java.util.LinkedList;
 
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSource;
@@ -80,22 +81,22 @@ public class SubInventory {
 				Integer yButton = (int)(index/inventoryCol)*buttonS.y+userY+8;
 				
 				// add MouseDown Event - equip
-				inventoryList[index].getButton().addListener(SWT.MouseDown, new Listener() {
+				inventoryList[index].getButton().addListener(SWT.MouseDoubleClick, new Listener() {
 			         @Override
 			         public void handleEvent(Event e) {
 			        	 if(e.button==3 && inventoryList[indexBox].enabled){
 			        		 //TODO
 			        	 }
-			        	 /*else if(e.button==1 && inventoryList[indexBox].enabled)
+			        	 else if(e.button==1 && inventoryList[indexBox].enabled)
 			        	 {
-			        		ChangeItemStatus changeItem = new ChangeItemStatus((Shell)parent, inventoryList[indexBox].getItem(), false);
+			        		ChangeItemStatus changeItem = new ChangeItemStatus(parent.getShell(), inventoryList[indexBox].getItem(), false);
 			        		int result = changeItem.open();
 							if (Window.OK == result) {
 								inventoryList[indexBox].setItem(changeItem.item);
 								if(userInfo.userItemInfo.equiped(i)) character.setStatus();
 								userInfo.renew();
 							}
-			        	 }*/
+			        	 }
 			         }
 			     });
 				
@@ -109,7 +110,7 @@ public class SubInventory {
 			        		 GridLayout layout = new GridLayout(1, false);
 			        		 layout.verticalSpacing=3;
 			        		 itemInfo.setLayout(layout);
-			        		 inventoryList[indexBox].setItemInfoComposite(itemInfo);
+			        		 MakeComposite.setItemInfoComposite(itemInfo, inventoryList[indexBox].getItem());
 			        		 itemInfoSize = itemInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			        		 itemInfo.moveAbove(null);
 			        		 
@@ -176,7 +177,7 @@ public class SubInventory {
 				// Rendering widget to image
 				gc.copyArea(image, 0, 0);
 				// Setting widget to DnD image
-				event.image = image;
+				event.image = itemButton.getButton().getImage();
 				
 				itemInfo.dispose();
 			}

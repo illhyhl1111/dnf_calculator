@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
+import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.InterfaceSize;
 import dnf_InterfacesAndExceptions.ItemFileNotFounded;
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
@@ -29,7 +30,7 @@ import dnf_class.Item;
 import dnf_class.Title;
 
 public class Inventory {
-	LinkedList<Item> itemList;
+	LinkedList<Equipment> itemList;
 	ItemButton[] inventoryList;
 	final static int inventoryCol=15;
 	final static int inventoryRow=5;
@@ -49,7 +50,7 @@ public class Inventory {
 	
 	public Inventory(Composite parent, Characters character, UserInfo userInfo)
 	{
-		this.itemList=character.userItemList.getAllItemList();
+		this.itemList=character.userItemList.getAllEquipmentList();
 		this.character=character;
 		this.userInfo=userInfo;
 		this.parent=parent;
@@ -73,7 +74,7 @@ public class Inventory {
 		inventoryList[0].getButton().dispose();
 		Integer userY=userInfo.getComposite().computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
 		
-		for(Item i : itemList){
+		for(Equipment i : itemList){
 			inventoryList[index] =
 					new ItemButton(inventoryComposite, i, InterfaceSize.INVENTORY_BUTTON_SIZE, InterfaceSize.INVENTORY_BUTTON_SIZE, false);
 			
@@ -111,7 +112,7 @@ public class Inventory {
 			        	 }
 			        	 else if(e.button==1 && inventoryList[indexBox].enabled)
 			        	 {
-			        		ChangeItemStatus changeItem = new ChangeItemStatus((Shell)parent, inventoryList[indexBox].getItem(), inventoryList[indexBox].hasSetOption());
+			        		ChangeItemStatus changeItem = new ChangeItemStatus(parent.getShell(), inventoryList[indexBox].getItem(), inventoryList[indexBox].hasSetOption());
 			        		int result = changeItem.open();
 							if (Window.OK == result) {
 								inventoryList[indexBox].setItem(changeItem.item);
@@ -147,7 +148,7 @@ public class Inventory {
 			        		 GridLayout layout = new GridLayout(1, false);
 			        		 layout.verticalSpacing=3;
 			        		 itemInfo.setLayout(layout);
-			        		 inventoryList[indexBox].setItemInfoComposite(itemInfo);
+			        		 MakeComposite.setItemInfoComposite(itemInfo, inventoryList[indexBox].getItem());
 			        		 itemInfoSize = itemInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			        		 itemInfo.moveAbove(null);
 			        		 
@@ -160,7 +161,7 @@ public class Inventory {
 			        			 if(character.getSetOptionList().get( ((Equipment)inventoryList[indexBox].getItem()).setName)==null) setNum=0;
 			        			 else setNum=character.getSetOptionList().get( ((Equipment)inventoryList[indexBox].getItem()).setName );
 			        			 
-				        		 inventoryList[indexBox].setSetInfoComposite(setInfo, setNum, character.userItemList);
+			        			 MakeComposite.setSetInfoComposite(setInfo, inventoryList[indexBox].getItem(), setNum, character.userItemList);
 				        		 setInfoSize = setInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 				        		 setInfo.moveAbove(null);
 			        		 }
@@ -237,30 +238,28 @@ public class Inventory {
 					return;
 				}
 				else if(event.data instanceof String){
-					if (itemButton.getItem() instanceof Equipment) {
+					if (itemButton.getItem() instanceof Equipment || itemButton.getItem() instanceof Title) {
 						try {
 							Card card = character.userItemList.getCard((String)event.data);
-							boolean succeed = ((Equipment)itemButton.getItem()).setCard(card);
-							if(succeed){
-								userInfo.renew();
-								MessageDialog dialog = new MessageDialog(parent.getShell(), "성☆공", null,
-									    "마법부여에 성공하였습니다!\n\n보주 : "+(String)event.data+"\n아이템 : "+itemButton.getItem().getName(),
-									    MessageDialog.INFORMATION, new String[] { "ㅇㅋ" }, 0);
-								dialog.open();
+							if(itemButton.enabled)
+							{
+								boolean succeed;
+								if(itemButton.getItem() instanceof Equipment) succeed= ((Equipment)itemButton.getItem()).setCard(card);
+								else succeed= ((Equipment)itemButton.getItem()).setCard(card);
+								if(succeed){
+									userInfo.renew();
+									MessageDialog dialog = new MessageDialog(parent.getShell(), "성☆공", null,
+										    "마법부여에 성공하였습니다!\n\n보주 : "+(String)event.data+"\n아이템 : "+itemButton.getItem().getName(),
+										    MessageDialog.INFORMATION, new String[] { "ㅇㅋ" }, 0);
+									dialog.open();
+								}
+								else{
+									MessageDialog dialog = new MessageDialog(parent.getShell(), "실★패", null,
+										    "마법부여에 실패하였습니다\n\n보주 : "+(String)event.data+"\n가능한 장비 부위 : "+card.getPartToString()+"\n아이템 : "+itemButton.getItem().getName(),
+										    MessageDialog.ERROR, new String[] { "납득" }, 0);
+									dialog.open();
+								}
 							}
-							else{
-								MessageDialog dialog = new MessageDialog(parent.getShell(), "실★패", null,
-									    "마법부여에 실패하였습니다\n\n보주 : "+(String)event.data+"\n가능한 장비 부위 : "+card.getPartToString(),
-									    MessageDialog.ERROR, new String[] { "납득" }, 0);
-								dialog.open();
-							}
-						} catch (ItemFileNotFounded e) {
-							e.printStackTrace();
-						}
-					}
-					if (itemButton.getItem() instanceof Title) {
-						try {
-							((Title)itemButton.getItem()).setCard(character.userItemList.getCard((String)event.data));
 						} catch (ItemFileNotFounded e) {
 							e.printStackTrace();
 						}
@@ -268,5 +267,15 @@ public class Inventory {
 				}
 			}
 		});
+	}
+	
+	public LinkedList<Equipment> getEnabledEquipment(LinkedList<Equip_part> part)
+	{
+		LinkedList<Equipment> enabledList = new LinkedList<Equipment>();
+		
+		for(ItemButton i : inventoryList)
+			if(i.getItem() instanceof Equipment && part.contains(((Equipment)i.getItem()).part) && i.enabled) enabledList.add((Equipment)i.getItem());
+		
+		return enabledList;
 	}
 }

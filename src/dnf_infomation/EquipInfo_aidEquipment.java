@@ -58,3 +58,27 @@ class EquipInfo_magicStone {
 		equipList.add(temp);
 	}
 }
+
+class EquipInfo_earring {
+	public static void getInfo(HashSet<Equipment> equipList)
+	{
+		Equipment temp;
+		Item_rarity rarity;
+		String image ="image\\sprite_item_new_equipment_11_magicstone\\magicstone.img\\";
+		Equip_part part = Equip_part.EARRING;
+		Equip_type type = Equip_type.NONE;
+		int level = 90;
+		
+		//////////레어
+		rarity = Item_rarity.RARE;
+		
+		//근원
+		temp = new Equipment("임시귀걸이", null, rarity, part, type, level);
+		temp.vStat.addStatList("힘", new StatusInfo(50), true);
+		temp.vStat.addStatList("지능", new StatusInfo(50), true);
+		temp.vStat.addStatList("무기물공", new StatusInfo(30), true);
+		temp.vStat.addStatList("무기마공", new StatusInfo(30), true);
+		temp.vStat.addStatList("독공", new StatusInfo(30), true);
+		equipList.add(temp);
+	}
+}

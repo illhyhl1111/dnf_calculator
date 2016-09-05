@@ -43,6 +43,12 @@ public class Equipment extends Item
 			vStat.addStatList("체력", new StatusInfo(0), true);
 			vStat.addStatList("정신력", new StatusInfo(0), true);
 		}
+		else if(part==Equip_part.EARRING)
+		{
+			vStat.addStatList("무기물공", new StatusInfo(0), true);
+			vStat.addStatList("무기마공", new StatusInfo(0), true);
+			vStat.addStatList("독공", new StatusInfo(0), true);
+		}
 		
 		try {
 			setReinforce(0);
@@ -75,6 +81,13 @@ public class Equipment extends Item
 			vStat.addStatList("지능", new StatusInfo(0), true);
 			vStat.addStatList("체력", new StatusInfo(0), true);
 			vStat.addStatList("정신력", new StatusInfo(0), true);
+		}
+		
+		else if(part==Equip_part.EARRING)
+		{
+			vStat.addStatList("무기물공", new StatusInfo(0), true);
+			vStat.addStatList("무기마공", new StatusInfo(0), true);
+			vStat.addStatList("독공", new StatusInfo(0), true);
 		}
 		
 		try {
@@ -146,6 +159,14 @@ public class Equipment extends Item
 				vStat.statList.get(strIndex+2).stat.setInfo(str);
 				vStat.statList.get(strIndex+3).stat.setInfo(str);
 			}
+			
+			strIndex = getEarringStatIndex();
+			if(strIndex>=0){
+				int[] str = GetItemDictionary.getReinforceEarringInfo( num, super.getRarity(), level);
+				vStat.statList.get(strIndex).stat.setInfo(str[0]);
+				vStat.statList.get(strIndex+1).stat.setInfo(str[0]);
+				vStat.statList.get(strIndex+2).stat.setInfo(str[1]);
+			}
 		}
 		catch (StatusTypeMismatch e) {
 			e.printStackTrace();
@@ -170,6 +191,22 @@ public class Equipment extends Item
 	}
 	
 	@Override
+	public int getEarringStatIndex()
+	{
+		if(part==Equip_part.EARRING)
+		{
+			int iter=1;
+			for(StatusAndName s : vStat.statList.subList(1, vStat.statList.size())){
+				if(s.equals("무기물공")){
+					return iter; 
+				}
+				iter++;
+			}
+		}
+		return -1;
+	}
+	
+	@Override
 	public int getDimStatIndex()
 	{
 		return 0;
@@ -182,6 +219,7 @@ public class Equipment extends Item
 	public int getItemStatIndex()
 	{
 		if(getAidStatIndex()!=-1) return getAidStatIndex()+4;
+		else if(getEarringStatIndex()!=-1) return getEarringStatIndex()+3;
 		else if(getDimStatIndex()!=-1) return getDimStatIndex()+1;
 		return 0;
 	}
@@ -191,7 +229,7 @@ public class Equipment extends Item
 	{
 		String out;
 		out = "name : " + super.getName() +"\nrarity : "+super.getRarity()+"\nreinforce : "+reinforce+"\ntype : "+type.toString();
-		out += "\npart : "+part.toString()+"\ntype : "+type.toString()+"\n\n";
+		out += "\npart : "+part.toString()+"\n\n";
 		return out;
 	}
 	
@@ -204,12 +242,16 @@ public class Equipment extends Item
 		else return type.getName();
 	}
 	
+	@Override
+	public Equip_part getPart() {return part;}
+	
 	public Dimension_stat getDimentionStat() {
 		return dimStat;
 	}
 	public int getReinforce() {
 		return reinforce;
 	}
+	@Override
 	public Card getCard() {
 		return card;
 	}

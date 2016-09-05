@@ -1,6 +1,7 @@
 package dnf_class;
 
 import dnf_calculator.StatusList;
+import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.Item_rarity;
 
 @SuppressWarnings("serial")
@@ -55,11 +56,15 @@ public class Item implements Cloneable, java.io.Serializable
 		return false;
 	}
 	
+	public Card getCard() {return null;}
+	public Equip_part getPart() {return null;}
+	
 	public String getTypeName() { return "아이템";}
 	public String getTypeName2() { return null;}
 	
 	public int getAidStatIndex() { return -1;}
 	public int getDimStatIndex(){ return -1;}
+	public int getEarringStatIndex() { return -1;}
 	public int getIgnIndex(){ return -1;}
 	public int getItemStatIndex() { return 0;}
 }

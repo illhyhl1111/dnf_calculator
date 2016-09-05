@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
 
+
 import dnf_InterfacesAndExceptions.Dimension_stat;
 import dnf_InterfacesAndExceptions.ItemFileNotFounded;
 import dnf_InterfacesAndExceptions.ItemFileNotReaded;
@@ -95,16 +96,19 @@ public class ChangeItemStatus extends Dialog{
 		Label phyIgnStatLabel;
 		Label magIgnStatLabel;
 		Label aidStatLabel;
+		Label[] earringStatLabel = new Label[3];
 		
 		Text dimStatText;
 		Text phyIgnStatText;
 		Text magIgnStatText;
 		Text aidStatText;
+		Text[] earringStatText = new Text[3];
 	
 		final StatusAndName dimStat;
 		final StatusAndName phyIgnStat;
 		final StatusAndName magIgnStat;
 		final StatusAndName aidStat;
+		final StatusAndName[] earringStat = new StatusAndName[3];
 		
 		Group selectModeComposite;
 		Group reinforceComposite;
@@ -170,6 +174,10 @@ public class ChangeItemStatus extends Dialog{
 			name.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_DARK_GREEN));
 			rarity.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_DARK_GREEN));
 			break;
+		case RARE:
+			name.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_CYAN));
+			rarity.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_CYAN));
+			break;
 			
 		default:
 		}
@@ -193,10 +201,13 @@ public class ChangeItemStatus extends Dialog{
 		{
 			StatusAndName tempStat=null;
 			StatusAndName tempStat2=null;
+			StatusAndName tempStat3=null;
 			Label tempLabel=null;
 			Label tempLabel2=null;
+			Label tempLabel3=null;
 			Text tempText=null;
 			Text tempText2=null;
+			Text tempText3=null;
 			GridData textData = new GridData(SWT.LEFT, SWT.TOP, true, false, 3, 1);
 			textData.grabExcessHorizontalSpace=true;
 			textData.minimumWidth=50;
@@ -256,7 +267,7 @@ public class ChangeItemStatus extends Dialog{
 				try{
 					GetItemDictionary.getReinforceInfo_mag(currentReinforce, item.getRarity(), ((Equipment)item).level, ((Weapon)item).weaponType);
 				}catch(UnknownInformationException e){
-					tempText.setEditable(true);
+					tempText2.setEditable(true);
 				}
 				tempText2.setLayoutData(textData);
 				
@@ -305,8 +316,7 @@ public class ChangeItemStatus extends Dialog{
 				vStatEntry.add(new AbstractMap.SimpleEntry<Integer, Wrapper>(index+2, wrapper));
 				vStatEntry.add(new AbstractMap.SimpleEntry<Integer, Wrapper>(index+3, wrapper));
 				
-			} catch(IndexOutOfBoundsException e)
-			{
+			} catch(IndexOutOfBoundsException e) {
 				tempLabel=null;
 				tempText=null;
 				tempStat=null;
@@ -314,6 +324,68 @@ public class ChangeItemStatus extends Dialog{
 				aidStat=tempStat;
 				aidStatLabel=tempLabel;
 				aidStatText=tempText;
+			}
+			
+			try{
+				tempStat = item.vStat.statList.get(item.getEarringStatIndex());
+				tempStat2 = item.vStat.statList.get(item.getEarringStatIndex()+1);
+				tempStat3 = item.vStat.statList.get(item.getEarringStatIndex()+2);
+
+				tempLabel = new Label(composite, SWT.WRAP);
+				tempText = new Text(composite, SWT.NONE);
+				tempLabel2 = new Label(composite, SWT.WRAP);
+				tempText2 = new Text(composite, SWT.NONE);
+				tempLabel3 = new Label(composite, SWT.WRAP);
+				tempText3 = new Text(composite, SWT.NONE);
+				
+				tempText.setEditable(false);
+				tempText.setLayoutData(textData);
+				tempText2.setEditable(false);
+				tempText2.setLayoutData(textData);
+				tempText3.setEditable(false);
+				tempText3.setLayoutData(textData);
+				try{
+					GetItemDictionary.getReinforceEarringInfo(currentReinforce, item.getRarity(), ((Equipment)item).level);
+				}catch(UnknownInformationException e){
+					tempText.setEditable(true);
+					tempText2.setEditable(true);
+					tempText3.setEditable(true);
+				}
+				
+				
+				tempLabel.setLayoutData(new GridData(SWT.LEFT, SWT.TOP,false, false, 1, 1));
+				tempLabel2.setLayoutData(new GridData(SWT.LEFT, SWT.TOP,false, false, 1, 1));
+				tempLabel3.setLayoutData(new GridData(SWT.LEFT, SWT.TOP,false, false, 1, 1));
+				
+				int[] box = {(int)tempStat.stat.getStatToDouble(), (int)tempStat2.stat.getStatToDouble(), (int)tempStat3.stat.getStatToDouble()};
+				setEarringStat(box, new Label[] {tempLabel, tempLabel2, tempLabel3}, new Text[] {tempText, tempText2, tempText3});
+				Entry<Integer, Wrapper> entry = new AbstractMap.SimpleEntry<Integer, Wrapper>(item.getEarringStatIndex(), new Wrapper(tempText, false));
+				vStatEntry.add(entry);
+				entry = new AbstractMap.SimpleEntry<Integer, Wrapper>(item.getEarringStatIndex()+1, new Wrapper(tempText2, false));
+				vStatEntry.add(entry);
+				entry = new AbstractMap.SimpleEntry<Integer, Wrapper>(item.getEarringStatIndex()+2, new Wrapper(tempText3, false));
+				vStatEntry.add(entry);
+				
+			} catch(IndexOutOfBoundsException e) {
+				tempLabel=null;
+				tempText=null;
+				tempStat=null;
+				tempLabel2=null;
+				tempText2=null;
+				tempStat2=null;
+				tempLabel3=null;
+				tempText3=null;
+				tempStat3=null;
+			} finally{
+				earringStat[0]=tempStat;
+				earringStatLabel[0]=tempLabel;
+				earringStatText[0]=tempText;
+				earringStat[1]=tempStat2;
+				earringStatLabel[1]=tempLabel2;
+				earringStatText[1]=tempText2;
+				earringStat[2]=tempStat3;
+				earringStatLabel[2]=tempLabel3;
+				earringStatText[2]=tempText3;
 			}
 			
 			Label label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
@@ -352,7 +424,7 @@ public class ChangeItemStatus extends Dialog{
 							setDimStat(GetItemDictionary.getDimensionInfo(currentReinforce, item.getRarity(), ((Equipment)item).level), dimStatLabel, dimStatText);
 							dimStatText.setEditable(false);
 						} catch (UnknownInformationException e){
-							dimStatText.setEditable(true);
+							if(currentDimStat!=Dimension_stat.NONE) dimStatText.setEditable(true);
 						} catch (StatusTypeMismatch e) {
 							e.printStackTrace();
 						}
@@ -384,6 +456,22 @@ public class ChangeItemStatus extends Dialog{
 						}
 			    	}
 			    	
+			    	if(earringStat!=null){
+				    	try {
+				    		int[] result = GetItemDictionary.getReinforceEarringInfo(currentReinforce, item.getRarity(), ((Equipment)item).level);
+							setEarringStat(new int[] {result[0], result[0], result[1]}, earringStatLabel, earringStatText);
+							earringStatText[0].setEditable(false);
+							earringStatText[1].setEditable(false);
+							earringStatText[2].setEditable(false);
+						} catch (UnknownInformationException e){
+							earringStatText[0].setEditable(true);
+							earringStatText[1].setEditable(true);
+							earringStatText[2].setEditable(true);
+						} catch (StatusTypeMismatch e) {
+							e.printStackTrace();
+						}
+			    	}
+			    	
 				});
 				
 				Listener radioGroup = event -> {
@@ -400,6 +488,7 @@ public class ChangeItemStatus extends Dialog{
 					try{
 						if(button2.getText().equals("없음")){
 							currentDimStat=Dimension_stat.NONE;
+							dimStatText.setEditable(false);
 						}
 						else if(button2.getText().equals("힘")){
 							currentDimStat=Dimension_stat.STR;
@@ -420,7 +509,13 @@ public class ChangeItemStatus extends Dialog{
 					}
 					catch(UnknownInformationException e)
 					{
-						dimStatText.setEditable(true);
+						if(currentDimStat!=Dimension_stat.NONE) dimStatText.setEditable(true);
+						try {
+							if(dimStatText.getText().isEmpty()) setDimStat(0, dimStatLabel, dimStatText);
+							else setDimStat(Integer.valueOf(dimStatText.getText()), dimStatLabel, dimStatText);
+						} catch (NumberFormatException | StatusTypeMismatch e1) {
+							e1.printStackTrace();
+						}
 					}
 					catch(StatusTypeMismatch e)
 					{
@@ -748,6 +843,22 @@ public class ChangeItemStatus extends Dialog{
 		text.setText(strength);
 		text.addVerifyListener(new TextInputOnlyNumbers());
 		text.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_BLUE));
+	}
+	
+	private void setEarringStat(int[] aidStat, Label[] aidStatLabel, Text[] text) throws StatusTypeMismatch
+	{
+		aidStatLabel[0].setText(StatusAndName.getStatHash().get(StatList.WEP_PHY));
+		aidStatLabel[1].setText(StatusAndName.getStatHash().get(StatList.WEP_MAG));
+		aidStatLabel[2].setText(StatusAndName.getStatHash().get(StatList.WEP_IND));
+		
+		for(int i=0; i<3; i++){
+			aidStatLabel[i].setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_BLUE));
+			
+			String strength = String.valueOf(aidStat[i]);
+			text[i].setText(strength);
+			text[i].addVerifyListener(new TextInputOnlyNumbers());
+			text[i].setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_BLUE));
+		}
 	}
 	
 	private void setItemName(Label name)

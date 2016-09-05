@@ -25,7 +25,7 @@ class UserItemInfo {
 	private Composite leftItemInfoComposite;
 	private Composite rightItemInfoComposite;
 	private ItemButton[] itemButtonList;
-	private static int ITEMNUM=12;
+	static final int ITEMNUM=13;
 	private Characters character;
 	private Composite itemInfo;
 	private Point itemInfoSize;
@@ -68,23 +68,28 @@ class UserItemInfo {
 		itemButtonList[2] = new ItemButton(leftItemInfoComposite, character.getEquipmentList().get(Equip_part.TROUSER), BUTTON_SIZE, BUTTON_SIZE, true);
 		itemButtonList[3] = new ItemButton(leftItemInfoComposite, character.getEquipmentList().get(Equip_part.BELT), BUTTON_SIZE, BUTTON_SIZE, true);
 		itemButtonList[4] = new ItemButton(leftItemInfoComposite, character.getEquipmentList().get(Equip_part.SHOES), BUTTON_SIZE, BUTTON_SIZE, true);
-		itemButtonList[5] = new ItemButton(leftItemInfoComposite, character.getEquipmentList().get(Equip_part.AIDEQUIPMENT), BUTTON_SIZE, BUTTON_SIZE, true);
 		
-		itemButtonList[6] = new ItemButton(rightItemInfoComposite, character.getWeapon(), BUTTON_SIZE, BUTTON_SIZE, true);
-		itemButtonList[7] = new ItemButton(rightItemInfoComposite, character.getTitle(), BUTTON_SIZE, BUTTON_SIZE, true);
-		itemButtonList[8] = new ItemButton(rightItemInfoComposite, character.getEquipmentList().get(Equip_part.BRACELET), BUTTON_SIZE, BUTTON_SIZE, true);
-		itemButtonList[9] = new ItemButton(rightItemInfoComposite, character.getEquipmentList().get(Equip_part.NECKLACE), BUTTON_SIZE, BUTTON_SIZE, true);
-		itemButtonList[10] = new ItemButton(rightItemInfoComposite, character.getEquipmentList().get(Equip_part.MAGICSTONE), BUTTON_SIZE, BUTTON_SIZE, true);
-		itemButtonList[11] = new ItemButton(rightItemInfoComposite, character.getEquipmentList().get(Equip_part.RING), BUTTON_SIZE, BUTTON_SIZE, true);
+		itemButtonList[5] = new ItemButton(rightItemInfoComposite, character.getWeapon(), BUTTON_SIZE, BUTTON_SIZE, true);
+		itemButtonList[6] = new ItemButton(rightItemInfoComposite, character.getTitle(), BUTTON_SIZE, BUTTON_SIZE, true);
+		itemButtonList[7] = new ItemButton(rightItemInfoComposite, character.getEquipmentList().get(Equip_part.BRACELET), BUTTON_SIZE, BUTTON_SIZE, true);
+		itemButtonList[8] = new ItemButton(rightItemInfoComposite, character.getEquipmentList().get(Equip_part.NECKLACE), BUTTON_SIZE, BUTTON_SIZE, true);
+		itemButtonList[9] = new ItemButton(rightItemInfoComposite, character.getEquipmentList().get(Equip_part.AIDEQUIPMENT), BUTTON_SIZE, BUTTON_SIZE, true);
+		itemButtonList[10] = new ItemButton(rightItemInfoComposite, character.getEquipmentList().get(Equip_part.RING), BUTTON_SIZE, BUTTON_SIZE, true);
+		itemButtonList[11] = new ItemButton(rightItemInfoComposite, character.getEquipmentList().get(Equip_part.EARRING), BUTTON_SIZE, BUTTON_SIZE, true);
+		itemButtonList[12] = new ItemButton(rightItemInfoComposite, character.getEquipmentList().get(Equip_part.MAGICSTONE), BUTTON_SIZE, BUTTON_SIZE, true);
+		
 		
 		Point buttonS = itemButtonList[0].getButton().computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		buttonS.x+=3; buttonS.y+=3;
 		for(int i=0; i<ITEMNUM; i++)
 		{
 			Integer x0;
-			if(i>5) x0 = InterfaceSize.USER_INFO_ITEM_SIZE_X-2*buttonS.x+(i%2)*buttonS.x-3;
+			if(i>4) x0 = InterfaceSize.USER_INFO_ITEM_SIZE_X-2*buttonS.x+((i-5)%2)*buttonS.x-3;
 			else x0 = (i%2)*buttonS.x+10;
-			Integer y0 = (int)((i/2)%3)*buttonS.y+10;
+			
+			Integer y0;
+			if(i>4) y0 = (int)((i-5)/2)*buttonS.y+10;
+			else y0 = (int)(i/2)*buttonS.y+10;
 			Integer indexBox = i;
 			
 			// add MouseDown Event - unequip
@@ -110,12 +115,12 @@ class UserItemInfo {
 		         @Override
 		         public void handleEvent(Event e) {
 		        	 if(itemButtonList[indexBox].enabled){
-		        		 //System.out.println("Mouse Entered "+i.getName());
+		        		 if(itemButtonList[indexBox].getItem().getName().contains("없음")) return;
 		        		 itemInfo = new Composite(parent, SWT.BORDER);
 		        		 GridLayout layout = new GridLayout(1, false);
 		        		 layout.verticalSpacing=3;
 		        		 itemInfo.setLayout(layout);
-		        		 itemButtonList[indexBox].setItemInfoComposite(itemInfo);
+		        		 MakeComposite.setItemInfoComposite(itemInfo, itemButtonList[indexBox].getItem());
 		        		 itemInfoSize = itemInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		        		 itemInfo.setBounds((e.x+x0), (e.y+y0), InterfaceSize.ITEM_INFO_SIZE, itemInfoSize.y);
 		        		 itemInfo.moveAbove(null);
@@ -125,7 +130,8 @@ class UserItemInfo {
 		        		 if(hasSet){
 		        			 setInfo = new Composite(parent, SWT.BORDER);
 		        			 setInfo.setLayout(layout);
-		        			 itemButtonList[indexBox].setSetInfoComposite(setInfo, character.getSetOptionList().get( ((Equipment)itemButtonList[indexBox].getItem()).setName ), character.userItemList);
+		        			 MakeComposite.setSetInfoComposite(setInfo, itemButtonList[indexBox].getItem(),
+		        					 character.getSetOptionList().get( ((Equipment)itemButtonList[indexBox].getItem()).setName ), character.userItemList);
 			        		 setInfoSize = setInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			        		 setInfo.moveAbove(null);
 			        		 setInfo.setBounds((e.x+x0+InterfaceSize.SET_ITEM_INTERVAL+InterfaceSize.ITEM_INFO_SIZE), (e.y+y0), InterfaceSize.SET_INFO_SIZE, setInfoSize.y);
@@ -138,7 +144,7 @@ class UserItemInfo {
 			itemButtonList[i].getButton().addListener(SWT.MouseExit, new Listener() {
 		         @Override
 		         public void handleEvent(Event e) {
-		        	 if(itemButtonList[indexBox].enabled && itemInfo !=null){
+		        	 if(itemInfo !=null && !itemInfo.isDisposed()){
 		        		 //System.out.println("Mouse Exited "+i.getName());
 		        		 itemInfo.dispose();
 		        		 if(hasSetOption && setInfo!=null) setInfo.dispose();
@@ -150,7 +156,7 @@ class UserItemInfo {
 			itemButtonList[i].getButton().addListener(SWT.MouseMove, new Listener() {
 		         @Override
 		         public void handleEvent(Event e) {
-		        	 if(itemButtonList[indexBox].enabled && itemInfo!=null && !itemInfo.isDisposed()){
+		        	 if(itemInfo !=null && !itemInfo.isDisposed()){
 		        		 //System.out.println("Mouse Move (button: " + e.button + " x: " + (e.x+x0) + " y: " + (e.y+y0) + ")");
 		        		 itemInfo.setLocation((e.x+x0), (e.y+y0));
 		        		 if(hasSetOption) setInfo.setLocation((e.x+x0+InterfaceSize.SET_ITEM_INTERVAL+InterfaceSize.ITEM_INFO_SIZE), (e.y+y0));
@@ -172,13 +178,15 @@ class UserItemInfo {
 		itemButtonList[2].setItem(character.getEquipmentList().get(Equip_part.TROUSER));
 		itemButtonList[3].setItem(character.getEquipmentList().get(Equip_part.BELT));
 		itemButtonList[4].setItem(character.getEquipmentList().get(Equip_part.SHOES));
-		itemButtonList[5].setItem(character.getEquipmentList().get(Equip_part.AIDEQUIPMENT));
-		itemButtonList[6].setItem(character.getWeapon());
-		itemButtonList[7].setItem(character.getTitle());
-		itemButtonList[8].setItem(character.getEquipmentList().get(Equip_part.BRACELET));
-		itemButtonList[9].setItem(character.getEquipmentList().get(Equip_part.NECKLACE));
-		itemButtonList[10].setItem(character.getEquipmentList().get(Equip_part.MAGICSTONE));
-		itemButtonList[11].setItem(character.getEquipmentList().get(Equip_part.RING));
+		itemButtonList[5].setItem(character.getWeapon());
+		itemButtonList[6].setItem(character.getTitle());
+		itemButtonList[7].setItem(character.getEquipmentList().get(Equip_part.BRACELET));
+		itemButtonList[8].setItem(character.getEquipmentList().get(Equip_part.NECKLACE));
+		itemButtonList[9].setItem(character.getEquipmentList().get(Equip_part.AIDEQUIPMENT));
+		itemButtonList[10].setItem(character.getEquipmentList().get(Equip_part.RING));
+		itemButtonList[12].setItem(character.getEquipmentList().get(Equip_part.EARRING));
+		itemButtonList[12].setItem(character.getEquipmentList().get(Equip_part.MAGICSTONE));
+		
 		
 		for(int i=0; i<ITEMNUM; i++)
 		{

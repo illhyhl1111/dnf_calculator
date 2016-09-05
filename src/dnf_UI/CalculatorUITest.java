@@ -4,6 +4,7 @@ package dnf_UI;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -36,20 +37,11 @@ public class CalculatorUITest {
 			GetItemDictionary.readFile();
 			Characters character = new Characters(86, JobList.LAUNCHER_F);
 
-			//StatusUI_Test.openStatusUI(10000, 100000, 1000, object, character, 1, false);
-			//StatusUI_Test.openStatusUI(10000, 100000, 1000, object, character, 1, true);
 			Display display = new Display();
 
 	        Shell shell = new Shell(display);
 	        shell.setText("인포창");
-	        //RowLayout layout = new RowLayout(SWT.VERTICAL);
-	        //layout.wrap=false;
-	        shell.setLayout(new FormLayout());
-	        
-	        UserInfo itemInfo;
-	        Inventory inventory; 
-	        Vault vault;
-	        SubInventory subInventory;
+	        shell.setLayout(new FillLayout());
 			
 			character.equip(character.userItemList.getEquipment("우요의 황금 캐넌"));
 			
@@ -64,6 +56,7 @@ public class CalculatorUITest {
 			character.equip(character.userItemList.getEquipment("필리르 - 꺼지지 않는 화염"));
 			character.equip(character.userItemList.getEquipment("무한한 탐식의 잔재"));
 			character.equip(character.userItemList.getEquipment("탐식의 근원"));
+			character.equip(character.userItemList.getEquipment("임시귀걸이"));
 			
 			Monster object = new Monster(new Status());
 			object.setBooleanStat(Monster_StatList.BACKATK, true);
@@ -74,24 +67,8 @@ public class CalculatorUITest {
 			object.setStat(Monster_StatList.DEFENSIVE_MAG, 135000);
 			object.setStat(Monster_StatList.LEVEL, 115);
 			object.setStat(Monster_StatList.TYPE, MonsterType.BOSS);
-	        
-	        itemInfo = new UserInfo(shell, character);
-	        inventory = new Inventory(shell, character, itemInfo);
-	        vault = new Vault(shell, GetItemDictionary.itemDictionary.getAllItemList(), inventory);
-	        inventory.setListener(vault);
-	        subInventory = new SubInventory(shell, character, itemInfo, inventory);
-	        subInventory.setListener();
-	        
-	        
-	        itemInfo.getComposite().setLayoutData(new FormData());
-	        
-	        FormData inventoryData = new FormData();
-	        inventoryData.top = new FormAttachment(itemInfo.getComposite(), 5);
-	        inventory.getComposite().setLayoutData(inventoryData);
-	        
-	        FormData subInventoryData = new FormData();
-	        subInventoryData.top = new FormAttachment(inventory.getComposite(), 20);
-	        subInventory.getComposite().setLayoutData(subInventoryData);
+			
+			VillageUI villageUI = new VillageUI(shell, character);
 	        
 	        display.addFilter(SWT.KeyDown, new Listener() {
 	            @Override
@@ -99,10 +76,10 @@ public class CalculatorUITest {
 	                char c = event.character;
 	                //System.out.println(c);
 	                if(c=='i'){
-	                	if(vault.getShell()==null)
-	                		vault.open();
+	                	if(villageUI.vault.getShell()==null)
+	                		villageUI.vault.open();
 	                	else
-	                		vault.close();
+	                		villageUI.vault.close();
 	                }
 	            }
 	        });
