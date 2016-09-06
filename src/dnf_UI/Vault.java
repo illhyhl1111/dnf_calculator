@@ -20,7 +20,8 @@ import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_class.Item;
 import dnf_infomation.GetItemDictionary;
 
-public class Vault extends Dialog {
+public class Vault extends Dialog 
+{
 	LinkedList<Item> itemList;
 	ItemButton[] vault;
 	final static int vaultCol = 20;
@@ -69,7 +70,6 @@ public class Vault extends Dialog {
 		int index=0;
 		
 		for(Item i : itemList){
-			Integer indexBox = index;
 			vault[index] = new ItemButton(vaultComposite, i, InterfaceSize.INVENTORY_BUTTON_SIZE, InterfaceSize.INVENTORY_BUTTON_SIZE, true);
 			
 			if(!i.getName().equals("이름없음"))
@@ -81,8 +81,8 @@ public class Vault extends Dialog {
 						if(e.button==3){
 							try{
 								ItemButton temp = inventory.getItem(i.getName());
-								temp.enabled=true;
-								temp.renewImage();
+								temp.getItem().setEnabled(true);
+								temp.renewImage(true);
 							}
 							catch(ItemNotFoundedException e1){
 								e1.printStackTrace();
@@ -96,12 +96,10 @@ public class Vault extends Dialog {
 				vault[index].getButton().addListener(SWT.MouseExit, new Listener() {
 			         @Override
 			         public void handleEvent(Event e) {
-			        	 if(vault[indexBox].enabled){
-			        		 if(itemInfo!=null && !itemInfo.isDisposed()){
-			        			 itemInfo.dispose();
-			        			 if(hasSetOption) setInfo.dispose();
-			        		 }
-			        	 }
+			        	 if(itemInfo!=null && !itemInfo.isDisposed()){
+		        			 itemInfo.dispose();
+		        			 if(hasSetOption) setInfo.dispose();
+		        		 }
 			         }
 			     });
 				
@@ -109,12 +107,10 @@ public class Vault extends Dialog {
 				vault[index].getButton().addListener(SWT.MouseMove, new Listener() {
 			         @Override
 			         public void handleEvent(Event e) {
-			        	 if(vault[indexBox].enabled){
-			        		 if(itemInfo!=null && !itemInfo.isDisposed()){
-				        		 itemInfo.setLocation((e.x+X0), (e.y+Y0));
-				        		 if(hasSetOption) setInfo.setLocation((e.x+X0+InterfaceSize.SET_ITEM_INTERVAL+InterfaceSize.ITEM_INFO_SIZE), (e.y+Y0));
-			        		 }
-			        	 }
+			        	 if(itemInfo!=null && !itemInfo.isDisposed()){
+			        		 itemInfo.setLocation((e.x+X0), (e.y+Y0));
+			        		 if(hasSetOption) setInfo.setLocation((e.x+X0+InterfaceSize.SET_ITEM_INTERVAL+InterfaceSize.ITEM_INFO_SIZE), (e.y+Y0));
+		        		 }
 			         }
 			     });			
 				index++;
@@ -151,38 +147,35 @@ public class Vault extends Dialog {
 				vault[index].getButton().addListener(SWT.MouseEnter, new Listener() {
 			         @Override
 			         public void handleEvent(Event e) {
-			        	 if(vault[indexBox].enabled){
-			        		 //System.out.println("Mouse Entered "+i.getName());
-			        		 itemInfo = new Composite(parent, SWT.BORDER);
-			        		 GridLayout layout = new GridLayout(1, false);
-			        		 layout.verticalSpacing=3;
-			        		 itemInfo.setLayout(layout);
-			        		 MakeComposite.setItemInfoComposite(itemInfo, vault[indexBox].getItem());
-			        		 itemInfoSize = itemInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-			        		 itemInfo.moveAbove(null);
-			        		 
-			        		 boolean hasSet = vault[indexBox].hasSetOption();
-			        		 hasSetOption = hasSet;
-			        		 if(hasSet){
-			        			 setInfo = new Composite(parent, SWT.BORDER);
-			        			 setInfo.setLayout(layout);
-			        			 MakeComposite.setSetInfoComposite(setInfo, vault[indexBox].getItem(), 0, GetItemDictionary.itemDictionary);
-				        		 setInfoSize = setInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				        		 setInfo.moveAbove(null);
-			        		 }
-			        		 
-			        		 int x0;
-			        		 int y0 = yButton-itemInfoSize.y-5;
-			        		 if(hasSet)
-			        			 x0 = xButton-InterfaceSize.ITEM_INFO_SIZE-InterfaceSize.SET_INFO_SIZE-5-InterfaceSize.SET_ITEM_INTERVAL;
-			        		 else x0 = xButton-InterfaceSize.ITEM_INFO_SIZE-5;
-			        		 if(x0<0) x0 = xButton+5;
-			        		 if(y0<0) y0 = yButton+5;
-			        		 itemInfo.setBounds((e.x+x0), (e.y+y0), InterfaceSize.ITEM_INFO_SIZE, itemInfoSize.y);
-			        		 if(hasSet) setInfo.setBounds((e.x+x0+InterfaceSize.SET_ITEM_INTERVAL+InterfaceSize.ITEM_INFO_SIZE), (e.y+y0), InterfaceSize.SET_INFO_SIZE, setInfoSize.y);
-			        		 X0=x0;
-			        		 Y0=y0;
-			        	 }
+			        	 itemInfo = new Composite(parent, SWT.BORDER);
+		        		 GridLayout layout = new GridLayout(1, false);
+		        		 layout.verticalSpacing=3;
+		        		 itemInfo.setLayout(layout);
+		        		 MakeComposite.setItemInfoComposite(itemInfo, vault[indexBox].getItem());
+		        		 itemInfoSize = itemInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		        		 itemInfo.moveAbove(null);
+		        		 
+		        		 boolean hasSet = vault[indexBox].hasSetOption();
+		        		 hasSetOption = hasSet;
+		        		 if(hasSet){
+		        			 setInfo = new Composite(parent, SWT.BORDER);
+		        			 setInfo.setLayout(layout);
+		        			 MakeComposite.setSetInfoComposite(setInfo, vault[indexBox].getItem(), 0, GetItemDictionary.itemDictionary);
+			        		 setInfoSize = setInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			        		 setInfo.moveAbove(null);
+		        		 }
+		        		 
+		        		 int x0;
+		        		 int y0 = yButton-itemInfoSize.y-5;
+		        		 if(hasSet)
+		        			 x0 = xButton-InterfaceSize.ITEM_INFO_SIZE-InterfaceSize.SET_INFO_SIZE-5-InterfaceSize.SET_ITEM_INTERVAL;
+		        		 else x0 = xButton-InterfaceSize.ITEM_INFO_SIZE-5;
+		        		 if(x0<0) x0 = xButton+5;
+		        		 if(y0<0) y0 = yButton+5;
+		        		 itemInfo.setBounds((e.x+x0), (e.y+y0), InterfaceSize.ITEM_INFO_SIZE, itemInfoSize.y);
+		        		 if(hasSet) setInfo.setBounds((e.x+x0+InterfaceSize.SET_ITEM_INTERVAL+InterfaceSize.ITEM_INFO_SIZE), (e.y+y0), InterfaceSize.SET_INFO_SIZE, setInfoSize.y);
+		        		 X0=x0;
+		        		 Y0=y0;
 			         }
 			     });
 			}

@@ -8,15 +8,18 @@ import dnf_InterfacesAndExceptions.Avatar_part;
 import dnf_InterfacesAndExceptions.Character_type;
 import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.ItemFileNotFounded;
-import dnf_InterfacesAndExceptions.ItemFileNotReaded;
 import dnf_InterfacesAndExceptions.JobList;
 import dnf_InterfacesAndExceptions.SetName;
 import dnf_calculator.Status;
 import dnf_infomation.GetItemDictionary;
 import dnf_infomation.ItemDictionary;
 
-public class Characters
+public class Characters implements java.io.Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2820101776203426270L;
 	public Status villageStatus;														//마을스탯
 	public Status dungeonStatus;														//인던스탯
 	private HashMap<Equip_part, Equipment> equipmentList;
@@ -31,6 +34,7 @@ public class Characters
 	private LinkedList<Consumeable> doping;
 	private int level;
 	private final JobList job;
+	public final String name;
 	private final Character_type characterType;
 	
 	public ItemDictionary userItemList;
@@ -39,8 +43,9 @@ public class Characters
 	
 	//LinkedList<PassiveSkill> passive;											//TODO
 
-	public Characters(int level, JobList job)
+	public Characters(int level, JobList job, String name)
 	{
+		this.name=name;
 		equipmentList = new HashMap<Equip_part, Equipment>();					//key : 장비 부위, value : 장비. 장비와 장비부위의 type이 같은곳에 장착됨
 		setOptionList = new HashMap<SetName, Integer>();						//key : 셋옵 이름, value : 셋옵 보유 개수
 		avatarList = new HashMap<Avatar_part, Avatar>();

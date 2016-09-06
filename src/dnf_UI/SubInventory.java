@@ -25,7 +25,8 @@ import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_class.Characters;
 import dnf_class.Item;
 
-public class SubInventory {
+public class SubInventory 
+{
 	LinkedList<Item> itemList;
 	ItemButton[] inventoryList;
 	final static int inventoryCol=15;
@@ -82,10 +83,10 @@ public class SubInventory {
 				inventoryList[index].getButton().addListener(SWT.MouseDoubleClick, new Listener() {
 			         @Override
 			         public void handleEvent(Event e) {
-			        	 if(e.button==3 && inventoryList[indexBox].enabled){
+			        	 if(e.button==3 && inventoryList[indexBox].getItem().getEnabled()){
 			        		 //TODO
 			        	 }
-			        	 else if(e.button==1 && inventoryList[indexBox].enabled)
+			        	 else if(e.button==1 && inventoryList[indexBox].getItem().getEnabled())
 			        	 {
 			        		ChangeItemStatus changeItem = new ChangeItemStatus(parent.getShell(), inventoryList[indexBox].getItem(), false);
 			        		int result = changeItem.open();
@@ -102,7 +103,7 @@ public class SubInventory {
 				inventoryList[index].getButton().addListener(SWT.MouseEnter, new Listener() {
 			         @Override
 			         public void handleEvent(Event e) {
-			        	 if(inventoryList[indexBox].enabled){
+			        	 if(inventoryList[indexBox].getItem().getEnabled()){
 			        		 //System.out.println("Mouse Entered "+i.getName());
 			        		 itemInfo = new Composite(background, SWT.BORDER);
 			        		 GridLayout layout = new GridLayout(1, false);
@@ -128,7 +129,7 @@ public class SubInventory {
 				inventoryList[index].getButton().addListener(SWT.MouseExit, new Listener() {
 			         @Override
 			         public void handleEvent(Event e) {
-			        	 if(inventoryList[indexBox].enabled && !itemInfo.isDisposed()){
+			        	 if(inventoryList[indexBox].getItem().getEnabled() && !itemInfo.isDisposed()){
 			        		 //System.out.println("Mouse Exited "+i.getName());
 			        		 itemInfo.dispose();
 			        	 }
@@ -139,7 +140,7 @@ public class SubInventory {
 				inventoryList[index].getButton().addListener(SWT.MouseMove, new Listener() {
 			         @Override
 			         public void handleEvent(Event e) {
-			        	 if(inventoryList[indexBox].enabled && !itemInfo.isDisposed()){
+			        	 if(inventoryList[indexBox].getItem().getEnabled() && !itemInfo.isDisposed()){
 			        		 //System.out.println("Mouse Move (button: " + e.button + " x: " + (e.x+x0) + " y: " + (e.y+y0) + ")");
 			        		 itemInfo.setLocation((e.x+X0), (e.y+Y0));
 			        	 }

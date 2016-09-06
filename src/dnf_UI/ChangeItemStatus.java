@@ -456,7 +456,7 @@ public class ChangeItemStatus extends Dialog{
 						}
 			    	}
 			    	
-			    	if(earringStat!=null){
+			    	if(earringStat[0]!=null){
 				    	try {
 				    		int[] result = GetItemDictionary.getReinforceEarringInfo(currentReinforce, item.getRarity(), ((Equipment)item).level);
 							setEarringStat(new int[] {result[0], result[0], result[1]}, earringStatLabel, earringStatText);

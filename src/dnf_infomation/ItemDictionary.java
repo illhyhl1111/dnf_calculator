@@ -12,7 +12,6 @@ import java.util.LinkedList;
 
 import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.ItemFileNotFounded;
-import dnf_InterfacesAndExceptions.Item_rarity;
 import dnf_InterfacesAndExceptions.SetName;
 import dnf_class.Card;
 import dnf_class.Equipment;

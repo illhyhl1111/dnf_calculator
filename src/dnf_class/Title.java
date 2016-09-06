@@ -8,16 +8,19 @@ public class Title extends Item
 {
 	private Card card;										//보주
 	public final Equip_part part;							//부위
+	public boolean enabled;
 	public Title(String name, String icon, Item_rarity rarity, Card card)
 	{
 		super(name, icon, rarity);
 		this.card=card;
 		part=Equip_part.TITLE;
+		enabled=false;
 	}
 	public Title(){
 		super();
 		card=new Card();
 		part=Equip_part.TITLE;
+		enabled=false;
 	}
 	
 	@Override
@@ -39,4 +42,9 @@ public class Title extends Item
 		}
 		return false;
 	}
+	
+	@Override
+	public boolean getEnabled() {return enabled;}
+	@Override
+	public void setEnabled(boolean enabled){this.enabled=enabled;}
 }

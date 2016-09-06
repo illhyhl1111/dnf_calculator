@@ -58,7 +58,7 @@ public class Calculator_test {
 			charStat.setDoubleStat("독공뻥", 15);
 			charStat.setDoubleStat("물리마스터리2", 1);
 			
-			Characters character = new Characters(86, JobList.LAUNCHER_F);
+			Characters character = new Characters(86, JobList.LAUNCHER_F, "명속은거들뿐");
 			character.villageStatus=charStat;
 			
 			Monster object = new Monster(new Status());

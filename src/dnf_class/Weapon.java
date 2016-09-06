@@ -1,6 +1,5 @@
 package dnf_class;
 
-import dnf_InterfacesAndExceptions.AddOn;
 import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.Equip_type;
 import dnf_InterfacesAndExceptions.Item_rarity;

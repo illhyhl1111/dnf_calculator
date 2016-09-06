@@ -372,19 +372,17 @@ public class BatchModifier extends Dialog {
 			itemButtonList[i].getButton().addListener(SWT.MouseEnter, new Listener() {
 		         @Override
 		         public void handleEvent(Event e) {
-		        	 if(itemButtonList[indexBox].enabled){
-		        		 Card card= itemButtonList[indexBox].getItem().getCard();
-		        		 
-		        		 if( card.getName().contains("없음")) return;
-		        		 itemInfo = new Composite(parent, SWT.BORDER);
-		        		 GridLayout layout = new GridLayout(1, false);
-		        		 layout.verticalSpacing=3;
-		        		 itemInfo.setLayout(layout);
-		        		 MakeComposite.setItemInfoComposite(itemInfo, card);
-		        		 itemInfoSize = itemInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		        		 itemInfo.setBounds((e.x+x0), (e.y+y0-itemInfoSize.y), InterfaceSize.ITEM_INFO_SIZE, itemInfoSize.y);
-		        		 itemInfo.moveAbove(null);
-		        	 }
+		        	 Card card= itemButtonList[indexBox].getItem().getCard();
+	        		 
+	        		 if( card.getName().contains("없음")) return;
+	        		 itemInfo = new Composite(parent, SWT.BORDER);
+	        		 GridLayout layout = new GridLayout(1, false);
+	        		 layout.verticalSpacing=3;
+	        		 itemInfo.setLayout(layout);
+	        		 MakeComposite.setItemInfoComposite(itemInfo, card);
+	        		 itemInfoSize = itemInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+	        		 itemInfo.setBounds((e.x+x0), (e.y+y0-itemInfoSize.y), InterfaceSize.ITEM_INFO_SIZE, itemInfoSize.y);
+	        		 itemInfo.moveAbove(null);
 		         }
 		     });
 			
@@ -431,13 +429,12 @@ public class BatchModifier extends Dialog {
 					
 					for(Item e : inventory.getEnabledEquipment(tempList))
 						e.setCard(tempCard);
-					
-					userInfo.renew();
-					MessageDialog dialog = new MessageDialog(shell, "성☆공", null,
-						    "마법부여 완료",
-						    MessageDialog.INFORMATION, new String[] { "ㅇㅋ" }, 0);
-					dialog.open();
 				}
+				
+				userInfo.renew();
+				MessageDialog dialog = new MessageDialog(shell, "성☆공", null,
+					    "마법부여 완료", MessageDialog.INFORMATION, new String[] { "ㅇㅋ" }, 0);
+				dialog.open();
 			}
 	    });
 	    
@@ -481,23 +478,20 @@ public class BatchModifier extends Dialog {
 				if (itemButton.getItem() instanceof Equipment || itemButton.getItem() instanceof Title) {
 					try {
 						Card card = character.userItemList.getCard((String)event.data);
-						if(itemButton.enabled)
-						{
-							boolean succeed;
-							if(itemButton.getItem() instanceof Equipment) succeed = ((Equipment)itemButton.getItem()).setCard(card);
-							else succeed = ((Title)itemButton.getItem()).setCard(card);
-							if(succeed){
-								MessageDialog dialog = new MessageDialog(shell, "성☆공", null,
-									    "마법부여 지정에 성공하였습니다!\n\n보주 : "+(String)event.data+"\n부위 : "+((Equipment)itemButton.getItem()).part,
-									    MessageDialog.INFORMATION, new String[] { "ㅇㅋ" }, 0);
-								dialog.open();
-							}
-							else{
-								MessageDialog dialog = new MessageDialog(shell, "실★패", null,
-									    "마법부여 지정에 실패하였습니다\n\n보주 : "+(String)event.data+"\n가능한 장비 부위 : "+card.getPartToString(),
-									    MessageDialog.ERROR, new String[] { "납득" }, 0);
-								dialog.open();
-							}
+						boolean succeed;
+						if(itemButton.getItem() instanceof Equipment) succeed = ((Equipment)itemButton.getItem()).setCard(card);
+						else succeed = ((Title)itemButton.getItem()).setCard(card);
+						if(succeed){
+							MessageDialog dialog = new MessageDialog(shell, "성☆공", null,
+								    "마법부여 지정에 성공하였습니다!\n\n보주 : "+(String)event.data+"\n부위 : "+((Equipment)itemButton.getItem()).part,
+								    MessageDialog.INFORMATION, new String[] { "ㅇㅋ" }, 0);
+							dialog.open();
+						}
+						else{
+							MessageDialog dialog = new MessageDialog(shell, "실★패", null,
+								    "마법부여 지정에 실패하였습니다\n\n보주 : "+(String)event.data+"\n가능한 장비 부위 : "+card.getPartToString(),
+								    MessageDialog.ERROR, new String[] { "납득" }, 0);
+							dialog.open();
 						}
 					} catch (ItemFileNotFounded e) {
 						e.printStackTrace();

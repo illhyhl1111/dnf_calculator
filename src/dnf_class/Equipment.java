@@ -22,6 +22,7 @@ public class Equipment extends Item
 	public final SetName setName;							//셋옵이름
 	public final Equip_type type;							//재질
 	public final int level;									//레벨
+	public boolean enabled;
 	
 	public Equipment(String name, String icon,Item_rarity rarity, Equip_part part,
 			Card card, SetName setName, Equip_type type, int level)
@@ -32,6 +33,7 @@ public class Equipment extends Item
 		this.setName=setName;
 		this.type=type;
 		this.level=level;
+		enabled=false;
 		
 		vStat.addStatList(StatList.NONE, new StatusInfo(0));					//임시 차원스탯
 		
@@ -72,6 +74,7 @@ public class Equipment extends Item
 		setName=SetName.NONE;
 		card = new Card("없음", null, Item_rarity.NONE);
 		level=0;
+		enabled=false;
 		
 		vStat.addStatList(StatList.NONE, new StatusInfo(0));
 		if(part==Equip_part.AIDEQUIPMENT || part==Equip_part.MAGICSTONE)
@@ -146,10 +149,18 @@ public class Equipment extends Item
 	
 	public void setReinforce(int num) throws UnknownInformationException
 	{
+		boolean throwException=false;
 		try {
 			if(dimStat!=Dimension_stat.NONE)
 				vStat.statList.get(getDimStatIndex()).stat.setInfo(GetItemDictionary.getDimensionInfo(num, super.getRarity(), level));
+		}
+		catch(UnknownInformationException e){
+			throwException = true;
+		} catch (StatusTypeMismatch e) {
+			e.printStackTrace();
+		}
 			
+		try{
 			int strIndex = getAidStatIndex();
 			if(strIndex>=0){
 				int str = GetItemDictionary.getReinforceAidInfo( num, super.getRarity(), level);
@@ -171,6 +182,8 @@ public class Equipment extends Item
 			e.printStackTrace();
 		}
 		reinforce=num;
+		
+		if(throwException) throw new UnknownInformationException();
 	}
 	
 	@Override
@@ -262,6 +275,10 @@ public class Equipment extends Item
 		}
 		return false;
 	}
+	@Override
+	public boolean getEnabled() {return enabled;}
+	@Override
+	public void setEnabled(boolean enabled){this.enabled=enabled;}
 	
 	//////정렬순서
 	// 1. 종류 : 장비->칭호->보주->아바타->엠블렘->크리쳐->비장비

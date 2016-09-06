@@ -4,7 +4,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 
-import dnf_calculator.Status;
 import dnf_class.Characters;
 
 public class WholeStatus

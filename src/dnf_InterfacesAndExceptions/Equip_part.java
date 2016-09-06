@@ -1,6 +1,8 @@
 package dnf_InterfacesAndExceptions;
 
-public enum Equip_part implements Equipable
+import java.io.Serializable;
+
+public enum Equip_part implements Equipable, Serializable
 {
 	TITLE("칭호", 0),
 	ROBE("상의", 11), TROUSER("하의", 10), SHOULDER("머리어깨", 9),

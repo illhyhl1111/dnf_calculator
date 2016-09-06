@@ -1,6 +1,6 @@
 package dnf_InterfacesAndExceptions;
 
-public enum JobList
+public enum JobList implements java.io.Serializable
 {
 	LAUNCHER_F(Character_type.GUNNER_F),
 	

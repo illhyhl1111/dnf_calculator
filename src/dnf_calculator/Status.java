@@ -5,8 +5,12 @@ import dnf_InterfacesAndExceptions.StatList;
 import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 import dnf_InterfacesAndExceptions.UndefinedStatusKey;
 
-public class Status implements Cloneable {
+public class Status implements Cloneable, java.io.Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4490242684644672237L;
 	private AbstractStatusInfo[] statInfo;
 	private static HashMap<String, Integer> statHash = new HashMap<String, Integer>();
 	private static boolean statHashsetted = false;

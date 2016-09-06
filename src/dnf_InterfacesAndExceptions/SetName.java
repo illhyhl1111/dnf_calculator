@@ -1,6 +1,8 @@
 package dnf_InterfacesAndExceptions;
 
-public enum SetName
+import java.io.Serializable;
+
+public enum SetName implements Serializable
 {
 	NONE("세트 없음"),
 	DARKGOTH("다크고스 세트"), CHAMELEON("무음 카멜레온 세트"), SUBMARINE("서브마린 볼케이노 세트"), DARKHOLE("미지의 다크홀 세트"), INFINITY("인피니티 레퀴엠 세트"),

@@ -1,6 +1,8 @@
 package dnf_InterfacesAndExceptions;
 
-public enum Avatar_part implements Equipable
+import java.io.Serializable;
+
+public enum Avatar_part implements Equipable, Serializable
 {
 	CAP("모자 아바타"), HAIR("머리 아바타"), EARRING("얼굴 아바타"), 
 	SHOULDER("목가슴 아바타"), COAT("상의 아바타"), BELT("벨트 아바타"),

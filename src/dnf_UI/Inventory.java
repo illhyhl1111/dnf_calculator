@@ -22,16 +22,15 @@ import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.InterfaceSize;
 import dnf_InterfacesAndExceptions.ItemFileNotFounded;
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
-import dnf_InterfacesAndExceptions.Item_rarity;
 import dnf_InterfacesAndExceptions.SetName;
 import dnf_class.Card;
 import dnf_class.Characters;
 import dnf_class.Equipment;
 import dnf_class.Item;
-import dnf_class.ItemConstraint;
 import dnf_class.Title;
 
-public class Inventory {
+public class Inventory 
+{
 	LinkedList<Item> itemList;
 	ItemButton[] inventoryList;
 	final static int inventoryCol=15;
@@ -76,9 +75,10 @@ public class Inventory {
 		inventoryList[0].getButton().dispose();
 		Integer userY=userInfo.getComposite().computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
 		
-		for(Item i : itemList){
+		for(Item i : itemList)
+		{
 			inventoryList[index] =
-					new ItemButton(inventoryComposite, i, InterfaceSize.INVENTORY_BUTTON_SIZE, InterfaceSize.INVENTORY_BUTTON_SIZE, false);
+					new ItemButton(inventoryComposite, i, InterfaceSize.INVENTORY_BUTTON_SIZE, InterfaceSize.INVENTORY_BUTTON_SIZE);
 			
 			if(!i.getName().equals("이름없음"))
 			{
@@ -92,14 +92,14 @@ public class Inventory {
 				inventoryList[index].getButton().addListener(SWT.MouseDown, new Listener() {
 			         @Override
 			         public void handleEvent(Event e) {
-			        	 if(e.button==3 && inventoryList[indexBox].enabled){
+			        	 if(e.button==3 && inventoryList[indexBox].getItem().getEnabled()){
 			        		 if(vault.getShell()==null){
 			        			 character.equip(i);
 			        			 userInfo.renew();
 			        		 }
 			        		 else{
-			        			 inventoryList[indexBox].enabled=false;
-			        			 inventoryList[indexBox].renewImage();
+			        			 inventoryList[indexBox].getItem().setEnabled(false);
+			        			 inventoryList[indexBox].renewImage(false);
 			        			 if(userInfo.userItemInfo.equiped(i)){
 			        				 character.unequip(i);
 			        				 userInfo.renew();
@@ -112,7 +112,14 @@ public class Inventory {
 					        	 }
 			        		 }
 			        	 }
-			        	 else if(e.button==1 && inventoryList[indexBox].enabled)
+			         }
+				});
+				
+				inventoryList[index].getButton().addListener(SWT.MouseDoubleClick, new Listener() {
+
+					@Override
+					public void handleEvent(Event event) {
+						if(inventoryList[indexBox].getItem().getEnabled())
 			        	 {
 			        		ChangeItemStatus changeItem = new ChangeItemStatus(parent.getShell(), inventoryList[indexBox].getItem(), inventoryList[indexBox].hasSetOption());
 			        		int result = changeItem.open();
@@ -136,15 +143,15 @@ public class Inventory {
 								}
 							}
 			        	 }
-			        	 //System.out.println("Mouse Down (button: " + e.button + " x: " + e.x + " y: " + e.y + ")");
-			         }
-			     });
+					}
+				});
+					
 				
 				// add MouseEnter Event - make composite
 				inventoryList[index].getButton().addListener(SWT.MouseEnter, new Listener() {
 			         @Override
 			         public void handleEvent(Event e) {
-			        	 if(inventoryList[indexBox].enabled){
+			        	 if(inventoryList[indexBox].getItem().getEnabled()){
 			        		 //System.out.println("Mouse Entered "+i.getName());
 			        		 itemInfo = new Composite(background, SWT.BORDER);
 			        		 GridLayout layout = new GridLayout(1, false);
@@ -189,7 +196,7 @@ public class Inventory {
 				inventoryList[index].getButton().addListener(SWT.MouseExit, new Listener() {
 			         @Override
 			         public void handleEvent(Event e) {
-			        	 if(inventoryList[indexBox].enabled && !itemInfo.isDisposed()){
+			        	 if(inventoryList[indexBox].getItem().getEnabled() && !itemInfo.isDisposed()){
 			        		 //System.out.println("Mouse Exited "+i.getName());
 			        		 itemInfo.dispose();
 			        		 if(hasSetOption) setInfo.dispose();
@@ -201,7 +208,7 @@ public class Inventory {
 				inventoryList[index].getButton().addListener(SWT.MouseMove, new Listener() {
 			         @Override
 			         public void handleEvent(Event e) {
-			        	 if(inventoryList[indexBox].enabled && !itemInfo.isDisposed()){
+			        	 if(inventoryList[indexBox].getItem().getEnabled() && !itemInfo.isDisposed()){
 			        		 //System.out.println("Mouse Move (button: " + e.button + " x: " + (e.x+x0) + " y: " + (e.y+y0) + ")");
 			        		 itemInfo.setLocation((e.x+X0), (e.y+Y0));
 			        		 if(hasSetOption) setInfo.setLocation((e.x+X0+InterfaceSize.SET_ITEM_INTERVAL+InterfaceSize.ITEM_INFO_SIZE), (e.y+Y0));
@@ -245,7 +252,7 @@ public class Inventory {
 					if (itemButton.getItem() instanceof Equipment || itemButton.getItem() instanceof Title) {
 						try {
 							Card card = character.userItemList.getCard((String)event.data);
-							if(itemButton.enabled)
+							if(itemButton.getItem().getEnabled())
 							{
 								boolean succeed;
 								if(itemButton.getItem() instanceof Equipment) succeed= ((Equipment)itemButton.getItem()).setCard(card);
@@ -278,7 +285,7 @@ public class Inventory {
 		LinkedList<Item> enabledList = new LinkedList<Item>();
 		
 		for(ItemButton i : inventoryList)
-			if(part.contains(i.getItem().getPart()) && i.enabled) enabledList.add(i.getItem());
+			if(part.contains(i.getItem().getPart()) && i.getItem().getEnabled()) enabledList.add(i.getItem());
 		
 		return enabledList;
 	}

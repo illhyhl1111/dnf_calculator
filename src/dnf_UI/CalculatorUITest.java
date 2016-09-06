@@ -1,13 +1,11 @@
 package dnf_UI;
 
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
@@ -21,13 +19,11 @@ import dnf_InterfacesAndExceptions.JobList;
 import dnf_InterfacesAndExceptions.MonsterType;
 import dnf_InterfacesAndExceptions.Monster_StatList;
 import dnf_InterfacesAndExceptions.StatusTypeMismatch;
-import dnf_InterfacesAndExceptions.ItemFileNotFounded;
 import dnf_calculator.Calculator;
 import dnf_calculator.Status;
 import dnf_class.Characters;
 import dnf_class.Monster;
 import dnf_infomation.GetItemDictionary;
-
 
 public class CalculatorUITest {
 	public static void main(String[] args) {
@@ -35,7 +31,7 @@ public class CalculatorUITest {
 		try{
 
 			GetItemDictionary.readFile();
-			Characters character = new Characters(86, JobList.LAUNCHER_F);
+			Characters character = new Characters(86, JobList.LAUNCHER_F, "명속은거들뿐");
 
 			Display display = new Display();
 
@@ -43,6 +39,7 @@ public class CalculatorUITest {
 	        shell.setText("인포창");
 	        shell.setLayout(new FillLayout());
 			
+	        /*
 			character.equip(character.userItemList.getEquipment("우요의 황금 캐넌"));
 			
 			character.equip(character.userItemList.getEquipment("타란튤라 상의"));
@@ -56,7 +53,7 @@ public class CalculatorUITest {
 			character.equip(character.userItemList.getEquipment("필리르 - 꺼지지 않는 화염"));
 			character.equip(character.userItemList.getEquipment("무한한 탐식의 잔재"));
 			character.equip(character.userItemList.getEquipment("탐식의 근원"));
-			character.equip(character.userItemList.getEquipment("임시귀걸이"));
+			character.equip(character.userItemList.getEquipment("임시귀걸이"));*/
 			
 			Monster object = new Monster(new Status());
 			object.setBooleanStat(Monster_StatList.BACKATK, true);
@@ -86,13 +83,21 @@ public class CalculatorUITest {
 	        
 	        shell.pack();
 	        shell.open();
+	        
+	        shell.addShellListener(new ShellAdapter(){
+				@Override
+				public void shellClosed(ShellEvent e) {
+					villageUI.save(character);
+				}
+	        });
+	        
 	        while (!shell.isDisposed()) {
 	            if (!display.readAndDispatch())
 	                display.sleep();
 	        }
 	        display.dispose();
 		}
-		catch(StatusTypeMismatch | ItemFileNotFounded e)
+		catch(StatusTypeMismatch e)
 		{
 			e.printStackTrace();
 		}

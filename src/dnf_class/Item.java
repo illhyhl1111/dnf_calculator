@@ -59,6 +59,8 @@ public class Item implements Cloneable, java.io.Serializable, Comparable<Item>
 	public Card getCard() {return null;}
 	public boolean setCard(Card card) {return false;}
 	public Equip_part getPart() {return null;}
+	public boolean getEnabled() {return true;}
+	public void setEnabled(boolean enabled){}
 	
 	public String getTypeName() { return "아이템";}
 	public String getTypeName2() { return null;}

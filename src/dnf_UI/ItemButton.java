@@ -10,23 +10,31 @@ import dnf_InterfacesAndExceptions.SetName;
 import dnf_class.Equipment;
 import dnf_class.Item;
 
-public class ItemButton {
+public class ItemButton
+{
 	private Button button;
 	private Item item;
 	private Composite parent;
 	private int imageSize_x;
 	private int imageSize_y;
-	boolean enabled;
 	
+	public ItemButton(Composite parent, Item item, int x, int y)
+	{
+		this.parent=parent;
+		this.item=item;
+		imageSize_x=x;
+		imageSize_y=y;
+		button = new Button(parent, SWT.PUSH);
+		renewImage(item.getEnabled());
+	}
 	public ItemButton(Composite parent, Item item, int x, int y, boolean enabled)
 	{
 		this.parent=parent;
 		this.item=item;
 		imageSize_x=x;
 		imageSize_y=y;
-		this.enabled=enabled;
 		button = new Button(parent, SWT.PUSH);
-		renewImage();
+		renewImage(enabled);
 	}
 	
 	public static Image resizeImage(Image image, int x, int y, Composite parent)
@@ -42,7 +50,7 @@ public class ItemButton {
 		return new Image(parent.getDisplay(), data);
 	}
 	
-	public void renewImage()
+	public void renewImage(boolean enabled)
 	{
 		if(button.getImage()!=null) button.getImage().dispose();
 		Image image;

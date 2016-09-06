@@ -1,5 +1,6 @@
 package dnf_UI;
 
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
@@ -13,14 +14,18 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 
 import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.InterfaceSize;
+import dnf_InterfacesAndExceptions.ItemFileNotFounded;
+import dnf_InterfacesAndExceptions.SetName;
 import dnf_class.Characters;
 import dnf_class.Equipment;
 import dnf_class.Item;
 
-class UserItemInfo {
+class UserItemInfo
+{
 	private Composite itemInfoComposite;
 	private Composite leftItemInfoComposite;
 	private Composite rightItemInfoComposite;
@@ -110,13 +115,44 @@ class UserItemInfo {
 		         }
 		     });
 			
+			// add MouseDoubleClick - modify
+			itemButtonList[i].getButton().addListener(SWT.MouseDoubleClick, new Listener() {
+				@Override
+				public void handleEvent(Event event) {
+					if(itemButtonList[indexBox].getItem().getEnabled())
+		        	 {
+		        		ChangeItemStatus changeItem = new ChangeItemStatus(parent.getShell(), itemButtonList[indexBox].getItem(), itemButtonList[indexBox].hasSetOption());
+		        		int result = changeItem.open();
+						if (Window.OK == result) {
+							itemButtonList[indexBox].setItem(changeItem.item);
+							superInfo.renew();
+						}
+						else if(result == 2)
+						{
+						//if(inventoryList[indexBox].hasSetOption()){
+							SetName setName = ((Equipment)itemButtonList[indexBox].getItem()).setName;
+							ChangeSetOptionStatus changeSet = new ChangeSetOptionStatus((Shell)parent, setName, character.userItemList);
+							if (Window.OK == changeSet.open()) {
+								try {
+									character.userItemList.setSetOptions(setName, changeSet.setOption);
+									itemButtonList[indexBox].setItem(changeItem.item);
+									superInfo.renew();
+								} catch (ItemFileNotFounded e1) {
+									e1.printStackTrace();
+								}				
+							}
+						}
+		        	 }
+				}
+			});
+			
 			// add MouseEnter Event - make composite
 			itemButtonList[i].getButton().addListener(SWT.MouseEnter, new Listener() {
 		         @Override
 		         public void handleEvent(Event e) {
-		        	 if(itemButtonList[indexBox].enabled){
+		        	 if(itemButtonList[indexBox].getItem().getEnabled()){
 		        		 if(itemButtonList[indexBox].getItem().getName().contains("없음")) return;
-		        		 itemInfo = new Composite(parent, SWT.BORDER);
+		        		 itemInfo = new Composite(superInfo.getComposite().getParent(), SWT.BORDER);
 		        		 GridLayout layout = new GridLayout(1, false);
 		        		 layout.verticalSpacing=3;
 		        		 itemInfo.setLayout(layout);
@@ -128,7 +164,7 @@ class UserItemInfo {
 		        		 boolean hasSet = itemButtonList[indexBox].hasSetOption();
 		        		 hasSetOption = hasSet;
 		        		 if(hasSet){
-		        			 setInfo = new Composite(parent, SWT.BORDER);
+		        			 setInfo = new Composite(superInfo.getComposite().getParent(), SWT.BORDER);
 		        			 setInfo.setLayout(layout);
 		        			 MakeComposite.setSetInfoComposite(setInfo, itemButtonList[indexBox].getItem(),
 		        					 character.getSetOptionList().get( ((Equipment)itemButtonList[indexBox].getItem()).setName ), character.userItemList);
@@ -184,13 +220,13 @@ class UserItemInfo {
 		itemButtonList[8].setItem(character.getEquipmentList().get(Equip_part.NECKLACE));
 		itemButtonList[9].setItem(character.getEquipmentList().get(Equip_part.AIDEQUIPMENT));
 		itemButtonList[10].setItem(character.getEquipmentList().get(Equip_part.RING));
-		itemButtonList[12].setItem(character.getEquipmentList().get(Equip_part.EARRING));
+		itemButtonList[11].setItem(character.getEquipmentList().get(Equip_part.EARRING));
 		itemButtonList[12].setItem(character.getEquipmentList().get(Equip_part.MAGICSTONE));
 		
 		
 		for(int i=0; i<ITEMNUM; i++)
 		{
-			itemButtonList[i].renewImage();
+			itemButtonList[i].renewImage(true);
 		}
 	}
 	
