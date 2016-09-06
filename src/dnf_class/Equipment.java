@@ -1,6 +1,5 @@
 package dnf_class;
 
-import dnf_InterfacesAndExceptions.AddOn;
 import dnf_InterfacesAndExceptions.Dimension_stat;
 import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.Equip_type;
@@ -255,11 +254,34 @@ public class Equipment extends Item
 	public Card getCard() {
 		return card;
 	}
+	@Override
 	public boolean setCard(Card card) {
 		if(card.available(this)){
 			this.card=card;
 			return true;
 		}
 		return false;
+	}
+	
+	//////정렬순서
+	// 1. 종류 : 장비->칭호->보주->아바타->엠블렘->크리쳐->비장비
+	// 2. 등급 : 에픽->레전더리->유니크->크로니클->레어->언커먼->커먼
+	// 3. 재질 : 천->가죽->경갑->중갑->판금
+	// 4. 레벨 : 고레벨->저레벨 
+	// 4. 셋옵 : 있음(사전배열)->없음
+	// 5. 부위 : 방어구->무기->목걸이->팔찌->반지->보조장비->마법석->귀걸이->칭호->기타
+	// 6. 강화등급
+	
+	@Override
+	public int compareTo(Item arg) {
+		if(!(arg instanceof Equipment)) return 1;			// 1.
+		Equipment arg2 = (Equipment)arg;
+		
+		if(arg2.getRarity()!=this.getRarity()) return this.getRarity().rarity-arg2.getRarity().rarity;		// 2.
+		if(arg2.type!=type) return type.order-arg2.type.order;												// 3.
+		if(arg2.level!=level) return level-arg2.level;														// 4.
+		if(arg2.setName!=setName) return arg2.setName.compare(setName);										// 5.
+		if(arg2.part!=part) return part.order-arg2.part.order;												// 6.
+		else return reinforce-arg2.getReinforce();															// 7.
 	}
 }

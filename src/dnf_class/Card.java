@@ -1,6 +1,7 @@
 package dnf_class;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.Item_rarity;
@@ -47,6 +48,13 @@ public class Card extends Item implements java.io.Serializable
 			if(availableType.contains(Equip_part.TITLE)) return true;
 			return false;
 		}
+		return false;
+	}
+	
+	public boolean available(LinkedList<Equip_part> partList)
+	{
+		for(Equip_part part : partList)
+			if(availableType.contains(part)) return true;
 		return false;
 	}
 	

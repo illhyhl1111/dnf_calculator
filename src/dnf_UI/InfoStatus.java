@@ -35,6 +35,7 @@ public class InfoStatus extends StatusUI
 		infoStatusComposite = new Composite(parent, SWT.BORDER);
 		GridLayout infoLayout = new GridLayout(2, true);
 		infoLayout.horizontalSpacing=5;
+		infoLayout.verticalSpacing=0;
 		infoStatusComposite.setLayout(infoLayout);
 		infoStatusText = new LabelAndInput[Status.infoStatNum];
 		GridData statusGridData = new GridData(SWT.FILL, SWT.TOP, true, false);

@@ -17,19 +17,18 @@ import org.eclipse.swt.widgets.Shell;
 
 import dnf_InterfacesAndExceptions.InterfaceSize;
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
-import dnf_class.Equipment;
 import dnf_class.Item;
 import dnf_infomation.GetItemDictionary;
 
 public class Vault extends Dialog {
-	LinkedList<Equipment> itemList;
+	LinkedList<Item> itemList;
 	ItemButton[] vault;
 	final static int vaultCol = 20;
 	final static int vaultRow = 20;
 	final static int vaultSize = vaultCol*vaultRow;
 	private Composite vaultComposite;
 	private ScrolledComposite scrollComposite;
-	Inventory inventory;
+	InventoryCardPack inventory;
 	private Composite itemInfo;
 	private Point itemInfoSize;
 	private Composite setInfo;
@@ -40,7 +39,7 @@ public class Vault extends Dialog {
 	
 	Shell save;
 	
-	public Vault(Shell parent, LinkedList<Equipment> itemList, Inventory inventory)
+	public Vault(Shell parent, LinkedList<Item> itemList, InventoryCardPack inventory)
 	{
 		super(parent);
 		this.itemList=itemList;

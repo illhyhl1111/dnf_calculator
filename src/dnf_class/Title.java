@@ -31,6 +31,7 @@ public class Title extends Item
 	@Override
 	public Equip_part getPart() {return part;}
 	
+	@Override
 	public boolean setCard(Card card) {
 		if(card.available(this)){
 			this.card=card;

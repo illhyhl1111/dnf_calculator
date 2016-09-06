@@ -165,6 +165,14 @@ public class Characters
 		//TODO 아바타
 	}
 	
+	private void statUpdate(SetOption setOpion)
+	{
+		setOpion.vStat.addListToStat(villageStatus);
+		
+		setOpion.vStat.addListToStat(dungeonStatus);
+		setOpion.dStat.addListToStat(dungeonStatus);
+	}
+	
 	public void setStatus()
 	{
 		villageStatus = new Status();

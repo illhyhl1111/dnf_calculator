@@ -10,12 +10,17 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 
+import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.ItemFileNotFounded;
+import dnf_InterfacesAndExceptions.Item_rarity;
 import dnf_InterfacesAndExceptions.SetName;
 import dnf_class.Card;
 import dnf_class.Equipment;
 import dnf_class.Item;
+import dnf_class.ItemConstraint;
 import dnf_class.SetOption;
+import dnf_class.Title;
+import dnf_class.Weapon;
 
 public class ItemDictionary implements java.io.Serializable, Cloneable
 {
@@ -24,6 +29,7 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 	 */
 	private static final long serialVersionUID = -4213722159864758338L;
 	public HashSet<Equipment> equipList;
+	public HashSet<Title> titleList;
 	public HashSet<SetOption> setOptionList;
 	public HashSet<Card> cardList;
 	
@@ -52,6 +58,8 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 		EquipInfo_magicStone.getInfo(equipList);
 		EquipInfo_earring.getInfo(equipList);
 		
+		titleList = new HashSet<Title>();	
+		
 		setOptionList = new HashSet<SetOption>();
 		SetOptionInfo.getInfo(setOptionList);
 		
@@ -59,12 +67,97 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 		CardInfo.getInfo(cardList);
 	}
 	
-	public LinkedList<Equipment> getAllEquipmentList()
+	public LinkedList<Item> getVaultItemList()
 	{
-		LinkedList<Equipment> list = new LinkedList<Equipment>();
+		LinkedList<Item> list = new LinkedList<Item>();
 		for(Equipment e : equipList)
 			list.add(e);
+		for(Title t : titleList)
+			list.add(t);
+		Collections.sort(list);
+		Collections.reverse(list);
 		return list;
+	}
+	
+	public LinkedList<Item> getItemList(ItemConstraint constraint)
+	{
+		LinkedList<Item> list = new LinkedList<Item>();
+		for(Equipment i : equipList){
+			if(constraint.partList.contains(i.getPart()) && constraint.rarityList.contains(i.getRarity()) 
+					&& (constraint.lowerLevel <= i.level && i.level <= constraint.upperLevel) )
+			{
+				if(i instanceof Weapon && ((Weapon) i).enabled(constraint.job)) list.add(i);
+				else list.add(i);
+			}
+		}
+		
+		if(constraint.partList.contains(Equip_part.TITLE))
+			for(Title i : titleList)
+				list.add(i);
+		
+		return list;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public LinkedList<Item>[] separateCardList(ItemConstraint[] constraintList)
+	{
+		LinkedList<?>[] list = new LinkedList<?>[constraintList.length+1];
+		for(int i=0; i<constraintList.length+1; i++)
+			list[i] = new LinkedList<Item>();
+		
+		int i;
+		for(Card c : cardList){
+			for(i=0; i<constraintList.length; i++){
+				if(c.available(constraintList[i].partList))
+					((LinkedList<Item>)list[i]).add(c);
+			}
+		}
+		
+		return (LinkedList<Item>[]) list;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public LinkedList<Item>[] separateList(ItemConstraint[] constraintList)
+	{
+		LinkedList<?>[] list = new LinkedList<?>[constraintList.length+1];
+		for(int i=0; i<constraintList.length+1; i++)
+			list[i] = new LinkedList<Item>();
+		
+		int i;
+		for(Equipment e : equipList){
+			for(i=0; i<constraintList.length; i++){
+				if(constraintList[i].partList.contains(e.getPart()) && constraintList[i].rarityList.contains(e.getRarity()) 
+						&& (constraintList[i].lowerLevel <= e.level && e.level <= constraintList[i].upperLevel) )
+					{
+						if(e instanceof Weapon && ((Weapon) e).enabled(constraintList[i].job)){
+							((LinkedList<Item>)list[i]).add(e);
+							break;
+						}
+						else{
+							((LinkedList<Item>)list[i]).add(e);
+							break;
+						}
+					
+					}
+			}
+			if(i==constraintList.length)((LinkedList<Item>)list[constraintList.length]).add(e);
+		}
+		
+		for(i=0; i<constraintList.length; i++){
+			if(constraintList[i].partList.contains(Equip_part.TITLE)){
+				for(Title t : titleList) ((LinkedList<Item>)list[i]).add(t);
+				break;
+			}
+		}
+		if(i==constraintList.length)
+			for(Title t : titleList) ((LinkedList<Item>)list[i]).add(t);
+		
+		for(i=0; i<constraintList.length; i++){
+			Collections.sort( (LinkedList<Item>)list[i] );
+			Collections.reverse( (LinkedList<Item>)list[i] );
+		}
+		
+		return (LinkedList<Item>[]) list;
 	}
 	
 	public LinkedList<Item> getAllCardList()

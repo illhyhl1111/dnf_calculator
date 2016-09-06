@@ -5,7 +5,7 @@ import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.Item_rarity;
 
 @SuppressWarnings("serial")
-public class Item implements Cloneable, java.io.Serializable
+public class Item implements Cloneable, java.io.Serializable, Comparable<Item>
 {
 	private String name;										//이름
 	private	String iconAddress;									//아이콘
@@ -57,6 +57,7 @@ public class Item implements Cloneable, java.io.Serializable
 	}
 	
 	public Card getCard() {return null;}
+	public boolean setCard(Card card) {return false;}
 	public Equip_part getPart() {return null;}
 	
 	public String getTypeName() { return "아이템";}
@@ -67,4 +68,14 @@ public class Item implements Cloneable, java.io.Serializable
 	public int getEarringStatIndex() { return -1;}
 	public int getIgnIndex(){ return -1;}
 	public int getItemStatIndex() { return 0;}
+	
+	
+	//////정렬순서
+	// 1. 종류 : 장비->칭호->보주->아바타->엠블렘->크리쳐->비장비
+	// 2. 등급 : 에픽->레전더리->유니크->크로니클->레어->언커먼->커먼
+
+	@Override
+	public int compareTo(Item arg) {
+		return 0;
+	}
 }

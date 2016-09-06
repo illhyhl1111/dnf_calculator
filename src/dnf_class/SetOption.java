@@ -1,21 +1,24 @@
 package dnf_class;
 
-import dnf_InterfacesAndExceptions.Item_rarity;
 import dnf_InterfacesAndExceptions.SetName;
+import dnf_calculator.StatusList;
 
-public class SetOption extends Item implements Comparable<SetOption>{
+public class SetOption implements Cloneable, java.io.Serializable, Comparable<SetOption>{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -6697625238787834124L;
 	public final SetName setName;
 	public final int requireNum;
+	public StatusList vStat;									//마을스탯
+	public StatusList dStat;									//인던스탯
 	
 	public SetOption(String name, SetName setName, int requireNum)
 	{
-		super(name, null, Item_rarity.NONE);
 		this.setName=setName;
 		this.requireNum=requireNum;
+		vStat = new StatusList();
+		dStat = new StatusList();
 	}
 	
 	public boolean isEnabled(int setNum)
@@ -30,6 +33,15 @@ public class SetOption extends Item implements Comparable<SetOption>{
 	{
 		vStat = target.vStat;
 		dStat = target.dStat;
+	}
+	
+	@Override
+	public Object clone() throws CloneNotSupportedException
+	{
+		Item temp = (Item) super.clone();
+		temp.vStat = (StatusList) vStat.clone();
+		temp.dStat = (StatusList) dStat.clone();
+		return temp;
 	}
 	
 	@Override

@@ -20,4 +20,13 @@ public enum SetName
 	}
 	
 	public String getName() {return name;}
+	
+	public int compare(SetName arg)
+	{
+		if(arg==this) return 0;
+		else if(arg==NONE) return 1;
+		else if(this==NONE) return -1;
+		
+		return name.compareTo(arg.getName()); 
+	}
 }

@@ -35,19 +35,17 @@ public class SubInventory {
 	Characters character;
 	UserInfo userInfo;
 	Composite parent;
-	Inventory inventory;
 	private Composite itemInfo;
 	private Point itemInfoSize;
 	private Integer X0;
 	private Integer Y0;
 	
-	public SubInventory(Composite parent, Characters character, UserInfo userInfo, Inventory inventory)
+	public SubInventory(Composite parent, Characters character, UserInfo userInfo, LinkedList<Item> itemList)
 	{
-		this.itemList=character.userItemList.getAllCardList();
+		this.itemList=itemList;
 		this.character=character;
 		this.userInfo=userInfo;
 		this.parent=parent;
-		this.inventory=inventory;
 		
 		inventoryComposite = new Composite(parent, SWT.BORDER);
 		GridLayout inventoryLayout = new GridLayout(inventoryCol, true);
@@ -60,13 +58,13 @@ public class SubInventory {
 		inventoryList = new ItemButton[inventorySize];
 	}
 	
-	public void setListener()
+	public void setListener(Inventory inventory, Composite background)
 	{
 		int index=0;
 		inventoryList[0] = new ItemButton(inventoryComposite, new Item(), InterfaceSize.INVENTORY_BUTTON_SIZE, InterfaceSize.INVENTORY_BUTTON_SIZE, false);
 		Point buttonS = inventoryList[0].getButton().computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		inventoryList[0].getButton().dispose();
-		Integer userY=userInfo.getComposite().computeSize(SWT.DEFAULT, SWT.DEFAULT).y+inventory.getComposite().computeSize(SWT.DEFAULT, SWT.DEFAULT).y+20;
+		Integer userY=userInfo.getComposite().computeSize(SWT.DEFAULT, SWT.DEFAULT).y+inventory.getComposite().computeSize(SWT.DEFAULT, SWT.DEFAULT).y+10;
 		
 		for(Item i : itemList){
 			inventoryList[index] =
@@ -106,7 +104,7 @@ public class SubInventory {
 			         public void handleEvent(Event e) {
 			        	 if(inventoryList[indexBox].enabled){
 			        		 //System.out.println("Mouse Entered "+i.getName());
-			        		 itemInfo = new Composite(parent, SWT.BORDER);
+			        		 itemInfo = new Composite(background, SWT.BORDER);
 			        		 GridLayout layout = new GridLayout(1, false);
 			        		 layout.verticalSpacing=3;
 			        		 itemInfo.setLayout(layout);

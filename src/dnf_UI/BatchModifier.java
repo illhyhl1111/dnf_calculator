@@ -40,19 +40,20 @@ import dnf_InterfacesAndExceptions.UnknownInformationException;
 import dnf_class.Card;
 import dnf_class.Characters;
 import dnf_class.Equipment;
+import dnf_class.Item;
 import dnf_class.Title;
 
 public class BatchModifier extends Dialog {
 	Shell shell;
 	final Characters character;
-	final Inventory inventory;
+	final InventoryCardPack inventory;
 	final UserInfo userInfo;
 	Composite itemInfo;
 	Point itemInfoSize;
 	Point contentSize;
 	Equipment[] equipList;
 	
-	public BatchModifier(Shell shell, Characters character, UserInfo userInfo, Inventory inventory)
+	public BatchModifier(Shell shell, Characters character, UserInfo userInfo, InventoryCardPack inventory)
 	{
 		super(shell);
 		this.shell=shell;
@@ -179,7 +180,7 @@ public class BatchModifier extends Dialog {
 	    	@Override
 	        public void handleEvent(Event e) {
 	    		LinkedList<Equip_part> partList = new LinkedList<Equip_part>();
-	    		LinkedList<Equipment> equipmentList = new LinkedList<Equipment>();
+	    		LinkedList<Item> equipmentList = new LinkedList<Item>();
 				String partSelection = combo.getText();
 				//"전부위", "무기", "방어구", "악세서리", "보장/마법석/귀걸이", "상의", "하의", "머리어깨", "벨트", "신발", "목걸이", "팔찌", "반지", "보조장비", "마법석", "귀걸이"
 				
@@ -255,8 +256,9 @@ public class BatchModifier extends Dialog {
 				else if(selected.equals("체력")) selectedStat=Dimension_stat.STA;
 				else if(selected.equals("정신력")) selectedStat=Dimension_stat.WILL;
 				
-				for(Equipment equipment : equipmentList)
+				for(Item item : equipmentList)
 				{
+					Equipment equipment = (Equipment)item;
 					try{
 						equipment.setDimension(selectedStat);
 					}
@@ -427,7 +429,7 @@ public class BatchModifier extends Dialog {
 					LinkedList<Equip_part> tempList = new LinkedList<Equip_part>();
 					tempList.add(b.getItem().getPart());
 					
-					for(Equipment e : inventory.getEnabledEquipment(tempList))
+					for(Item e : inventory.getEnabledEquipment(tempList))
 						e.setCard(tempCard);
 					
 					userInfo.renew();

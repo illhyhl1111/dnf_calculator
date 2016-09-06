@@ -22,15 +22,17 @@ import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.InterfaceSize;
 import dnf_InterfacesAndExceptions.ItemFileNotFounded;
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
+import dnf_InterfacesAndExceptions.Item_rarity;
 import dnf_InterfacesAndExceptions.SetName;
 import dnf_class.Card;
 import dnf_class.Characters;
 import dnf_class.Equipment;
 import dnf_class.Item;
+import dnf_class.ItemConstraint;
 import dnf_class.Title;
 
 public class Inventory {
-	LinkedList<Equipment> itemList;
+	LinkedList<Item> itemList;
 	ItemButton[] inventoryList;
 	final static int inventoryCol=15;
 	final static int inventoryRow=5;
@@ -48,9 +50,9 @@ public class Inventory {
 	private Integer Y0;
 	private Boolean hasSetOption;
 	
-	public Inventory(Composite parent, Characters character, UserInfo userInfo)
+	public Inventory(Composite parent, Characters character, UserInfo userInfo, LinkedList<Item> itemList)
 	{
-		this.itemList=character.userItemList.getAllEquipmentList();
+		this.itemList=itemList;
 		this.character=character;
 		this.userInfo=userInfo;
 		this.parent=parent;
@@ -66,7 +68,7 @@ public class Inventory {
 		inventoryList = new ItemButton[inventorySize];
 	}
 	
-	public void setListener(Vault vault)
+	public void setListener(Vault vault, Composite background)
 	{
 		int index=0;
 		inventoryList[0] = new ItemButton(inventoryComposite, new Item(), InterfaceSize.INVENTORY_BUTTON_SIZE, InterfaceSize.INVENTORY_BUTTON_SIZE, false);
@@ -74,7 +76,7 @@ public class Inventory {
 		inventoryList[0].getButton().dispose();
 		Integer userY=userInfo.getComposite().computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
 		
-		for(Equipment i : itemList){
+		for(Item i : itemList){
 			inventoryList[index] =
 					new ItemButton(inventoryComposite, i, InterfaceSize.INVENTORY_BUTTON_SIZE, InterfaceSize.INVENTORY_BUTTON_SIZE, false);
 			
@@ -83,8 +85,8 @@ public class Inventory {
 				setDrop(inventoryList[index]);
 				
 				Integer indexBox = index;
-				Integer xButton = (index%inventoryCol)*buttonS.x+2;
-				Integer yButton = (int)(index/inventoryCol)*buttonS.y+userY+8;
+				Integer xButton = (index%inventoryCol)*buttonS.x+10;
+				Integer yButton = (int)(index/inventoryCol)*buttonS.y+userY+38;
 				
 				// add MouseDown Event - equip
 				inventoryList[index].getButton().addListener(SWT.MouseDown, new Listener() {
@@ -144,7 +146,7 @@ public class Inventory {
 			         public void handleEvent(Event e) {
 			        	 if(inventoryList[indexBox].enabled){
 			        		 //System.out.println("Mouse Entered "+i.getName());
-			        		 itemInfo = new Composite(parent, SWT.BORDER);
+			        		 itemInfo = new Composite(background, SWT.BORDER);
 			        		 GridLayout layout = new GridLayout(1, false);
 			        		 layout.verticalSpacing=3;
 			        		 itemInfo.setLayout(layout);
@@ -155,7 +157,7 @@ public class Inventory {
 			        		 boolean hasSet = inventoryList[indexBox].hasSetOption();
 			        		 hasSetOption = hasSet;
 			        		 if(hasSet){
-			        			 setInfo = new Composite(parent, SWT.BORDER);
+			        			 setInfo = new Composite(background, SWT.BORDER);
 			        			 setInfo.setLayout(layout);
 			        			 int setNum;
 			        			 if(character.getSetOptionList().get( ((Equipment)inventoryList[indexBox].getItem()).setName)==null) setNum=0;
@@ -167,12 +169,14 @@ public class Inventory {
 			        		 }
 			        		 
 			        		 int x0;
-			        		 int y0 = yButton-itemInfoSize.y-5;
+			        		 int y0;
+			        		 if(setInfoSize!=null) y0 = yButton-Math.max(setInfoSize.y, itemInfoSize.y)-5;
+			        		 else y0=yButton-itemInfoSize.y-5;
 			        		 if(hasSet)
 			        			 x0 = xButton-InterfaceSize.ITEM_INFO_SIZE-InterfaceSize.SET_INFO_SIZE-5-InterfaceSize.SET_ITEM_INTERVAL;
 			        		 else x0 = xButton-InterfaceSize.ITEM_INFO_SIZE-5;
 			        		 if(x0<0) x0 = xButton+5;
-			        		 if(y0<0) y0 = yButton+5;
+			        		 //if(y0<0) y0 = yButton+5;
 			        		 itemInfo.setBounds((e.x+x0), (e.y+y0), InterfaceSize.ITEM_INFO_SIZE, itemInfoSize.y);
 			        		 if(hasSet) setInfo.setBounds((e.x+x0+InterfaceSize.SET_ITEM_INTERVAL+InterfaceSize.ITEM_INFO_SIZE), (e.y+y0), InterfaceSize.SET_INFO_SIZE, setInfoSize.y);
 			        		 X0=x0;
@@ -269,12 +273,12 @@ public class Inventory {
 		});
 	}
 	
-	public LinkedList<Equipment> getEnabledEquipment(LinkedList<Equip_part> part)
+	public LinkedList<Item> getEnabledEquipment(LinkedList<Equip_part> part)
 	{
-		LinkedList<Equipment> enabledList = new LinkedList<Equipment>();
+		LinkedList<Item> enabledList = new LinkedList<Item>();
 		
 		for(ItemButton i : inventoryList)
-			if(i.getItem() instanceof Equipment && part.contains(((Equipment)i.getItem()).part) && i.enabled) enabledList.add((Equipment)i.getItem());
+			if(part.contains(i.getItem().getPart()) && i.enabled) enabledList.add(i.getItem());
 		
 		return enabledList;
 	}
