@@ -73,10 +73,10 @@ public class CalculatorUITest {
 	                char c = event.character;
 	                //System.out.println(c);
 	                if(c=='i'){
-	                	if(villageUI.vault.getShell()==null)
-	                		villageUI.vault.open();
+	                	if(villageUI.getVault().getShell()==null)
+	                		villageUI.getVault().open();
 	                	else
-	                		villageUI.vault.close();
+	                		villageUI.getVault().close();
 	                }
 	            }
 	        });

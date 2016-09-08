@@ -61,7 +61,7 @@ public class ItemButton
 	
 	public boolean hasSetOption()
 	{
-		if(!(item instanceof Equipment) || ((Equipment)item).setName==SetName.NONE) return false;
+		if(item.getSetName()==SetName.NONE) return false;
 		else return true;
 	}
 

@@ -13,10 +13,15 @@ import java.util.LinkedList;
 import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.ItemFileNotFounded;
 import dnf_InterfacesAndExceptions.SetName;
+import dnf_class.Avatar;
 import dnf_class.Card;
+import dnf_class.Creature;
+import dnf_class.Drape;
+import dnf_class.Emblem;
 import dnf_class.Equipment;
 import dnf_class.Item;
 import dnf_class.ItemConstraint;
+import dnf_class.Jam;
 import dnf_class.SetOption;
 import dnf_class.Title;
 import dnf_class.Weapon;
@@ -31,6 +36,11 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 	public HashSet<Title> titleList;
 	public HashSet<SetOption> setOptionList;
 	public HashSet<Card> cardList;
+	public HashSet<Avatar> avatarList;
+	public HashSet<Creature> creatureList;
+	public HashSet<Drape> drapeList;
+	public HashSet<Emblem> emblemList;
+	public HashSet<Jam> jamList;
 	
 	public ItemDictionary() 
 	{
@@ -64,6 +74,14 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 		
 		cardList = new HashSet<Card>();
 		CardInfo.getInfo(cardList);
+		
+		avatarList = new HashSet<Avatar>();
+		AvatarInfo.getInfo(avatarList);
+		
+		creatureList = new HashSet<Creature>();
+		drapeList = new HashSet<Drape>();
+		emblemList = new HashSet<Emblem>();
+		jamList = new HashSet<Jam>();
 	}
 	
 	public LinkedList<Item> getVaultItemList()
@@ -215,6 +233,16 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 			}
 		equipList.add(equipment);
 		return true;
+	}
+	
+	public <T extends Item> LinkedList<Item> getHashSetToLinkedList(HashSet<T> set)
+	{
+		LinkedList<Item> aList = new LinkedList<Item>();
+		for(T t : set)
+			aList.add(t);
+		Collections.sort(aList);
+		Collections.reverse(aList);
+		return aList;
 	}
 	
 	@Override

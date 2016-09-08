@@ -26,15 +26,14 @@ public class MakeComposite {
 	public static void setSetInfoComposite(Composite itemInfo, Item item, int setNum, ItemDictionary itemDictionary)
 	{
 		Label name = new Label(itemInfo, SWT.WRAP);
-		Equipment equipment = (Equipment)item;
-		name.setText(equipment.setName.getName());
+		name.setText(item.getSetName().getName());
 		name.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_GREEN));
 		
 		Label option;
 		
 		try
 		{
-			LinkedList<SetOption> setOptionList = itemDictionary.getSetOptions(equipment.setName);
+			LinkedList<SetOption> setOptionList = itemDictionary.getSetOptions(item.getSetName());
 			
 			for(SetOption s : setOptionList)
 			{
@@ -77,6 +76,13 @@ public class MakeComposite {
 						for(StatusAndName s2 : s.dStat.statList)
 							setText(itemInfo, s2, false, itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 					}
+				}
+				
+				if(!s.explanation.isEmpty()) option = new Label(itemInfo, SWT.WRAP);
+				for(String str : s.explanation){
+					option = new Label(itemInfo, SWT.WRAP);
+					option.setText(str);
+					option.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 				}
 			}			
 		}
@@ -244,6 +250,13 @@ public class MakeComposite {
 					for(StatusAndName s : card.dStat.statList)
 						setText(itemInfo, s, itemInfo.getDisplay().getSystemColor(SWT.COLOR_GREEN));
 				}
+			}
+			
+			if(!item.explanation.isEmpty()) stat = new Label(itemInfo, SWT.WRAP);
+			for(String str : item.explanation){
+				stat = new Label(itemInfo, SWT.WRAP);
+				stat.setText(str);
+				stat.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 			}
 		}
 		catch (StatusTypeMismatch e) {

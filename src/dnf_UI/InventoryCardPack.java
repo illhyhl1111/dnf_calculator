@@ -22,10 +22,18 @@ public class InventoryCardPack
 	Composite[] pack;
 	TabItem[] inventoryTabList;
 	TabFolder inventoryFolder;
+	Characters character;
+	UserInfo itemInfo;
 	
 	public InventoryCardPack(TabFolder inventoryFolder, Characters character, UserInfo itemInfo)
 	{		
 		this.inventoryFolder=inventoryFolder;
+		this.character=character;
+		this.itemInfo=itemInfo;
+	}
+	
+	public void setEquipmentMode()
+	{
 		String[] tabNameList = {"무기", "방어구 1", "악세서리 1", "악세서리 2", "기타"};
 		final int inventoryListNum = tabNameList.length;
 		
@@ -97,11 +105,57 @@ public class InventoryCardPack
 		}
 	}
 	
-	public void setLinstener(Vault vault, Composite background)
+	@SuppressWarnings("unchecked")
+	public void setAvatarMode()
+	{
+		String[] tabNameList = {"아바타", "크리쳐", "휘장"};
+		final int inventoryListNum = tabNameList.length;
+		
+		inventoryList = new Inventory[inventoryListNum];
+		subInventoryList = new SubInventory[inventoryListNum];
+		inventoryTabList = new TabItem[inventoryListNum]; 
+		pack = new Composite[inventoryListNum];
+		LinkedList<?>[] itemList = {
+				character.userItemList.getHashSetToLinkedList(character.userItemList.avatarList),
+				character.userItemList.getHashSetToLinkedList(character.userItemList.creatureList),
+				character.userItemList.getHashSetToLinkedList(character.userItemList.drapeList)}; 
+		LinkedList<?>[] cardList = {
+				character.userItemList.getHashSetToLinkedList(character.userItemList.emblemList),
+				new LinkedList<Item>(), 
+				character.userItemList.getHashSetToLinkedList(character.userItemList.jamList) };
+		
+		RowLayout packLayout = new RowLayout(SWT.VERTICAL);
+		packLayout.spacing=10;
+		
+		for(int i=0; i<inventoryListNum; i++)
+		{
+			pack[i] = new Composite(inventoryFolder, SWT.NONE);
+			pack[i].setLayout(packLayout);
+			
+			inventoryTabList[i]= new TabItem(inventoryFolder, SWT.NONE);
+			inventoryTabList[i].setText(tabNameList[i]);
+			
+			inventoryList[i] = new Inventory(pack[i], character, itemInfo, (LinkedList<Item>) itemList[i]);
+			subInventoryList[i] = new SubInventory(pack[i], character, itemInfo, (LinkedList<Item>) cardList[i]);
+			
+			inventoryTabList[i].setControl(pack[i]);
+		}
+	}
+	
+	public void setVaultListener(Vault vault, Composite background)
 	{
 		for(int i=0; i<inventoryList.length; i++)
 		{
-			inventoryList[i].setListener(vault, background);
+			inventoryList[i].setListener(0, background, vault);
+			subInventoryList[i].setListener(inventoryList[i], background);
+		}
+	}
+	
+	public void setListener(Composite background)
+	{
+		for(int i=0; i<inventoryList.length; i++)
+		{
+			inventoryList[i].setListener(1, background, null);
 			subInventoryList[i].setListener(inventoryList[i], background);
 		}
 	}

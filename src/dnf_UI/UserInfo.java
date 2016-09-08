@@ -19,7 +19,12 @@ import dnf_InterfacesAndExceptions.InterfaceSize;
 import dnf_class.Characters;
 import dnf_class.Item;
 
-class UserItemInfo
+interface Info{
+	public Composite getComposite();
+	public void renew();
+}
+
+class UserItemInfo implements Info
 {
 	private Composite itemInfoComposite;
 	private Composite leftItemInfoComposite;
@@ -136,40 +141,35 @@ class UserItemInfo
 	}
 }
 
-class UserAvatarInfo
+class UserAvatarInfo implements Info
 {
 	private Composite wholeComposite;
 	private Composite avatarInfoComposite;
 	private Composite creatureInfoComposite;
 	private Composite drapeInfoComposite;
 	private ItemButton[] itemButtonList;
-	static final int AVATARNUM=9;
+	private ItemButton creatureButton;
+	private ItemButton drapeButton;
+	static final int AVATARNUM=10;
 	private Characters character;
 	private Composite avatarInfo;
 	private Composite setInfo;
+	Avatar_part[] partOrder= { Avatar_part.CAP, Avatar_part.HAIR, Avatar_part.FACE, Avatar_part.NECK, Avatar_part.COAT,
+			Avatar_part.SKIN, Avatar_part.BELT, Avatar_part.PANTS, Avatar_part.SHOES, Avatar_part.AURA};
 	
 	public UserAvatarInfo(Composite parent, Characters character, UserInfo superInfo)
 	{
 		this.character=character;
+		int BUTTON_SIZE = InterfaceSize.INFO_BUTTON_SIZE;
 		wholeComposite = new Composite(parent, SWT.BORDER);
 		wholeComposite.setLayout(new FormLayout());
 		
 		//TODO wholeComposite.setBackgroundImage(배경그림);
 		
 		avatarInfoComposite = new Composite(wholeComposite, SWT.NONE);
-		avatarInfoComposite.setLayoutData(new FormData());
-		
-		creatureInfoComposite = new Composite(wholeComposite, SWT.NONE);
-		FormData creatureInfoData = new FormData();
-		creatureInfoData.left = new FormAttachment(avatarInfoComposite, 10);
-		creatureInfoComposite.setLayoutData(creatureInfoData);
-		
+		creatureInfoComposite = new Composite(wholeComposite, SWT.NONE);	
 		drapeInfoComposite = new Composite(wholeComposite, SWT.NONE);
-		FormData drapeInfoData = new FormData();
-		drapeInfoData.left = new FormAttachment(avatarInfoComposite, 10);
-		drapeInfoData.top = new FormAttachment(creatureInfoComposite, 10);
-		drapeInfoComposite.setLayoutData(creatureInfoData);
-		
+
 		GridLayout avatarInfoLayout = new GridLayout(3, true);
 		avatarInfoLayout.horizontalSpacing=3;
 		avatarInfoLayout.verticalSpacing=3;
@@ -181,20 +181,35 @@ class UserAvatarInfo
 		creatureInfoComposite.setLayout(new FillLayout());
 		drapeInfoComposite.setLayout(new FillLayout());
 
-		itemButtonList = new ItemButton[AVATARNUM];
-		int BUTTON_SIZE = InterfaceSize.INFO_BUTTON_SIZE;
-		Avatar_part[] partOrder = { Avatar_part.CAP, Avatar_part.HAIR, Avatar_part.FACE, Avatar_part.NECK, Avatar_part.COAT,
-				Avatar_part.AURA, Avatar_part.BELT, Avatar_part.PANTS, Avatar_part.SHOES };
+		itemButtonList = new ItemButton[AVATARNUM]; 
 		for(int i=0; i<AVATARNUM; i++)
 			itemButtonList[i] = new ItemButton(avatarInfoComposite, character.getAvatarList().get(partOrder[i]), BUTTON_SIZE, BUTTON_SIZE);
 		
+		creatureButton = new ItemButton(creatureInfoComposite, character.getCreature(), BUTTON_SIZE, BUTTON_SIZE);
+		drapeButton = new ItemButton(drapeInfoComposite, character.getDrape(), BUTTON_SIZE, BUTTON_SIZE);
 		
 		Point buttonS = itemButtonList[0].getButton().computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		buttonS.x+=3; buttonS.y+=3;
+		
+		avatarInfoComposite.setLayoutData(new FormData());
+		
+		FormData creatureInfoData = new FormData();
+		creatureInfoData.left = new FormAttachment(0, buttonS.x);
+		creatureInfoData.top = new FormAttachment(0, buttonS.y*3);
+		creatureInfoComposite.setLayoutData(creatureInfoData);
+		creatureInfoComposite.moveAbove(avatarInfoComposite);
+		
+		FormData drapeInfoData = new FormData();
+		drapeInfoData.left = new FormAttachment(creatureInfoComposite, 3);
+		drapeInfoData.top = new FormAttachment(0, buttonS.y*3);
+		drapeInfoComposite.setLayoutData(drapeInfoData);
+		drapeInfoComposite.moveAbove(avatarInfoComposite);
+		
+		
 		for(int i=0; i<AVATARNUM; i++)
 		{
-			Integer x0 = (i%3)*buttonS.x;
-			Integer y0 = (int)(i/3)*buttonS.y;
+			Integer x0 = (i%3)*buttonS.x+5;
+			Integer y0 = (int)(i/3)*buttonS.y+5;
 			SetListener listenerGroup = new SetListener(itemButtonList[i], character, superInfo, avatarInfo, setInfo, x0, y0, parent);
 			
 			itemButtonList[i].getButton().addListener(SWT.MouseDown, listenerGroup.unequipListener()); 				// add MouseDown Event - unequip
@@ -204,6 +219,20 @@ class UserAvatarInfo
 			itemButtonList[i].getButton().addListener(SWT.MouseMove, listenerGroup.moveItemInfoListener());			// add MouseMove Event - move composite
 		}
 		
+		SetListener listenerGroup = new SetListener(creatureButton, character, superInfo, avatarInfo, null, 5, buttonS.y*3+5, parent);
+		creatureButton.getButton().addListener(SWT.MouseDown, listenerGroup.unequipListener());					// add MouseDown Event - unequip
+		creatureButton.getButton().addListener(SWT.MouseDoubleClick, listenerGroup.modifyListener());			// add MouseDoubleClick - modify
+		creatureButton.getButton().addListener(SWT.MouseEnter, listenerGroup.makeItemInfoListener(superInfo.getComposite().getParent()));		// add MouseEnter Event - make composite
+		creatureButton.getButton().addListener(SWT.MouseExit, listenerGroup.disposeItemInfoListener()); 		// add MouseExit Event - dispose composite
+		creatureButton.getButton().addListener(SWT.MouseMove, listenerGroup.moveItemInfoListener());			// add MouseMove Event - move composite
+		
+		listenerGroup = new SetListener(drapeButton, character, superInfo, avatarInfo, null, buttonS.x*2+5, buttonS.y*3+5, parent);
+		drapeButton.getButton().addListener(SWT.MouseDown, listenerGroup.unequipListener());					// add MouseDown Event - unequip
+		drapeButton.getButton().addListener(SWT.MouseEnter, listenerGroup.makeItemInfoListener(superInfo.getComposite().getParent()));		// add MouseEnter Event - make composite
+		drapeButton.getButton().addListener(SWT.MouseExit, listenerGroup.disposeItemInfoListener()); 		// add MouseExit Event - dispose composite
+		drapeButton.getButton().addListener(SWT.MouseMove, listenerGroup.moveItemInfoListener());			// add MouseMove Event - move composite
+		
+		
 		GridData buttonGridData = new GridData(SWT.LEFT, SWT.TOP, false, false);
 		for(int i=0; i<AVATARNUM; i++){
 			itemButtonList[i].getButton().setData(buttonGridData);
@@ -212,8 +241,6 @@ class UserAvatarInfo
 	
 	public void renew()
 	{
-		Avatar_part[] partOrder = { Avatar_part.CAP, Avatar_part.HAIR, Avatar_part.FACE, Avatar_part.NECK, Avatar_part.COAT,
-				Avatar_part.AURA, Avatar_part.BELT, Avatar_part.PANTS, Avatar_part.SHOES };
 		for(int i=0; i<AVATARNUM; i++){
 			itemButtonList[i].setItem(character.getAvatarList().get(partOrder[i]));
 			itemButtonList[i].renewImage(true);
@@ -233,29 +260,30 @@ class UserAvatarInfo
 
 public class UserInfo
 {
-	UserItemInfo userItemInfo;
+	Info userItemInfo;
 	Composite selectModeComposite;
 	InfoStatus infoStatus;
 	NonInfoStatus nonInfoStatus;
 	private Composite userInfoComposite;
 	private boolean dungeonMode = false;
 	private Characters character;
+	int mode;
 	
-	public UserInfo(Composite parent, Characters character){
+	public UserInfo(Composite parent, Characters character, int mode)
+	{
 		this.character=character;
+		this.mode=mode;
 		userInfoComposite = new Composite(parent, SWT.BORDER);
 		userInfoComposite.setLayout(new FormLayout());
 		
 		int interval = InterfaceSize.USER_INFO_INTERVAL;
-
-		userItemInfo = new UserItemInfo(userInfoComposite, character, this);
+		
+		if(mode==0)				//장비
+			userItemInfo = new UserItemInfo(userInfoComposite, character, this);
+		else if(mode==1)		//아바타
+			userItemInfo = new UserAvatarInfo(userInfoComposite, character, this);
+		
 		userItemInfo.getComposite().setLayoutData(new FormData(InterfaceSize.USER_INFO_ITEM_SIZE_X, InterfaceSize.USER_INFO_ITEM_SIZE_Y));
-		/*userItemInfo.getComposite().addListener(SWT.MouseDown, new Listener() {
-	         @Override
-	         public void handleEvent(Event e) {
-	        	 System.out.println("Mouse Down (button: " + e.button + " x: " + e.x + " y: " + e.y + ")");
-	         }
-	     });*/
 		
 		selectModeComposite = new Composite (userInfoComposite, SWT.BORDER | SWT.NO_RADIO_GROUP);
 		selectModeComposite.setLayout (new GridLayout(2, true));

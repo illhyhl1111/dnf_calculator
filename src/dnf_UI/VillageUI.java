@@ -7,95 +7,54 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 
 import dnf_class.Characters;
 import dnf_infomation.GetItemDictionary;
 
 public class VillageUI
 {
+	TabFolder villageFolder;
 	Characters character;
-	UserInfo itemInfo;
-	InventoryCardPack inventoryPack;
-	Vault vault;
-	SubInventory subInventory;
 	
-	Button vaultButton;
-	Button batchModify;
-
-	private Composite villageComposite;
+	EquipmentInfoUI equipUI;
+	TabItem equipTab;
+	EquipmentInfoUI avatarUI;
+	TabItem avatarTab;
 	
-	public VillageUI(Shell shell, Characters character)
+	VillageUI(Shell shell, Characters character)
 	{
 		this.character=character;
+		villageFolder = new TabFolder(shell, SWT.NONE);
 		
-		villageComposite = new Composite(shell, SWT.BORDER);
-		villageComposite.setLayout(new FormLayout());
+		equipTab = new TabItem(villageFolder, SWT.NONE);
+		String str1 = "장비";
+		equipTab.setText(str1);
+		equipUI = new EquipmentInfoUI(villageFolder, character, 0);
+		equipTab.setControl(equipUI.getComposite());
 		
-		itemInfo = new UserInfo(villageComposite, character);
+		avatarTab = new TabItem(villageFolder, SWT.NONE);
+		String str2 = "아바타/크리쳐/휘장";
+		avatarTab.setText(str2);
+		avatarUI = new EquipmentInfoUI(villageFolder, character, 1);
+		avatarTab.setControl(avatarUI.getComposite());
 		
-		TabFolder inventoryFolder = new TabFolder(villageComposite, SWT.NONE);
-		
-		inventoryPack = new InventoryCardPack(inventoryFolder, character, itemInfo);
-		
-		vault = new Vault(shell, character.userItemList.getVaultItemList(), inventoryPack);
-		inventoryPack.setLinstener(vault, villageComposite);
-
-		itemInfo.getComposite().setLayoutData(new FormData());
-
-		FormData inventoryData = new FormData();
-		inventoryData.top = new FormAttachment(itemInfo.getComposite(), 5);
-		inventoryFolder.setLayoutData(inventoryData);
-		
-		vaultButton = new Button(villageComposite, SWT.PUSH);
-		vaultButton.setText("금고 열기");
-		FormData vaultButtonData = new FormData();
-		vaultButtonData.left = new FormAttachment(itemInfo.getComposite(), 10);
-		vaultButton.setLayoutData(vaultButtonData);
-		
-		vaultButton.addListener(SWT.Selection, new Listener(){
-			 @Override
-	         public void handleEvent(Event e) {
-				 if(vault.getShell()==null)
-             		vault.open();
-             	else
-             		vault.close();
-			 }
-		});
-		
-		batchModify = new Button(villageComposite, SWT.PUSH);
-		batchModify.setText("일괄 강화/마법부여");
-		FormData batchButtonData = new FormData();	
-		batchButtonData.left = new FormAttachment(itemInfo.getComposite(), 10);
-		batchButtonData.top = new FormAttachment(vaultButton, 10);
-		batchModify.setLayoutData(batchButtonData);
-		
-		BatchModifier batchModifier = new BatchModifier(shell, character, itemInfo, inventoryPack); 
-		
-		batchModify.addListener(SWT.Selection, new Listener(){
-			 @Override
-	         public void handleEvent(Event e) {
-				 if(batchModifier.getShell()==null)
-					 batchModifier.open();
-	             	else
-	             		batchModifier.close();
-			 }
+		villageFolder.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(org.eclipse.swt.events.SelectionEvent event) {
+				if(villageFolder.getSelection()[0].getText().equals(str1)) equipUI.itemInfo.renew();
+				else if(villageFolder.getSelection()[0].getText().equals(str2)) avatarUI.itemInfo.renew();
+			}
 		});
 	}
-	
-	public Composite getComposite(){ return villageComposite; }
 	
 	public void save(Characters character)
 	{
@@ -109,6 +68,8 @@ public class VillageUI
 			e.printStackTrace();
 		}
 	}
+	
+	public Vault getVault() {return equipUI.vault;}
 }
 
 class VillageUILoad
@@ -140,10 +101,10 @@ class VillageUILoad
 	                char c = event.character;
 	                //System.out.println(c);
 	                if(c=='i'){
-	                	if(villageUI.vault.getShell()==null)
-	                		villageUI.vault.open();
+	                	if(villageUI.getVault().getShell()==null)
+	                		villageUI.getVault().open();
 	                	else
-	                		villageUI.vault.close();
+	                		villageUI.getVault().close();
 	                }
 	            }
 	        });
@@ -167,6 +128,5 @@ class VillageUILoad
 		{
 			e.printStackTrace();
 		}
-		
 	}
 }

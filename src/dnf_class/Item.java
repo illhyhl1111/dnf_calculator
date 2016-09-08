@@ -1,5 +1,7 @@
 package dnf_class;
 
+import java.util.LinkedList;
+
 import dnf_calculator.StatusList;
 import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.Item_rarity;
@@ -13,6 +15,7 @@ public class Item implements Cloneable, java.io.Serializable, Comparable<Item>
 	private Item_rarity rarity;									//희귀도
 	public StatusList vStat;									//마을스탯
 	public StatusList dStat;									//인던스탯
+	public LinkedList<String> explanation;
 	
 	public Item(String name, String icon, Item_rarity rarity)
 	{
@@ -21,6 +24,7 @@ public class Item implements Cloneable, java.io.Serializable, Comparable<Item>
 		this.rarity=rarity;
 		vStat = new StatusList();
 		dStat = new StatusList();
+		explanation = new LinkedList<String>();
 	}
 	public Item()
 	{
@@ -29,6 +33,7 @@ public class Item implements Cloneable, java.io.Serializable, Comparable<Item>
 		rarity=Item_rarity.NONE;
 		vStat = new StatusList();
 		dStat = new StatusList();
+		explanation = new LinkedList<String>();
 	}
 	
 	public String getName() { return name;}

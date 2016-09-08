@@ -24,6 +24,7 @@ public class SubInventory
 	UserInfo userInfo;
 	Composite parent;
 	private Composite itemInfo;
+	private Composite setInfo;
 	
 	public SubInventory(Composite parent, Characters character, UserInfo userInfo, LinkedList<Item> itemList)
 	{
@@ -60,7 +61,7 @@ public class SubInventory
 				Integer xButton = (index%inventoryCol)*buttonS.x+8;
 				Integer yButton = (int)(index/inventoryCol)*buttonS.y+userY+33;
 				
-				SetListener listenerGroup = new SetListener(inventoryList[index], character, userInfo, itemInfo, null, xButton, yButton, parent);
+				SetListener listenerGroup = new SetListener(inventoryList[index], character, userInfo, itemInfo, setInfo, xButton, yButton, parent);
 				
 				inventoryList[index].getButton().addListener(SWT.MouseDoubleClick, listenerGroup.modifyListener());					// add MouseDoubleClick - modify
 				inventoryList[index].getButton().addListener(SWT.MouseEnter, listenerGroup.makeItemInfoListener(background));		// add MouseEnter Event - make composite

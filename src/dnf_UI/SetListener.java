@@ -44,8 +44,6 @@ public class SetListener {
 		this.xPoint=xPoint;
 		this.yPoint=yPoint;
 		this.parent=parent;
-		
-		hasSetOption = itemButton.hasSetOption();
 	}
 	
 	public Listener unequipListener()
@@ -78,7 +76,7 @@ public class SetListener {
 	        		 else{
 	        			 itemButton.getItem().setEnabled(false);
 	        			 itemButton.renewImage(false);
-	        			 if(superInfo.userItemInfo.equiped(itemButton.getItem())){
+	        			 if(((UserItemInfo)superInfo.userItemInfo).equiped(itemButton.getItem())){
 	        				 character.unequip(itemButton.getItem());
 	        				 superInfo.renew();
 	        				 if(!itemInfo.isDisposed()) itemInfo.dispose();
@@ -90,6 +88,19 @@ public class SetListener {
 	        		 }
 	        	 }
 	         }
+		};
+	}
+	
+	public Listener equipListener()
+	{
+		return new Listener() {
+			@Override
+	        public void handleEvent(Event e) {
+				if(e.button==3 && itemButton.getItem().getEnabled()){
+	        		character.equip(itemButton.getItem());
+	        		superInfo.renew();
+	        	}
+	        }
 		};
 	}
 	
@@ -130,6 +141,8 @@ public class SetListener {
 	     return new Listener() {
 	         @Override
 	         public void handleEvent(Event e) {
+	        	 if(itemButton.getItem().getName().contains("없음")) return;
+	        	 
 	        	 Point setInfoSize=null;
 	        	 Point itemInfoSize=null;
 	        	 
@@ -142,6 +155,7 @@ public class SetListener {
 	        		 itemInfoSize = itemInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 	        		 itemInfo.moveAbove(null);
 	        		 
+	        		 hasSetOption = itemButton.hasSetOption();
 	        		 if(hasSetOption){
 	        			 setInfo = new Composite(background, SWT.BORDER);
 	        			 setInfo.setLayout(layout);

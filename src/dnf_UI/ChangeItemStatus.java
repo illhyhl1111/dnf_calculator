@@ -26,6 +26,8 @@ import org.eclipse.swt.widgets.Text;
 
 
 
+
+
 import dnf_InterfacesAndExceptions.Dimension_stat;
 import dnf_InterfacesAndExceptions.ItemFileNotFounded;
 import dnf_InterfacesAndExceptions.ItemFileNotReaded;
@@ -34,6 +36,8 @@ import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 import dnf_InterfacesAndExceptions.UnknownInformationException;
 import dnf_calculator.ElementInfo;
 import dnf_calculator.StatusAndName;
+import dnf_calculator.StatusInfo;
+import dnf_class.Avatar;
 import dnf_class.Card;
 import dnf_class.Equipment;
 import dnf_class.Item;
@@ -80,6 +84,7 @@ public class ChangeItemStatus extends Dialog{
 		try {
 			if(item instanceof Equipment) originalItem=GetItemDictionary.getEquipment(item.getName());
 			else if(item instanceof Card) originalItem=GetItemDictionary.getCard(item.getName());
+			else originalItem=null;
 		} catch (ItemFileNotReaded | ItemFileNotFounded e) {
 			e.printStackTrace();
 		}
@@ -392,11 +397,22 @@ public class ChangeItemStatus extends Dialog{
 			label.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 4, 1));	
 			
 			int index = item.getItemStatIndex();
-			Iterator<StatusAndName> maxS = originalItem.vStat.statList.subList(index, item.vStat.statList.size()).iterator();
-			List<StatusAndName> itemStatList = item.vStat.statList.subList(index, item.vStat.statList.size());
-			for(StatusAndName s : itemStatList) {
-				Entry<Integer, Wrapper> entry = new AbstractMap.SimpleEntry<Integer, Wrapper>(index++, setText(composite, s, maxS.next()));
-				vStatEntry.add(entry);
+			Iterator<StatusAndName> maxS;
+			if(originalItem!=null)
+			{
+				maxS = originalItem.vStat.statList.subList(index, item.vStat.statList.size()).iterator();
+				List<StatusAndName> itemStatList = item.vStat.statList.subList(index, item.vStat.statList.size());
+				for(StatusAndName s : itemStatList) {
+					Entry<Integer, Wrapper> entry = new AbstractMap.SimpleEntry<Integer, Wrapper>(index++, setText(composite, s, maxS.next()));
+					vStatEntry.add(entry);
+				}
+			}
+			else{
+				List<StatusAndName> itemStatList = item.vStat.statList.subList(index, item.vStat.statList.size());
+				for(StatusAndName s : itemStatList) {
+					Entry<Integer, Wrapper> entry = new AbstractMap.SimpleEntry<Integer, Wrapper>(index++, setText(composite, s, new StatusAndName(0, new StatusInfo(0)) ));
+					vStatEntry.add(entry);
+				}
 			}
 			
 			if(!item.dStat.statList.isEmpty())
@@ -405,11 +421,21 @@ public class ChangeItemStatus extends Dialog{
 				label.setText("\n――――――던전 입장 시 적용――――――\n\n");
 				label.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, true, false, 4, 1));
 				
-				maxS = originalItem.dStat.statList.iterator();
-				int dIndex=0;
-				for(StatusAndName s : item.dStat.statList){
-					Entry<Integer, Wrapper> entry = new AbstractMap.SimpleEntry<Integer, Wrapper>(dIndex++, setText(composite, s, maxS.next()));
-					dStatEntry.add(entry);
+				if(originalItem!=null)
+				{
+					maxS = originalItem.dStat.statList.iterator();
+					int dIndex=0;
+					for(StatusAndName s : item.dStat.statList){
+						Entry<Integer, Wrapper> entry = new AbstractMap.SimpleEntry<Integer, Wrapper>(dIndex++, setText(composite, s, maxS.next()));
+						dStatEntry.add(entry);
+					}
+				}
+				else{
+					int dIndex=0;
+					for(StatusAndName s : item.dStat.statList){
+						Entry<Integer, Wrapper> entry = new AbstractMap.SimpleEntry<Integer, Wrapper>(dIndex++, setText(composite, s, new StatusAndName(0, new StatusInfo(0)) ));
+						dStatEntry.add(entry);
+					}
 				}
 			}
 			

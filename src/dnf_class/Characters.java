@@ -31,6 +31,7 @@ public class Characters implements java.io.Serializable
 	private HashMap<SetName, Integer> setOptionList;
 	private Creature creature;
 	private Title title;
+	private Drape drape;
 	private LinkedList<Consumeable> doping;
 	private int level;
 	private final JobList job;
@@ -57,6 +58,7 @@ public class Characters implements java.io.Serializable
 		
 		weapon = new Weapon();
 		creature = new Creature();
+		drape = new Drape();
 		title = new Title();
 		doping = new LinkedList<Consumeable>();
 		this.setLevel(level);
@@ -72,22 +74,22 @@ public class Characters implements java.io.Serializable
 		userItemList = (ItemDictionary) GetItemDictionary.itemDictionary.clone();
 	}
 
-	private void addSet(Equipment equipment)
+	private void addSet(Item item)
 	{
-		if(equipment.setName!=SetName.NONE){								//세트아이템
-			if(setOptionList.containsKey(equipment.setName))				
-				setOptionList.replace(equipment.setName, setOptionList.get(equipment.setName)+1);		//이미 등록된 셋옵 -> 1 추가
-			else setOptionList.put(equipment.setName, 1);												//셋옵 등록
+		if(item.getSetName()!=SetName.NONE){								//세트아이템
+			if(setOptionList.containsKey(item.getSetName()))				
+				setOptionList.replace(item.getSetName(), setOptionList.get(item.getSetName())+1);		//이미 등록된 셋옵 -> 1 추가
+			else setOptionList.put(item.getSetName(), 1);												//셋옵 등록
 		}
 	}
 	
-	private void subtractSet(Equipment equipment)
+	private void subtractSet(Item item)
 	{
-		if(equipment.setName!=SetName.NONE){								//세트아이템
-			if(setOptionList.get(equipment.setName)==1)
-				setOptionList.remove(equipment.setName);
+		if(item.getSetName()!=SetName.NONE){								//세트아이템
+			if(setOptionList.get(item.getSetName())==1)
+				setOptionList.remove(item.getSetName());
 			else 
-				setOptionList.replace(equipment.setName, setOptionList.get(equipment.setName)-1);		//이미 등록된 셋옵 -> 1 감소
+				setOptionList.replace(item.getSetName(), setOptionList.get(item.getSetName())-1);		//이미 등록된 셋옵 -> 1 감소
 		}
 	}
 	
@@ -114,6 +116,8 @@ public class Characters implements java.io.Serializable
 			Avatar avatar = (Avatar)item; 
 			Avatar_part part = avatar.part;
 			avatarList.replace(part, avatar);
+			
+			addSet(avatar);
 		}
 		else if(item instanceof Consumeable){
 			Consumeable consume = (Consumeable)item; 
@@ -145,6 +149,7 @@ public class Characters implements java.io.Serializable
 			Avatar avatar = (Avatar)item; 
 			Avatar_part part = avatar.part;
 			avatarList.replace(part, new Avatar(part));
+			subtractSet(avatar);
 		}
 		else if(item instanceof Consumeable){
 			Consumeable consume = (Consumeable)item; 
@@ -188,6 +193,8 @@ public class Characters implements java.io.Serializable
 		for(Equipment e : equipmentList.values())
 			statUpdate(e);														//equipmentList(장비목록)에 포함된 모든 장비 스탯 더하기
 		
+		for(Avatar a : avatarList.values()) statUpdate(a);
+		
 		for(Entry<SetName,Integer> e : setOptionList.entrySet())				//setOptionList(셋옵목록)에 포함된 모든 셋옵 e에 대해
 		{
 			try {
@@ -205,8 +212,7 @@ public class Characters implements java.io.Serializable
 		
 		statUpdate(title);
 		statUpdate(creature);
-		
-		//TODO 아바타, 도핑, 패시브스킬 장착
+		//TODO 도핑, 패시브스킬 장착
 	}
 
 	public int getLevel() { return level; }
@@ -225,4 +231,6 @@ public class Characters implements java.io.Serializable
 	public void setWeapon(Weapon weapon) {this.weapon = weapon;}
 	public void setCreature(Creature creature) {this.creature = creature;}
 	public void setTitle(Title title) {this.title = title;}
+	public Drape getDrape() {return drape;}
+	public void setDrape(Drape drape) {this.drape = drape;}
 }

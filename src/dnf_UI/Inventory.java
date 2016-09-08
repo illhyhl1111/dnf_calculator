@@ -32,7 +32,6 @@ public class Inventory
 	final static int inventoryRow=5;
 	final static int inventorySize=inventoryCol*inventoryRow;
 	private Composite inventoryComposite;
-	Vault vault;
 	Characters character;
 	UserInfo userInfo;
 	Composite parent;
@@ -57,7 +56,7 @@ public class Inventory
 		inventoryList = new ItemButton[inventorySize];
 	}
 	
-	public void setListener(Vault vault, Composite background)
+	public void setListener(int mode, Composite background, Vault vault)
 	{
 		int index=0;
 		inventoryList[0] = new ItemButton(inventoryComposite, new Item(), InterfaceSize.INVENTORY_BUTTON_SIZE, InterfaceSize.INVENTORY_BUTTON_SIZE, false);
@@ -79,7 +78,8 @@ public class Inventory
 				
 				SetListener listenerGroup = new SetListener(inventoryList[index], character, userInfo, itemInfo, setInfo, xButton, yButton, parent);
 				
-				inventoryList[index].getButton().addListener(SWT.MouseDown, listenerGroup.equipListener(vault)); 			// add MouseDown Event - unequip
+				if(mode==0) inventoryList[index].getButton().addListener(SWT.MouseDown, listenerGroup.equipListener(vault)); 			// add MouseDown Event - unequip
+				else inventoryList[index].getButton().addListener(SWT.MouseDown, listenerGroup.equipListener()); 			// add MouseDown Event - unequip
 				inventoryList[index].getButton().addListener(SWT.MouseDoubleClick, listenerGroup.modifyListener());			// add MouseDoubleClick - modify
 				inventoryList[index].getButton().addListener(SWT.MouseEnter, listenerGroup.makeItemInfoListener(background));			// add MouseEnter Event - make composite
 				inventoryList[index].getButton().addListener(SWT.MouseExit, listenerGroup.disposeItemInfoListener()); 		// add MouseExit Event - dispose composite
