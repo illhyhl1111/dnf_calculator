@@ -3,7 +3,6 @@ package dnf_UI;
 import java.util.LinkedList;
 
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
@@ -14,15 +13,11 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
 
 import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.InterfaceSize;
 import dnf_InterfacesAndExceptions.ItemFileNotFounded;
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
-import dnf_InterfacesAndExceptions.SetName;
 import dnf_class.Card;
 import dnf_class.Characters;
 import dnf_class.Equipment;
@@ -42,12 +37,7 @@ public class Inventory
 	UserInfo userInfo;
 	Composite parent;
 	private Composite itemInfo;
-	private Point itemInfoSize;
 	private Composite setInfo;
-	private Point setInfoSize;
-	private Integer X0;
-	private Integer Y0;
-	private Boolean hasSetOption;
 	
 	public Inventory(Composite parent, Characters character, UserInfo userInfo, LinkedList<Item> itemList)
 	{
@@ -83,138 +73,17 @@ public class Inventory
 			if(!i.getName().equals("이름없음"))
 			{
 				setDrop(inventoryList[index]);
-				
-				Integer indexBox = index;
+
 				Integer xButton = (index%inventoryCol)*buttonS.x+10;
 				Integer yButton = (int)(index/inventoryCol)*buttonS.y+userY+38;
 				
-				// add MouseDown Event - equip
-				inventoryList[index].getButton().addListener(SWT.MouseDown, new Listener() {
-			         @Override
-			         public void handleEvent(Event e) {
-			        	 if(e.button==3 && inventoryList[indexBox].getItem().getEnabled()){
-			        		 if(vault.getShell()==null){
-			        			 character.equip(i);
-			        			 userInfo.renew();
-			        		 }
-			        		 else{
-			        			 inventoryList[indexBox].getItem().setEnabled(false);
-			        			 inventoryList[indexBox].renewImage(false);
-			        			 if(userInfo.userItemInfo.equiped(i)){
-			        				 character.unequip(i);
-			        				 userInfo.renew();
-			        				 if(!itemInfo.isDisposed()) itemInfo.dispose();
-			        			 }
-			        			 if(itemInfo!=null && !itemInfo.isDisposed()){
-					        		 //System.out.println("Mouse Exited "+i.getName());
-					        		 itemInfo.dispose();
-					        		 if(hasSetOption) setInfo.dispose();
-					        	 }
-			        		 }
-			        	 }
-			         }
-				});
+				SetListener listenerGroup = new SetListener(inventoryList[index], character, userInfo, itemInfo, setInfo, xButton, yButton, parent);
 				
-				inventoryList[index].getButton().addListener(SWT.MouseDoubleClick, new Listener() {
-
-					@Override
-					public void handleEvent(Event event) {
-						if(inventoryList[indexBox].getItem().getEnabled())
-			        	 {
-			        		ChangeItemStatus changeItem = new ChangeItemStatus(parent.getShell(), inventoryList[indexBox].getItem(), inventoryList[indexBox].hasSetOption());
-			        		int result = changeItem.open();
-							if (Window.OK == result) {
-								inventoryList[indexBox].setItem(changeItem.item);
-								userInfo.renew();
-							}
-							else if(result == 2)
-							{
-							//if(inventoryList[indexBox].hasSetOption()){
-								SetName setName = ((Equipment)inventoryList[indexBox].getItem()).setName;
-								ChangeSetOptionStatus changeSet = new ChangeSetOptionStatus((Shell)parent, setName, character.userItemList);
-								if (Window.OK == changeSet.open()) {
-									try {
-										character.userItemList.setSetOptions(setName, changeSet.setOption);
-										inventoryList[indexBox].setItem(changeItem.item);
-										userInfo.renew();
-									} catch (ItemFileNotFounded e1) {
-										e1.printStackTrace();
-									}				
-								}
-							}
-			        	 }
-					}
-				});
-					
-				
-				// add MouseEnter Event - make composite
-				inventoryList[index].getButton().addListener(SWT.MouseEnter, new Listener() {
-			         @Override
-			         public void handleEvent(Event e) {
-			        	 if(inventoryList[indexBox].getItem().getEnabled()){
-			        		 //System.out.println("Mouse Entered "+i.getName());
-			        		 itemInfo = new Composite(background, SWT.BORDER);
-			        		 GridLayout layout = new GridLayout(1, false);
-			        		 layout.verticalSpacing=3;
-			        		 itemInfo.setLayout(layout);
-			        		 MakeComposite.setItemInfoComposite(itemInfo, inventoryList[indexBox].getItem());
-			        		 itemInfoSize = itemInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-			        		 itemInfo.moveAbove(null);
-			        		 
-			        		 boolean hasSet = inventoryList[indexBox].hasSetOption();
-			        		 hasSetOption = hasSet;
-			        		 if(hasSet){
-			        			 setInfo = new Composite(background, SWT.BORDER);
-			        			 setInfo.setLayout(layout);
-			        			 int setNum;
-			        			 if(character.getSetOptionList().get( ((Equipment)inventoryList[indexBox].getItem()).setName)==null) setNum=0;
-			        			 else setNum=character.getSetOptionList().get( ((Equipment)inventoryList[indexBox].getItem()).setName );
-			        			 
-			        			 MakeComposite.setSetInfoComposite(setInfo, inventoryList[indexBox].getItem(), setNum, character.userItemList);
-				        		 setInfoSize = setInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				        		 setInfo.moveAbove(null);
-			        		 }
-			        		 
-			        		 int x0;
-			        		 int y0;
-			        		 if(setInfoSize!=null) y0 = yButton-Math.max(setInfoSize.y, itemInfoSize.y)-5;
-			        		 else y0=yButton-itemInfoSize.y-5;
-			        		 if(hasSet)
-			        			 x0 = xButton-InterfaceSize.ITEM_INFO_SIZE-InterfaceSize.SET_INFO_SIZE-5-InterfaceSize.SET_ITEM_INTERVAL;
-			        		 else x0 = xButton-InterfaceSize.ITEM_INFO_SIZE-5;
-			        		 if(x0<0) x0 = xButton+5;
-			        		 //if(y0<0) y0 = yButton+5;
-			        		 itemInfo.setBounds((e.x+x0), (e.y+y0), InterfaceSize.ITEM_INFO_SIZE, itemInfoSize.y);
-			        		 if(hasSet) setInfo.setBounds((e.x+x0+InterfaceSize.SET_ITEM_INTERVAL+InterfaceSize.ITEM_INFO_SIZE), (e.y+y0), InterfaceSize.SET_INFO_SIZE, setInfoSize.y);
-			        		 X0=x0;
-			        		 Y0=y0;
-			        	 }
-			         }
-			     });
-				
-				// add MouseExit Event - dispose composite
-				inventoryList[index].getButton().addListener(SWT.MouseExit, new Listener() {
-			         @Override
-			         public void handleEvent(Event e) {
-			        	 if(inventoryList[indexBox].getItem().getEnabled() && !itemInfo.isDisposed()){
-			        		 //System.out.println("Mouse Exited "+i.getName());
-			        		 itemInfo.dispose();
-			        		 if(hasSetOption) setInfo.dispose();
-			        	 }
-			         }
-			     });
-				
-				// add MouseMove Event - move composite
-				inventoryList[index].getButton().addListener(SWT.MouseMove, new Listener() {
-			         @Override
-			         public void handleEvent(Event e) {
-			        	 if(inventoryList[indexBox].getItem().getEnabled() && !itemInfo.isDisposed()){
-			        		 //System.out.println("Mouse Move (button: " + e.button + " x: " + (e.x+x0) + " y: " + (e.y+y0) + ")");
-			        		 itemInfo.setLocation((e.x+X0), (e.y+Y0));
-			        		 if(hasSetOption) setInfo.setLocation((e.x+X0+InterfaceSize.SET_ITEM_INTERVAL+InterfaceSize.ITEM_INFO_SIZE), (e.y+Y0));
-			        	 }
-			         }
-			     });
+				inventoryList[index].getButton().addListener(SWT.MouseDown, listenerGroup.equipListener(vault)); 			// add MouseDown Event - unequip
+				inventoryList[index].getButton().addListener(SWT.MouseDoubleClick, listenerGroup.modifyListener());			// add MouseDoubleClick - modify
+				inventoryList[index].getButton().addListener(SWT.MouseEnter, listenerGroup.makeItemInfoListener(background));			// add MouseEnter Event - make composite
+				inventoryList[index].getButton().addListener(SWT.MouseExit, listenerGroup.disposeItemInfoListener()); 		// add MouseExit Event - dispose composite
+				inventoryList[index].getButton().addListener(SWT.MouseMove, listenerGroup.moveItemInfoListener());			// add MouseMove Event - move composite
 			}
 			index++;
 		}

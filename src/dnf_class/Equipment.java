@@ -279,6 +279,8 @@ public class Equipment extends Item
 	public boolean getEnabled() {return enabled;}
 	@Override
 	public void setEnabled(boolean enabled){this.enabled=enabled;}
+	@Override
+	public SetName getSetName() {return setName;}
 	
 	//////정렬순서
 	// 1. 종류 : 장비->칭호->보주->아바타->엠블렘->크리쳐->비장비

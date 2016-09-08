@@ -2,6 +2,7 @@ package dnf_class;
 
 import dnf_InterfacesAndExceptions.Avatar_part;
 import dnf_InterfacesAndExceptions.Item_rarity;
+import dnf_InterfacesAndExceptions.SetName;
 
 @SuppressWarnings("serial")
 public class Avatar extends Item
@@ -9,6 +10,7 @@ public class Avatar extends Item
 	Avatar_part part;
 	Emblem emblem1;
 	Emblem emblem2;
+	SetName setName;
 	
 	public Avatar(String name, String icon, Item_rarity rarity, Avatar_part part, Emblem emblem1, Emblem emblem2)
 	{
@@ -16,6 +18,9 @@ public class Avatar extends Item
 		this.part=part;
 		this.emblem1=emblem1;
 		this.emblem2=emblem2;
+		
+		if(rarity == Item_rarity.RARE) setName = SetName.RAREAVATAR;
+		else setName = SetName.AVATAR;
 	}
 	
 	public Avatar(String name, String icon, Item_rarity rarity, Avatar_part part)
@@ -24,14 +29,22 @@ public class Avatar extends Item
 		this.part=part;
 		emblem1 = new Emblem();
 		emblem2 = new Emblem();
+		
+		if(rarity == Item_rarity.RARE) setName = SetName.RAREAVATAR;
+		else setName = SetName.AVATAR;
 	}
 	public Avatar(Avatar_part part) {
 		super();
 		this.part=part;
 		emblem1 = new Emblem();
 		emblem2 = new Emblem();
+		
+		setName = SetName.NONE;
 	}
 	
 	@Override
 	public String getTypeName() { return part.getName();}
+	
+	@Override
+	public SetName getSetName() {return setName;}
 }

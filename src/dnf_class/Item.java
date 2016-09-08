@@ -3,6 +3,7 @@ package dnf_class;
 import dnf_calculator.StatusList;
 import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.Item_rarity;
+import dnf_InterfacesAndExceptions.SetName;
 
 @SuppressWarnings("serial")
 public class Item implements Cloneable, java.io.Serializable, Comparable<Item>
@@ -61,6 +62,7 @@ public class Item implements Cloneable, java.io.Serializable, Comparable<Item>
 	public Equip_part getPart() {return null;}
 	public boolean getEnabled() {return true;}
 	public void setEnabled(boolean enabled){}
+	public SetName getSetName() {return SetName.NONE;}
 	
 	public String getTypeName() { return "아이템";}
 	public String getTypeName2() { return null;}

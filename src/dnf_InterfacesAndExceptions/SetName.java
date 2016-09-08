@@ -12,7 +12,9 @@ public enum SetName implements Serializable
 	GREATGLORY("고대 왕국의 기사 세트"), GRACIA("그라시아 가문의 상징 세트"), DEVASTEDGRIEF("애끓는 비탄 세트"), BURIEDSCREAM("파묻힌 비명의 영혼 세트"),
 	ROOTOFDISEASE("질병의 근원 세트"), ROMANTICE("황야의 로멘티스트 세트"), CURSEOFSEAGOD("해신의 저주를 받은 세트"),
 	RELIC_80("유물 : 오로바스의 세라믹 세트"), RELIC_85("유물 : 정화된 오로바스의 세라믹 세트"),
-	HOLYRELIC_80("성물 : 오로바스의 세라믹 세트"), HOLYRELIC_85("성물 : 정화된 오로바스의 세라믹 세트");
+	HOLYRELIC_80("성물 : 오로바스의 세라믹 세트"), HOLYRELIC_85("성물 : 정화된 오로바스의 세라믹 세트"),
+	
+	RAREAVATAR("레어 아바타 세트"), AVATAR("상급 아바타 세트");
 	
 	String name;
 	

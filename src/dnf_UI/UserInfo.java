@@ -1,6 +1,5 @@
 package dnf_UI;
 
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
@@ -12,16 +11,12 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
 
+import dnf_InterfacesAndExceptions.Avatar_part;
 import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.InterfaceSize;
-import dnf_InterfacesAndExceptions.ItemFileNotFounded;
-import dnf_InterfacesAndExceptions.SetName;
 import dnf_class.Characters;
-import dnf_class.Equipment;
 import dnf_class.Item;
 
 class UserItemInfo
@@ -33,10 +28,7 @@ class UserItemInfo
 	static final int ITEMNUM=13;
 	private Characters character;
 	private Composite itemInfo;
-	private Point itemInfoSize;
 	private Composite setInfo;
-	private Point setInfoSize;
-	private Boolean hasSetOption;
 	
 	public UserItemInfo(Composite parent, Characters character, UserInfo superInfo)
 	{
@@ -89,116 +81,20 @@ class UserItemInfo
 		for(int i=0; i<ITEMNUM; i++)
 		{
 			Integer x0;
-			if(i>4) x0 = InterfaceSize.USER_INFO_ITEM_SIZE_X-2*buttonS.x+((i-5)%2)*buttonS.x-3;
-			else x0 = (i%2)*buttonS.x+10;
+			if(i>4) x0 = InterfaceSize.USER_INFO_ITEM_SIZE_X-2*buttonS.x+((i-5)%2)*buttonS.x-6;
+			else x0 = (i%2)*buttonS.x+7;
 			
 			Integer y0;
-			if(i>4) y0 = (int)((i-5)/2)*buttonS.y+10;
-			else y0 = (int)(i/2)*buttonS.y+10;
-			Integer indexBox = i;
+			if(i>4) y0 = (int)((i-5)/2)*buttonS.y+7;
+			else y0 = (int)(i/2)*buttonS.y+7;
 			
-			// add MouseDown Event - unequip
-			ItemButton temp = itemButtonList[i];
-			itemButtonList[i].getButton().addListener(SWT.MouseDown, new Listener() {
-		         @Override
-		         public void handleEvent(Event e) {
-		        	 if(e.button==3){
-		        		 character.unequip(temp.getItem());
-		        		 superInfo.renew();
-		        		 if(itemInfo!=null && !itemInfo.isDisposed()){
-			        		 //System.out.println("Mouse Exited "+i.getName());
-			        		 itemInfo.dispose();
-			        		 if(hasSetOption) setInfo.dispose();
-			        	 }
-		        	 }
-		        	 //System.out.println("Mouse Down (button: " + e.button + " x: " + e.x + " y: " + e.y + ")");
-		         }
-		     });
+			SetListener listenerGroup = new SetListener(itemButtonList[i], character, superInfo, itemInfo, setInfo, x0, y0, parent);
 			
-			// add MouseDoubleClick - modify
-			itemButtonList[i].getButton().addListener(SWT.MouseDoubleClick, new Listener() {
-				@Override
-				public void handleEvent(Event event) {
-					if(itemButtonList[indexBox].getItem().getEnabled())
-		        	 {
-		        		ChangeItemStatus changeItem = new ChangeItemStatus(parent.getShell(), itemButtonList[indexBox].getItem(), itemButtonList[indexBox].hasSetOption());
-		        		int result = changeItem.open();
-						if (Window.OK == result) {
-							itemButtonList[indexBox].setItem(changeItem.item);
-							superInfo.renew();
-						}
-						else if(result == 2)
-						{
-						//if(inventoryList[indexBox].hasSetOption()){
-							SetName setName = ((Equipment)itemButtonList[indexBox].getItem()).setName;
-							ChangeSetOptionStatus changeSet = new ChangeSetOptionStatus((Shell)parent, setName, character.userItemList);
-							if (Window.OK == changeSet.open()) {
-								try {
-									character.userItemList.setSetOptions(setName, changeSet.setOption);
-									itemButtonList[indexBox].setItem(changeItem.item);
-									superInfo.renew();
-								} catch (ItemFileNotFounded e1) {
-									e1.printStackTrace();
-								}				
-							}
-						}
-		        	 }
-				}
-			});
-			
-			// add MouseEnter Event - make composite
-			itemButtonList[i].getButton().addListener(SWT.MouseEnter, new Listener() {
-		         @Override
-		         public void handleEvent(Event e) {
-		        	 if(itemButtonList[indexBox].getItem().getEnabled()){
-		        		 if(itemButtonList[indexBox].getItem().getName().contains("없음")) return;
-		        		 itemInfo = new Composite(superInfo.getComposite().getParent(), SWT.BORDER);
-		        		 GridLayout layout = new GridLayout(1, false);
-		        		 layout.verticalSpacing=3;
-		        		 itemInfo.setLayout(layout);
-		        		 MakeComposite.setItemInfoComposite(itemInfo, itemButtonList[indexBox].getItem());
-		        		 itemInfoSize = itemInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		        		 itemInfo.setBounds((e.x+x0), (e.y+y0), InterfaceSize.ITEM_INFO_SIZE, itemInfoSize.y);
-		        		 itemInfo.moveAbove(null);
-		        		 
-		        		 boolean hasSet = itemButtonList[indexBox].hasSetOption();
-		        		 hasSetOption = hasSet;
-		        		 if(hasSet){
-		        			 setInfo = new Composite(superInfo.getComposite().getParent(), SWT.BORDER);
-		        			 setInfo.setLayout(layout);
-		        			 MakeComposite.setSetInfoComposite(setInfo, itemButtonList[indexBox].getItem(),
-		        					 character.getSetOptionList().get( ((Equipment)itemButtonList[indexBox].getItem()).setName ), character.userItemList);
-			        		 setInfoSize = setInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-			        		 setInfo.moveAbove(null);
-			        		 setInfo.setBounds((e.x+x0+InterfaceSize.SET_ITEM_INTERVAL+InterfaceSize.ITEM_INFO_SIZE), (e.y+y0), InterfaceSize.SET_INFO_SIZE, setInfoSize.y);
-		        		 }
-		        	 }
-		         }
-		     });
-			
-			// add MouseExit Event - dispose composite
-			itemButtonList[i].getButton().addListener(SWT.MouseExit, new Listener() {
-		         @Override
-		         public void handleEvent(Event e) {
-		        	 if(itemInfo !=null && !itemInfo.isDisposed()){
-		        		 //System.out.println("Mouse Exited "+i.getName());
-		        		 itemInfo.dispose();
-		        		 if(hasSetOption && setInfo!=null) setInfo.dispose();
-		        	 }
-		         }
-		     });
-			
-			// add MouseMove Event - move composite
-			itemButtonList[i].getButton().addListener(SWT.MouseMove, new Listener() {
-		         @Override
-		         public void handleEvent(Event e) {
-		        	 if(itemInfo !=null && !itemInfo.isDisposed()){
-		        		 //System.out.println("Mouse Move (button: " + e.button + " x: " + (e.x+x0) + " y: " + (e.y+y0) + ")");
-		        		 itemInfo.setLocation((e.x+x0), (e.y+y0));
-		        		 if(hasSetOption) setInfo.setLocation((e.x+x0+InterfaceSize.SET_ITEM_INTERVAL+InterfaceSize.ITEM_INFO_SIZE), (e.y+y0));
-		        	 }
-		         }
-		     });
+			itemButtonList[i].getButton().addListener(SWT.MouseDown, listenerGroup.unequipListener()); 				// add MouseDown Event - unequip
+			itemButtonList[i].getButton().addListener(SWT.MouseDoubleClick, listenerGroup.modifyListener());		// add MouseDoubleClick - modify
+			itemButtonList[i].getButton().addListener(SWT.MouseEnter, listenerGroup.makeItemInfoListener(superInfo.getComposite().getParent()));		// add MouseEnter Event - make composite
+			itemButtonList[i].getButton().addListener(SWT.MouseExit, listenerGroup.disposeItemInfoListener()); 		// add MouseExit Event - dispose composite
+			itemButtonList[i].getButton().addListener(SWT.MouseMove, listenerGroup.moveItemInfoListener());			// add MouseMove Event - move composite
 		}
 		
 		GridData buttonGridData = new GridData(SWT.LEFT, SWT.TOP, false, false);
@@ -231,6 +127,100 @@ class UserItemInfo
 	}
 	
 	public Composite getComposite() {return itemInfoComposite;}
+	
+	public boolean equiped(Item item)
+	{
+		for(ItemButton i : itemButtonList)
+			if(i.getItem().getName().equals(item.getName())) return true;
+		return false;
+	}
+}
+
+class UserAvatarInfo
+{
+	private Composite wholeComposite;
+	private Composite avatarInfoComposite;
+	private Composite creatureInfoComposite;
+	private Composite drapeInfoComposite;
+	private ItemButton[] itemButtonList;
+	static final int AVATARNUM=9;
+	private Characters character;
+	private Composite avatarInfo;
+	private Composite setInfo;
+	
+	public UserAvatarInfo(Composite parent, Characters character, UserInfo superInfo)
+	{
+		this.character=character;
+		wholeComposite = new Composite(parent, SWT.BORDER);
+		wholeComposite.setLayout(new FormLayout());
+		
+		//TODO wholeComposite.setBackgroundImage(배경그림);
+		
+		avatarInfoComposite = new Composite(wholeComposite, SWT.NONE);
+		avatarInfoComposite.setLayoutData(new FormData());
+		
+		creatureInfoComposite = new Composite(wholeComposite, SWT.NONE);
+		FormData creatureInfoData = new FormData();
+		creatureInfoData.left = new FormAttachment(avatarInfoComposite, 10);
+		creatureInfoComposite.setLayoutData(creatureInfoData);
+		
+		drapeInfoComposite = new Composite(wholeComposite, SWT.NONE);
+		FormData drapeInfoData = new FormData();
+		drapeInfoData.left = new FormAttachment(avatarInfoComposite, 10);
+		drapeInfoData.top = new FormAttachment(creatureInfoComposite, 10);
+		drapeInfoComposite.setLayoutData(creatureInfoData);
+		
+		GridLayout avatarInfoLayout = new GridLayout(3, true);
+		avatarInfoLayout.horizontalSpacing=3;
+		avatarInfoLayout.verticalSpacing=3;
+		avatarInfoLayout.marginHeight=0;
+		avatarInfoLayout.marginWidth=0;
+		avatarInfoLayout.makeColumnsEqualWidth=true;
+		avatarInfoComposite.setLayout(avatarInfoLayout);
+		
+		creatureInfoComposite.setLayout(new FillLayout());
+		drapeInfoComposite.setLayout(new FillLayout());
+
+		itemButtonList = new ItemButton[AVATARNUM];
+		int BUTTON_SIZE = InterfaceSize.INFO_BUTTON_SIZE;
+		Avatar_part[] partOrder = { Avatar_part.CAP, Avatar_part.HAIR, Avatar_part.FACE, Avatar_part.NECK, Avatar_part.COAT,
+				Avatar_part.AURA, Avatar_part.BELT, Avatar_part.PANTS, Avatar_part.SHOES };
+		for(int i=0; i<AVATARNUM; i++)
+			itemButtonList[i] = new ItemButton(avatarInfoComposite, character.getAvatarList().get(partOrder[i]), BUTTON_SIZE, BUTTON_SIZE);
+		
+		
+		Point buttonS = itemButtonList[0].getButton().computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		buttonS.x+=3; buttonS.y+=3;
+		for(int i=0; i<AVATARNUM; i++)
+		{
+			Integer x0 = (i%3)*buttonS.x;
+			Integer y0 = (int)(i/3)*buttonS.y;
+			SetListener listenerGroup = new SetListener(itemButtonList[i], character, superInfo, avatarInfo, setInfo, x0, y0, parent);
+			
+			itemButtonList[i].getButton().addListener(SWT.MouseDown, listenerGroup.unequipListener()); 				// add MouseDown Event - unequip
+			itemButtonList[i].getButton().addListener(SWT.MouseDoubleClick, listenerGroup.modifyListener());		// add MouseDoubleClick - modify
+			itemButtonList[i].getButton().addListener(SWT.MouseEnter, listenerGroup.makeItemInfoListener(superInfo.getComposite().getParent()));		// add MouseEnter Event - make composite
+			itemButtonList[i].getButton().addListener(SWT.MouseExit, listenerGroup.disposeItemInfoListener()); 		// add MouseExit Event - dispose composite
+			itemButtonList[i].getButton().addListener(SWT.MouseMove, listenerGroup.moveItemInfoListener());			// add MouseMove Event - move composite
+		}
+		
+		GridData buttonGridData = new GridData(SWT.LEFT, SWT.TOP, false, false);
+		for(int i=0; i<AVATARNUM; i++){
+			itemButtonList[i].getButton().setData(buttonGridData);
+		}
+	}
+	
+	public void renew()
+	{
+		Avatar_part[] partOrder = { Avatar_part.CAP, Avatar_part.HAIR, Avatar_part.FACE, Avatar_part.NECK, Avatar_part.COAT,
+				Avatar_part.AURA, Avatar_part.BELT, Avatar_part.PANTS, Avatar_part.SHOES };
+		for(int i=0; i<AVATARNUM; i++){
+			itemButtonList[i].setItem(character.getAvatarList().get(partOrder[i]));
+			itemButtonList[i].renewImage(true);
+		}
+	}
+	
+	public Composite getComposite() {return wholeComposite;}
 	
 	public boolean equiped(Item item)
 	{

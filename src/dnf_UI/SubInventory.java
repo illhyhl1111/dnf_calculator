@@ -2,23 +2,10 @@ package dnf_UI;
 
 import java.util.LinkedList;
 
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.DragSource;
-import org.eclipse.swt.dnd.DragSourceAdapter;
-import org.eclipse.swt.dnd.DragSourceEvent;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 
 import dnf_InterfacesAndExceptions.InterfaceSize;
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
@@ -37,9 +24,6 @@ public class SubInventory
 	UserInfo userInfo;
 	Composite parent;
 	private Composite itemInfo;
-	private Point itemInfoSize;
-	private Integer X0;
-	private Integer Y0;
 	
 	public SubInventory(Composite parent, Characters character, UserInfo userInfo, LinkedList<Item> itemList)
 	{
@@ -73,79 +57,16 @@ public class SubInventory
 			
 			if(!i.getName().equals("이름없음"))
 			{
-				setDrag(inventoryList[index]);
+				Integer xButton = (index%inventoryCol)*buttonS.x+8;
+				Integer yButton = (int)(index/inventoryCol)*buttonS.y+userY+33;
 				
-				Integer indexBox = index;
-				Integer xButton = (index%inventoryCol)*buttonS.x+2;
-				Integer yButton = (int)(index/inventoryCol)*buttonS.y+userY+8;
+				SetListener listenerGroup = new SetListener(inventoryList[index], character, userInfo, itemInfo, null, xButton, yButton, parent);
 				
-				// add MouseDown Event - equip
-				inventoryList[index].getButton().addListener(SWT.MouseDoubleClick, new Listener() {
-			         @Override
-			         public void handleEvent(Event e) {
-			        	 if(e.button==3 && inventoryList[indexBox].getItem().getEnabled()){
-			        		 //TODO
-			        	 }
-			        	 else if(e.button==1 && inventoryList[indexBox].getItem().getEnabled())
-			        	 {
-			        		ChangeItemStatus changeItem = new ChangeItemStatus(parent.getShell(), inventoryList[indexBox].getItem(), false);
-			        		int result = changeItem.open();
-							if (Window.OK == result) {
-								inventoryList[indexBox].setItem(changeItem.item);
-								if(userInfo.userItemInfo.equiped(i)) character.setStatus();
-								userInfo.renew();
-							}
-			        	 }
-			         }
-			     });
-				
-				// add MouseEnter Event - make composite
-				inventoryList[index].getButton().addListener(SWT.MouseEnter, new Listener() {
-			         @Override
-			         public void handleEvent(Event e) {
-			        	 if(inventoryList[indexBox].getItem().getEnabled()){
-			        		 //System.out.println("Mouse Entered "+i.getName());
-			        		 itemInfo = new Composite(background, SWT.BORDER);
-			        		 GridLayout layout = new GridLayout(1, false);
-			        		 layout.verticalSpacing=3;
-			        		 itemInfo.setLayout(layout);
-			        		 MakeComposite.setItemInfoComposite(itemInfo, inventoryList[indexBox].getItem());
-			        		 itemInfoSize = itemInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-			        		 itemInfo.moveAbove(null);
-			        		 
-			        		 int x0;
-			        		 int y0 = yButton-itemInfoSize.y-5;
-			        		 x0 = xButton-InterfaceSize.ITEM_INFO_SIZE-5;
-			        		 if(x0<0) x0 = xButton+5;
-			        		 if(y0<0) y0 = yButton+5;
-			        		 itemInfo.setBounds((e.x+x0), (e.y+y0), InterfaceSize.ITEM_INFO_SIZE, itemInfoSize.y);
-			        		 X0=x0;
-			        		 Y0=y0;
-			        	 }
-			         }
-			     });
-				
-				// add MouseExit Event - dispose composite
-				inventoryList[index].getButton().addListener(SWT.MouseExit, new Listener() {
-			         @Override
-			         public void handleEvent(Event e) {
-			        	 if(inventoryList[indexBox].getItem().getEnabled() && !itemInfo.isDisposed()){
-			        		 //System.out.println("Mouse Exited "+i.getName());
-			        		 itemInfo.dispose();
-			        	 }
-			         }
-			     });
-				
-				// add MouseMove Event - move composite
-				inventoryList[index].getButton().addListener(SWT.MouseMove, new Listener() {
-			         @Override
-			         public void handleEvent(Event e) {
-			        	 if(inventoryList[indexBox].getItem().getEnabled() && !itemInfo.isDisposed()){
-			        		 //System.out.println("Mouse Move (button: " + e.button + " x: " + (e.x+x0) + " y: " + (e.y+y0) + ")");
-			        		 itemInfo.setLocation((e.x+X0), (e.y+Y0));
-			        	 }
-			         }
-			     });
+				inventoryList[index].getButton().addListener(SWT.MouseDoubleClick, listenerGroup.modifyListener());					// add MouseDoubleClick - modify
+				inventoryList[index].getButton().addListener(SWT.MouseEnter, listenerGroup.makeItemInfoListener(background));		// add MouseEnter Event - make composite
+				inventoryList[index].getButton().addListener(SWT.MouseExit, listenerGroup.disposeItemInfoListener()); 				// add MouseExit Event - dispose composite
+				inventoryList[index].getButton().addListener(SWT.MouseMove, listenerGroup.moveItemInfoListener());					// add MouseMove Event - move composite
+				listenerGroup.setDrag();
 			}
 			index++;
 		}
@@ -153,40 +74,6 @@ public class SubInventory
 		for(; index<inventorySize; index++)
 			inventoryList[index] = new ItemButton(inventoryComposite, new Item(), InterfaceSize.INVENTORY_BUTTON_SIZE, InterfaceSize.INVENTORY_BUTTON_SIZE, false);
 	}
-	
-	public void setDrag(final ItemButton itemButton) {
-
-		Transfer[] types = new Transfer[] { TextTransfer.getInstance() };
-		int operations = DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK;
-
-		final DragSource source = new DragSource(itemButton.getButton(), operations);
-		source.setTransfer(types);
-		source.addDragListener(new DragSourceAdapter() {
-			public void dragStart(DragSourceEvent event) {
-				event.doit = (itemButton.getButton().getImage() != null);
-
-				// getting control widget - Composite in this case
-				Button composite = (Button) ((DragSource) event.getSource()).getControl();
-				// Getting dimensions of this widget
-				Point compositeSize = composite.getSize();
-				// creating new GC
-				GC gc = new GC(composite);
-				// Creating new Image
-				Image image = new Image(Display.getCurrent(), compositeSize.x, compositeSize.y);
-				// Rendering widget to image
-				gc.copyArea(image, 0, 0);
-				// Setting widget to DnD image
-				event.image = itemButton.getButton().getImage();
-				
-				itemInfo.dispose();
-			}
-
-			public void dragSetData(DragSourceEvent event) {
-				event.data = itemButton.getItem().getName();
-			}
-		});
-	}
-	
 	
 	public Composite getComposite() {return inventoryComposite;}
 	

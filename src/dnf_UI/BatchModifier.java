@@ -66,8 +66,10 @@ public class BatchModifier extends Dialog {
 				Equip_part.BRACELET, Equip_part.NECKLACE, Equip_part.AIDEQUIPMENT, Equip_part.RING, Equip_part.EARRING, Equip_part.MAGICSTONE
 		};
 		equipList = new Equipment[partList.length];
-		for(int i=0; i<equipList.length; i++)
+		for(int i=0; i<equipList.length; i++){
 			equipList[i]=new Equipment(partList[i]);
+			equipList[i].setName("꺄아앙ㅇ아앙");
+		}
 	}
 	
 	@Override
@@ -347,66 +349,19 @@ public class BatchModifier extends Dialog {
 			setDrop(itemButtonList[i]);
 			
 			Integer x0;
-			if(i>4) x0 = leftItemInfoComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT).x+225+((i-5)%2)*buttonS.x;
-			else x0 = (i%2)*buttonS.x+10;
+			if(i>4) x0 = leftItemInfoComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT).x+222+((i-5)%2)*buttonS.x;
+			else x0 = (i%2)*buttonS.x+7;
 			
 			Integer y0;
-			if(i>4) y0 = (int)((i-5)/2)*buttonS.y + enhance.computeSize(SWT.DEFAULT, SWT.DEFAULT).y+116;
-			else y0 = (int)(i/2)*buttonS.y+ enhance.computeSize(SWT.DEFAULT, SWT.DEFAULT).y+116;
-			Integer indexBox = i;
+			if(i>4) y0 = (int)((i-5)/2)*buttonS.y + enhance.computeSize(SWT.DEFAULT, SWT.DEFAULT).y+125;
+			else y0 = (int)(i/2)*buttonS.y+ enhance.computeSize(SWT.DEFAULT, SWT.DEFAULT).y+125;
 			
-			itemButtonList[i].getButton().addListener(SWT.MouseDown, new Listener() {
-		         @Override
-		         public void handleEvent(Event e) {
-		        	 if(e.button==3){
-		        		 if((Equipment)itemButtonList[indexBox].getItem() instanceof Equipment) ((Equipment)itemButtonList[indexBox].getItem()).setCard(new Card());
-		        		 else ((Title)itemButtonList[indexBox].getItem()).setCard(new Card());
-		        		 if(itemInfo!=null && !itemInfo.isDisposed()){
-			        		 itemInfo.dispose();
-			        	 }
-		        	 }
-		         }
-		     });
+			SetListener listenerGroup = new SetListener(itemButtonList[i], character, userInfo, itemInfo, null, x0, y0, parent);
 			
-			// add MouseEnter Event - make composite
-			itemButtonList[i].getButton().addListener(SWT.MouseEnter, new Listener() {
-		         @Override
-		         public void handleEvent(Event e) {
-		        	 Card card= itemButtonList[indexBox].getItem().getCard();
-	        		 
-	        		 if( card.getName().contains("없음")) return;
-	        		 itemInfo = new Composite(parent, SWT.BORDER);
-	        		 GridLayout layout = new GridLayout(1, false);
-	        		 layout.verticalSpacing=3;
-	        		 itemInfo.setLayout(layout);
-	        		 MakeComposite.setItemInfoComposite(itemInfo, card);
-	        		 itemInfoSize = itemInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-	        		 itemInfo.setBounds((e.x+x0), (e.y+y0-itemInfoSize.y), InterfaceSize.ITEM_INFO_SIZE, itemInfoSize.y);
-	        		 itemInfo.moveAbove(null);
-		         }
-		     });
-			
-			// add MouseExit Event - dispose composite
-			itemButtonList[i].getButton().addListener(SWT.MouseExit, new Listener() {
-		         @Override
-		         public void handleEvent(Event e) {
-		        	 if(itemInfo !=null && !itemInfo.isDisposed()){
-		        		 //System.out.println("Mouse Exited "+i.getName());
-		        		 itemInfo.dispose();
-		        	 }
-		         }
-		     });
-			
-			// add MouseMove Event - move composite
-			itemButtonList[i].getButton().addListener(SWT.MouseMove, new Listener() {
-		         @Override
-		         public void handleEvent(Event e) {
-		        	 if(itemInfo !=null && !itemInfo.isDisposed()){
-		        		 //System.out.println("Mouse Move (button: " + e.button + " x: " + (e.x+x0) + " y: " + (e.y+y0) + ")");
-		        		 itemInfo.setLocation((e.x+x0), (e.y+y0-itemInfoSize.y));
-		        	 }
-		         }
-		     });
+			itemButtonList[i].getButton().addListener(SWT.MouseDown, listenerGroup.unequipCardListener()); 				// add MouseDown Event - unequip
+			itemButtonList[i].getButton().addListener(SWT.MouseEnter, listenerGroup.makeCardInfoListener(content));		// add MouseEnter Event - make composite
+			itemButtonList[i].getButton().addListener(SWT.MouseExit, listenerGroup.disposeItemInfoListener()); 		// add MouseExit Event - dispose composite
+			itemButtonList[i].getButton().addListener(SWT.MouseMove, listenerGroup.moveItemInfoListener());			// add MouseMove Event - move composite
 		}
 		
 		okButton = new Button(enchant, SWT.PUSH);
