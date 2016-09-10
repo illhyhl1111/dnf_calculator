@@ -16,6 +16,13 @@ public class Title extends Item
 		part=Equip_part.TITLE;
 		enabled=false;
 	}
+	public Title(String name, String icon, Item_rarity rarity)
+	{
+		super(name, icon, rarity);
+		this.card=new Card();
+		part=Equip_part.TITLE;
+		enabled=false;
+	}
 	public Title(){
 		super();
 		card=new Card();
@@ -47,4 +54,21 @@ public class Title extends Item
 	public boolean getEnabled() {return enabled;}
 	@Override
 	public void setEnabled(boolean enabled){this.enabled=enabled;}
+	
+	@Override
+	public int compareTo(Item arg) {
+		if(!(arg instanceof Title)){
+			if(arg instanceof Equipment) return -1;
+			else return 1;
+		}
+		return arg.getName().compareTo(this.getName());
+	}
+	
+	@Override
+	public Object clone() throws CloneNotSupportedException
+	{
+		Title clone = (Title) super.clone();
+		clone.card = (Card) card.clone();
+		return clone;
+	}
 }

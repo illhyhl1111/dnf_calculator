@@ -34,7 +34,7 @@ public class InventoryCardPack
 	
 	public void setEquipmentMode()
 	{
-		String[] tabNameList = {"무기", "방어구 1", "악세서리 1", "악세서리 2", "기타"};
+		String[] tabNameList = {"무기", "방어구 1", "악세서리 1", "악세서리 2", "칭호", "기타"};
 		final int inventoryListNum = tabNameList.length;
 		
 		inventoryList = new Inventory[inventoryListNum];
@@ -84,6 +84,12 @@ public class InventoryCardPack
 		constraintList[num].partList.add(Equip_part.EARRING);
 		constraintList[num].rarityList.add(Item_rarity.LEGENDARY);
 		
+		//칭호
+		num++;
+		constraintList[num] = new ItemConstraint(0, 0, character.getJob());
+		constraintList[num].partList.add(Equip_part.TITLE);
+		constraintList[num].rarityList.add(Item_rarity.RARE);
+		
 		itemList = character.userItemList.separateList(constraintList);
 		cardList = character.userItemList.separateCardList(constraintList);
 		
@@ -98,7 +104,7 @@ public class InventoryCardPack
 			inventoryTabList[i]= new TabItem(inventoryFolder, SWT.NONE);
 			inventoryTabList[i].setText(tabNameList[i]);
 			
-			inventoryList[i] = new Inventory(pack[i], character, itemInfo, itemList[i]);
+			inventoryList[i] = new Inventory(pack[i], character, itemInfo, itemList[i], 0);
 			subInventoryList[i] = new SubInventory(pack[i], character, itemInfo, cardList[i]);
 			
 			inventoryTabList[i].setControl(pack[i]);
@@ -135,7 +141,7 @@ public class InventoryCardPack
 			inventoryTabList[i]= new TabItem(inventoryFolder, SWT.NONE);
 			inventoryTabList[i].setText(tabNameList[i]);
 			
-			inventoryList[i] = new Inventory(pack[i], character, itemInfo, (LinkedList<Item>) itemList[i]);
+			inventoryList[i] = new Inventory(pack[i], character, itemInfo, (LinkedList<Item>) itemList[i], 1);
 			subInventoryList[i] = new SubInventory(pack[i], character, itemInfo, (LinkedList<Item>) cardList[i]);
 			
 			inventoryTabList[i].setControl(pack[i]);

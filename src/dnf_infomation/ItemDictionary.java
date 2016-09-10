@@ -68,6 +68,7 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 		EquipInfo_earring.getInfo(equipList);
 		
 		titleList = new HashSet<Title>();	
+		TitleInfo.getInfo(titleList);
 		
 		setOptionList = new HashSet<SetOption>();
 		SetOptionInfo.getInfo(setOptionList);
@@ -79,8 +80,13 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 		AvatarInfo.getInfo(avatarList);
 		
 		creatureList = new HashSet<Creature>();
+		CreatureInfo.getInfo(creatureList);
+		
 		drapeList = new HashSet<Drape>();
+		
 		emblemList = new HashSet<Emblem>();
+		EmblemInfo.getInfo(emblemList);
+		
 		jamList = new HashSet<Jam>();
 	}
 	
@@ -194,6 +200,13 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 		throw new ItemFileNotFounded(name);
 	}
 	
+	public Title getTitle(String name) throws ItemFileNotFounded
+	{
+		for(Title t : titleList)
+			if(t.getName().equals(name)) return t;
+		throw new ItemFileNotFounded(name);
+	}
+	
 	public Card getCard(String name) throws ItemFileNotFounded
 	{
 		for(Card e : cardList)
@@ -210,6 +223,19 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 		if(temp.isEmpty()) throw new ItemFileNotFounded(setName.toString());
 		Collections.sort(temp);
 		return temp;
+	}
+	
+	public Emblem getEmblem(String name) throws ItemFileNotFounded
+	{
+		for(Emblem e : emblemList)
+			if(e.getName().equals(name)) return e;
+		throw new ItemFileNotFounded(name);
+	}
+	
+	public Avatar getAvatar(String name) throws ItemFileNotFounded {
+		for(Avatar a : avatarList)
+			if(a.getName().equals(name)) return a;
+		throw new ItemFileNotFounded(name);
 	}
 	
 	public void setSetOptions(SetName setName, LinkedList<SetOption> list) throws ItemFileNotFounded

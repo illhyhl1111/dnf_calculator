@@ -44,6 +44,7 @@ public class SetListener {
 		this.xPoint=xPoint;
 		this.yPoint=yPoint;
 		this.parent=parent;
+		hasSetOption=false;
 	}
 	
 	public Listener unequipListener()
@@ -96,7 +97,7 @@ public class SetListener {
 		return new Listener() {
 			@Override
 	        public void handleEvent(Event e) {
-				if(e.button==3 && itemButton.getItem().getEnabled()){
+				if(e.button==3){
 	        		character.equip(itemButton.getItem());
 	        		superInfo.renew();
 	        	}

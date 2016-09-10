@@ -10,14 +10,16 @@ public class Avatar extends Item
 	Avatar_part part;
 	Emblem emblem1;
 	Emblem emblem2;
+	Emblem platinumEmblem;
 	SetName setName;
 	
-	public Avatar(String name, String icon, Item_rarity rarity, Avatar_part part, Emblem emblem1, Emblem emblem2, SetName setName)
+	public Avatar(String name, String icon, Item_rarity rarity, Avatar_part part, Emblem emblem1, Emblem emblem2, Emblem platinum, SetName setName)
 	{
 		super(name, icon, rarity);
 		this.part=part;
 		this.emblem1=emblem1;
 		this.emblem2=emblem2;
+		platinumEmblem=platinum;
 		this.setName=setName;
 	}
 	
@@ -27,6 +29,7 @@ public class Avatar extends Item
 		this.part=part;
 		emblem1 = new Emblem();
 		emblem2 = new Emblem();
+		platinumEmblem = new Emblem();
 		this.setName=setName;
 	}
 	public Avatar(Avatar_part part) {
@@ -34,6 +37,7 @@ public class Avatar extends Item
 		this.part=part;
 		emblem1 = new Emblem();
 		emblem2 = new Emblem();
+		platinumEmblem = new Emblem();
 		setName = SetName.NONE;
 	}
 	
@@ -42,6 +46,33 @@ public class Avatar extends Item
 	
 	@Override
 	public SetName getSetName() {return setName;}
+	
+	@Override
+	public Emblem[] getEmblem()
+	{
+		return new Emblem[] {emblem1, emblem2, platinumEmblem};
+	}
+	
+	@Override
+	public boolean setEmblem1(Emblem emblem){
+		if(!emblem.equipable(this)) return false;
+		emblem1 = emblem;
+		return true;
+	}
+	
+	@Override
+	public boolean setEmblem2(Emblem emblem){
+		if(!emblem.equipable(this)) return false;
+		emblem2 = emblem;
+		return true;
+	}
+	
+	@Override
+	public boolean setPlatinum(Emblem emblem){
+		if(!emblem.equipable(this)) return false;
+		platinumEmblem = emblem;
+		return true;
+	}
 	
 	//////정렬순서
 	// 1. 종류 : 장비->칭호->보주->아바타->엠블렘->크리쳐->비장비

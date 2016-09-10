@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import dnf_class.Card;
 import dnf_class.Equipment;
+import dnf_class.Item;
 import dnf_class.SetOption;
 import dnf_InterfacesAndExceptions.ItemFileNotFounded;
 import dnf_InterfacesAndExceptions.ItemFileNotReaded;
@@ -53,6 +54,11 @@ public class GetItemDictionary
 	{
 		if(!readed) throw new ItemFileNotReaded();
 		return itemDictionary.getCard(name);
+	}
+	
+	public static Item getTitle(String name) throws ItemFileNotFounded, ItemFileNotReaded {
+		if(!readed) throw new ItemFileNotReaded();
+		return itemDictionary.getTitle(name);
 	}
 	
 	public static LinkedList<SetOption> getSetOptions(SetName setName) throws ItemFileNotReaded, ItemFileNotFounded

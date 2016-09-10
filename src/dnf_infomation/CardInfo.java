@@ -13,13 +13,14 @@ public class CardInfo {
 	public static void getInfo(HashSet<Card> cardList)
 	{
 		Card temp;
-		String icon;
+		String icon=null;
 		Item_rarity rarity;
 		
-		//////////유니크
-		rarity = Item_rarity.UNIQUE;
 		
-		///// 무기, 상의, 하의
+		
+		////////// 무기, 상의, 하의
+		/////유니크
+		rarity = Item_rarity.UNIQUE;
 		
 		//아그네스
 		temp = new Card("찬란한 불꽃의 아그네스 보주", null, rarity);
@@ -45,8 +46,38 @@ public class CardInfo {
 		temp.vStat.addStatList("지능", new StatusInfo(45));
 		cardList.add(temp);
 		
+		///////////어깨, 벨트, 신발
+		/////유니크
+		rarity = Item_rarity.UNIQUE;
 		
-		///// 악세사리
+		//노블보주
+		temp = new Card("노블스카이 황옥 보주", icon, rarity);
+		temp.addPart(Equip_part.SHOULDER);
+		temp.addPart(Equip_part.BELT);
+		temp.addPart(Equip_part.SHOES);
+		temp.vStat.addStatList("물크", new DoubleStatusInfo(5));
+		cardList.add(temp);
+		
+		temp = new Card("노블스카이 녹옥 보주", icon, rarity);
+		temp.addPart(Equip_part.SHOULDER);
+		temp.addPart(Equip_part.BELT);
+		temp.addPart(Equip_part.SHOES);
+		temp.vStat.addStatList("마크", new DoubleStatusInfo(5));
+		cardList.add(temp);
+		
+		
+		//////레어
+		rarity = Item_rarity.RARE;
+		
+		//케인보주
+		temp = new Card("케인 보주", icon, rarity);
+		temp.addPart(Equip_part.SHOULDER);
+		temp.vStat.addStatList("물크", new DoubleStatusInfo(9), true);
+		cardList.add(temp);
+		
+		//////////// 악세사리
+		/////유니크
+		rarity = Item_rarity.UNIQUE;
 		
 		//진하메타
 		temp = new Card("진 : 하이퍼 메카 타우 보주", null, rarity);
@@ -57,7 +88,9 @@ public class CardInfo {
 		cardList.add(temp);
 		
 		
-		///// 보장
+		////////////// 보장
+		/////유니크
+		rarity = Item_rarity.UNIQUE;
 		
 		//노블보주
 		temp = new Card("노블스카이 홍옥 보주", null, rarity);
@@ -75,7 +108,9 @@ public class CardInfo {
 		cardList.add(temp);
 		
 		
-		///// 마법석
+		////////// 마법석
+		/////유니크
+		rarity = Item_rarity.UNIQUE;
 		
 		//심카
 		temp = new Card("안톤의 심장 보주(노작)", null, rarity);
@@ -86,6 +121,17 @@ public class CardInfo {
 		temp = new Card("안톤의 심장 보주(풀업)", null, rarity);
 		temp.addPart(Equip_part.MAGICSTONE);
 		temp.vStat.addStatList("모속강", new StatusInfo(15), true);
+		cardList.add(temp);
+		
+		
+		///////////칭호
+		/////레어
+		rarity = Item_rarity.RARE;
+		
+		//이름뭐더라
+		temp = new Card("이름뭐더라", icon, rarity);
+		temp.addPart(Equip_part.TITLE);
+		temp.vStat.addStatList("모속강", new StatusInfo(3));
 		cardList.add(temp);
 	}
 }

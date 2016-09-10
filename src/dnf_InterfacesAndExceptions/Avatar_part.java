@@ -2,6 +2,8 @@ package dnf_InterfacesAndExceptions;
 
 import java.io.Serializable;
 
+import dnf_class.Emblem;
+
 public enum Avatar_part implements Equipable, Serializable
 {
 	CAP("모자 아바타", 9), HAIR("머리 아바타", 8), FACE("얼굴 아바타", 7), 
@@ -20,6 +22,30 @@ public enum Avatar_part implements Equipable, Serializable
 	public String getName()
 	{
 		return name;
+	}
+	
+	public boolean equipable(Emblem emblem)
+	{
+		Emblem_type type = emblem.type;
+		switch(this)
+		{
+		case CAP: case HAIR:
+			if(type==Emblem_type.RED || type==Emblem_type.RED_GREEN || type==Emblem_type.MULTIPLE_COLOR) return true;
+			return false;
+		case FACE: case NECK:
+			if(type==Emblem_type.YELLOW || type==Emblem_type.YELLOW_BLUE || type==Emblem_type.MULTIPLE_COLOR) return true;
+			return false;
+		case COAT: case PANTS:
+			if(type==Emblem_type.GREEN || type==Emblem_type.RED_GREEN || type==Emblem_type.MULTIPLE_COLOR || type==Emblem_type.PLATINUM) return true;
+			return false;
+		case SHOES: case BELT:
+			if(type==Emblem_type.BLUE || type==Emblem_type.YELLOW_BLUE || type==Emblem_type.MULTIPLE_COLOR) return true;
+			return false;
+		case AURA: case SKIN:
+			return true;
+		default:
+			return false;
+		}
 	}
 }
 

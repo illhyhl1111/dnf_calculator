@@ -24,10 +24,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
-
-
-
-
 import dnf_InterfacesAndExceptions.Dimension_stat;
 import dnf_InterfacesAndExceptions.ItemFileNotFounded;
 import dnf_InterfacesAndExceptions.ItemFileNotReaded;
@@ -37,10 +33,10 @@ import dnf_InterfacesAndExceptions.UnknownInformationException;
 import dnf_calculator.ElementInfo;
 import dnf_calculator.StatusAndName;
 import dnf_calculator.StatusInfo;
-import dnf_class.Avatar;
 import dnf_class.Card;
 import dnf_class.Equipment;
 import dnf_class.Item;
+import dnf_class.Title;
 import dnf_class.Weapon;
 import dnf_infomation.GetItemDictionary;
 
@@ -79,10 +75,11 @@ public class ChangeItemStatus extends Dialog{
 	public ChangeItemStatus(Shell parent, Item item, boolean hasSet)
 	{
 		super(parent);
-		this.item=item;
+		this.item=item;		
 		this.hasSet=hasSet;
 		try {
 			if(item instanceof Equipment) originalItem=GetItemDictionary.getEquipment(item.getName());
+			else if(item instanceof Title) originalItem=GetItemDictionary.getTitle(item.getName());
 			else if(item instanceof Card) originalItem=GetItemDictionary.getCard(item.getName());
 			else originalItem=null;
 		} catch (ItemFileNotReaded | ItemFileNotFounded e) {

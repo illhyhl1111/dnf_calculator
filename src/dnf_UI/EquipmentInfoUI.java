@@ -21,6 +21,7 @@ public class EquipmentInfoUI {
 	
 	Button vaultButton;
 	Button batchModify;
+	Button emblemModity;
 
 	private Composite villageComposite;
 	
@@ -69,26 +70,47 @@ public class EquipmentInfoUI {
 	             		vault.close();
 				 }
 			});
+			
+			batchModify = new Button(villageComposite, SWT.PUSH);
+			batchModify.setText("일괄 강화/마법부여");
+			FormData batchButtonData = new FormData();	
+			batchButtonData.left = new FormAttachment(itemInfo.getComposite(), 10);
+			batchButtonData.top = new FormAttachment(vaultButton, 10);
+			batchModify.setLayoutData(batchButtonData);
+			
+			BatchModifier batchModifier = new BatchModifier(parent.getShell(), character, itemInfo, inventoryPack); 
+			
+			batchModify.addListener(SWT.Selection, new Listener(){
+				 @Override
+		         public void handleEvent(Event e) {
+					 if(batchModifier.getShell()==null)
+						 batchModifier.open();
+		             	else
+		             		batchModifier.close();
+				 }
+			});
 		}
 		
-		batchModify = new Button(villageComposite, SWT.PUSH);
-		batchModify.setText("일괄 강화/마법부여");
-		FormData batchButtonData = new FormData();	
-		batchButtonData.left = new FormAttachment(itemInfo.getComposite(), 10);
-		if(mode==0) batchButtonData.top = new FormAttachment(vaultButton, 10);
-		batchModify.setLayoutData(batchButtonData);
-		
-		BatchModifier batchModifier = new BatchModifier(parent.getShell(), character, itemInfo, inventoryPack); 
-		
-		batchModify.addListener(SWT.Selection, new Listener(){
-			 @Override
-	         public void handleEvent(Event e) {
-				 if(batchModifier.getShell()==null)
-					 batchModifier.open();
+		else if(mode==1)
+		{
+			emblemModity = new Button(villageComposite, SWT.PUSH);
+			emblemModity.setText("엠블렘 옵션 최적화");
+			FormData emblemButtonData = new FormData();
+			emblemButtonData.left = new FormAttachment(itemInfo.getComposite(), 10);
+			emblemModity.setLayoutData(emblemButtonData);
+			
+			AvatarModifier avatarModifier = new AvatarModifier(parent.getShell(), character, itemInfo);
+			
+			emblemModity.addListener(SWT.Selection, new Listener(){
+				 @Override
+		         public void handleEvent(Event e) {
+					 if(avatarModifier.getShell()==null)
+						 avatarModifier.open();
 	             	else
-	             		batchModifier.close();
-			 }
-		});
+	             		avatarModifier.close();
+				 }
+			});
+		}
 	}
 	
 	public Composite getComposite(){ return villageComposite; }

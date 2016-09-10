@@ -90,6 +90,19 @@ public class StatusList implements java.io.Serializable, Cloneable {
 			if(s.enabled) stat.addStat(s.name, s.stat);
 	}
 	
+	public double findStat(int name)
+	{
+		double temp=0;
+		for(StatusAndName s : statList)
+			if(s.name==name)
+				try {
+					temp+=s.stat.getStatToDouble();
+				} catch (StatusTypeMismatch e) {
+					e.printStackTrace();
+				}
+		return temp;
+	}
+	
 	@Override
 	public Object clone() throws CloneNotSupportedException
 	{

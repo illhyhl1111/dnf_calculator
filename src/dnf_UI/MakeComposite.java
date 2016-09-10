@@ -15,10 +15,10 @@ import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 import dnf_calculator.ElementInfo;
 import dnf_calculator.StatusAndName;
 import dnf_class.Card;
+import dnf_class.Emblem;
 import dnf_class.Equipment;
 import dnf_class.Item;
 import dnf_class.SetOption;
-import dnf_class.Title;
 import dnf_infomation.ItemDictionary;
 
 public class MakeComposite {
@@ -46,15 +46,7 @@ public class MakeComposite {
 					option.setText("["+s.requireNum+"]세트 효과");
 					option.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_GREEN));
 					
-					for(StatusAndName s2 : s.vStat.statList)
-						setText(itemInfo, s2, itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLACK));
-					if(!item.dStat.statList.isEmpty())
-					{
-						option = new Label(itemInfo, SWT.WRAP);
-						option.setText("\n――――――던전 입장 시 적용――――――\n\n");
-						for(StatusAndName s2 : s.dStat.statList)
-							setText(itemInfo, s2, itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLACK));
-					}
+					setStatusText(item, itemInfo, itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 				}
 				
 				else
@@ -218,37 +210,35 @@ public class MakeComposite {
 				stat = new Label(itemInfo, SWT.WRAP);
 				stat.setText(((Card) item).getPartToString());
 			}
-			
-			for(StatusAndName s : item.vStat.statList.subList(item.getItemStatIndex(), item.vStat.statList.size()))
-				setText(itemInfo, s, itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLACK));
-			
-			if(!item.dStat.statList.isEmpty())
+			else if(item instanceof Emblem)
 			{
 				stat = new Label(itemInfo, SWT.WRAP);
-				stat.setText("\n――――――던전 입장 시 적용――――――\n\n");
-				for(StatusAndName s : item.dStat.statList)
-					setText(itemInfo, s, itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+				stat.setText( ((Emblem) item).type.getName());
 			}
 			
-			if(item instanceof Equipment || item instanceof Title)
+			setStatusText(item.getItemStatIndex(), item, itemInfo, itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+			
+			if(item.getCard()!=null)
 			{
-				Card card=null;
-				if(item instanceof Equipment) card = ((Equipment) item).getCard();
-				else if(item instanceof Title) card = ((Title) item).getCard();
-					
+				Card card=item.getCard();
 				stat = new Label(itemInfo, SWT.WRAP);
 				stat.setText("");
 
-				for(StatusAndName s : card.vStat.statList)
-					setText(itemInfo, s, itemInfo.getDisplay().getSystemColor(SWT.COLOR_GREEN));
-				
-				if(!card.dStat.statList.isEmpty())
+				setStatusText(card, itemInfo, itemInfo.getDisplay().getSystemColor(SWT.COLOR_GREEN));
+			}
+			else if(item.getEmblem()!=null)
+			{
+				Emblem[] emblemList = item.getEmblem();
+				String[] stringList = {"엠블렘 1", "엠블렘 2", "플래티넘 엠블렘"};
+				int i=0;
+				for(Emblem emblem : emblemList)
 				{
-					stat = new Label(itemInfo, SWT.WRAP);
-					stat.setText("\n――――――던전 입장 시 적용――――――\n\n");
-					stat.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_GREEN));
-					for(StatusAndName s : card.dStat.statList)
-						setText(itemInfo, s, itemInfo.getDisplay().getSystemColor(SWT.COLOR_GREEN));
+					if(emblem.getName().contains("없음")) continue;
+					stat = new Label(itemInfo, SWT.WRAP);				
+					stat.setText("\n"+stringList[i]);
+
+					setStatusText(emblem, itemInfo, itemInfo.getDisplay().getSystemColor(SWT.COLOR_GREEN));
+					i++;
 				}
 			}
 			
@@ -261,6 +251,27 @@ public class MakeComposite {
 		}
 		catch (StatusTypeMismatch e) {
 			e.printStackTrace();
+		}
+	}
+	
+	
+	public static void setStatusText(Item item, Composite itemInfo, Color color) throws StatusTypeMismatch
+	{
+		setStatusText(0, item, itemInfo, color);
+	}
+	
+	public static void setStatusText(int startIndex, Item item, Composite itemInfo, Color color) throws StatusTypeMismatch
+	{
+		for(StatusAndName s : item.vStat.statList.subList(startIndex, item.vStat.statList.size()))
+			setText(itemInfo, s, color);
+		
+		if(!item.dStat.statList.isEmpty())
+		{
+			Label stat = new Label(itemInfo, SWT.WRAP);
+			stat.setText("\n――――――던전 입장 시 적용――――――\n\n");
+			stat.setForeground(color);
+			for(StatusAndName s : item.dStat.statList)
+				setText(itemInfo, s, color);
 		}
 	}
 	
@@ -277,23 +288,23 @@ public class MakeComposite {
 		strength = String.valueOf(s.stat.getStatToDouble());
 		if(s.stat instanceof ElementInfo && strength.equals("0.0"));
 		else{
-			if(strength.contains(".0")){
+			if(strength.contains(".0"))
 				strength=strength.substring(0, strength.length()-2);
-				stat = new Label(itemInfo, SWT.WRAP);
+			
+			stat = new Label(itemInfo, SWT.WRAP);
 				
-				if(strength.contains("-")){
-					String name = StatusAndName.getStatHash().get(s.name);
-					if(name.contains("+")) stat.setText(name.substring(0, name.length()-1)+strength);
-					else if(name.contains("-")) stat.setText(name.substring(0, name.length()-1)+"+"+strength.substring(1, strength.length()));
-					else stat.setText(name+strength);
-				}
-				else stat.setText(StatusAndName.getStatHash().get(s.name)+strength);
-				stat.setEnabled(enable && s.enabled);
-				if(!s.enabled)
-					stat.setText(stat.getText()+"(옵션 꺼짐)");
-				
-				stat.setForeground(textColor);
+			if(strength.contains("-")){
+				String name = StatusAndName.getStatHash().get(s.name);
+				if(name.contains("+")) stat.setText(name.substring(0, name.length()-1)+strength);
+				else if(name.contains("-")) stat.setText(name.substring(0, name.length()-1)+"+"+strength.substring(1, strength.length()));
+				else stat.setText(name+strength);
 			}
+			else stat.setText(StatusAndName.getStatHash().get(s.name)+strength);
+			stat.setEnabled(enable && s.enabled);
+			if(!s.enabled)
+				stat.setText(stat.getText()+"(옵션 꺼짐)");
+			
+			stat.setForeground(textColor);
 		}
 		
 		if(s.stat instanceof ElementInfo && ((ElementInfo)s.stat).getElementEnabled()==true)

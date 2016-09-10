@@ -14,15 +14,15 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
+import dnf_InterfacesAndExceptions.Emblem_type;
 import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.InterfaceSize;
 import dnf_InterfacesAndExceptions.ItemFileNotFounded;
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_class.Card;
 import dnf_class.Characters;
-import dnf_class.Equipment;
+import dnf_class.Emblem;
 import dnf_class.Item;
-import dnf_class.Title;
 
 public class Inventory 
 {
@@ -37,13 +37,15 @@ public class Inventory
 	Composite parent;
 	private Composite itemInfo;
 	private Composite setInfo;
+	final int mode;
 	
-	public Inventory(Composite parent, Characters character, UserInfo userInfo, LinkedList<Item> itemList)
+	public Inventory(Composite parent, Characters character, UserInfo userInfo, LinkedList<Item> itemList, int mode)
 	{
 		this.itemList=itemList;
 		this.character=character;
 		this.userInfo=userInfo;
 		this.parent=parent;
+		this.mode=mode;
 		
 		inventoryComposite = new Composite(parent, SWT.BORDER);
 		GridLayout inventoryLayout = new GridLayout(inventoryCol, true);
@@ -71,7 +73,7 @@ public class Inventory
 			
 			if(!i.getName().equals("이름없음"))
 			{
-				setDrop(inventoryList[index]);
+				setDrop(inventoryList[index], mode);
 
 				Integer xButton = (index%inventoryCol)*buttonS.x+10;
 				Integer yButton = (int)(index/inventoryCol)*buttonS.y+userY+38;
@@ -79,7 +81,7 @@ public class Inventory
 				SetListener listenerGroup = new SetListener(inventoryList[index], character, userInfo, itemInfo, setInfo, xButton, yButton, parent);
 				
 				if(mode==0) inventoryList[index].getButton().addListener(SWT.MouseDown, listenerGroup.equipListener(vault)); 			// add MouseDown Event - unequip
-				else inventoryList[index].getButton().addListener(SWT.MouseDown, listenerGroup.equipListener()); 			// add MouseDown Event - unequip
+				else if(mode==1) inventoryList[index].getButton().addListener(SWT.MouseDown, listenerGroup.equipListener()); 			// add MouseDown Event - unequip
 				inventoryList[index].getButton().addListener(SWT.MouseDoubleClick, listenerGroup.modifyListener());			// add MouseDoubleClick - modify
 				inventoryList[index].getButton().addListener(SWT.MouseEnter, listenerGroup.makeItemInfoListener(background));			// add MouseEnter Event - make composite
 				inventoryList[index].getButton().addListener(SWT.MouseExit, listenerGroup.disposeItemInfoListener()); 		// add MouseExit Event - dispose composite
@@ -103,7 +105,7 @@ public class Inventory
 		throw new ItemNotFoundedException(name);
 	}
 
-	public void setDrop(final ItemButton itemButton) {
+	public void setDrop(final ItemButton itemButton, int mode) {
 
 		Transfer[] types = new Transfer[] { TextTransfer.getInstance() };
 		int operations = DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK;
@@ -118,14 +120,12 @@ public class Inventory
 					return;
 				}
 				else if(event.data instanceof String){
-					if (itemButton.getItem() instanceof Equipment || itemButton.getItem() instanceof Title) {
+					if (mode==0) {
 						try {
 							Card card = character.userItemList.getCard((String)event.data);
 							if(itemButton.getItem().getEnabled())
 							{
-								boolean succeed;
-								if(itemButton.getItem() instanceof Equipment) succeed= ((Equipment)itemButton.getItem()).setCard(card);
-								else succeed= ((Equipment)itemButton.getItem()).setCard(card);
+								boolean succeed= itemButton.getItem().setCard(card);
 								if(succeed){
 									userInfo.renew();
 									MessageDialog dialog = new MessageDialog(parent.getShell(), "성☆공", null,
@@ -139,6 +139,38 @@ public class Inventory
 										    MessageDialog.ERROR, new String[] { "납득" }, 0);
 									dialog.open();
 								}
+							}
+						} catch (ItemFileNotFounded e) {
+							e.printStackTrace();
+						}
+					}
+					
+					else if (mode==1) {
+						try {
+							Emblem emblem = character.userItemList.getEmblem((String)event.data);
+							boolean succeed=false;
+							if(emblem.type==Emblem_type.PLATINUM) succeed = itemButton.getItem().setPlatinum(emblem);
+							else{
+								MessageDialog dialog = new MessageDialog(parent.getShell(), "!", null,
+									    "적용할 엠블렘 번호를 선택하세요 : ",
+									    MessageDialog.QUESTION, new String[] { "1번 엠블렘", "2번 엠블렘" }, 0);
+								int result = dialog.open();
+								if(result==0) succeed = itemButton.getItem().setEmblem1(emblem);
+								else if(result==1) succeed = itemButton.getItem().setEmblem2(emblem);
+							}
+							
+							if(succeed){
+								userInfo.renew();
+								MessageDialog dialog = new MessageDialog(parent.getShell(), "성☆공", null,
+									    "엠블렘 장착에 성공하였습니다!\n\n엠블렘 : "+(String)event.data+"\n아이템 : "+itemButton.getItem().getName(),
+									    MessageDialog.INFORMATION, new String[] { "ㅇㅋ" }, 0);
+								dialog.open();
+							}
+							else{
+								MessageDialog dialog = new MessageDialog(parent.getShell(), "실★패", null,
+									    "엠블렘 장착에 실패하였습니다\n\n엠블렘 : "+(String)event.data+"\n아이템 : "+itemButton.getItem().getName(),
+									    MessageDialog.ERROR, new String[] { "납득" }, 0);
+								dialog.open();
 							}
 						} catch (ItemFileNotFounded e) {
 							e.printStackTrace();

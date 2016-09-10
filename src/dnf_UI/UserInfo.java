@@ -145,8 +145,6 @@ class UserAvatarInfo implements Info
 {
 	private Composite wholeComposite;
 	private Composite avatarInfoComposite;
-	private Composite creatureInfoComposite;
-	private Composite drapeInfoComposite;
 	private ItemButton[] itemButtonList;
 	private ItemButton creatureButton;
 	private ItemButton drapeButton;
@@ -167,8 +165,6 @@ class UserAvatarInfo implements Info
 		//TODO wholeComposite.setBackgroundImage(배경그림);
 		
 		avatarInfoComposite = new Composite(wholeComposite, SWT.NONE);
-		creatureInfoComposite = new Composite(wholeComposite, SWT.NONE);	
-		drapeInfoComposite = new Composite(wholeComposite, SWT.NONE);
 
 		GridLayout avatarInfoLayout = new GridLayout(3, true);
 		avatarInfoLayout.horizontalSpacing=3;
@@ -177,16 +173,13 @@ class UserAvatarInfo implements Info
 		avatarInfoLayout.marginWidth=0;
 		avatarInfoLayout.makeColumnsEqualWidth=true;
 		avatarInfoComposite.setLayout(avatarInfoLayout);
-		
-		creatureInfoComposite.setLayout(new FillLayout());
-		drapeInfoComposite.setLayout(new FillLayout());
 
 		itemButtonList = new ItemButton[AVATARNUM]; 
 		for(int i=0; i<AVATARNUM; i++)
 			itemButtonList[i] = new ItemButton(avatarInfoComposite, character.getAvatarList().get(partOrder[i]), BUTTON_SIZE, BUTTON_SIZE);
 		
-		creatureButton = new ItemButton(creatureInfoComposite, character.getCreature(), BUTTON_SIZE, BUTTON_SIZE);
-		drapeButton = new ItemButton(drapeInfoComposite, character.getDrape(), BUTTON_SIZE, BUTTON_SIZE);
+		creatureButton = new ItemButton(wholeComposite, character.getCreature(), BUTTON_SIZE, BUTTON_SIZE);
+		drapeButton = new ItemButton(wholeComposite, character.getDrape(), BUTTON_SIZE, BUTTON_SIZE);
 		
 		Point buttonS = itemButtonList[0].getButton().computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		buttonS.x+=3; buttonS.y+=3;
@@ -196,14 +189,14 @@ class UserAvatarInfo implements Info
 		FormData creatureInfoData = new FormData();
 		creatureInfoData.left = new FormAttachment(0, buttonS.x);
 		creatureInfoData.top = new FormAttachment(0, buttonS.y*3);
-		creatureInfoComposite.setLayoutData(creatureInfoData);
-		creatureInfoComposite.moveAbove(avatarInfoComposite);
+		creatureButton.getButton().setLayoutData(creatureInfoData);
+		creatureButton.getButton().moveAbove(avatarInfoComposite);
 		
 		FormData drapeInfoData = new FormData();
-		drapeInfoData.left = new FormAttachment(creatureInfoComposite, 3);
+		drapeInfoData.left = new FormAttachment(creatureButton.getButton(), 3);
 		drapeInfoData.top = new FormAttachment(0, buttonS.y*3);
-		drapeInfoComposite.setLayoutData(drapeInfoData);
-		drapeInfoComposite.moveAbove(avatarInfoComposite);
+		drapeButton.getButton().setLayoutData(drapeInfoData);
+		drapeButton.getButton().moveAbove(avatarInfoComposite);
 		
 		
 		for(int i=0; i<AVATARNUM; i++)
@@ -219,7 +212,7 @@ class UserAvatarInfo implements Info
 			itemButtonList[i].getButton().addListener(SWT.MouseMove, listenerGroup.moveItemInfoListener());			// add MouseMove Event - move composite
 		}
 		
-		SetListener listenerGroup = new SetListener(creatureButton, character, superInfo, avatarInfo, null, 5, buttonS.y*3+5, parent);
+		SetListener listenerGroup = new SetListener(creatureButton, character, superInfo, avatarInfo, null, buttonS.x+5, buttonS.y*3+5, parent);
 		creatureButton.getButton().addListener(SWT.MouseDown, listenerGroup.unequipListener());					// add MouseDown Event - unequip
 		creatureButton.getButton().addListener(SWT.MouseDoubleClick, listenerGroup.modifyListener());			// add MouseDoubleClick - modify
 		creatureButton.getButton().addListener(SWT.MouseEnter, listenerGroup.makeItemInfoListener(superInfo.getComposite().getParent()));		// add MouseEnter Event - make composite
@@ -245,6 +238,10 @@ class UserAvatarInfo implements Info
 			itemButtonList[i].setItem(character.getAvatarList().get(partOrder[i]));
 			itemButtonList[i].renewImage(true);
 		}
+		creatureButton.setItem(character.getCreature());
+		creatureButton.renewImage(true);
+		drapeButton.setItem(character.getDrape());
+		drapeButton.renewImage(true);
 	}
 	
 	public Composite getComposite() {return wholeComposite;}
