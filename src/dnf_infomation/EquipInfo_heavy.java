@@ -5,11 +5,16 @@ import java.util.HashSet;
 import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.Equip_type;
 import dnf_InterfacesAndExceptions.SetName;
+import dnf_InterfacesAndExceptions.StatList;
+import dnf_class.Characters;
 import dnf_class.Equipment;
+import dnf_class.Monster;
 import dnf_InterfacesAndExceptions.Item_rarity;
 import dnf_calculator.DoubleStatusInfo;
 import dnf_calculator.ElementInfo;
+import dnf_calculator.FunctionStat;
 import dnf_calculator.StatusInfo;
+import dnf_calculator.StatusList;
 
 public class EquipInfo_heavy {
 	
@@ -75,6 +80,7 @@ public class EquipInfo_heavy {
 		temp.vStat.addStatList("지능", new StatusInfo(188), true);
 		temp.dStat.addStatList("고정물방깍", new StatusInfo(12000), false, true);
 		temp.dStat.addStatList("고정마방깍", new StatusInfo(12000), false, true);
+		temp.fStat.explanation.add("거미셋의 최대 방깍량 : 36000");
 		equipList.add(temp);
 		
 		//거미하의
@@ -83,6 +89,7 @@ public class EquipInfo_heavy {
 		temp.vStat.addStatList("지능", new StatusInfo(188), true);
 		temp.dStat.addStatList("고정물방깍", new StatusInfo(12000), false, true);
 		temp.dStat.addStatList("고정마방깍", new StatusInfo(12000), false, true);
+		temp.fStat.explanation.add("거미셋의 최대 방깍량 : 36000");
 		equipList.add(temp);
 		
 		//거미어깨
@@ -91,6 +98,7 @@ public class EquipInfo_heavy {
 		temp.vStat.addStatList("지능", new StatusInfo(138), true);
 		temp.dStat.addStatList("고정물방깍", new StatusInfo(12000), false, true);
 		temp.dStat.addStatList("고정마방깍", new StatusInfo(12000), false, true);
+		temp.fStat.explanation.add("거미셋의 최대 방깍량 : 36000");
 		equipList.add(temp);
 		
 		//거미벨트
@@ -99,6 +107,7 @@ public class EquipInfo_heavy {
 		temp.vStat.addStatList("지능", new StatusInfo(130), true);
 		temp.dStat.addStatList("고정물방깍", new StatusInfo(12000), false, true);
 		temp.dStat.addStatList("고정마방깍", new StatusInfo(12000), false, true);
+		temp.fStat.explanation.add("거미셋의 최대 방깍량 : 36000");
 		equipList.add(temp);
 			
 		//거미신발
@@ -107,6 +116,7 @@ public class EquipInfo_heavy {
 		temp.vStat.addStatList("지능", new StatusInfo(130), true);
 		temp.dStat.addStatList("고정물방깍", new StatusInfo(12000), false, true);
 		temp.dStat.addStatList("고정마방깍", new StatusInfo(12000), false, true);
+		temp.fStat.explanation.add("거미셋의 최대 방깍량 : 36000");
 		equipList.add(temp);
 		
 	

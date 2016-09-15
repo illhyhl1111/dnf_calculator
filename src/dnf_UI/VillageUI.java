@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
 import dnf_class.Characters;
-import dnf_infomation.GetItemDictionary;
+import dnf_infomation.GetDictionary;
 
 public class VillageUI
 {
@@ -76,7 +76,7 @@ class VillageUILoad
 {
 	public static void main(String[] args)
 	{
-		GetItemDictionary.readFile();
+		GetDictionary.readFile();
 
 		Display display = new Display();
 

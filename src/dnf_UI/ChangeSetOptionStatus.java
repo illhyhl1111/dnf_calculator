@@ -28,7 +28,7 @@ import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 import dnf_calculator.ElementInfo;
 import dnf_calculator.StatusAndName;
 import dnf_class.SetOption;
-import dnf_infomation.GetItemDictionary;
+import dnf_infomation.GetDictionary;
 import dnf_infomation.ItemDictionary;
 
 public class ChangeSetOptionStatus extends Dialog{
@@ -45,7 +45,7 @@ public class ChangeSetOptionStatus extends Dialog{
 		this.itemDictionary=itemDictionary;
 		try {
 			this.setOption=itemDictionary.getSetOptions(setName);
-			originalSet=GetItemDictionary.getSetOptions(setName);
+			originalSet=GetDictionary.getSetOptions(setName);
 		} catch (ItemFileNotFounded e1) {
 			e1.printStackTrace();
 		} catch (ItemFileNotReaded e) {
@@ -91,7 +91,7 @@ public class ChangeSetOptionStatus extends Dialog{
 					Entry<Integer, Wrapper> entry = new AbstractMap.SimpleEntry<Integer, Wrapper>(statName.name, setText(composite, statName, maxS.next()));
 					vStatList.add(entry);
 				}
-				if(!set2.dStat.statList.isEmpty())
+				if(!set.dStat.statList.isEmpty() || !set.fStat.explanation.isEmpty())
 				{
 					option = new Label(composite, SWT.WRAP);
 					option.setText("\n――――――던전 입장 시 적용――――――\n\n");
@@ -104,6 +104,12 @@ public class ChangeSetOptionStatus extends Dialog{
 					for(StatusAndName statName : set.dStat.statList){
 						Entry<Integer, Wrapper> entry = new AbstractMap.SimpleEntry<Integer, Wrapper>(statName.name, setText(composite, statName, maxS.next()));
 						dStatList.add(entry);
+					}
+					
+					for(String s : set.fStat.explanation){
+						option = new Label(composite, SWT.WRAP);
+						option.setText(s);
+						option.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, true, false, 4, 1));
 					}
 				}
 			}			

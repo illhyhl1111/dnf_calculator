@@ -3,6 +3,7 @@ package dnf_calculator;
 import java.util.HashMap;
 
 import dnf_InterfacesAndExceptions.StatList;
+import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 import dnf_InterfacesAndExceptions.UndefinedStatusKey;
 
 @SuppressWarnings("serial")
@@ -16,40 +17,6 @@ public class StatusAndName implements java.io.Serializable, Cloneable
 	private static HashMap<Integer, String> reverseHash = new HashMap<Integer, String>();
 	private static boolean reverseHashsetted = false;
 	
-	public StatusAndName(int name, AbstractStatusInfo stat)
-	{
-		this.name=name;
-		this.stat=stat;
-		changeable=false;
-		enableable=false;
-		enabled=true;
-	}
-	public StatusAndName(String name, AbstractStatusInfo stat) throws UndefinedStatusKey
-	{
-		this.stat=stat;
-		changeable=false;
-		enableable=false;
-		enabled=true;
-		if(Status.getStatHash().containsKey(name)) this.name = Status.getStatHash().get(name);
-		else throw new UndefinedStatusKey(name);
-	}
-	public StatusAndName(int name, AbstractStatusInfo stat, boolean changeable)
-	{
-		this.name=name;
-		this.stat=stat;
-		this.changeable=changeable;
-		enableable=false;
-		enabled=true;
-	}
-	public StatusAndName(String name, AbstractStatusInfo stat, boolean changeable) throws UndefinedStatusKey
-	{
-		this.stat=stat;
-		this.changeable=changeable;
-		enableable=false;
-		enabled=true;
-		if(Status.getStatHash().containsKey(name)) this.name = Status.getStatHash().get(name);
-		else throw new UndefinedStatusKey(name);
-	}
 	public StatusAndName(int name, AbstractStatusInfo stat, boolean changeable, boolean enableable)
 	{
 		this.name=name;
@@ -66,6 +33,65 @@ public class StatusAndName implements java.io.Serializable, Cloneable
 		enabled=true;
 		if(Status.getStatHash().containsKey(name)) this.name = Status.getStatHash().get(name);
 		else throw new UndefinedStatusKey(name);
+	}
+	public StatusAndName(int name, AbstractStatusInfo stat)
+	{
+		this(name, stat, false, false);
+	}
+	public StatusAndName(String name, AbstractStatusInfo stat) throws UndefinedStatusKey
+	{
+		this(name, stat, false, false);
+	}
+	public StatusAndName(int name, AbstractStatusInfo stat, boolean changeable)
+	{
+		this(name, stat, changeable, false);
+	}
+	public StatusAndName(String name, AbstractStatusInfo stat, boolean changeable) throws UndefinedStatusKey
+	{
+		this(name, stat, changeable, false);
+	}
+	
+	public StatusAndName(String name, int stat, boolean changeable, boolean enableable) throws UndefinedStatusKey, StatusTypeMismatch
+	{
+		this.changeable=changeable;
+		this.enableable=enableable;
+		enabled=true;
+		
+		if(Status.getStatHash().containsKey(name)) this.name = Status.getStatHash().get(name);
+		else throw new UndefinedStatusKey(name);
+		
+		if(this.name<=StatList.ELEMENTNUM_END) this.stat=new ElementInfo(stat);
+		else if(this.name<=StatList.INTNUM_END) this.stat=new StatusInfo(stat);
+		else if(this.name<=StatList.DOUBLENUM_END) this.stat=new DoubleStatusInfo(stat);
+		else throw new StatusTypeMismatch("int");
+	}
+	public StatusAndName(String name, double stat, boolean changeable, boolean enableable) throws UndefinedStatusKey, StatusTypeMismatch
+	{
+		changeable=false;
+		enableable=false;
+		enabled=true;
+		
+		if(Status.getStatHash().containsKey(name)) this.name = Status.getStatHash().get(name);
+		else throw new UndefinedStatusKey(name);
+		
+		if(StatList.DOUBLENUM_START<=this.name && this.name<=StatList.DOUBLENUM_END) this.stat=new DoubleStatusInfo(stat);
+		else throw new StatusTypeMismatch("double");
+	}
+	public StatusAndName(String name, int stat) throws UndefinedStatusKey, StatusTypeMismatch
+	{
+		this(name, stat, false, false);
+	}
+	public StatusAndName(String name, double stat) throws UndefinedStatusKey, StatusTypeMismatch
+	{
+		this(name, stat, false, false);
+	}
+	public StatusAndName(String name, int stat, boolean changeable) throws UndefinedStatusKey, StatusTypeMismatch
+	{
+		this(name, stat, changeable, false);
+	}
+	public StatusAndName(String name, double stat, boolean changeable) throws UndefinedStatusKey, StatusTypeMismatch
+	{
+		this(name, stat, changeable, false);
 	}
 	
 	public static HashMap<Integer, String> getStatHash()

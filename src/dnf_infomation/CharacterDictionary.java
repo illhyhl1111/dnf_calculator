@@ -1,0 +1,68 @@
+package dnf_infomation;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.HashSet;
+
+import dnf_class.Skill;
+
+public class CharacterDictionary implements java.io.Serializable, Cloneable
+{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2541411296068975333L;
+	public HashSet<Skill> skillList;
+	
+	public CharacterDictionary() 
+	{
+		skillList = new HashSet<Skill>();
+		SkillInfo_gunner.getInfo(skillList);
+	}
+	
+	@Override
+	public Object clone()
+	{
+		CharacterDictionary charDictionary;
+		try{
+			ObjectInputStream in = new ObjectInputStream(new FileInputStream("CharacterDictionary.dfd"));
+			Object temp = in.readObject();
+
+			charDictionary = (CharacterDictionary)temp;
+			in.close();
+			return charDictionary;
+		}
+		catch(FileNotFoundException e)
+		{	
+			charDictionary = new CharacterDictionary();
+			SaveCharacterDictionary.main(null);
+			return charDictionary;
+		}
+		catch(IOException | ClassNotFoundException e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+	}
+}
+
+class SaveCharacterDictionary {
+	public static void main(String[] args)
+	{
+		try{
+			CharacterDictionary charDic = new CharacterDictionary();
+			
+			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("CharacterDictionary.dfd"));
+			out.writeObject(charDic);
+			out.close();
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+}

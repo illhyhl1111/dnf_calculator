@@ -56,6 +56,55 @@ public class StatusList implements java.io.Serializable, Cloneable {
 		}
 	}
 	
+	public void addStatList(String name, int stat)
+	{
+		try {
+			statList.add(new StatusAndName(name, stat));
+		} catch (UndefinedStatusKey | StatusTypeMismatch e) {
+			e.printStackTrace();
+		}
+	}
+	public void addStatList(String name, double stat)
+	{
+		try {
+			statList.add(new StatusAndName(name, stat));
+		} catch (UndefinedStatusKey | StatusTypeMismatch e) {
+			e.printStackTrace();
+		}
+	}
+	public void addStatList(String name, int stat, boolean changeable)
+	{
+		try {
+			statList.add(new StatusAndName(name, stat, changeable));
+		} catch (UndefinedStatusKey | StatusTypeMismatch e) {
+			e.printStackTrace();
+		}
+	}
+	public void addStatList(String name, double stat, boolean changeable)
+	{
+		try {
+			statList.add(new StatusAndName(name, stat, changeable));
+		} catch (UndefinedStatusKey | StatusTypeMismatch e) {
+			e.printStackTrace();
+		}
+	}
+	public void addStatList(String name, int stat, boolean changeable, boolean enableable)
+	{
+		try {
+			statList.add(new StatusAndName(name, stat, changeable, enableable));
+		} catch (UndefinedStatusKey | StatusTypeMismatch e) {
+			e.printStackTrace();
+		}
+	}
+	public void addStatList(String name, double stat, boolean changeable, boolean enableable)
+	{
+		try {
+			statList.add(new StatusAndName(name, stat, changeable, enableable));
+		} catch (UndefinedStatusKey | StatusTypeMismatch e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void changeStat(int order, AbstractStatusInfo stat)
 	{
 		StatusAndName temp = statList.get(order);
@@ -74,14 +123,13 @@ public class StatusList implements java.io.Serializable, Cloneable {
 			temp.enabled=enable;
 	}
 	
-	public boolean findChangeable(int name)
+	public StatusAndName findStat(int name)
 	{
 		for(StatusAndName s : statList)
 			if(s.name==name){
-				if(s.changeable) return true;
-				else return false;
+				return s;
 			}
-		return false;
+		return null;
 	}
 	
 	public void addListToStat(Status stat)
@@ -90,7 +138,7 @@ public class StatusList implements java.io.Serializable, Cloneable {
 			if(s.enabled) stat.addStat(s.name, s.stat);
 	}
 	
-	public double findStat(int name)
+	public double getStatSum(int name)
 	{
 		double temp=0;
 		for(StatusAndName s : statList)

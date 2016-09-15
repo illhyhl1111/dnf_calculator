@@ -10,7 +10,7 @@ import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 import dnf_InterfacesAndExceptions.UnknownInformationException;
 import dnf_calculator.StatusAndName;
 import dnf_calculator.StatusInfo;
-import dnf_infomation.GetItemDictionary;
+import dnf_infomation.GetDictionary;
 
 @SuppressWarnings("serial")
 public class Equipment extends Item
@@ -125,7 +125,7 @@ public class Equipment extends Item
 	
 	public void setDimension(Dimension_stat dim) throws UnknownInformationException
 	{
-		int stat = GetItemDictionary.getDimensionInfo(reinforce, super.getRarity(), level);
+		int stat = GetDictionary.getDimensionInfo(reinforce, super.getRarity(), level);
 		switch(dim)
 		{
 		case STR:
@@ -152,7 +152,7 @@ public class Equipment extends Item
 		boolean throwException=false;
 		try {
 			if(dimStat!=Dimension_stat.NONE)
-				vStat.statList.get(getDimStatIndex()).stat.setInfo(GetItemDictionary.getDimensionInfo(num, super.getRarity(), level));
+				vStat.statList.get(getDimStatIndex()).stat.setInfo(GetDictionary.getDimensionInfo(num, super.getRarity(), level));
 		}
 		catch(UnknownInformationException e){
 			throwException = true;
@@ -163,7 +163,7 @@ public class Equipment extends Item
 		try{
 			int strIndex = getAidStatIndex();
 			if(strIndex>=0){
-				int str = GetItemDictionary.getReinforceAidInfo( num, super.getRarity(), level);
+				int str = GetDictionary.getReinforceAidInfo( num, super.getRarity(), level);
 				vStat.statList.get(strIndex).stat.setInfo(str);
 				vStat.statList.get(strIndex+1).stat.setInfo(str);
 				vStat.statList.get(strIndex+2).stat.setInfo(str);
@@ -172,7 +172,7 @@ public class Equipment extends Item
 			
 			strIndex = getEarringStatIndex();
 			if(strIndex>=0){
-				int[] str = GetItemDictionary.getReinforceEarringInfo( num, super.getRarity(), level);
+				int[] str = GetDictionary.getReinforceEarringInfo( num, super.getRarity(), level);
 				vStat.statList.get(strIndex).stat.setInfo(str[0]);
 				vStat.statList.get(strIndex+1).stat.setInfo(str[0]);
 				vStat.statList.get(strIndex+2).stat.setInfo(str[1]);

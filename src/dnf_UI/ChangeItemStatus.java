@@ -38,7 +38,7 @@ import dnf_class.Equipment;
 import dnf_class.Item;
 import dnf_class.Title;
 import dnf_class.Weapon;
-import dnf_infomation.GetItemDictionary;
+import dnf_infomation.GetDictionary;
 
 class Wrapper {
 	private Text text;
@@ -78,9 +78,9 @@ public class ChangeItemStatus extends Dialog{
 		this.item=item;		
 		this.hasSet=hasSet;
 		try {
-			if(item instanceof Equipment) originalItem=GetItemDictionary.getEquipment(item.getName());
-			else if(item instanceof Title) originalItem=GetItemDictionary.getTitle(item.getName());
-			else if(item instanceof Card) originalItem=GetItemDictionary.getCard(item.getName());
+			if(item instanceof Equipment) originalItem=GetDictionary.getEquipment(item.getName());
+			else if(item instanceof Title) originalItem=GetDictionary.getTitle(item.getName());
+			else if(item instanceof Card) originalItem=GetDictionary.getCard(item.getName());
 			else originalItem=null;
 		} catch (ItemFileNotReaded | ItemFileNotFounded e) {
 			e.printStackTrace();
@@ -224,7 +224,7 @@ public class ChangeItemStatus extends Dialog{
 				tempText = new Text(composite, SWT.NONE);
 				tempText.setEditable(false);
 				try{
-					GetItemDictionary.getDimensionInfo(currentReinforce, item.getRarity(), ((Equipment)item).level);
+					GetDictionary.getDimensionInfo(currentReinforce, item.getRarity(), ((Equipment)item).level);
 				}catch(UnknownInformationException e){
 					tempText.setEditable(true);
 				}
@@ -255,7 +255,7 @@ public class ChangeItemStatus extends Dialog{
 				tempText = new Text(composite, SWT.NONE);
 				tempText.setEditable(false);
 				try{
-					GetItemDictionary.getReinforceInfo_phy(currentReinforce, item.getRarity(), ((Equipment)item).level, ((Weapon)item).weaponType);
+					GetDictionary.getReinforceInfo_phy(currentReinforce, item.getRarity(), ((Equipment)item).level, ((Weapon)item).weaponType);
 				}catch(UnknownInformationException e){
 					tempText.setEditable(true);
 				}
@@ -267,7 +267,7 @@ public class ChangeItemStatus extends Dialog{
 				tempText2 = new Text(composite, SWT.NONE);
 				tempText2.setEditable(false);
 				try{
-					GetItemDictionary.getReinforceInfo_mag(currentReinforce, item.getRarity(), ((Equipment)item).level, ((Weapon)item).weaponType);
+					GetDictionary.getReinforceInfo_mag(currentReinforce, item.getRarity(), ((Equipment)item).level, ((Weapon)item).weaponType);
 				}catch(UnknownInformationException e){
 					tempText2.setEditable(true);
 				}
@@ -303,7 +303,7 @@ public class ChangeItemStatus extends Dialog{
 				tempText = new Text(composite, SWT.NONE);
 				tempText.setEditable(false);
 				try{
-					GetItemDictionary.getReinforceAidInfo(currentReinforce, item.getRarity(), ((Equipment)item).level);
+					GetDictionary.getReinforceAidInfo(currentReinforce, item.getRarity(), ((Equipment)item).level);
 				}catch(UnknownInformationException e){
 					tempText.setEditable(true);
 				}
@@ -347,7 +347,7 @@ public class ChangeItemStatus extends Dialog{
 				tempText3.setEditable(false);
 				tempText3.setLayoutData(textData);
 				try{
-					GetItemDictionary.getReinforceEarringInfo(currentReinforce, item.getRarity(), ((Equipment)item).level);
+					GetDictionary.getReinforceEarringInfo(currentReinforce, item.getRarity(), ((Equipment)item).level);
 				}catch(UnknownInformationException e){
 					tempText.setEditable(true);
 					tempText2.setEditable(true);
@@ -412,7 +412,7 @@ public class ChangeItemStatus extends Dialog{
 				}
 			}
 			
-			if(!item.dStat.statList.isEmpty())
+			if(!item.dStat.statList.isEmpty() || !item.fStat.statList.isEmpty())
 			{
 				label = new Label(composite, SWT.WRAP);
 				label.setText("\n――――――던전 입장 시 적용――――――\n\n");
@@ -434,6 +434,12 @@ public class ChangeItemStatus extends Dialog{
 						dStatEntry.add(entry);
 					}
 				}
+				
+				for(String s : item.fStat.explanation){
+					label = new Label(composite, SWT.WRAP);
+					label.setText(s);
+					label.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, true, false, 4, 1));
+				}
 			}
 			
 			if(item instanceof Equipment)
@@ -444,7 +450,7 @@ public class ChangeItemStatus extends Dialog{
 			    	
 			    	if(dimStat!=null){
 				    	try {
-							setDimStat(GetItemDictionary.getDimensionInfo(currentReinforce, item.getRarity(), ((Equipment)item).level), dimStatLabel, dimStatText);
+							setDimStat(GetDictionary.getDimensionInfo(currentReinforce, item.getRarity(), ((Equipment)item).level), dimStatLabel, dimStatText);
 							dimStatText.setEditable(false);
 						} catch (UnknownInformationException e){
 							if(currentDimStat!=Dimension_stat.NONE) dimStatText.setEditable(true);
@@ -455,8 +461,8 @@ public class ChangeItemStatus extends Dialog{
 			    	
 			    	if(phyIgnStat!=null){
 				    	try {
-				    		int phyStat=GetItemDictionary.getReinforceInfo_phy(currentReinforce, item.getRarity(), ((Equipment)item).level, ((Weapon)item).weaponType);
-				    		int magStat=GetItemDictionary.getReinforceInfo_mag(currentReinforce, item.getRarity(), ((Equipment)item).level, ((Weapon)item).weaponType);
+				    		int phyStat=GetDictionary.getReinforceInfo_phy(currentReinforce, item.getRarity(), ((Equipment)item).level, ((Weapon)item).weaponType);
+				    		int magStat=GetDictionary.getReinforceInfo_mag(currentReinforce, item.getRarity(), ((Equipment)item).level, ((Weapon)item).weaponType);
 							setIgnStat(phyStat, phyIgnStatLabel, phyIgnStatText, magStat, magIgnStatLabel, magIgnStatText);
 							phyIgnStatText.setEditable(false);
 				    		magIgnStatText.setEditable(false);
@@ -470,7 +476,7 @@ public class ChangeItemStatus extends Dialog{
 			    	
 			    	if(aidStat!=null){
 				    	try {
-							setAidStat(GetItemDictionary.getReinforceAidInfo(currentReinforce, item.getRarity(), ((Equipment)item).level), aidStatLabel, aidStatText);
+							setAidStat(GetDictionary.getReinforceAidInfo(currentReinforce, item.getRarity(), ((Equipment)item).level), aidStatLabel, aidStatText);
 							aidStatText.setEditable(false);
 						} catch (UnknownInformationException e){
 							aidStatText.setEditable(true);
@@ -481,7 +487,7 @@ public class ChangeItemStatus extends Dialog{
 			    	
 			    	if(earringStat[0]!=null){
 				    	try {
-				    		int[] result = GetItemDictionary.getReinforceEarringInfo(currentReinforce, item.getRarity(), ((Equipment)item).level);
+				    		int[] result = GetDictionary.getReinforceEarringInfo(currentReinforce, item.getRarity(), ((Equipment)item).level);
 							setEarringStat(new int[] {result[0], result[0], result[1]}, earringStatLabel, earringStatText);
 							earringStatText[0].setEditable(false);
 							earringStatText[1].setEditable(false);
@@ -526,7 +532,7 @@ public class ChangeItemStatus extends Dialog{
 							currentDimStat=Dimension_stat.WILL;
 						}
 						
-						int str = GetItemDictionary.getDimensionInfo(currentReinforce, item.getRarity(), ((Equipment)item).level);
+						int str = GetDictionary.getDimensionInfo(currentReinforce, item.getRarity(), ((Equipment)item).level);
 						setDimStat(str, dimStatLabel, dimStatText);
 						dimStatText.setEditable(false);
 					}

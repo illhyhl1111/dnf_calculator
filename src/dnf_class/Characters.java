@@ -15,7 +15,7 @@ import dnf_InterfacesAndExceptions.StatList;
 import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 import dnf_InterfacesAndExceptions.UndefinedStatusKey;
 import dnf_calculator.Status;
-import dnf_infomation.GetItemDictionary;
+import dnf_infomation.GetDictionary;
 import dnf_infomation.ItemDictionary;
 
 public class Characters implements java.io.Serializable
@@ -49,6 +49,8 @@ public class Characters implements java.io.Serializable
 	
 	String charImageAddress;
 	
+	public Monster target;
+	
 	//LinkedList<PassiveSkill> passive;											//TODO
 
 	public Characters(int level, JobList job, String name)
@@ -78,10 +80,12 @@ public class Characters implements java.io.Serializable
 		villageStatus = new Status();
 		dungeonStatus = new Status();
 		
-		userItemList = (ItemDictionary) GetItemDictionary.itemDictionary.clone();
+		userItemList = (ItemDictionary) GetDictionary.itemDictionary.clone();
 		autoOptimize = false;
 		autoOptimizeRarity = Item_rarity.NONE;
 		autoOptimizeMode = 0;
+		
+		target = null;
 	}
 
 	private void addSet(Item item)
@@ -105,6 +109,13 @@ public class Characters implements java.io.Serializable
 	
 	public void equip(Item item)
 	{
+		double crt_before=0, crt_after=0;
+		try {
+			crt_before = dungeonStatus.getStat("물크");
+		} catch (StatusTypeMismatch | UndefinedStatusKey e) {
+			e.printStackTrace();
+		}
+		
 		if(item instanceof Weapon){
 			Weapon temp = (Weapon)item;
 			subtractSet(weapon);
@@ -139,11 +150,24 @@ public class Characters implements java.io.Serializable
 		
 		setStatus();
 		
-		if(autoOptimize) optimizeEmblem(autoOptimizeMode, autoOptimizeRarity);
+		try {
+			crt_after = dungeonStatus.getStat("물크");
+		} catch (StatusTypeMismatch | UndefinedStatusKey e) {
+			e.printStackTrace();
+		}
+		
+		if(autoOptimize && crt_before!=crt_after) optimizeEmblem(autoOptimizeMode, autoOptimizeRarity);
 	}
 	
 	public void unequip(Item item)
 	{
+		double crt_before=0, crt_after=0;
+		try {
+			crt_before = dungeonStatus.getStat("물크");
+		} catch (StatusTypeMismatch | UndefinedStatusKey e) {
+			e.printStackTrace();
+		}
+		
 		if(item instanceof Weapon){
 			Weapon weapon = (Weapon)item;
 			this.weapon = new Weapon();
@@ -173,10 +197,16 @@ public class Characters implements java.io.Serializable
 		
 		setStatus();
 		
-		if(autoOptimize) optimizeEmblem(autoOptimizeMode, autoOptimizeRarity);
+		try {
+			crt_after = dungeonStatus.getStat("물크");
+		} catch (StatusTypeMismatch | UndefinedStatusKey e) {
+			e.printStackTrace();
+		}
+		
+		if(autoOptimize && crt_before!=crt_after) optimizeEmblem(autoOptimizeMode, autoOptimizeRarity);
 	}
 	
-	private void statUpdate(Item item)
+	private void itemStatUpdate(Item item)
 	{
 		item.vStat.addListToStat(villageStatus);
 		
@@ -184,16 +214,16 @@ public class Characters implements java.io.Serializable
 		item.dStat.addListToStat(dungeonStatus);
 		
 		if(item.getCard()!=null)
-			statUpdate(item.getCard());
+			itemStatUpdate(item.getCard());
 		else if(item.getEmblem()!=null)
 		{
 			for(Emblem e : item.getEmblem())
-				statUpdate(e);
+				itemStatUpdate(e);
 		}
 			
 	}
 	
-	private void statUpdate(SetOption setOpion)
+	private void itemStatUpdate(SetOption setOpion)
 	{
 		setOpion.vStat.addListToStat(villageStatus);
 		
@@ -206,12 +236,12 @@ public class Characters implements java.io.Serializable
 		villageStatus = new Status();
 		dungeonStatus = new Status();
 		
-		statUpdate(weapon);
+		itemStatUpdate(weapon);
 		
 		for(Equipment e : equipmentList.values())
-			statUpdate(e);														//equipmentList(장비목록)에 포함된 모든 장비 스탯 더하기
+			itemStatUpdate(e);														//equipmentList(장비목록)에 포함된 모든 장비 스탯 더하기
 		
-		for(Avatar a : avatarList.values()) statUpdate(a);
+		for(Avatar a : avatarList.values()) itemStatUpdate(a);
 		
 		for(Entry<SetName,Integer> e : setOptionList.entrySet())				//setOptionList(셋옵목록)에 포함된 모든 셋옵 e에 대해
 		{
@@ -219,7 +249,7 @@ public class Characters implements java.io.Serializable
 				LinkedList<SetOption> candidates = userItemList.getSetOptions(e.getKey());		//e에 해당되는 셋옵 목록 - candidates
 				for(SetOption s : candidates)
 				{
-					if(s.isEnabled(e.getValue())) statUpdate(s);									//셋옵에 요구되는 장착수를 넘었을 때 셋옵 스탯 더하기
+					if(s.isEnabled(e.getValue())) itemStatUpdate(s);									//셋옵에 요구되는 장착수를 넘었을 때 셋옵 스탯 더하기
 				}
 			} 
 			catch (ItemFileNotFounded e1) {
@@ -228,9 +258,27 @@ public class Characters implements java.io.Serializable
 			
 		}
 		
-		statUpdate(title);
-		statUpdate(creature);
+		itemStatUpdate(title);
+		itemStatUpdate(creature);
 		//TODO 도핑, 패시브스킬 장착
+		
+		weapon.fStat.addListToStat(dungeonStatus, this, target, weapon);
+		for(Equipment e : equipmentList.values())
+			e.fStat.addListToStat(dungeonStatus, this, target, e);
+		for(Entry<SetName,Integer> e : setOptionList.entrySet())				//setOptionList(셋옵목록)에 포함된 모든 셋옵 e에 대해
+		{
+			try {
+				LinkedList<SetOption> candidates = userItemList.getSetOptions(e.getKey());		//e에 해당되는 셋옵 목록 - candidates
+				for(SetOption s : candidates)
+				{
+					if(s.isEnabled(e.getValue())) s.fStat.addListToStat(dungeonStatus, this, target, null);
+				}
+			} 
+			catch (ItemFileNotFounded e1) {
+				e1.printStackTrace();
+			}
+			
+		}
 	}
 	
 	public void optimizeEmblem(int mode, Item_rarity rarity)
@@ -348,8 +396,8 @@ public class Characters implements java.io.Serializable
 		{
 			for(Emblem emblem : avatar.getEmblem())
 			{
-				if(mode==0) temp+=emblem.vStat.findStat(StatList.CRT_PHY);
-				else temp+=emblem.vStat.findStat(StatList.CRT_MAG);
+				if(mode==0) temp+=emblem.vStat.getStatSum(StatList.CRT_PHY);
+				else temp+=emblem.vStat.getStatSum(StatList.CRT_MAG);
 			}
 		}
 		return temp;

@@ -14,9 +14,10 @@ import dnf_InterfacesAndExceptions.SetName;
 import dnf_InterfacesAndExceptions.UnknownInformationException;
 import dnf_InterfacesAndExceptions.Weapon_detailType;
 
-public class GetItemDictionary
+public class GetDictionary
 {
 	public static ItemDictionary itemDictionary;
+	public static CharacterDictionary charDictionary;
 	static boolean readed=false;
 
 	public static void readFile()
@@ -37,6 +38,27 @@ public class GetItemDictionary
 			itemDictionary = new ItemDictionary();
 			readed=true;
 			SaveItemDictionary.main(null);
+		}
+		catch(IOException | ClassNotFoundException e)
+		{
+			e.printStackTrace();
+		}
+		
+		
+		try{
+			ObjectInputStream in = new ObjectInputStream(new FileInputStream("CharacterDictionary.dfd"));
+			Object temp = in.readObject();
+
+			charDictionary = (CharacterDictionary)temp;
+			
+			readed=true;
+			in.close();
+		}
+		catch(FileNotFoundException e)
+		{	
+			charDictionary = new CharacterDictionary();
+			readed=true;
+			SaveCharacterDictionary.main(null);
 		}
 		catch(IOException | ClassNotFoundException e)
 		{

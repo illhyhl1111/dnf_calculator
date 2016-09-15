@@ -45,10 +45,7 @@ public class MakeComposite {
 					option = new Label(itemInfo, SWT.WRAP);
 					option.setText("["+s.requireNum+"]세트 효과");
 					option.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_GREEN));
-					
-					setStatusText(item, itemInfo, itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 				}
-				
 				else
 				{
 					option = new Label(itemInfo, SWT.SEPARATOR | SWT.HORIZONTAL);
@@ -57,19 +54,24 @@ public class MakeComposite {
 					option = new Label(itemInfo, SWT.WRAP);
 					option.setText("["+s.requireNum+"]세트 효과");
 					option.setEnabled(false);
+				}
 					
-					for(StatusAndName s2 : s.vStat.statList)
+				for(StatusAndName s2 : s.vStat.statList)
+					setText(itemInfo, s2, false, itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+				if(!s.dStat.statList.isEmpty() || !s.fStat.explanation.isEmpty())
+				{
+					option = new Label(itemInfo, SWT.WRAP);
+					option.setText("\n――――――던전 입장 시 적용――――――\n\n");
+					option.setEnabled(false);
+					for(StatusAndName s2 : s.dStat.statList)
 						setText(itemInfo, s2, false, itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLACK));
-					if(!item.dStat.statList.isEmpty())
-					{
+					for(String str : item.fStat.explanation){
 						option = new Label(itemInfo, SWT.WRAP);
-						option.setText("\n――――――던전 입장 시 적용――――――\n\n");
-						option.setEnabled(false);
-						for(StatusAndName s2 : s.dStat.statList)
-							setText(itemInfo, s2, false, itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+						option.setText(str);
+						option.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 					}
 				}
-				
+			
 				if(!s.explanation.isEmpty()) option = new Label(itemInfo, SWT.WRAP);
 				for(String str : s.explanation){
 					option = new Label(itemInfo, SWT.WRAP);
@@ -265,13 +267,19 @@ public class MakeComposite {
 		for(StatusAndName s : item.vStat.statList.subList(startIndex, item.vStat.statList.size()))
 			setText(itemInfo, s, color);
 		
-		if(!item.dStat.statList.isEmpty())
+		if(!item.dStat.statList.isEmpty() || !item.fStat.statList.isEmpty())
 		{
 			Label stat = new Label(itemInfo, SWT.WRAP);
 			stat.setText("\n――――――던전 입장 시 적용――――――\n\n");
 			stat.setForeground(color);
 			for(StatusAndName s : item.dStat.statList)
 				setText(itemInfo, s, color);
+			
+			for(String s : item.fStat.explanation){
+				stat = new Label(itemInfo, SWT.WRAP);
+				stat.setText(s);
+				stat.setForeground(color);
+			}
 		}
 	}
 	

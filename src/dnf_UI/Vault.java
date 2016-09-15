@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Shell;
 import dnf_InterfacesAndExceptions.InterfaceSize;
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_class.Item;
-import dnf_infomation.GetItemDictionary;
+import dnf_infomation.GetDictionary;
 
 public class Vault extends Dialog 
 {
@@ -160,7 +160,7 @@ public class Vault extends Dialog
 		        		 if(hasSet){
 		        			 setInfo = new Composite(parent, SWT.BORDER);
 		        			 setInfo.setLayout(layout);
-		        			 MakeComposite.setSetInfoComposite(setInfo, vault[indexBox].getItem(), 0, GetItemDictionary.itemDictionary);
+		        			 MakeComposite.setSetInfoComposite(setInfo, vault[indexBox].getItem(), 0, GetDictionary.itemDictionary);
 			        		 setInfoSize = setInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			        		 setInfo.moveAbove(null);
 		        		 }

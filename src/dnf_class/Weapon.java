@@ -10,7 +10,7 @@ import dnf_InterfacesAndExceptions.UnknownInformationException;
 import dnf_InterfacesAndExceptions.Weapon_detailType;
 import dnf_calculator.StatusAndName;
 import dnf_calculator.StatusInfo;
-import dnf_infomation.GetItemDictionary;
+import dnf_infomation.GetDictionary;
 
 public class Weapon extends Equipment{
 
@@ -51,8 +51,8 @@ public class Weapon extends Equipment{
 		try {			
 			int ignIndex = getIgnIndex();
 			if(ignIndex>=0){
-				int ignPhy = GetItemDictionary.getReinforceInfo_phy(num, super.getRarity(), level, weaponType);
-				int ignMag = GetItemDictionary.getReinforceInfo_mag(num, super.getRarity(), level, weaponType);
+				int ignPhy = GetDictionary.getReinforceInfo_phy(num, super.getRarity(), level, weaponType);
+				int ignMag = GetDictionary.getReinforceInfo_mag(num, super.getRarity(), level, weaponType);
 				vStat.statList.get(ignIndex).stat.setInfo(ignPhy);
 				vStat.statList.get(ignIndex+1).stat.setInfo(ignMag);
 			}

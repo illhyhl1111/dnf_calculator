@@ -3,6 +3,7 @@ package dnf_class;
 import java.util.LinkedList;
 
 import dnf_InterfacesAndExceptions.SetName;
+import dnf_calculator.FunctionStatusList;
 import dnf_calculator.StatusList;
 
 public class SetOption implements Cloneable, java.io.Serializable, Comparable<SetOption>{
@@ -14,6 +15,7 @@ public class SetOption implements Cloneable, java.io.Serializable, Comparable<Se
 	public final int requireNum;
 	public StatusList vStat;									//마을스탯
 	public StatusList dStat;									//인던스탯
+	public FunctionStatusList fStat;							//조건부 스탯
 	public LinkedList<String> explanation;
 	
 	public SetOption(String name, SetName setName, int requireNum)
@@ -22,6 +24,7 @@ public class SetOption implements Cloneable, java.io.Serializable, Comparable<Se
 		this.requireNum=requireNum;
 		vStat = new StatusList();
 		dStat = new StatusList();
+		fStat = new FunctionStatusList();
 		explanation = new LinkedList<String>();
 	}
 	

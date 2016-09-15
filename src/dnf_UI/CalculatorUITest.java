@@ -23,14 +23,14 @@ import dnf_calculator.Calculator;
 import dnf_calculator.Status;
 import dnf_class.Characters;
 import dnf_class.Monster;
-import dnf_infomation.GetItemDictionary;
+import dnf_infomation.GetDictionary;
 
 public class CalculatorUITest {
 	public static void main(String[] args) {
 
 		try{
 
-			GetItemDictionary.readFile();
+			GetDictionary.readFile();
 			Characters character = new Characters(86, JobList.LAUNCHER_F, "명속은거들뿐");
 
 			Display display = new Display();
