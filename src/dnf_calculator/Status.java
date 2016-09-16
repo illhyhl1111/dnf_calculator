@@ -1,9 +1,13 @@
 package dnf_calculator;
 import java.util.HashMap;
+import java.util.LinkedList;
 
+import dnf_InterfacesAndExceptions.ItemNotFoundedException;
+import dnf_InterfacesAndExceptions.JobList;
 import dnf_InterfacesAndExceptions.StatList;
 import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 import dnf_InterfacesAndExceptions.UndefinedStatusKey;
+import dnf_infomation.GetDictionary;
 
 public class Status implements Cloneable, java.io.Serializable {
 	
@@ -12,6 +16,7 @@ public class Status implements Cloneable, java.io.Serializable {
 	 */
 	private static final long serialVersionUID = -4490242684644672237L;
 	private AbstractStatusInfo[] statInfo;
+	private LinkedList<AbstractStatusInfo> skillInfo;
 	private static HashMap<String, Integer> statHash = new HashMap<String, Integer>();
 	private static boolean statHashsetted = false;
 	
@@ -49,14 +54,22 @@ public class Status implements Cloneable, java.io.Serializable {
 	{
 		statInfo = new AbstractStatusInfo[StatList.STATNUM];
 		int i;
-		for(i=0; i<StatList.ELEMENTNUM; i++)
+		for(i=0; i<=StatList.ELEMENTNUM_END; i++)
 			statInfo[i] = new ElementInfo(false, 0);
 		
-		for(; i<StatList.ELEMENTNUM+StatList.INTNUM; i++)
+		for(; i<=StatList.INTNUM_END; i++)
 			statInfo[i] = new StatusInfo(0);
 		
-		for(; i<StatList.STATNUM; i++)
+		for(; i<=StatList.DOUBLENUM_END; i++)
 			statInfo[i] = new DoubleStatusInfo(0);
+	
+		skillInfo = new LinkedList<AbstractStatusInfo>();
+	}
+	
+	public Status(JobList job, int level) throws ItemNotFoundedException
+	{
+		this();
+		GetDictionary.charDictionary.getBasicStat(job, level).addListToStat(this);
 	}
 	
 	public static HashMap<String, Integer> getStatHash()
@@ -111,7 +124,10 @@ public class Status implements Cloneable, java.io.Serializable {
 		statHash.put("물리마스터리2", StatList.MAST_PHY_2); statHash.put("마법마스터리2", StatList.MAST_MAG_2);
 		
 		statHash.put("모속강", StatList.ELEM_ALL); statHash.put("모속", StatList.ELEM_ALL);
-
+		
+		statHash.put("스킬", StatList.SKILL); statHash.put("스킬레벨", StatList.SKILL);  
+		statHash.put("스킬범위", StatList.SKILL_RANGE); 
+		
 		statHashsetted=true;
 	}
 	
@@ -164,6 +180,14 @@ public class Status implements Cloneable, java.io.Serializable {
 		else throw new UndefinedStatusKey(stat);
 	}
 	
+	public void setSkillStat(String name, int skillNum)
+	{
+		skillInfo.add(new SkillStatusInfo(skillNum, name));
+	}
+	public void setSkillRangeStat(int start, int end, int skillNum)
+	{
+		skillInfo.add(new SkillRangeStatusInfo(skillNum, start, end));
+	}
 	
 	public double getStat(int stat) throws StatusTypeMismatch
 	{
@@ -175,6 +199,8 @@ public class Status implements Cloneable, java.io.Serializable {
 		if(statHash.containsKey(stat)) return getStat(statHash.get(stat));
 		else throw new UndefinedStatusKey(stat);
 	}
+	
+	public LinkedList<AbstractStatusInfo> getSkillStatList() { return skillInfo;}
 	
 	public boolean getEnabled(int stat) throws StatusTypeMismatch
 	{
@@ -193,33 +219,41 @@ public class Status implements Cloneable, java.io.Serializable {
 	
 	public void addStat(int statNum, AbstractStatusInfo stat2)
 	{
-		AbstractStatusInfo stat1 = statInfo[statNum];
 		try{
-			switch(statNum)
-			{
-				case StatList.ELEM_FIRE: case StatList.ELEM_WATER:									//속성항
-				case StatList.ELEM_LIGHT: case StatList.ELEM_DARKNESS:
-					stat1.setInfo(((ElementInfo)stat1).getElementEnabled() || ((ElementInfo)stat2).getElementEnabled());
-					stat1.setInfo(stat1.getStatToDouble()+stat2.getStatToDouble());
-					break;
-					
-				case StatList.DAM_INC: case StatList.DAM_CRT:										//중첩불가항
-				case StatList.DAM_INC_BACK: case StatList.DAM_CRT_BACK:
-					if(stat2.getStatToDouble()>stat1.getStatToDouble()) stat1.setInfo(stat2.getStatToDouble()); 
-					break;
-					
-				case StatList.DAM_SKILL: case StatList.BUF_INC: case StatList.BUF_CRT:				//복리중첩항
-					double temp1=100.0+stat1.getStatToDouble();
-					double temp2=100.0+stat2.getStatToDouble();
-					stat1.setInfo(temp1*temp2/100-100);
-					break;
-					
-				default:																			//단리중첩항
-					stat1.setInfo(stat1.getStatToDouble()+stat2.getStatToDouble());
+			AbstractStatusInfo stat1 = statInfo[statNum];
+			
+			try{
+				switch(statNum)
+				{
+					case StatList.ELEM_FIRE: case StatList.ELEM_WATER:									//속성항
+					case StatList.ELEM_LIGHT: case StatList.ELEM_DARKNESS:
+						stat1.setInfo(((ElementInfo)stat1).getElementEnabled() || ((ElementInfo)stat2).getElementEnabled());
+						stat1.setInfo(stat1.getStatToDouble()+stat2.getStatToDouble());
+						break;
+						
+					case StatList.DAM_INC: case StatList.DAM_CRT:										//중첩불가항
+					case StatList.DAM_INC_BACK: case StatList.DAM_CRT_BACK:
+						if(stat2.getStatToDouble()>stat1.getStatToDouble()) stat1.setInfo(stat2.getStatToDouble()); 
+						break;
+						
+					case StatList.DAM_SKILL: case StatList.BUF_INC: case StatList.BUF_CRT:				//복리중첩항
+						double temp1=100.0+stat1.getStatToDouble();
+						double temp2=100.0+stat2.getStatToDouble();
+						stat1.setInfo(temp1*temp2/100-100);
+						break;
+						
+					default:																			//단리중첩항
+						stat1.setInfo(stat1.getStatToDouble()+stat2.getStatToDouble());
+				}
+			}
+			catch(StatusTypeMismatch e){
+				e.printStackTrace();
 			}
 		}
-		catch(StatusTypeMismatch e){
-			e.printStackTrace();
+		
+		catch(ArrayIndexOutOfBoundsException e)											//스킬레벨항
+		{
+			skillInfo.add(stat2);
 		}
 	}
 	
@@ -230,6 +264,9 @@ public class Status implements Cloneable, java.io.Serializable {
 		temp.statInfo = (AbstractStatusInfo[])this.statInfo.clone();
 		for(int i=0; i<StatList.STATNUM; i++)
 			statInfo[i] = (AbstractStatusInfo)this.statInfo[i].clone();
+		temp.skillInfo = new LinkedList<AbstractStatusInfo>();
+		for(AbstractStatusInfo s : this.skillInfo)
+			temp.skillInfo.add(s);
 		return temp;
 	}
 }

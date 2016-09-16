@@ -31,7 +31,7 @@ public class CalculatorUITest {
 		try{
 
 			GetDictionary.readFile();
-			Characters character = new Characters(86, JobList.LAUNCHER_F, "명속은거들뿐");
+			Characters character = new Characters(90, JobList.LAUNCHER_F, "명속은거들뿐");
 
 			Display display = new Display();
 

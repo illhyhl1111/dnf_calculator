@@ -5,17 +5,11 @@ import java.util.HashSet;
 import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.Equip_type;
 import dnf_InterfacesAndExceptions.SetName;
-import dnf_InterfacesAndExceptions.StatList;
-import dnf_class.Characters;
 import dnf_class.Equipment;
-import dnf_class.Monster;
 import dnf_InterfacesAndExceptions.Item_rarity;
 import dnf_calculator.DoubleStatusInfo;
 import dnf_calculator.ElementInfo;
-import dnf_calculator.FunctionStat;
 import dnf_calculator.StatusInfo;
-import dnf_calculator.StatusList;
-
 public class EquipInfo_heavy {
 	
 	public static void getInfo(HashSet<Equipment> equipList)

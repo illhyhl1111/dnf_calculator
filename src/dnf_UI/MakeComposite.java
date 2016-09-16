@@ -37,6 +37,8 @@ public class MakeComposite {
 			
 			for(SetOption s : setOptionList)
 			{
+				Color color;
+				boolean enabled;
 				if(s.isEnabled(setNum))
 				{
 					option = new Label(itemInfo, SWT.SEPARATOR | SWT.HORIZONTAL);
@@ -45,6 +47,8 @@ public class MakeComposite {
 					option = new Label(itemInfo, SWT.WRAP);
 					option.setText("["+s.requireNum+"]세트 효과");
 					option.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_GREEN));
+					color = itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLACK);
+					enabled=true;
 				}
 				else
 				{
@@ -54,21 +58,24 @@ public class MakeComposite {
 					option = new Label(itemInfo, SWT.WRAP);
 					option.setText("["+s.requireNum+"]세트 효과");
 					option.setEnabled(false);
+					color = itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLACK);
+					enabled=false;
 				}
 					
 				for(StatusAndName s2 : s.vStat.statList)
-					setText(itemInfo, s2, false, itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+					setText(itemInfo, s2, enabled, color);
 				if(!s.dStat.statList.isEmpty() || !s.fStat.explanation.isEmpty())
 				{
 					option = new Label(itemInfo, SWT.WRAP);
 					option.setText("\n――――――던전 입장 시 적용――――――\n\n");
-					option.setEnabled(false);
+					option.setEnabled(enabled);
 					for(StatusAndName s2 : s.dStat.statList)
-						setText(itemInfo, s2, false, itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+						setText(itemInfo, s2, enabled, color);
 					for(String str : item.fStat.explanation){
 						option = new Label(itemInfo, SWT.WRAP);
 						option.setText(str);
-						option.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+						option.setForeground(color);
+						option.setEnabled(enabled);
 					}
 				}
 			
@@ -301,13 +308,16 @@ public class MakeComposite {
 			
 			stat = new Label(itemInfo, SWT.WRAP);
 				
+			String name = StatusAndName.getStatHash().get(s.name);
+			if(s.name==StatList.SKILL || s.name==StatList.SKILL_RANGE)
+				name = s.stat.getStatToString()+name;
+			
 			if(strength.contains("-")){
-				String name = StatusAndName.getStatHash().get(s.name);
 				if(name.contains("+")) stat.setText(name.substring(0, name.length()-1)+strength);
 				else if(name.contains("-")) stat.setText(name.substring(0, name.length()-1)+"+"+strength.substring(1, strength.length()));
 				else stat.setText(name+strength);
 			}
-			else stat.setText(StatusAndName.getStatHash().get(s.name)+strength);
+			else stat.setText(name+strength);
 			stat.setEnabled(enable && s.enabled);
 			if(!s.enabled)
 				stat.setText(stat.getText()+"(옵션 꺼짐)");

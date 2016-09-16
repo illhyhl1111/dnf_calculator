@@ -46,4 +46,8 @@ public interface StatList									// 스탯 종류에 붙는 고유한 식별번
 	///////////////////////////////////////
 	
 	int STATNUM = ELEMENTNUM+INTNUM+DOUBLENUM;								// 총 스탯 개수
+	////////////////////////////////////
+	
+	int SKILL = DOUBLENUM_END+1;
+	int SKILL_RANGE = DOUBLENUM_END+2;
 }

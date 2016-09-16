@@ -617,7 +617,10 @@ public class ChangeItemStatus extends Dialog{
 			if(maxStrength.contains(".0")) maxStrength=maxStrength.substring(0, maxStrength.length()-2);
 			
 			statName  = new Label(itemInfo, SWT.NONE);
-			statName.setText(StatusAndName.getStatHash().get(s.name));
+			String name = StatusAndName.getStatHash().get(s.name);
+			if(s.name==StatList.SKILL || s.name==StatList.SKILL_RANGE)
+				name = s.stat.getStatToString()+name;
+			statName.setText(name);
 			statName.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false));
 			
 			statNum = new Text(itemInfo, SWT.NONE);

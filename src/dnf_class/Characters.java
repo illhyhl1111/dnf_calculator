@@ -8,15 +8,40 @@ import dnf_InterfacesAndExceptions.Avatar_part;
 import dnf_InterfacesAndExceptions.Character_type;
 import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.ItemFileNotFounded;
+import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_InterfacesAndExceptions.Item_rarity;
 import dnf_InterfacesAndExceptions.JobList;
 import dnf_InterfacesAndExceptions.SetName;
+import dnf_InterfacesAndExceptions.SkillInfoNotFounded;
+import dnf_InterfacesAndExceptions.Skill_type;
 import dnf_InterfacesAndExceptions.StatList;
 import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 import dnf_InterfacesAndExceptions.UndefinedStatusKey;
+import dnf_calculator.AbstractStatusInfo;
+import dnf_calculator.SkillRangeStatusInfo;
+import dnf_calculator.SkillStatusInfo;
 import dnf_calculator.Status;
+import dnf_infomation.CharacterDictionary;
 import dnf_infomation.GetDictionary;
 import dnf_infomation.ItemDictionary;
+
+class SkillLevelGroup implements java.io.Serializable
+{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -621310949988394392L;
+	Skill skill;
+	int villageLevel;
+	int dungeonLevel;
+	
+	SkillLevelGroup(Skill skill)
+	{
+		this.skill=skill;
+		this.villageLevel=0;
+		this.dungeonLevel=0;
+	}
+}
 
 public class Characters implements java.io.Serializable
 {
@@ -26,6 +51,8 @@ public class Characters implements java.io.Serializable
 	private static final long serialVersionUID = -2820101776203426270L;
 	public Status villageStatus;														//마을스탯
 	public Status dungeonStatus;														//인던스탯
+	
+	private LinkedList<SkillLevelGroup> skillList;
 	private HashMap<Equip_part, Equipment> equipmentList;
 	static final int EQUIPNUM=11;
 	private Weapon weapon;
@@ -45,6 +72,7 @@ public class Characters implements java.io.Serializable
 	public final String name;
 	private final Character_type characterType;
 	
+	public CharacterDictionary characterInfoList;
 	public ItemDictionary userItemList;
 	
 	String charImageAddress;
@@ -56,6 +84,11 @@ public class Characters implements java.io.Serializable
 	public Characters(int level, JobList job, String name)
 	{
 		this.name=name;
+		characterInfoList = (CharacterDictionary) GetDictionary.charDictionary.clone();
+		skillList = new LinkedList<SkillLevelGroup>();
+		for(Skill skill : characterInfoList.getSkillList(job, level))
+			skillList.add(new SkillLevelGroup(skill));
+		
 		equipmentList = new HashMap<Equip_part, Equipment>();					//key : 장비 부위, value : 장비. 장비와 장비부위의 type이 같은곳에 장착됨
 		setOptionList = new HashMap<SetName, Integer>();						//key : 셋옵 이름, value : 셋옵 보유 개수
 		avatarList = new HashMap<Avatar_part, Avatar>();
@@ -86,6 +119,23 @@ public class Characters implements java.io.Serializable
 		autoOptimizeMode = 0;
 		
 		target = null;
+
+		setStatus();
+	}
+	
+	private void initStatus()
+	{
+		try {
+			villageStatus = new Status(job, level);
+			dungeonStatus = new Status(job, level);
+		} catch (ItemNotFoundedException e) {
+			e.printStackTrace();
+		}
+		for(SkillLevelGroup s : skillList)
+		{
+			s.dungeonLevel=0;
+			s.villageLevel=0;
+		}
 	}
 
 	private void addSet(Item item)
@@ -231,10 +281,9 @@ public class Characters implements java.io.Serializable
 		setOpion.dStat.addListToStat(dungeonStatus);
 	}
 	
-	public void setStatus()
+	public void setStatus()													// 순서 - 아이템장착 ->버프스킬->스탯
 	{
-		villageStatus = new Status();
-		dungeonStatus = new Status();
+		initStatus();
 		
 		itemStatUpdate(weapon);
 		
@@ -260,7 +309,6 @@ public class Characters implements java.io.Serializable
 		
 		itemStatUpdate(title);
 		itemStatUpdate(creature);
-		//TODO 도핑, 패시브스킬 장착
 		
 		weapon.fStat.addListToStat(dungeonStatus, this, target, weapon);
 		for(Equipment e : equipmentList.values())
@@ -278,6 +326,64 @@ public class Characters implements java.io.Serializable
 				e1.printStackTrace();
 			}
 			
+		}
+		//TODO 도핑, 휘장
+		getSkillLevel(false);
+		getSkillLevel(true);	
+
+		try {
+			for(Skill skill : getVillageSkillList()){
+				if(skill.type==Skill_type.PASSIVE && skill.buff_enabled)
+					skill.stat.addListToStat(villageStatus);
+			}
+		} catch (SkillInfoNotFounded e1) {
+			System.out.println("마을스탯 - 스킬정보없음 ("+e1.name+", "+e1.level+")");
+		}
+		
+		try {
+			for(Skill skill : getDungeonSkillList()){
+				if(skill.hasBuff() && skill.buff_enabled)
+					skill.stat.addListToStat(dungeonStatus);
+			}
+		} catch (SkillInfoNotFounded e1) {
+			System.out.println("던전스탯 - 스킬정보없음 ("+e1.name+", "+e1.level+")");
+		}
+	}
+	
+	private void getSkillLevel(boolean isDungeon)
+	{
+		Status stat;
+		if(isDungeon) stat=dungeonStatus;
+		else stat=villageStatus;
+		for(AbstractStatusInfo statInfo : stat.getSkillStatList()){
+			try {
+				if(statInfo instanceof SkillStatusInfo){
+					String name = statInfo.getStatToString();
+					for(SkillLevelGroup group : skillList){
+						if(group.skill.isEqualTo(name)){
+							if(isDungeon) group.dungeonLevel += (int)statInfo.getStatToDouble();
+							else group.villageLevel += (int)statInfo.getStatToDouble();
+							break;
+						}
+					}
+				}
+				
+				else if(statInfo instanceof SkillRangeStatusInfo){
+					String[] range = statInfo.getStatToString().split(" ~ ");
+					boolean flag = false; 
+					for(SkillLevelGroup group : skillList){
+						if(group.skill.isInRange(Integer.parseInt(range[0]), Integer.parseInt(range[1]))){
+							flag = true;
+							if(isDungeon) group.dungeonLevel += (int)statInfo.getStatToDouble();
+							else group.villageLevel += (int)statInfo.getStatToDouble();
+						}
+						else if(flag) break;
+					}
+				}
+				
+			}catch (StatusTypeMismatch e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -421,6 +527,35 @@ public class Characters implements java.io.Serializable
 	public void setTitle(Title title) {this.title = title;}
 	public Drape getDrape() {return drape;}
 	public void setDrape(Drape drape) {this.drape = drape;}
+	
+	public LinkedList<Skill> getCharacterSkillList()
+	{
+		LinkedList<Skill> list = new LinkedList<Skill>();
+		for(SkillLevelGroup s : skillList){
+			list.add(s.skill);
+		}
+		return list;
+	}
+	
+	public LinkedList<Skill> getDungeonSkillList() throws SkillInfoNotFounded {
+		LinkedList<Skill> list = new LinkedList<Skill>();
+		for(SkillLevelGroup s : skillList){
+			Skill skill = (Skill) s.skill.clone();
+			skill.increaseLevel(s.dungeonLevel);
+			list.add(skill);
+		}
+		return list;
+	}
+	
+	public LinkedList<Skill> getVillageSkillList() throws SkillInfoNotFounded {
+		LinkedList<Skill> list = new LinkedList<Skill>();
+		for(SkillLevelGroup s : skillList){
+			Skill skill = (Skill) s.skill.clone();
+			skill.increaseLevel(s.villageLevel);
+			list.add(skill);
+		}
+		return list;
+	}
 
 	public void setAutoOptimizeMode(int autoOptimizeMode) {
 		this.autoOptimizeMode = autoOptimizeMode;
@@ -429,4 +564,5 @@ public class Characters implements java.io.Serializable
 	public void setAutoOptimizeRarity(Item_rarity autoOptimizeRarity) {
 		this.autoOptimizeRarity = autoOptimizeRarity;
 	}
+
 }

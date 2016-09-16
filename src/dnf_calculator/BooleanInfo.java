@@ -24,4 +24,7 @@ public class BooleanInfo extends AbstractStatusInfo			// boolean형 스탯정보
 	}
 	public boolean getBooleanStat() {return bool;} 
 	public void setBooleanStat(boolean bool) {this.bool=bool;}
+	public String getStatToString() throws StatusTypeMismatch { throw new StatusTypeMismatch("Skill->Boolean");}
+	public void setInfo(String name) throws StatusTypeMismatch { throw new StatusTypeMismatch("Skill->Boolean");}
+	public void setInfo(int start, int end) throws StatusTypeMismatch { throw new StatusTypeMismatch("SkillRange->Boolean");}
 }

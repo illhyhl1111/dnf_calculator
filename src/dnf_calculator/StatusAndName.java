@@ -134,6 +134,8 @@ public class StatusAndName implements java.io.Serializable, Cloneable
 		reverseHash.put(StatList.MAST_PHY_2, "물리 공격력 %증가(2) +"); reverseHash.put(StatList.MAST_MAG_2, "마법 공격력 %증가(2) +");
 		reverseHash.put(StatList.BUF_INC, "데미지 증가 버프(%) +"); reverseHash.put(StatList.BUF_CRT, "크리티컬 데미지 증가 버프(%) +");
 		
+		reverseHash.put(StatList.SKILL, " Lv + "); reverseHash.put(StatList.SKILL_RANGE, " 스킬 Lv + ");
+		
 		reverseHashsetted=true;
 	}
 	

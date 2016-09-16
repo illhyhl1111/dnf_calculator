@@ -8,7 +8,7 @@ import dnf_InterfacesAndExceptions.SkillInfoNotFounded;
 import dnf_InterfacesAndExceptions.Skill_type;
 import dnf_calculator.StatusList;
 
-public class Skill implements java.io.Serializable{
+public class Skill implements java.io.Serializable, Comparable<Skill>, Cloneable{
 	/**
 	 * 
 	 */
@@ -31,6 +31,9 @@ public class Skill implements java.io.Serializable{
 	public int mag_fix;
 	public LinkedList<SkillLevelInfo> skillInfo;
 	
+	public boolean active_enabled;
+	public boolean buff_enabled;
+	
 	public Skill(String name, Skill_type type, String icon, JobList job, int firstLevel, int maxLevel, int masterLevel, int levelInterval)
 	{
 		this.name=name;
@@ -49,6 +52,9 @@ public class Skill implements java.io.Serializable{
 		phy_fix=0;
 		mag_fix=0;
 		skillInfo = new LinkedList<SkillLevelInfo>();
+		active_enabled = true;
+		if(type==Skill_type.PASSIVE) buff_enabled = true;
+		else buff_enabled = false;
 	}
 	
 	public Skill(String name, Skill_type type, String icon, Character_type charType, int firstLevel, int maxLevel, int masterLevel, int levelInterval)
@@ -69,6 +75,9 @@ public class Skill implements java.io.Serializable{
 		phy_fix=0;
 		mag_fix=0;
 		skillInfo = new LinkedList<SkillLevelInfo>();
+		active_enabled = true;
+		if(type==Skill_type.PASSIVE) buff_enabled = true;
+		else buff_enabled = false;
 	}
 	
 	public boolean isSkillOfChar(JobList job)
@@ -105,27 +114,71 @@ public class Skill implements java.io.Serializable{
 				phy_fix=info.phy_fix;
 				mag_atk=info.mag_atk;
 				mag_fix=info.mag_fix;
+				stat=info.stat;
 				return;
 			}
 		}
 		throw new SkillInfoNotFounded(name, skillLevel);
 	}
 	
-	public int skillMaster(int charLevel)
+	public int masterSkill(int charLevel) throws SkillInfoNotFounded
 	{
 		skillLevel = (int)((charLevel-firstLevel)/levelInterval);
 		if(skillLevel>masterLevel) skillLevel = masterLevel;
+		getSkillInfo();
 		return skillLevel;
 	}
 	
 	public int getSkillLevel() { return skillLevel;}
-	public void setSkillLevel(int skillLevel) {this.skillLevel=skillLevel;}
-	public void increaseLevel()
+	public void setSkillLevel(int skillLevel) throws SkillInfoNotFounded {
+		this.skillLevel=skillLevel;
+		getSkillInfo();
+	}
+	public void increaseLevel() throws SkillInfoNotFounded
 	{
 		if(skillLevel<masterLevel) skillLevel++;
+		getSkillInfo();
 	}
-	public void increaseLevel(int inc)
+	public void increaseLevel(int inc) throws SkillInfoNotFounded
 	{
 		if(skillLevel+inc<=masterLevel) skillLevel+=inc;
+		getSkillInfo();
+	}
+	
+	public boolean getActiveEnabled() {return active_enabled;}
+	public void setActiveEnabled(boolean enabled){this.active_enabled=enabled;}
+	public boolean getBuffEnabled() {return buff_enabled;}
+	public void setBuffEnabled(boolean enabled){this.buff_enabled=enabled;}
+	
+	public boolean isEqualTo(String name)
+	{
+		if (this.name.equals(name)) return true;
+		return false;
+	}
+	
+	public boolean isInRange(int startLevel, int endLevel)
+	{
+		if(startLevel<=firstLevel && firstLevel<=endLevel) return true;
+		return false;
+	}
+
+	@Override
+	public int compareTo(Skill arg0) {
+		if(arg0.skillLevel!=skillLevel) return skillLevel-arg0.skillLevel;
+		else return arg0.name.compareTo(name);
+	}
+	
+	@Override
+	public Object clone()
+	{
+		Skill temp=null;
+		try {
+			temp = (Skill) super.clone();
+			temp.stat = (StatusList) this.stat.clone();
+		} catch (CloneNotSupportedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return temp;
 	}
 }
