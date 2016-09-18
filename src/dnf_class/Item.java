@@ -9,10 +9,8 @@ import dnf_InterfacesAndExceptions.Item_rarity;
 import dnf_InterfacesAndExceptions.SetName;
 
 @SuppressWarnings("serial")
-public class Item implements Cloneable, java.io.Serializable, Comparable<Item>
+public class Item extends IconObject implements Comparable<Item>
 {
-	private String name;										//이름
-	private	String iconAddress;									//아이콘
 	private Item_rarity rarity;									//희귀도
 	public StatusList vStat;									//마을스탯
 	public StatusList dStat;									//인던스탯
@@ -31,20 +29,13 @@ public class Item implements Cloneable, java.io.Serializable, Comparable<Item>
 	}
 	public Item()
 	{
-		name="없음";
-		iconAddress="image\\default.png";
+		super();
 		rarity=Item_rarity.NONE;
 		vStat = new StatusList();
 		dStat = new StatusList();
 		fStat = new FunctionStatusList();
 		explanation = new LinkedList<String>();
 	}
-	
-	public String getName() { return name;}
-	public void setName(String name) { this.name = name;}
-	
-	public String getIcon() { return iconAddress;}
-	public void setIcon(String icon) { iconAddress = icon;}
 	
 	public Item_rarity getRarity() { return rarity;}
 	public void setRarity(Item_rarity rarity) { this.rarity = rarity;}

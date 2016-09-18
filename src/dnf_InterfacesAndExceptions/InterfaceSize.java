@@ -3,6 +3,7 @@ package dnf_InterfacesAndExceptions;
 public interface InterfaceSize {
 	int INFO_BUTTON_SIZE=40;
 	int INVENTORY_BUTTON_SIZE=35;
+	int SKILL_BUTTON_SIZE=40;
 	
 	int USER_INFO_INTERVAL=5;
 	int USER_INFO_ITEM_SIZE_X=360; int USER_INFO_ITEM_SIZE_Y=210;

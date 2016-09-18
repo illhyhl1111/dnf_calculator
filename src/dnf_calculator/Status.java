@@ -180,13 +180,13 @@ public class Status implements Cloneable, java.io.Serializable {
 		else throw new UndefinedStatusKey(stat);
 	}
 	
-	public void setSkillStat(String name, int skillNum)
+	public void setSkillStat(String name, int skillNum, int skillInc)
 	{
-		skillInfo.add(new SkillStatusInfo(skillNum, name));
+		skillInfo.add(new SkillStatusInfo(skillNum, skillInc, name));
 	}
-	public void setSkillRangeStat(int start, int end, int skillNum)
+	public void setSkillRangeStat(int start, int end, int skillNum, boolean TP)
 	{
-		skillInfo.add(new SkillRangeStatusInfo(skillNum, start, end));
+		skillInfo.add(new SkillRangeStatusInfo(skillNum, start, end, TP));
 	}
 	
 	public double getStat(int stat) throws StatusTypeMismatch

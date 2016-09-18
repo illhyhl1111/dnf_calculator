@@ -11,6 +11,7 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
@@ -19,36 +20,59 @@ import dnf_InterfacesAndExceptions.ItemFileNotFounded;
 import dnf_InterfacesAndExceptions.SetName;
 import dnf_class.Card;
 import dnf_class.Characters;
+import dnf_class.IconObject;
+import dnf_class.Item;
+import dnf_class.Skill;
 
+@SuppressWarnings("unchecked")
 public class SetListener {
-	ItemButton itemButton;
+	ItemButton<? extends IconObject> itemButton_wildCard;
 	Characters character;
 	UserInfo superInfo;
 	Composite itemInfo;
 	Boolean hasSetOption;
 	Composite setInfo;
-	Integer xPoint;
-	Integer yPoint;
+	Point mousePoint;
 	Composite parent;
 	int x0;
 	int y0;
+	static final int mouseInterval_hor = 7;
+	static final int mouseInterval_ver = 5;
 	
-	public SetListener(ItemButton itemButton, Characters character, UserInfo superInfo, Composite itemInfo,
-			Composite setInfo, int xPoint, int yPoint, Composite parent)
+	public SetListener(ItemButton<? extends IconObject> itemButton, Characters character, UserInfo superInfo, Composite itemInfo,
+			Composite setInfo, Composite parent)
 	{
-		this.itemButton=itemButton;
+		this.itemButton_wildCard=itemButton;
 		this.character=character;
 		this.superInfo=superInfo;
 		this.itemInfo=itemInfo;
 		this.setInfo=setInfo;
-		this.xPoint=xPoint;
-		this.yPoint=yPoint;
 		this.parent=parent;
+		
 		hasSetOption=false;
+	}
+	
+	private void setMousePoint(Event e, Composite background, Point itemInfoSize, Point setInfoSize)
+	{
+		Point mousePoint = ((Control) e.widget).toDisplay(0, 0);
+    	mousePoint.x-=background.toDisplay(0, 0).x;
+    	mousePoint.y-=background.toDisplay(0, 0).y;
+   		
+   		if(setInfoSize!=null) y0 = mousePoint.y-Math.max(setInfoSize.y, itemInfoSize.y)-mouseInterval_hor;
+		else y0=mousePoint.y-itemInfoSize.y-mouseInterval_hor;
+		if(hasSetOption)
+			x0 = mousePoint.x-InterfaceSize.ITEM_INFO_SIZE-InterfaceSize.SET_INFO_SIZE-mouseInterval_ver-InterfaceSize.SET_ITEM_INTERVAL;
+		else x0 = mousePoint.x-InterfaceSize.ITEM_INFO_SIZE-mouseInterval_ver;
+		if(x0<0) x0 = mousePoint.x+mouseInterval_ver;
+		if(y0<0) y0 = mousePoint.y+mouseInterval_hor;
 	}
 	
 	public Listener unequipListener()
 	{
+		ItemButton<Item> itemButton;
+		if(itemButton_wildCard.getItem() instanceof Item) itemButton = (ItemButton<Item>) itemButton_wildCard;
+		else return null;
+		
 		return new Listener() {
 			@Override
 	        public void handleEvent(Event e) {
@@ -66,6 +90,10 @@ public class SetListener {
 	
 	public Listener equipListener(Vault vault)
 	{
+		ItemButton<Item> itemButton;
+		if(itemButton_wildCard.getItem() instanceof Item) itemButton = (ItemButton<Item>) itemButton_wildCard;
+		else return null;
+		
 		return new Listener() {
 	         @Override
 	         public void handleEvent(Event e) {
@@ -94,6 +122,10 @@ public class SetListener {
 	
 	public Listener equipListener()
 	{
+		ItemButton<Item> itemButton;
+		if(itemButton_wildCard.getItem() instanceof Item) itemButton = (ItemButton<Item>) itemButton_wildCard;
+		else return null;
+		
 		return new Listener() {
 			@Override
 	        public void handleEvent(Event e) {
@@ -107,6 +139,10 @@ public class SetListener {
 	
 	public Listener modifyListener()
 	{
+		ItemButton<Item> itemButton;
+		if(itemButton_wildCard.getItem() instanceof Item) itemButton = (ItemButton<Item>) itemButton_wildCard;
+		else return null;
+		
 		return new Listener() {
 			@Override
 			public void handleEvent(Event event) {
@@ -139,72 +175,128 @@ public class SetListener {
 	
 	public Listener makeItemInfoListener(Composite background)
 	{	     
+		ItemButton<Item> itemButton;
+		if(itemButton_wildCard.getItem() instanceof Item) itemButton = (ItemButton<Item>) itemButton_wildCard;
+		else return null;
+		
 	     return new Listener() {
 	         @Override
 	         public void handleEvent(Event e) {
 	        	 if(itemButton.getItem().getName().contains("없음")) return;
 	        	 
-	        	 Point setInfoSize=null;
-	        	 Point itemInfoSize=null;
-	        	 
-	        	 if(itemButton.getItem().getEnabled()){
-	        		 itemInfo = new Composite(background, SWT.BORDER);
-	        		 GridLayout layout = new GridLayout(1, false);
-	        		 layout.verticalSpacing=3;
-	        		 itemInfo.setLayout(layout);
-	        		 MakeComposite.setItemInfoComposite(itemInfo, itemButton.getItem());
-	        		 itemInfoSize = itemInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-	        		 itemInfo.moveAbove(null);
+	        	Point setInfoSize=null;
+	        	Point itemInfoSize=null;
+
+	        	if(itemButton.getItem().getEnabled()){
+	        		itemInfo = new Composite(background, SWT.BORDER);
+	        		GridLayout layout = new GridLayout(1, false);
+	        		layout.verticalSpacing=3;
+	        		itemInfo.setLayout(layout);
+	        		MakeComposite.setItemInfoComposite(itemInfo, itemButton.getItem());
+	        		itemInfoSize = itemInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+	        		itemInfo.moveAbove(null);
+	        		
+	        		hasSetOption = itemButton.hasSetOption();
+	        		if(hasSetOption){
+	        			setInfo = new Composite(background, SWT.BORDER);
+	        			setInfo.setLayout(layout);
+	        			int setNum;
+	        			if(character.getSetOptionList().get( itemButton.getItem().getSetName() )==null) setNum=0;
+	        			else setNum=character.getSetOptionList().get( itemButton.getItem().getSetName() );
+	        			
+	        			MakeComposite.setSetInfoComposite(setInfo, itemButton.getItem(), setNum, character.userItemList);
+		        		setInfoSize = setInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		        		setInfo.moveAbove(null);
+	        		}
 	        		 
-	        		 hasSetOption = itemButton.hasSetOption();
-	        		 if(hasSetOption){
-	        			 setInfo = new Composite(background, SWT.BORDER);
-	        			 setInfo.setLayout(layout);
-	        			 int setNum;
-	        			 if(character.getSetOptionList().get( itemButton.getItem().getSetName() )==null) setNum=0;
-	        			 else setNum=character.getSetOptionList().get( itemButton.getItem().getSetName() );
-	        			 
-	        			 MakeComposite.setSetInfoComposite(setInfo, itemButton.getItem(), setNum, character.userItemList);
-		        		 setInfoSize = setInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		        		 setInfo.moveAbove(null);
-	        		 }
-	        		 
-	        		 if(setInfoSize!=null) y0 = yPoint-Math.max(setInfoSize.y, itemInfoSize.y)-5;
-	        		 else y0=yPoint-itemInfoSize.y-5;
-	        		 if(hasSetOption)
-	        			 x0 = xPoint-InterfaceSize.ITEM_INFO_SIZE-InterfaceSize.SET_INFO_SIZE-5-InterfaceSize.SET_ITEM_INTERVAL;
-	        		 else x0 = xPoint-InterfaceSize.ITEM_INFO_SIZE-5;
-	        		 if(x0<0) x0 = xPoint+5;
-	        		 if(y0<0) y0 = yPoint+5;
-	        		 itemInfo.setBounds((e.x+x0), (e.y+y0), InterfaceSize.ITEM_INFO_SIZE, itemInfoSize.y);
-	        		 if(hasSetOption) setInfo.setBounds((e.x+x0+InterfaceSize.SET_ITEM_INTERVAL+InterfaceSize.ITEM_INFO_SIZE), (e.y+y0), InterfaceSize.SET_INFO_SIZE, setInfoSize.y);
-	        	 }
-	         }
-	     };
+	        		setMousePoint(e, background, itemInfoSize, setInfoSize);
+	        		itemInfo.setBounds((e.x+x0), (e.y+y0), InterfaceSize.ITEM_INFO_SIZE, itemInfoSize.y);
+	        		if(hasSetOption) setInfo.setBounds((e.x+x0+InterfaceSize.SET_ITEM_INTERVAL+InterfaceSize.ITEM_INFO_SIZE), (e.y+y0), InterfaceSize.SET_INFO_SIZE, setInfoSize.y);
+	        	}
+	        }
+	    };
 	}
 	
 	public Listener makeCardInfoListener(Composite background)
 	{
+		ItemButton<Item> itemButton;
+		if(itemButton_wildCard.getItem() instanceof Item) itemButton = (ItemButton<Item>) itemButton_wildCard;
+		else return null;
+		
 		return new Listener() {
 	        @Override
 	        public void handleEvent(Event e) {
 	        	Card card= itemButton.getItem().getCard();
-       		
-       		if( card.getName().contains("없음")) return;
-       		itemInfo = new Composite(background, SWT.BORDER);
-       		GridLayout layout = new GridLayout(1, false);
-       		layout.verticalSpacing=3;
-       		itemInfo.setLayout(layout);
-       		MakeComposite.setItemInfoComposite(itemInfo, card);
-       		Point itemInfoSize = itemInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-       		y0 = yPoint-itemInfoSize.y-5;
-       		x0 = xPoint-InterfaceSize.ITEM_INFO_SIZE-5;
-       		if(x0<0) x0 = xPoint+5;
-       		if(y0<0) y0 = yPoint+5;
-       		itemInfo.setBounds((e.x+x0), (e.y+y0), InterfaceSize.ITEM_INFO_SIZE, itemInfoSize.y);
-       		itemInfo.moveAbove(null);
+	       		
+	       		if( card.getName().contains("없음")) return;
+	       		itemInfo = new Composite(background, SWT.BORDER);
+	       		GridLayout layout = new GridLayout(1, false);
+	       		layout.verticalSpacing=3;
+	       		itemInfo.setLayout(layout);
+	       		MakeComposite.setItemInfoComposite(itemInfo, card);
+	       		Point itemInfoSize = itemInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+	       		setMousePoint(e, background, itemInfoSize, null);
+	       		itemInfo.setBounds((e.x+x0), (e.y+y0), InterfaceSize.ITEM_INFO_SIZE, itemInfoSize.y);
+	       		itemInfo.moveAbove(null);
 	        }
 	    };
+	}
+	
+	public Listener makeSkillInfoListener(Composite background)
+	{
+		ItemButton<Skill> skillButton;
+		if(itemButton_wildCard.getItem() instanceof Skill) skillButton = (ItemButton<Skill>) itemButton_wildCard;
+		else return null;
+		
+		return new Listener() {
+	        @Override
+	        public void handleEvent(Event e) {	        	
+	       		itemInfo = new Composite(background, SWT.BORDER);
+	       		GridLayout layout = new GridLayout(1, false);
+	       		layout.verticalSpacing=3;
+	       		itemInfo.setLayout(layout);
+	       		MakeComposite.setSkillInfoComposite(itemInfo, skillButton.getItem(), character.dungeonStatus);
+	       		Point itemInfoSize = itemInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+	       		setMousePoint(e, background, itemInfoSize, null);
+	       		itemInfo.setBounds((e.x+x0), (e.y+y0), InterfaceSize.ITEM_INFO_SIZE, itemInfoSize.y);
+	       		itemInfo.moveAbove(null);
+	        }
+	    };
+	}
+	
+	public Listener skillLevelModifyListener(Composite background, boolean TPMode)
+	{
+		ItemButton<Skill> skillButton;
+		if(itemButton_wildCard.getItem() instanceof Skill) skillButton = (ItemButton<Skill>) itemButton_wildCard;
+		else return null;
+		
+		return new Listener() {
+			@Override
+			public void handleEvent(Event e) {
+				if(e.button==1){
+					if(TPMode) skillButton.getItem().increaseLevel_char();
+					else skillButton.getItem().masterSkill(character.getLevel());
+				}
+				else if(e.button==3)
+					if(TPMode) skillButton.getItem().decreaseLevel_char();
+					else skillButton.getItem().setSkillLevel(0);
+				
+				//dispose
+				if(itemInfo !=null && !itemInfo.isDisposed())
+	        		 itemInfo.dispose();
+				
+				//same with makeSkillInfoListener
+				itemInfo = new Composite(background, SWT.BORDER);
+	       		GridLayout layout = new GridLayout(1, false);
+	       		layout.verticalSpacing=3;
+	       		itemInfo.setLayout(layout);
+	       		MakeComposite.setSkillInfoComposite(itemInfo, skillButton.getItem(), character.dungeonStatus);
+	       		Point itemInfoSize = itemInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+	       		setMousePoint(e, background, itemInfoSize, null);
+	       		itemInfo.setBounds((e.x+x0), (e.y+y0), InterfaceSize.ITEM_INFO_SIZE, itemInfoSize.y);
+	       		itemInfo.moveAbove(null);
+			}
+		};
 	}
 	
 	public Listener disposeItemInfoListener()
@@ -235,6 +327,10 @@ public class SetListener {
 	
 	public Listener unequipCardListener()
 	{
+		ItemButton<Item> itemButton;
+		if(itemButton_wildCard.getItem() instanceof Item) itemButton = (ItemButton<Item>) itemButton_wildCard;
+		else return null;
+		
 		return new Listener() {
 	         @Override
 	         public void handleEvent(Event e) {
@@ -248,8 +344,12 @@ public class SetListener {
 		};
 	}
 	
-	public void setDrag()
+	public void setItemDrag()
 	{
+		ItemButton<Item> itemButton;
+		if(itemButton_wildCard.getItem() instanceof Item) itemButton = (ItemButton<Item>) itemButton_wildCard;
+		else return;
+		
 		Transfer[] types = new Transfer[] { TextTransfer.getInstance() };
 		int operations = DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK;
 

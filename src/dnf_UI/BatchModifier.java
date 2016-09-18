@@ -326,37 +326,28 @@ public class BatchModifier extends Dialog {
 		leftItemInfoComposite.setLayout(itemInfoLayout);
 		rightItemInfoComposite.setLayout(itemInfoLayout);
 
-		ItemButton[] itemButtonList = new ItemButton[UserItemInfo.ITEMNUM];
+		ItemButton<?>[] itemButtonList_wildCard = new ItemButton<?>[UserItemInfo.ITEMNUM];
 		int BUTTON_SIZE = InterfaceSize.INFO_BUTTON_SIZE;
 		int i;
 		for(i=0; i<5; i++)
-			itemButtonList[i] = new ItemButton(leftItemInfoComposite, equipList[i], BUTTON_SIZE, BUTTON_SIZE, true);
+			itemButtonList_wildCard[i] = new ItemButton<Item>(leftItemInfoComposite, equipList[i], BUTTON_SIZE, BUTTON_SIZE, true);
 		for(; i<UserItemInfo.ITEMNUM; i++){
-			if(i==6) itemButtonList[i] = new ItemButton(rightItemInfoComposite, new Title(), BUTTON_SIZE, BUTTON_SIZE, true);
-			else itemButtonList[i] = new ItemButton(rightItemInfoComposite, equipList[i], BUTTON_SIZE, BUTTON_SIZE, true);
+			if(i==6) itemButtonList_wildCard[i] = new ItemButton<Item>(rightItemInfoComposite, new Title(), BUTTON_SIZE, BUTTON_SIZE, true);
+			else itemButtonList_wildCard[i] = new ItemButton<Item>(rightItemInfoComposite, equipList[i], BUTTON_SIZE, BUTTON_SIZE, true);
 		}
+		
+		@SuppressWarnings("unchecked")
+		ItemButton<Item>[] itemButtonList = (ItemButton<Item>[]) itemButtonList_wildCard;
 		
 		GridData buttonGridData = new GridData(SWT.LEFT, SWT.TOP, false, false);
 		for(i=0; i<UserItemInfo.ITEMNUM; i++){
 			itemButtonList[i].getButton().setData(buttonGridData);
 		}
 		
-		Point buttonS = itemButtonList[0].getButton().computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		buttonS.x+=3; buttonS.y+=3;
-		
 		for(i=0; i<UserItemInfo.ITEMNUM; i++)
 		{
 			setDrop(itemButtonList[i]);
-			
-			Integer x0;
-			if(i>4) x0 = leftItemInfoComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT).x+222+((i-5)%2)*buttonS.x;
-			else x0 = (i%2)*buttonS.x+7;
-			
-			Integer y0;
-			if(i>4) y0 = (int)((i-5)/2)*buttonS.y + enhance.computeSize(SWT.DEFAULT, SWT.DEFAULT).y+125;
-			else y0 = (int)(i/2)*buttonS.y+ enhance.computeSize(SWT.DEFAULT, SWT.DEFAULT).y+125;
-			
-			SetListener listenerGroup = new SetListener(itemButtonList[i], character, userInfo, itemInfo, null, x0, y0, parent);
+			SetListener listenerGroup = new SetListener(itemButtonList[i], character, userInfo, itemInfo, null, parent);
 			
 			itemButtonList[i].getButton().addListener(SWT.MouseDown, listenerGroup.unequipCardListener()); 				// add MouseDown Event - unequip
 			itemButtonList[i].getButton().addListener(SWT.MouseEnter, listenerGroup.makeCardInfoListener(content));		// add MouseEnter Event - make composite
@@ -374,7 +365,7 @@ public class BatchModifier extends Dialog {
 	    okButton.addListener(SWT.Selection, new Listener(){
 			@Override
 			public void handleEvent(Event event) {
-				for(ItemButton b : itemButtonList){
+				for(ItemButton<Item> b : itemButtonList){
 					if(b.getItem().getCard().getName().contains("없음")) continue;
 					
 					Card tempCard = b.getItem().getCard();
@@ -421,7 +412,7 @@ public class BatchModifier extends Dialog {
 	    return new Point(contentSize.x+130, contentSize.y+100);
 	}
 	
-	public void setDrop(final ItemButton itemButton) {
+	public void setDrop(final ItemButton<Item> itemButton) {
 
 		Transfer[] types = new Transfer[] { TextTransfer.getInstance() };
 		int operations = DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK;

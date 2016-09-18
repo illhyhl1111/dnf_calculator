@@ -23,7 +23,7 @@ import dnf_infomation.GetDictionary;
 public class Vault extends Dialog 
 {
 	LinkedList<Item> itemList;
-	ItemButton[] vault;
+	ItemButton<Item>[] vault;
 	final static int vaultCol = 20;
 	final static int vaultRow = 20;
 	final static int vaultSize = vaultCol*vaultRow;
@@ -40,6 +40,7 @@ public class Vault extends Dialog
 	
 	Shell save;
 	
+	@SuppressWarnings("unchecked")
 	public Vault(Shell parent, LinkedList<Item> itemList, InventoryCardPack inventory)
 	{
 		super(parent);
@@ -65,12 +66,12 @@ public class Vault extends Dialog
 		inventoryLayout.marginWidth=0;
 		vaultComposite.setLayout(inventoryLayout);
 		
-		vault = new ItemButton[vaultSize];
+		vault = (ItemButton<Item>[]) new ItemButton<?>[vaultSize];
 		
 		int index=0;
 		
 		for(Item i : itemList){
-			vault[index] = new ItemButton(vaultComposite, i, InterfaceSize.INVENTORY_BUTTON_SIZE, InterfaceSize.INVENTORY_BUTTON_SIZE, true);
+			vault[index] = new ItemButton<Item>(vaultComposite, i, InterfaceSize.INVENTORY_BUTTON_SIZE, InterfaceSize.INVENTORY_BUTTON_SIZE, true);
 			
 			if(!i.getName().equals("이름없음"))
 			{
@@ -80,7 +81,7 @@ public class Vault extends Dialog
 			        public void handleEvent(Event e) {
 						if(e.button==3){
 							try{
-								ItemButton temp = inventory.getItem(i.getName());
+								ItemButton<Item> temp = inventory.getItem(i.getName());
 								temp.getItem().setEnabled(true);
 								temp.renewImage(true);
 							}
@@ -118,7 +119,7 @@ public class Vault extends Dialog
 		}
 		
 		for(; index<vaultSize; index++)
-			vault[index] = new ItemButton(vaultComposite, new Item(), InterfaceSize.INVENTORY_BUTTON_SIZE, InterfaceSize.INVENTORY_BUTTON_SIZE, false);
+			vault[index] = new ItemButton<Item>(vaultComposite, new Item(), InterfaceSize.INVENTORY_BUTTON_SIZE, InterfaceSize.INVENTORY_BUTTON_SIZE, false);
 		
 		scrollComposite.setContent(vaultComposite);
 		vaultComposite.setSize(vaultComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
@@ -217,7 +218,7 @@ public class Vault extends Dialog
 	public boolean close()
 	{
 		scrollComposite.setParent(save);
-		for(ItemButton b : vault)
+		for(ItemButton<Item> b : vault)
 		{
 			Listener[] list = b.getButton().getListeners(SWT.MouseEnter);
 			if(list.length!=0)
@@ -226,9 +227,9 @@ public class Vault extends Dialog
 		return super.close();
 	}
 	
-	public ItemButton getItem(String name) throws ItemNotFoundedException
+	public ItemButton<Item> getItem(String name) throws ItemNotFoundedException
 	{
-		for(ItemButton i : vault)
+		for(ItemButton<Item> i : vault)
 		{
 			if(i.getItem().getName().equals(name)) return i;
 		}

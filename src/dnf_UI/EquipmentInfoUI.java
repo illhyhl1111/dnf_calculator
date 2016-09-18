@@ -18,10 +18,12 @@ public class EquipmentInfoUI {
 	InventoryCardPack inventoryPack;
 	Vault vault;
 	SubInventory subInventory;
+	SkillTree skillTree;
 	
 	Button vaultButton;
 	Button batchModify;
 	Button emblemModity;
+	Button skillButton;
 
 	private Composite villageComposite;
 	
@@ -54,11 +56,30 @@ public class EquipmentInfoUI {
 		inventoryData.top = new FormAttachment(itemInfo.getComposite(), 5);
 		inventoryFolder.setLayoutData(inventoryData);
 		
+		skillButton = new Button(villageComposite, SWT.PUSH);
+		skillButton.setText("스킬트리");
+		FormData skillButtonData = new FormData();
+		skillButtonData.left = new FormAttachment(itemInfo.getComposite(), 10);
+		skillButton.setLayoutData(skillButtonData);
+		
+		skillTree = new SkillTree(parent.getShell(), character, itemInfo);
+		
+		skillButton.addListener(SWT.Selection, new Listener(){
+			 @Override
+	         public void handleEvent(Event e) {
+				 if(skillTree.getShell()==null)
+					skillTree.open();
+            	else
+            		skillTree.close();
+			 }
+		});
+		
 		if(mode==0){
 			vaultButton = new Button(villageComposite, SWT.PUSH);
 			vaultButton.setText("금고 열기");
 			FormData vaultButtonData = new FormData();
 			vaultButtonData.left = new FormAttachment(itemInfo.getComposite(), 10);
+			vaultButtonData.top = new FormAttachment(skillButton);
 			vaultButton.setLayoutData(vaultButtonData);
 			
 			vaultButton.addListener(SWT.Selection, new Listener(){
@@ -96,6 +117,7 @@ public class EquipmentInfoUI {
 			emblemModity = new Button(villageComposite, SWT.PUSH);
 			emblemModity.setText("엠블렘 옵션 최적화");
 			FormData emblemButtonData = new FormData();
+			emblemButtonData.top = new FormAttachment(skillButton);
 			emblemButtonData.left = new FormAttachment(itemInfo.getComposite(), 10);
 			emblemModity.setLayoutData(emblemButtonData);
 			

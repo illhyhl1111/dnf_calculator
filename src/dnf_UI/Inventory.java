@@ -10,7 +10,6 @@ import org.eclipse.swt.dnd.DropTargetAdapter;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
@@ -27,7 +26,7 @@ import dnf_class.Item;
 public class Inventory 
 {
 	LinkedList<Item> itemList;
-	ItemButton[] inventoryList;
+	ItemButton<Item>[] inventoryList;
 	final static int inventoryCol=15;
 	final static int inventoryRow=5;
 	final static int inventorySize=inventoryCol*inventoryRow;
@@ -39,6 +38,7 @@ public class Inventory
 	private Composite setInfo;
 	final int mode;
 	
+	@SuppressWarnings("unchecked")
 	public Inventory(Composite parent, Characters character, UserInfo userInfo, LinkedList<Item> itemList, int mode)
 	{
 		this.itemList=itemList;
@@ -55,30 +55,23 @@ public class Inventory
 		inventoryLayout.marginWidth=0;
 		inventoryComposite.setLayout(inventoryLayout);
 		
-		inventoryList = new ItemButton[inventorySize];
+		inventoryList = (ItemButton<Item>[]) new ItemButton<?>[inventorySize];
 	}
 	
 	public void setListener(int mode, Composite background, Vault vault)
 	{
 		int index=0;
-		inventoryList[0] = new ItemButton(inventoryComposite, new Item(), InterfaceSize.INVENTORY_BUTTON_SIZE, InterfaceSize.INVENTORY_BUTTON_SIZE, false);
-		Point buttonS = inventoryList[0].getButton().computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		inventoryList[0].getButton().dispose();
-		Integer userY=userInfo.getComposite().computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
 		
 		for(Item i : itemList)
 		{
 			inventoryList[index] =
-					new ItemButton(inventoryComposite, i, InterfaceSize.INVENTORY_BUTTON_SIZE, InterfaceSize.INVENTORY_BUTTON_SIZE);
+					new ItemButton<Item>(inventoryComposite, i, InterfaceSize.INVENTORY_BUTTON_SIZE, InterfaceSize.INVENTORY_BUTTON_SIZE);
 			
 			if(!i.getName().equals("이름없음"))
 			{
 				setDrop(inventoryList[index], mode);
 
-				Integer xButton = (index%inventoryCol)*buttonS.x+10;
-				Integer yButton = (int)(index/inventoryCol)*buttonS.y+userY+38;
-				
-				SetListener listenerGroup = new SetListener(inventoryList[index], character, userInfo, itemInfo, setInfo, xButton, yButton, parent);
+				SetListener listenerGroup = new SetListener(inventoryList[index], character, userInfo, itemInfo, setInfo, parent);
 				
 				if(mode==0) inventoryList[index].getButton().addListener(SWT.MouseDown, listenerGroup.equipListener(vault)); 			// add MouseDown Event - unequip
 				else if(mode==1) inventoryList[index].getButton().addListener(SWT.MouseDown, listenerGroup.equipListener()); 			// add MouseDown Event - unequip
@@ -91,21 +84,21 @@ public class Inventory
 		}
 		
 		for(; index<inventorySize; index++)
-			inventoryList[index] = new ItemButton(inventoryComposite, new Item(), InterfaceSize.INVENTORY_BUTTON_SIZE, InterfaceSize.INVENTORY_BUTTON_SIZE, false);
+			inventoryList[index] = new ItemButton<Item>(inventoryComposite, new Item(), InterfaceSize.INVENTORY_BUTTON_SIZE, InterfaceSize.INVENTORY_BUTTON_SIZE, false);
 	}
 	
 	public Composite getComposite() {return inventoryComposite;}
 	
-	public ItemButton getItem(String name) throws ItemNotFoundedException
+	public ItemButton<Item> getItem(String name) throws ItemNotFoundedException
 	{
-		for(ItemButton i : inventoryList)
+		for(ItemButton<Item> i : inventoryList)
 		{
 			if(i.getItem().getName().equals(name)) return i;
 		}
 		throw new ItemNotFoundedException(name);
 	}
 
-	public void setDrop(final ItemButton itemButton, int mode) {
+	public void setDrop(final ItemButton<Item> itemButton, int mode) {
 
 		Transfer[] types = new Transfer[] { TextTransfer.getInstance() };
 		int operations = DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK;
@@ -185,7 +178,7 @@ public class Inventory
 	{
 		LinkedList<Item> enabledList = new LinkedList<Item>();
 		
-		for(ItemButton i : inventoryList)
+		for(ItemButton<Item> i : inventoryList)
 			if(part.contains(i.getItem().getPart()) && i.getItem().getEnabled()) enabledList.add(i.getItem());
 		
 		return enabledList;

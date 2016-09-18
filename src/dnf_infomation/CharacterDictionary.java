@@ -57,11 +57,7 @@ public class CharacterDictionary implements java.io.Serializable, Cloneable
 		LinkedList<Skill> list = new LinkedList<Skill>();
 		for(Skill s : skillList){
 			if(s.isSkillOfChar(job)){
-				try {
-					s.masterSkill(level);
-				} catch (SkillInfoNotFounded e) {
-					e.printStackTrace();
-				}
+				s.masterSkill(level);
 				list.add(s);
 			}
 		}

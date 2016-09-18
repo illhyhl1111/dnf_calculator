@@ -74,6 +74,7 @@ public class EquipInfo_heavy {
 		temp.vStat.addStatList("지능", new StatusInfo(188), true);
 		temp.dStat.addStatList("고정물방깍", new StatusInfo(12000), false, true);
 		temp.dStat.addStatList("고정마방깍", new StatusInfo(12000), false, true);
+		temp.vStat.addSkillRange(1, 85, 1, false);
 		temp.fStat.explanation.add("거미셋의 최대 방깍량 : 36000");
 		equipList.add(temp);
 		

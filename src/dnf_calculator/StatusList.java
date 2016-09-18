@@ -108,15 +108,24 @@ public class StatusList implements java.io.Serializable, Cloneable {
 	public void addSkill(String skillName, int skillLevel)
 	{
 		try {
-			statList.add(new StatusAndName("스킬", new SkillStatusInfo(skillLevel, skillName)));
+			statList.add(new StatusAndName("스킬", new SkillStatusInfo(skillLevel, 0, skillName)));
 		} catch (UndefinedStatusKey e) {
 			e.printStackTrace();
 		}
 	}
-	public void addSkillRange(int start, int end , int skillLevel)
+	public void addSkillRange(int start, int end , int skillLevel, boolean TP)
 	{
 		try {
-			statList.add(new StatusAndName("스킬범위", new SkillRangeStatusInfo(skillLevel, start, end)));
+			statList.add(new StatusAndName("스킬범위", new SkillRangeStatusInfo(skillLevel, start, end, TP)));
+		} catch (UndefinedStatusKey e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void addSkill_damage(String skillName, int skillIncrease)
+	{
+		try {
+			statList.add(new StatusAndName("스킬", new SkillStatusInfo(0, skillIncrease, skillName)));
 		} catch (UndefinedStatusKey e) {
 			e.printStackTrace();
 		}

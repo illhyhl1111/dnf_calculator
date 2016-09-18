@@ -1,6 +1,7 @@
 package dnf_class;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 
@@ -12,7 +13,6 @@ import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_InterfacesAndExceptions.Item_rarity;
 import dnf_InterfacesAndExceptions.JobList;
 import dnf_InterfacesAndExceptions.SetName;
-import dnf_InterfacesAndExceptions.SkillInfoNotFounded;
 import dnf_InterfacesAndExceptions.Skill_type;
 import dnf_InterfacesAndExceptions.StatList;
 import dnf_InterfacesAndExceptions.StatusTypeMismatch;
@@ -21,27 +21,11 @@ import dnf_calculator.AbstractStatusInfo;
 import dnf_calculator.SkillRangeStatusInfo;
 import dnf_calculator.SkillStatusInfo;
 import dnf_calculator.Status;
+import dnf_calculator.StatusAndName;
 import dnf_infomation.CharacterDictionary;
 import dnf_infomation.GetDictionary;
 import dnf_infomation.ItemDictionary;
 
-class SkillLevelGroup implements java.io.Serializable
-{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -621310949988394392L;
-	Skill skill;
-	int villageLevel;
-	int dungeonLevel;
-	
-	SkillLevelGroup(Skill skill)
-	{
-		this.skill=skill;
-		this.villageLevel=0;
-		this.dungeonLevel=0;
-	}
-}
 
 public class Characters implements java.io.Serializable
 {
@@ -52,7 +36,7 @@ public class Characters implements java.io.Serializable
 	public Status villageStatus;														//마을스탯
 	public Status dungeonStatus;														//인던스탯
 	
-	private LinkedList<SkillLevelGroup> skillList;
+	private LinkedList<Skill> skillList;
 	private HashMap<Equip_part, Equipment> equipmentList;
 	static final int EQUIPNUM=11;
 	private Weapon weapon;
@@ -78,16 +62,12 @@ public class Characters implements java.io.Serializable
 	String charImageAddress;
 	
 	public Monster target;
-	
-	//LinkedList<PassiveSkill> passive;											//TODO
 
 	public Characters(int level, JobList job, String name)
 	{
 		this.name=name;
 		characterInfoList = (CharacterDictionary) GetDictionary.charDictionary.clone();
-		skillList = new LinkedList<SkillLevelGroup>();
-		for(Skill skill : characterInfoList.getSkillList(job, level))
-			skillList.add(new SkillLevelGroup(skill));
+		skillList = characterInfoList.getSkillList(job, level);
 		
 		equipmentList = new HashMap<Equip_part, Equipment>();					//key : 장비 부위, value : 장비. 장비와 장비부위의 type이 같은곳에 장착됨
 		setOptionList = new HashMap<SetName, Integer>();						//key : 셋옵 이름, value : 셋옵 보유 개수
@@ -107,8 +87,6 @@ public class Characters implements java.io.Serializable
 		
 		this.job = job;
 		characterType = job.charType;
-		
-		//passive = new LinkedList<PassiveSkill>();								//TODO
 		
 		villageStatus = new Status();
 		dungeonStatus = new Status();
@@ -131,10 +109,17 @@ public class Characters implements java.io.Serializable
 		} catch (ItemNotFoundedException e) {
 			e.printStackTrace();
 		}
-		for(SkillLevelGroup s : skillList)
+		for(Skill s : skillList)
 		{
 			s.dungeonLevel=0;
 			s.villageLevel=0;
+			try {
+				s.dungeonIncrease=(100+dungeonStatus.getStat(StatList.DAM_SKILL))/100.0;
+				s.villageIncrease=(100+villageStatus.getStat(StatList.DAM_SKILL))/100.0;
+			} catch (StatusTypeMismatch e) {
+				e.printStackTrace();
+			}
+			
 		}
 	}
 
@@ -328,41 +313,56 @@ public class Characters implements java.io.Serializable
 			
 		}
 		//TODO 도핑, 휘장
-		getSkillLevel(false);
-		getSkillLevel(true);	
-
-		try {
-			for(Skill skill : getVillageSkillList()){
-				if(skill.type==Skill_type.PASSIVE && skill.buff_enabled)
-					skill.stat.addListToStat(villageStatus);
-			}
-		} catch (SkillInfoNotFounded e1) {
-			System.out.println("마을스탯 - 스킬정보없음 ("+e1.name+", "+e1.level+")");
-		}
 		
-		try {
-			for(Skill skill : getDungeonSkillList()){
-				if(skill.hasBuff() && skill.buff_enabled)
-					skill.stat.addListToStat(dungeonStatus);
+		setSkillLevel();
+	}
+	
+	private void setSkillLevel()
+	{
+		getSkillLevel(false, villageStatus.getSkillStatList());
+		getSkillLevel(true, dungeonStatus.getSkillStatList());
+		
+		LinkedList<AbstractStatusInfo> list = new LinkedList<AbstractStatusInfo>();
+		for(Skill skill : skillList){
+			if(skill.hasBuff()){
+				for(StatusAndName s : skill.getSkillLevelInfo(false).stat.statList)
+					list.add(s.stat);
 			}
-		} catch (SkillInfoNotFounded e1) {
-			System.out.println("던전스탯 - 스킬정보없음 ("+e1.name+", "+e1.level+")");
+		}
+		getSkillLevel(false, list);
+		
+		for(Skill skill : skillList){
+			if(skill.hasBuff()){
+				for(StatusAndName s : skill.getSkillLevelInfo(true).stat.statList)
+					list.add(s.stat);
+			}
+		}
+		getSkillLevel(true, list);
+		
+		for(Skill skill : skillList){
+			if(skill.type==Skill_type.PASSIVE && skill.buff_enabled)
+				skill.getSkillLevelInfo(false).stat.addListToStat(villageStatus);
+			if(skill.hasBuff() && skill.buff_enabled)
+				skill.getSkillLevelInfo(true).stat.addListToStat(dungeonStatus);
 		}
 	}
 	
-	private void getSkillLevel(boolean isDungeon)
+	private void getSkillLevel(boolean isDungeon, LinkedList<AbstractStatusInfo> list)
 	{
-		Status stat;
-		if(isDungeon) stat=dungeonStatus;
-		else stat=villageStatus;
-		for(AbstractStatusInfo statInfo : stat.getSkillStatList()){
+		for(AbstractStatusInfo statInfo : list){
 			try {
 				if(statInfo instanceof SkillStatusInfo){
 					String name = statInfo.getStatToString();
-					for(SkillLevelGroup group : skillList){
-						if(group.skill.isEqualTo(name)){
-							if(isDungeon) group.dungeonLevel += (int)statInfo.getStatToDouble();
-							else group.villageLevel += (int)statInfo.getStatToDouble();
+					for(Skill group : skillList){
+						if(group.isEqualTo(name)){
+							if(isDungeon){
+								group.dungeonLevel += (int)statInfo.getStatToDouble();
+								group.dungeonIncrease *=(100+((SkillStatusInfo)statInfo).getIncrease())/100.0;
+							}
+							else{
+								group.villageLevel += (int)statInfo.getStatToDouble();
+								group.villageIncrease *=(100+((SkillStatusInfo)statInfo).getIncrease())/100.0;
+							}
 							break;
 						}
 					}
@@ -371,13 +371,16 @@ public class Characters implements java.io.Serializable
 				else if(statInfo instanceof SkillRangeStatusInfo){
 					String[] range = statInfo.getStatToString().split(" ~ ");
 					boolean flag = false; 
-					for(SkillLevelGroup group : skillList){
-						if(group.skill.isInRange(Integer.parseInt(range[0]), Integer.parseInt(range[1]))){
+					int endNum;
+					if(range.length==2) endNum = Integer.parseInt(range[1]);
+					else endNum = Integer.parseInt(range[0]);
+					for(Skill group : skillList){
+						if(group.isInRange(Integer.parseInt(range[0]), endNum, ((SkillRangeStatusInfo)statInfo).getTP())){
 							flag = true;
 							if(isDungeon) group.dungeonLevel += (int)statInfo.getStatToDouble();
 							else group.villageLevel += (int)statInfo.getStatToDouble();
 						}
-						else if(flag) break;
+						else if(!group.isInRange(Integer.parseInt(range[0]), endNum) && flag) break;
 					}
 				}
 				
@@ -527,34 +530,20 @@ public class Characters implements java.io.Serializable
 	public void setTitle(Title title) {this.title = title;}
 	public Drape getDrape() {return drape;}
 	public void setDrape(Drape drape) {this.drape = drape;}
+
 	
-	public LinkedList<Skill> getCharacterSkillList()
+	public void setSkillLevel(LinkedList<Skill> list)
 	{
-		LinkedList<Skill> list = new LinkedList<Skill>();
-		for(SkillLevelGroup s : skillList){
-			list.add(s.skill);
+		Iterator<Skill> iter = list.iterator();
+		for(Skill s : skillList)
+		{
+			s.setSkillLevel(iter.next().getSkillLevel());
 		}
-		return list;
 	}
 	
-	public LinkedList<Skill> getDungeonSkillList() throws SkillInfoNotFounded {
-		LinkedList<Skill> list = new LinkedList<Skill>();
-		for(SkillLevelGroup s : skillList){
-			Skill skill = (Skill) s.skill.clone();
-			skill.increaseLevel(s.dungeonLevel);
-			list.add(skill);
-		}
-		return list;
-	}
-	
-	public LinkedList<Skill> getVillageSkillList() throws SkillInfoNotFounded {
-		LinkedList<Skill> list = new LinkedList<Skill>();
-		for(SkillLevelGroup s : skillList){
-			Skill skill = (Skill) s.skill.clone();
-			skill.increaseLevel(s.villageLevel);
-			list.add(skill);
-		}
-		return list;
+	public LinkedList<Skill> getSkillList()
+	{
+		return skillList;
 	}
 
 	public void setAutoOptimizeMode(int autoOptimizeMode) {

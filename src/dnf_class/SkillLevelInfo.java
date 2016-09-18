@@ -11,10 +11,11 @@ public class SkillLevelInfo implements java.io.Serializable{
 	public StatusList stat;
 	public int phy_atk;
 	public int mag_atk;
-	public int phy_fix;
-	public int mag_fix;
+	public double phy_fix;
+	public double mag_fix;
+	public boolean fromDictionary;
 	
-	public SkillLevelInfo(int level, int phy_atk, int phy_fix, int mag_atk, int mag_fix)
+	public SkillLevelInfo(int level, int phy_atk, double phy_fix, int mag_atk, double mag_fix)
 	{
 		skillLevel=level;
 		this.phy_atk=phy_atk;
@@ -22,5 +23,34 @@ public class SkillLevelInfo implements java.io.Serializable{
 		this.mag_atk=mag_atk;
 		this.mag_fix=mag_fix;
 		stat = new StatusList();
+		fromDictionary=true;
 	}
+	
+	public SkillLevelInfo(int level)
+	{
+		skillLevel=level;
+		this.phy_atk=0;
+		this.phy_fix=0;
+		this.mag_atk=0;
+		this.mag_fix=0;
+		stat = new StatusList();
+		fromDictionary=true;
+	}
+}
+
+class TPSkillLevelInfo implements java.io.Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4333299195866799759L;
+	public int skillLevel;
+	public int increase;
+	
+	public TPSkillLevelInfo(int level, int increase)
+	{
+		this.skillLevel=level;
+		this.increase=increase;
+	}
+	
 }

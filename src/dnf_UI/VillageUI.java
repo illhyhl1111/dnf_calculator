@@ -70,6 +70,7 @@ public class VillageUI
 	}
 	
 	public Vault getVault() {return equipUI.vault;}
+	public SkillTree getSkillTree() {return equipUI.skillTree;}
 }
 
 class VillageUILoad

@@ -29,12 +29,13 @@ class UserItemInfo implements Info
 	private Composite itemInfoComposite;
 	private Composite leftItemInfoComposite;
 	private Composite rightItemInfoComposite;
-	private ItemButton[] itemButtonList;
+	private ItemButton<Item>[] itemButtonList;
 	static final int ITEMNUM=13;
 	private Characters character;
 	private Composite itemInfo;
 	private Composite setInfo;
 	
+	@SuppressWarnings("unchecked")
 	public UserItemInfo(Composite parent, Characters character, UserInfo superInfo)
 	{
 		this.character=character;
@@ -62,38 +63,30 @@ class UserItemInfo implements Info
 		leftItemInfoComposite.setLayout(itemInfoLayout);
 		rightItemInfoComposite.setLayout(itemInfoLayout);
 
-		itemButtonList = new ItemButton[ITEMNUM];
+		itemButtonList = (ItemButton<Item>[]) new ItemButton<?>[ITEMNUM];
 
 		int BUTTON_SIZE = InterfaceSize.INFO_BUTTON_SIZE;
-		itemButtonList[0] = new ItemButton(leftItemInfoComposite, character.getEquipmentList().get(Equip_part.SHOULDER), BUTTON_SIZE, BUTTON_SIZE, true);
-		itemButtonList[1] = new ItemButton(leftItemInfoComposite, character.getEquipmentList().get(Equip_part.ROBE), BUTTON_SIZE, BUTTON_SIZE, true);
-		itemButtonList[2] = new ItemButton(leftItemInfoComposite, character.getEquipmentList().get(Equip_part.TROUSER), BUTTON_SIZE, BUTTON_SIZE, true);
-		itemButtonList[3] = new ItemButton(leftItemInfoComposite, character.getEquipmentList().get(Equip_part.BELT), BUTTON_SIZE, BUTTON_SIZE, true);
-		itemButtonList[4] = new ItemButton(leftItemInfoComposite, character.getEquipmentList().get(Equip_part.SHOES), BUTTON_SIZE, BUTTON_SIZE, true);
+		itemButtonList[0] = new ItemButton<Item>(leftItemInfoComposite, character.getEquipmentList().get(Equip_part.SHOULDER), BUTTON_SIZE, BUTTON_SIZE, true);
+		itemButtonList[1] = new ItemButton<Item>(leftItemInfoComposite, character.getEquipmentList().get(Equip_part.ROBE), BUTTON_SIZE, BUTTON_SIZE, true);
+		itemButtonList[2] = new ItemButton<Item>(leftItemInfoComposite, character.getEquipmentList().get(Equip_part.TROUSER), BUTTON_SIZE, BUTTON_SIZE, true);
+		itemButtonList[3] = new ItemButton<Item>(leftItemInfoComposite, character.getEquipmentList().get(Equip_part.BELT), BUTTON_SIZE, BUTTON_SIZE, true);
+		itemButtonList[4] = new ItemButton<Item>(leftItemInfoComposite, character.getEquipmentList().get(Equip_part.SHOES), BUTTON_SIZE, BUTTON_SIZE, true);
 		
-		itemButtonList[5] = new ItemButton(rightItemInfoComposite, character.getWeapon(), BUTTON_SIZE, BUTTON_SIZE, true);
-		itemButtonList[6] = new ItemButton(rightItemInfoComposite, character.getTitle(), BUTTON_SIZE, BUTTON_SIZE, true);
-		itemButtonList[7] = new ItemButton(rightItemInfoComposite, character.getEquipmentList().get(Equip_part.BRACELET), BUTTON_SIZE, BUTTON_SIZE, true);
-		itemButtonList[8] = new ItemButton(rightItemInfoComposite, character.getEquipmentList().get(Equip_part.NECKLACE), BUTTON_SIZE, BUTTON_SIZE, true);
-		itemButtonList[9] = new ItemButton(rightItemInfoComposite, character.getEquipmentList().get(Equip_part.AIDEQUIPMENT), BUTTON_SIZE, BUTTON_SIZE, true);
-		itemButtonList[10] = new ItemButton(rightItemInfoComposite, character.getEquipmentList().get(Equip_part.RING), BUTTON_SIZE, BUTTON_SIZE, true);
-		itemButtonList[11] = new ItemButton(rightItemInfoComposite, character.getEquipmentList().get(Equip_part.EARRING), BUTTON_SIZE, BUTTON_SIZE, true);
-		itemButtonList[12] = new ItemButton(rightItemInfoComposite, character.getEquipmentList().get(Equip_part.MAGICSTONE), BUTTON_SIZE, BUTTON_SIZE, true);
+		itemButtonList[5] = new ItemButton<Item>(rightItemInfoComposite, character.getWeapon(), BUTTON_SIZE, BUTTON_SIZE, true);
+		itemButtonList[6] = new ItemButton<Item>(rightItemInfoComposite, character.getTitle(), BUTTON_SIZE, BUTTON_SIZE, true);
+		itemButtonList[7] = new ItemButton<Item>(rightItemInfoComposite, character.getEquipmentList().get(Equip_part.BRACELET), BUTTON_SIZE, BUTTON_SIZE, true);
+		itemButtonList[8] = new ItemButton<Item>(rightItemInfoComposite, character.getEquipmentList().get(Equip_part.NECKLACE), BUTTON_SIZE, BUTTON_SIZE, true);
+		itemButtonList[9] = new ItemButton<Item>(rightItemInfoComposite, character.getEquipmentList().get(Equip_part.AIDEQUIPMENT), BUTTON_SIZE, BUTTON_SIZE, true);
+		itemButtonList[10] = new ItemButton<Item>(rightItemInfoComposite, character.getEquipmentList().get(Equip_part.RING), BUTTON_SIZE, BUTTON_SIZE, true);
+		itemButtonList[11] = new ItemButton<Item>(rightItemInfoComposite, character.getEquipmentList().get(Equip_part.EARRING), BUTTON_SIZE, BUTTON_SIZE, true);
+		itemButtonList[12] = new ItemButton<Item>(rightItemInfoComposite, character.getEquipmentList().get(Equip_part.MAGICSTONE), BUTTON_SIZE, BUTTON_SIZE, true);
 		
 		
 		Point buttonS = itemButtonList[0].getButton().computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		buttonS.x+=3; buttonS.y+=3;
 		for(int i=0; i<ITEMNUM; i++)
 		{
-			Integer x0;
-			if(i>4) x0 = InterfaceSize.USER_INFO_ITEM_SIZE_X-2*buttonS.x+((i-5)%2)*buttonS.x-6;
-			else x0 = (i%2)*buttonS.x+7;
-			
-			Integer y0;
-			if(i>4) y0 = (int)((i-5)/2)*buttonS.y+7;
-			else y0 = (int)(i/2)*buttonS.y+7;
-			
-			SetListener listenerGroup = new SetListener(itemButtonList[i], character, superInfo, itemInfo, setInfo, x0, y0, parent);
+			SetListener listenerGroup = new SetListener(itemButtonList[i], character, superInfo, itemInfo, setInfo, parent);
 			
 			itemButtonList[i].getButton().addListener(SWT.MouseDown, listenerGroup.unequipListener()); 				// add MouseDown Event - unequip
 			itemButtonList[i].getButton().addListener(SWT.MouseDoubleClick, listenerGroup.modifyListener());		// add MouseDoubleClick - modify
@@ -135,7 +128,7 @@ class UserItemInfo implements Info
 	
 	public boolean equiped(Item item)
 	{
-		for(ItemButton i : itemButtonList)
+		for(ItemButton<Item> i : itemButtonList)
 			if(i.getItem().getName().equals(item.getName())) return true;
 		return false;
 	}
@@ -145,9 +138,9 @@ class UserAvatarInfo implements Info
 {
 	private Composite wholeComposite;
 	private Composite avatarInfoComposite;
-	private ItemButton[] itemButtonList;
-	private ItemButton creatureButton;
-	private ItemButton drapeButton;
+	private ItemButton<Item>[] itemButtonList;
+	private ItemButton<Item> creatureButton;
+	private ItemButton<Item> drapeButton;
 	static final int AVATARNUM=10;
 	private Characters character;
 	private Composite avatarInfo;
@@ -155,6 +148,7 @@ class UserAvatarInfo implements Info
 	Avatar_part[] partOrder= { Avatar_part.CAP, Avatar_part.HAIR, Avatar_part.FACE, Avatar_part.NECK, Avatar_part.COAT,
 			Avatar_part.SKIN, Avatar_part.BELT, Avatar_part.PANTS, Avatar_part.SHOES, Avatar_part.AURA};
 	
+	@SuppressWarnings("unchecked")
 	public UserAvatarInfo(Composite parent, Characters character, UserInfo superInfo)
 	{
 		this.character=character;
@@ -174,12 +168,12 @@ class UserAvatarInfo implements Info
 		avatarInfoLayout.makeColumnsEqualWidth=true;
 		avatarInfoComposite.setLayout(avatarInfoLayout);
 
-		itemButtonList = new ItemButton[AVATARNUM]; 
+		itemButtonList = (ItemButton<Item>[]) new ItemButton<?>[AVATARNUM]; 
 		for(int i=0; i<AVATARNUM; i++)
-			itemButtonList[i] = new ItemButton(avatarInfoComposite, character.getAvatarList().get(partOrder[i]), BUTTON_SIZE, BUTTON_SIZE);
+			itemButtonList[i] = new ItemButton<Item>(avatarInfoComposite, character.getAvatarList().get(partOrder[i]), BUTTON_SIZE, BUTTON_SIZE);
 		
-		creatureButton = new ItemButton(wholeComposite, character.getCreature(), BUTTON_SIZE, BUTTON_SIZE);
-		drapeButton = new ItemButton(wholeComposite, character.getDrape(), BUTTON_SIZE, BUTTON_SIZE);
+		creatureButton = new ItemButton<Item>(wholeComposite, character.getCreature(), BUTTON_SIZE, BUTTON_SIZE);
+		drapeButton = new ItemButton<Item>(wholeComposite, character.getDrape(), BUTTON_SIZE, BUTTON_SIZE);
 		
 		Point buttonS = itemButtonList[0].getButton().computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		buttonS.x+=3; buttonS.y+=3;
@@ -201,9 +195,7 @@ class UserAvatarInfo implements Info
 		
 		for(int i=0; i<AVATARNUM; i++)
 		{
-			Integer x0 = (i%3)*buttonS.x+5;
-			Integer y0 = (int)(i/3)*buttonS.y+5;
-			SetListener listenerGroup = new SetListener(itemButtonList[i], character, superInfo, avatarInfo, setInfo, x0, y0, parent);
+			SetListener listenerGroup = new SetListener(itemButtonList[i], character, superInfo, avatarInfo, setInfo, parent);
 			
 			itemButtonList[i].getButton().addListener(SWT.MouseDown, listenerGroup.unequipListener()); 				// add MouseDown Event - unequip
 			itemButtonList[i].getButton().addListener(SWT.MouseDoubleClick, listenerGroup.modifyListener());		// add MouseDoubleClick - modify
@@ -212,14 +204,14 @@ class UserAvatarInfo implements Info
 			itemButtonList[i].getButton().addListener(SWT.MouseMove, listenerGroup.moveItemInfoListener());			// add MouseMove Event - move composite
 		}
 		
-		SetListener listenerGroup = new SetListener(creatureButton, character, superInfo, avatarInfo, null, buttonS.x+5, buttonS.y*3+5, parent);
+		SetListener listenerGroup = new SetListener(creatureButton, character, superInfo, avatarInfo, null, parent);
 		creatureButton.getButton().addListener(SWT.MouseDown, listenerGroup.unequipListener());					// add MouseDown Event - unequip
 		creatureButton.getButton().addListener(SWT.MouseDoubleClick, listenerGroup.modifyListener());			// add MouseDoubleClick - modify
 		creatureButton.getButton().addListener(SWT.MouseEnter, listenerGroup.makeItemInfoListener(superInfo.getComposite().getParent()));		// add MouseEnter Event - make composite
 		creatureButton.getButton().addListener(SWT.MouseExit, listenerGroup.disposeItemInfoListener()); 		// add MouseExit Event - dispose composite
 		creatureButton.getButton().addListener(SWT.MouseMove, listenerGroup.moveItemInfoListener());			// add MouseMove Event - move composite
 		
-		listenerGroup = new SetListener(drapeButton, character, superInfo, avatarInfo, null, buttonS.x*2+5, buttonS.y*3+5, parent);
+		listenerGroup = new SetListener(drapeButton, character, superInfo, avatarInfo, null, parent);
 		drapeButton.getButton().addListener(SWT.MouseDown, listenerGroup.unequipListener());					// add MouseDown Event - unequip
 		drapeButton.getButton().addListener(SWT.MouseEnter, listenerGroup.makeItemInfoListener(superInfo.getComposite().getParent()));		// add MouseEnter Event - make composite
 		drapeButton.getButton().addListener(SWT.MouseExit, listenerGroup.disposeItemInfoListener()); 		// add MouseExit Event - dispose composite
@@ -248,7 +240,7 @@ class UserAvatarInfo implements Info
 	
 	public boolean equiped(Item item)
 	{
-		for(ItemButton i : itemButtonList)
+		for(ItemButton<Item> i : itemButtonList)
 			if(i.getItem().getName().equals(item.getName())) return true;
 		return false;
 	}

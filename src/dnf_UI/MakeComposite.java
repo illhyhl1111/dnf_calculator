@@ -6,19 +6,26 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 
 import dnf_InterfacesAndExceptions.Dimension_stat;
 import dnf_InterfacesAndExceptions.ItemFileNotFounded;
+import dnf_InterfacesAndExceptions.Skill_type;
 import dnf_InterfacesAndExceptions.StatList;
 import dnf_InterfacesAndExceptions.StatusTypeMismatch;
+import dnf_calculator.Calculator;
 import dnf_calculator.ElementInfo;
+import dnf_calculator.SkillStatusInfo;
+import dnf_calculator.Status;
 import dnf_calculator.StatusAndName;
 import dnf_class.Card;
 import dnf_class.Emblem;
 import dnf_class.Equipment;
 import dnf_class.Item;
 import dnf_class.SetOption;
+import dnf_class.Skill;
+import dnf_class.SkillLevelInfo;
 import dnf_infomation.ItemDictionary;
 
 public class MakeComposite {
@@ -263,13 +270,83 @@ public class MakeComposite {
 		}
 	}
 	
+	public static void setSkillInfoComposite(Composite composite, Skill skill, Status stat)
+	{
+		Label label = new Label(composite, SWT.WRAP);
+		String name;
+		if(skill.getSkillLevel()!=0) name = skill.getName()+" Lv "+(skill.getSkillLevel()+skill.dungeonLevel)
+				+"("+skill.getSkillLevel()+" + "+ skill.dungeonLevel+")";
+		else name = skill.getName()+ "Lv 0";
+		label.setText(name);
+		if(skill.type==Skill_type.PASSIVE)
+			label.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GREEN));
+		else
+			label.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_YELLOW));
+		
+		label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
+		label.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+		
+		SkillLevelInfo skillInfo = skill.getSkillLevelInfo(true);
+		
+		if(skillInfo.phy_atk!=0 || skillInfo.phy_fix!=0){
+			label = new Label(composite, SWT.WRAP);
+			String atk = "";
+			if(skillInfo.phy_atk!=0) atk = String.valueOf(skillInfo.phy_atk)+"%";
+			String fix = "";
+			if(skillInfo.phy_fix!=0) fix = String.valueOf((int)(skillInfo.phy_fix*Calculator.getInfoIndependentATK(stat)));
+			String add = "";
+			if(skillInfo.phy_atk!=0 && skillInfo.phy_fix!=0) add = " + ";
+			label.setText("물리공격력(총합) : "+atk+add+fix);
+			label.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+		}
+		
+		if(skillInfo.mag_atk!=0 || skillInfo.mag_fix!=0){
+			label = new Label(composite, SWT.WRAP);
+			String atk = "";
+			if(skillInfo.mag_atk!=0) atk = String.valueOf(skillInfo.mag_atk)+"%";
+			String fix = "";
+			if(skillInfo.mag_fix!=0) fix = String.valueOf((int)(skillInfo.mag_fix*Calculator.getInfoIndependentATK(stat)));
+			String add = "";
+			if(skillInfo.mag_atk!=0 && skillInfo.mag_fix!=0) add = " + ";
+			label.setText("마법공격력(총합) : "+atk+add+fix);
+			label.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+		}
+		
+		if(skill.hasBuff())
+		{
+			if(skill.hasDamage()){
+				label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
+				label.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+			}
+			
+			label = new Label(composite, SWT.WRAP);
+			label.setText("[버프옵션]");
+			label.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+			
+			for(StatusAndName s : skillInfo.stat.statList)
+				try {
+					setText(composite, s, Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
+				} catch (StatusTypeMismatch e) {
+					e.printStackTrace();
+				}
+		}
+		
+		if(!skillInfo.fromDictionary)
+		{
+			label = new Label(composite, SWT.WRAP);
+			label.setText("\nLv "+skill.getSkillLevel()+" 에 대한 정보가 기록되어있지 않습니다. 대충 가장 가까운 레벨로 추정합니다.");
+			label.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+		}
+		composite.setSize(composite.computeSize(SWT.NONE, SWT.NONE));
+	}
 	
-	public static void setStatusText(Item item, Composite itemInfo, Color color) throws StatusTypeMismatch
+	
+	private static void setStatusText(Item item, Composite itemInfo, Color color) throws StatusTypeMismatch
 	{
 		setStatusText(0, item, itemInfo, color);
 	}
 	
-	public static void setStatusText(int startIndex, Item item, Composite itemInfo, Color color) throws StatusTypeMismatch
+	private static void setStatusText(int startIndex, Item item, Composite itemInfo, Color color) throws StatusTypeMismatch
 	{
 		for(StatusAndName s : item.vStat.statList.subList(startIndex, item.vStat.statList.size()))
 			setText(itemInfo, s, color);
@@ -290,18 +367,19 @@ public class MakeComposite {
 		}
 	}
 	
-	public static void setText(Composite itemInfo, StatusAndName s, Color textColor) throws StatusTypeMismatch
+	private static void setText(Composite itemInfo, StatusAndName s, Color textColor) throws StatusTypeMismatch
 	{
 		setText(itemInfo, s, true, textColor);
 	}
 	
-	public static void setText(Composite itemInfo, StatusAndName s, boolean enable, Color textColor) throws StatusTypeMismatch
+	private static void setText(Composite itemInfo, StatusAndName s, boolean enable, Color textColor) throws StatusTypeMismatch
 	{
 		String strength;
 		Label stat;
 		
 		strength = String.valueOf(s.stat.getStatToDouble());
 		if(s.stat instanceof ElementInfo && strength.equals("0.0"));
+		else if(s.stat instanceof SkillStatusInfo && strength.equals("0.0"));
 		else{
 			if(strength.contains(".0"))
 				strength=strength.substring(0, strength.length()-2);
@@ -348,6 +426,15 @@ public class MakeComposite {
 				stat.setText(stat.getText()+"(옵션 꺼짐)");
 			
 			stat.setForeground(textColor);
+		}
+		
+		else if(s.stat instanceof SkillStatusInfo && ((SkillStatusInfo)s.stat).getIncrease()>1.0005)
+		{
+			stat = new Label(itemInfo, SWT.WRAP);
+			stat.setText(s.stat.getStatToString()+" 데미지 증가 + "+((SkillStatusInfo)s.stat).getIncrease());		
+			stat.setEnabled(enable && s.enabled);
+			if(!s.enabled)
+				stat.setText(stat.getText()+"(옵션 꺼짐)");
 		}
 	}
 }

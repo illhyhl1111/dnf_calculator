@@ -78,6 +78,13 @@ public class CalculatorUITest {
 	                	else
 	                		villageUI.getVault().close();
 	                }
+	                
+	                else if(c=='k'){
+	                	if(villageUI.getSkillTree().getShell()==null)
+	                		villageUI.getSkillTree().open();
+	                	else
+	                		villageUI.getSkillTree().close();
+	                }
 	            }
 	        });
 	        

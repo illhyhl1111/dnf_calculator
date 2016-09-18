@@ -166,12 +166,12 @@ public class InventoryCardPack
 		}
 	}
 	
-	public ItemButton getItem(String name) throws ItemNotFoundedException
+	public ItemButton<Item> getItem(String name) throws ItemNotFoundedException
 	{
 		for(Inventory inventory : inventoryList)
 		{
 			try{
-				ItemButton temp = inventory.getItem(name);
+				ItemButton<Item> temp = inventory.getItem(name);
 				return temp;
 			}
 			catch(ItemNotFoundedException e){}
@@ -185,7 +185,7 @@ public class InventoryCardPack
 		
 		for(Inventory inventory : inventoryList)
 		{
-			for(ItemButton i : inventory.inventoryList)
+			for(ItemButton<Item> i : inventory.inventoryList)
 				if(part.contains(i.getItem().getPart()) && i.getItem().getEnabled()) enabledList.add(i.getItem());
 		}
 		

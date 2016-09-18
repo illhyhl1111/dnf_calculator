@@ -7,27 +7,28 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
 import dnf_InterfacesAndExceptions.SetName;
-import dnf_class.Equipment;
+import dnf_class.IconObject;
 import dnf_class.Item;
 
-public class ItemButton
+public class ItemButton<T extends IconObject>
 {
 	private Button button;
-	private Item item;
+	private T item;
 	private Composite parent;
 	private int imageSize_x;
 	private int imageSize_y;
 	
-	public ItemButton(Composite parent, Item item, int x, int y)
+	public ItemButton(Composite parent, T item, int x, int y)
 	{
 		this.parent=parent;
 		this.item=item;
 		imageSize_x=x;
 		imageSize_y=y;
 		button = new Button(parent, SWT.PUSH);
-		renewImage(item.getEnabled());
+		if(item instanceof Item) renewImage(((Item) item).getEnabled());
+		else renewImage(true);
 	}
-	public ItemButton(Composite parent, Item item, int x, int y, boolean enabled)
+	public ItemButton(Composite parent, T item, int x, int y, boolean enabled)
 	{
 		this.parent=parent;
 		this.item=item;
@@ -61,7 +62,7 @@ public class ItemButton
 	
 	public boolean hasSetOption()
 	{
-		if(item.getSetName()==SetName.NONE) return false;
+		if(item instanceof Item && ((Item)item).getSetName()==SetName.NONE) return false;
 		else return true;
 	}
 
@@ -73,11 +74,11 @@ public class ItemButton
 		this.button = button;
 	}
 
-	public Item getItem() {
+	public T getItem() {
 		return item;
 	}
 
-	public void setItem(Item item) {
+	public void setItem(T item) {
 		this.item = item;
 	}
 
