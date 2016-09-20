@@ -54,7 +54,7 @@ public class LabelAndText extends LabelAndInput
 		input = new Text(composite, SWT.RIGHT);
 		GridData textData = new GridData(SWT.LEFT, SWT.TOP, true, false);
 		textData.grabExcessHorizontalSpace=true;
-		textData.minimumWidth=80;
+		textData.minimumWidth=70;
 		textData.heightHint=20;
 		((Text)input).setLayoutData(textData);
 		((Text)input).setText(TextString);

@@ -32,18 +32,9 @@ public class InventoryCardPack
 		this.itemInfo=itemInfo;
 	}
 	
-	public void setEquipmentMode()
+	private ItemConstraint[] setConstraintList(int length)
 	{
-		String[] tabNameList = {"무기", "방어구 1", "악세서리 1", "악세서리 2", "칭호", "기타"};
-		final int inventoryListNum = tabNameList.length;
-		
-		inventoryList = new Inventory[inventoryListNum];
-		subInventoryList = new SubInventory[inventoryListNum];
-		inventoryTabList = new TabItem[inventoryListNum]; 
-		pack = new Composite[inventoryListNum];
-		ItemConstraint[] constraintList = new ItemConstraint[inventoryListNum-1];
-		LinkedList<Item>[] itemList; 
-		LinkedList<Item>[] cardList;
+		ItemConstraint[] constraintList = new ItemConstraint[length];
 		
 		int num;
 		//75~85 에픽무기
@@ -90,8 +81,59 @@ public class InventoryCardPack
 		constraintList[num].partList.add(Equip_part.TITLE);
 		constraintList[num].rarityList.add(Item_rarity.RARE);
 		
-		itemList = character.userItemList.separateList(constraintList);
-		cardList = character.userItemList.separateCardList(constraintList);
+		return constraintList;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void setDungeonMode()
+	{
+		String[] tabNameList = {"무기", "방어구 1", "악세서리 1", "악세서리 2", "칭호", "기타", "아바타", "크리쳐", "휘장"};
+		final int inventoryListNum = tabNameList.length;
+		
+		inventoryList = new Inventory[inventoryListNum];
+		subInventoryList = null;
+		inventoryTabList = new TabItem[inventoryListNum]; 
+		pack = new Composite[inventoryListNum];
+		
+		ItemConstraint[] constraintList = setConstraintList(tabNameList.length-1-3);
+		LinkedList<Item>[] equipList = character.userItemList.separateList(constraintList);
+		LinkedList<?>[] itemList = new LinkedList<?>[equipList.length+3];
+		for(int i=0; i<equipList.length; i++)
+			itemList[i]=equipList[i];
+		itemList[equipList.length] = character.userItemList.getHashSetToLinkedList(character.userItemList.avatarList);
+		itemList[equipList.length+1] = character.userItemList.getHashSetToLinkedList(character.userItemList.creatureList);
+		itemList[equipList.length+2] = character.userItemList.getHashSetToLinkedList(character.userItemList.drapeList); 
+		
+		RowLayout packLayout = new RowLayout(SWT.VERTICAL);
+		packLayout.spacing=10;
+		
+		for(int i=0; i<inventoryListNum; i++)
+		{
+			pack[i] = new Composite(inventoryFolder, SWT.NONE);
+			pack[i].setLayout(packLayout);
+			
+			inventoryTabList[i]= new TabItem(inventoryFolder, SWT.NONE);
+			inventoryTabList[i].setText(tabNameList[i]);
+
+			inventoryList[i] = new Inventory(pack[i], character, itemInfo, (LinkedList<Item>) itemList[i], 0);			
+			inventoryTabList[i].setControl(pack[i]);
+		}
+	}
+	
+	public void setEquipmentMode()
+	{
+		String[] tabNameList = {"무기", "방어구 1", "악세서리 1", "악세서리 2", "칭호", "기타"};
+		final int inventoryListNum = tabNameList.length;
+		
+		inventoryList = new Inventory[inventoryListNum];
+		subInventoryList = new SubInventory[inventoryListNum];
+		inventoryTabList = new TabItem[inventoryListNum]; 
+		pack = new Composite[inventoryListNum];
+		
+		ItemConstraint[] constraintList = setConstraintList(tabNameList.length-1);
+		
+		LinkedList<Item>[] itemList = character.userItemList.separateList(constraintList); 
+		LinkedList<Item>[] cardList = character.userItemList.separateCardList(constraintList);
 		
 		RowLayout packLayout = new RowLayout(SWT.VERTICAL);
 		packLayout.spacing=10;
@@ -163,6 +205,14 @@ public class InventoryCardPack
 		{
 			inventoryList[i].setListener(1, background, null);
 			subInventoryList[i].setListener(inventoryList[i], background);
+		}
+	}
+	
+	public void setDungeonListener(Composite background)
+	{
+		for(int i=0; i<inventoryList.length; i++)
+		{
+			inventoryList[i].setListener(2, background, null);
 		}
 	}
 	

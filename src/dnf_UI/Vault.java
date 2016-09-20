@@ -29,7 +29,6 @@ public class Vault extends Dialog
 	final static int vaultSize = vaultCol*vaultRow;
 	private Composite vaultComposite;
 	private ScrolledComposite scrollComposite;
-	InventoryCardPack inventory;
 	private Composite itemInfo;
 	private Point itemInfoSize;
 	private Composite setInfo;
@@ -37,15 +36,15 @@ public class Vault extends Dialog
 	private Integer X0;
 	private Integer Y0;
 	private Boolean hasSetOption;
+	private InventoryCardPack inventory;
 	
 	Shell save;
 	
 	@SuppressWarnings("unchecked")
-	public Vault(Shell parent, LinkedList<Item> itemList, InventoryCardPack inventory)
+	public Vault(Shell parent, LinkedList<Item> itemList)
 	{
 		super(parent);
 		this.itemList=itemList;
-		this.inventory=inventory;
 	
 		save = new Shell(Display.getCurrent());
 		
@@ -75,24 +74,6 @@ public class Vault extends Dialog
 			
 			if(!i.getName().equals("이름없음"))
 			{
-				// add MouseDown Event - get item - inventory to vault
-				vault[index].getButton().addListener(SWT.MouseDown, new Listener() {
-					@Override
-			        public void handleEvent(Event e) {
-						if(e.button==3){
-							try{
-								ItemButton<Item> temp = inventory.getItem(i.getName());
-								temp.getItem().setEnabled(true);
-								temp.renewImage(true);
-							}
-							catch(ItemNotFoundedException e1){
-								e1.printStackTrace();
-							}
-						}
-			        	 //System.out.println("Mouse Down (button: " + e.button + " x: " + e.x + " y: " + e.y + ")");
-			        }
-			    });
-				
 				// add MouseExit Event - dispose composite
 				vault[index].getButton().addListener(SWT.MouseExit, new Listener() {
 			         @Override
@@ -127,7 +108,11 @@ public class Vault extends Dialog
 		scrollComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
 	
-	@Override
+	public void setInventoryPack(InventoryCardPack inventory)
+	{
+		this.inventory=inventory;
+	}
+	
 	protected Control createDialogArea(Composite parent)
 	{
 		Composite composite = (Composite) super.createDialogArea(parent);
@@ -144,6 +129,24 @@ public class Vault extends Dialog
 			
 			if(!i.getName().equals("이름없음"))
 			{
+				// add MouseDown Event - get item - inventory to vault
+				vault[index].getButton().addListener(SWT.MouseDown, new Listener() {
+					@Override
+			        public void handleEvent(Event e) {
+						if(e.button==3){
+							try{
+								ItemButton<Item> temp = inventory.getItem(i.getName());
+								temp.getItem().setEnabled(true);
+								temp.renewImage(true);
+							}
+							catch(ItemNotFoundedException e1){
+								e1.printStackTrace();
+							}
+						}
+			        	 //System.out.println("Mouse Down (button: " + e.button + " x: " + e.x + " y: " + e.y + ")");
+			        }
+			    });
+				
 				// add MouseEnvet Event - make composite
 				vault[index].getButton().addListener(SWT.MouseEnter, new Listener() {
 			         @Override

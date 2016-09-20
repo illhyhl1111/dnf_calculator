@@ -69,12 +69,13 @@ public class Inventory
 			
 			if(!i.getName().equals("이름없음"))
 			{
-				setDrop(inventoryList[index], mode);
+				if(mode!=2) setDrop(inventoryList[index], mode);
 
 				SetListener listenerGroup = new SetListener(inventoryList[index], character, userInfo, itemInfo, setInfo, parent);
 				
 				if(mode==0) inventoryList[index].getButton().addListener(SWT.MouseDown, listenerGroup.equipListener(vault)); 			// add MouseDown Event - unequip
 				else if(mode==1) inventoryList[index].getButton().addListener(SWT.MouseDown, listenerGroup.equipListener()); 			// add MouseDown Event - unequip
+				else if(mode==2) inventoryList[index].getButton().addListener(SWT.MouseDown, listenerGroup.equipListener());
 				inventoryList[index].getButton().addListener(SWT.MouseDoubleClick, listenerGroup.modifyListener());			// add MouseDoubleClick - modify
 				inventoryList[index].getButton().addListener(SWT.MouseEnter, listenerGroup.makeItemInfoListener(background));			// add MouseEnter Event - make composite
 				inventoryList[index].getButton().addListener(SWT.MouseExit, listenerGroup.disposeItemInfoListener()); 		// add MouseExit Event - dispose composite

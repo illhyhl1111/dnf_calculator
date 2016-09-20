@@ -1,11 +1,11 @@
 package dnf_UI;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
@@ -36,24 +36,8 @@ public class CalculatorUITest {
 			Display display = new Display();
 
 	        Shell shell = new Shell(display);
-	        shell.setText("인포창");
-	        shell.setLayout(new FillLayout());
-			
-	        /*
-			character.equip(character.userItemList.getEquipment("우요의 황금 캐넌"));
-			
-			character.equip(character.userItemList.getEquipment("타란튤라 상의"));
-			character.equip(character.userItemList.getEquipment("킹바분 하의"));
-			character.equip(character.userItemList.getEquipment("골리앗 버드이터 어깨"));
-			character.equip(character.userItemList.getEquipment("로즈헤어 벨트"));
-			character.equip(character.userItemList.getEquipment("인디언 오너멘탈 신발"));
-			character.equip(character.userItemList.getEquipment("탐식의 증적"));
-			
-			character.equip(character.userItemList.getEquipment("무한한 탐식의 형상"));
-			character.equip(character.userItemList.getEquipment("필리르 - 꺼지지 않는 화염"));
-			character.equip(character.userItemList.getEquipment("무한한 탐식의 잔재"));
-			character.equip(character.userItemList.getEquipment("탐식의 근원"));
-			character.equip(character.userItemList.getEquipment("임시귀걸이"));*/
+	        final StackLayout stackLayout = new StackLayout();
+	        shell.setLayout(stackLayout);
 			
 			Monster object = new Monster(new Status());
 			object.setBooleanStat(Monster_StatList.BACKATK, true);
@@ -66,27 +50,48 @@ public class CalculatorUITest {
 			object.setStat(Monster_StatList.TYPE, MonsterType.BOSS);
 			
 			VillageUI villageUI = new VillageUI(shell, character);
-	        
-	        display.addFilter(SWT.KeyDown, new Listener() {
-	            @Override
-	            public void handleEvent(Event event) {
-	                char c = event.character;
-	                //System.out.println(c);
-	                if(c=='i'){
-	                	if(villageUI.getVault().getShell()==null)
-	                		villageUI.getVault().open();
-	                	else
-	                		villageUI.getVault().close();
-	                }
-	                
-	                else if(c=='k'){
-	                	if(villageUI.getSkillTree().getShell()==null)
-	                		villageUI.getSkillTree().open();
-	                	else
-	                		villageUI.getSkillTree().close();
-	                }
-	            }
-	        });
+			DungeonUI dungeonUI = new DungeonUI(shell, character);
+			
+			villageUI.renew();
+			stackLayout.topControl = villageUI.getComposite();
+			shell.setText("인포창");
+			
+			villageUI.get_toDungeonButton().addListener(SWT.Selection, event -> {
+				villageUI.disposeContent();
+				dungeonUI.renew();
+				stackLayout.topControl = dungeonUI.getComposite();
+				shell.setText("수련의 방");
+				shell.layout();
+			});
+			
+			dungeonUI.get_toVillageButton().addListener(SWT.Selection, event -> {
+				dungeonUI.disposeContent();
+				villageUI.renew();
+				stackLayout.topControl = villageUI.getComposite();
+				shell.setText("인포창");
+				shell.layout();
+			});
+			
+			display.addFilter(SWT.KeyDown, new Listener() {
+				@Override
+				public void handleEvent(Event event) {
+					char c = event.character;
+					// System.out.println(c);
+					if ((c == 'i' || c == 'I') && stackLayout.topControl == villageUI.getComposite()) {
+						if (villageUI.getVault().getShell() == null)
+							villageUI.getVault().open();
+						else
+							villageUI.getVault().close();
+					}
+
+					else if (c == 'k' || c == 'K') {
+						if (villageUI.getSkillTree().getShell() == null)
+							villageUI.getSkillTree().open();
+						else
+							villageUI.getSkillTree().close();
+					}
+				}
+			});
 	        
 	        shell.pack();
 	        shell.open();

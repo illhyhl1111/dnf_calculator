@@ -10,6 +10,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TabFolder;
 
+import dnf_InterfacesAndExceptions.Location;
 import dnf_class.Characters;
 
 public class EquipmentInfoUI {
@@ -17,7 +18,6 @@ public class EquipmentInfoUI {
 	UserInfo itemInfo;
 	InventoryCardPack inventoryPack;
 	Vault vault;
-	SubInventory subInventory;
 	SkillTree skillTree;
 	
 	Button vaultButton;
@@ -27,14 +27,15 @@ public class EquipmentInfoUI {
 
 	private Composite villageComposite;
 	
-	public EquipmentInfoUI(TabFolder parent, Characters character, int mode)
+	public EquipmentInfoUI(TabFolder parent, Characters character, Vault vault, int mode)
 	{
 		this.character=character;
+		this.vault=vault;
 		
 		villageComposite = new Composite(parent, SWT.BORDER);
 		villageComposite.setLayout(new FormLayout());
 		
-		itemInfo = new UserInfo(villageComposite, character, mode);
+		itemInfo = new UserInfo(villageComposite, character, Location.VILLAGE, mode);
 		
 		TabFolder inventoryFolder = new TabFolder(villageComposite, SWT.NONE);
 		
@@ -42,7 +43,7 @@ public class EquipmentInfoUI {
 		
 		if(mode==0){
 			inventoryPack.setEquipmentMode();
-			vault = new Vault(parent.getShell(), character.userItemList.getVaultItemList(), inventoryPack);
+			vault.setInventoryPack(inventoryPack);
 			inventoryPack.setVaultListener(vault, villageComposite);
 		}
 		else{

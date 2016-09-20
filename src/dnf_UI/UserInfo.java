@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Listener;
 import dnf_InterfacesAndExceptions.Avatar_part;
 import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.InterfaceSize;
+import dnf_InterfacesAndExceptions.Location;
 import dnf_class.Characters;
 import dnf_class.Item;
 
@@ -257,20 +258,38 @@ public class UserInfo
 	private boolean dungeonMode = false;
 	private Characters character;
 	int mode;
+	Location location;
 	
-	public UserInfo(Composite parent, Characters character, int mode)
+	public UserInfo(Composite parent, Characters character, Location location, int mode)
 	{
 		this.character=character;
+		this.location=location;
 		this.mode=mode;
 		userInfoComposite = new Composite(parent, SWT.BORDER);
 		userInfoComposite.setLayout(new FormLayout());
-		
-		int interval = InterfaceSize.USER_INFO_INTERVAL;
 		
 		if(mode==0)				//장비
 			userItemInfo = new UserItemInfo(userInfoComposite, character, this);
 		else if(mode==1)		//아바타
 			userItemInfo = new UserAvatarInfo(userInfoComposite, character, this);
+		
+		infoStatus = new InfoStatus(userInfoComposite, character, dungeonMode);
+		nonInfoStatus = new NonInfoStatus(userInfoComposite, character, dungeonMode);
+		
+		switch(location)
+		{
+		case VILLAGE:
+			init_village();
+			break;
+		case DUNGEON:
+			init_dungeon();
+			break;
+		}
+	}
+	
+	private void init_village()
+	{
+		int interval = InterfaceSize.USER_INFO_INTERVAL;
 		
 		userItemInfo.getComposite().setLayoutData(new FormData(InterfaceSize.USER_INFO_ITEM_SIZE_X, InterfaceSize.USER_INFO_ITEM_SIZE_Y));
 		
@@ -313,15 +332,31 @@ public class UserInfo
 		setDungeonMode.addListener(SWT.Selection, radioGroup);
 		setDungeonMode.setLayoutData(gridData);
 		
-		infoStatus = new InfoStatus(userInfoComposite, character, dungeonMode);
 		FormData infoStatusData = new FormData(InterfaceSize.USER_INFO_STAT_SIZE_X, InterfaceSize.USER_INFO_STAT_SIZE_Y);
 		infoStatusData.top = new FormAttachment(selectModeComposite, interval);
 		infoStatus.getComposite().setLayoutData(infoStatusData);
 		
-		nonInfoStatus = new NonInfoStatus(userInfoComposite, character, dungeonMode);
 		FormData nonInfoStatusData = new FormData(InterfaceSize.USER_INFO_NONSTAT_SIZE_X, InterfaceSize.USER_INFO_NONSTAT_SIZE_Y);
 		nonInfoStatusData.left = new FormAttachment(userItemInfo.getComposite(), interval);
 		nonInfoStatus.getComposite().setLayoutData(nonInfoStatusData);
+	}
+	
+	private void init_dungeon()
+	{
+		int interval = InterfaceSize.USER_INFO_INTERVAL;
+		
+		userItemInfo.getComposite().setLayoutData(new FormData(InterfaceSize.USER_INFO_ITEM_SIZE_X, InterfaceSize.USER_INFO_ITEM_SIZE_Y));
+		
+		FormData infoStatusData = new FormData(InterfaceSize.USER_INFO_STAT_SIZE_X, InterfaceSize.USER_INFO_STAT_SIZE_Y);
+		infoStatusData.top = new FormAttachment(userItemInfo.getComposite(), interval);
+		infoStatus.getComposite().setLayoutData(infoStatusData);
+		
+		FormData nonInfoStatusData = new FormData(InterfaceSize.USER_INFO_NONSTAT_SIZE_INDUNGEON_X, InterfaceSize.USER_INFO_NONSTAT_SIZE_INDUNGEON_Y);
+		nonInfoStatusData.top = new FormAttachment(infoStatus.getComposite(), interval);
+		nonInfoStatus.getComposite().setLayoutData(nonInfoStatusData);
+		
+		infoStatus.isDungeon=true;
+		nonInfoStatus.isDungeon=true;
 	}
 	
 	public void renew()

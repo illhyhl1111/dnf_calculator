@@ -14,13 +14,11 @@ public class ItemButton<T extends IconObject>
 {
 	private Button button;
 	private T item;
-	private Composite parent;
 	private int imageSize_x;
 	private int imageSize_y;
 	
 	public ItemButton(Composite parent, T item, int x, int y)
 	{
-		this.parent=parent;
 		this.item=item;
 		imageSize_x=x;
 		imageSize_y=y;
@@ -30,7 +28,6 @@ public class ItemButton<T extends IconObject>
 	}
 	public ItemButton(Composite parent, T item, int x, int y, boolean enabled)
 	{
-		this.parent=parent;
 		this.item=item;
 		imageSize_x=x;
 		imageSize_y=y;
@@ -55,9 +52,10 @@ public class ItemButton<T extends IconObject>
 	{
 		if(button.getImage()!=null) button.getImage().dispose();
 		Image image;
-		if(item.getIcon()==null || !enabled) image = new Image(parent.getDisplay(), "image\\default.png");
-		else image = new Image(parent.getDisplay(), item.getIcon());
-		button.setImage(ItemButton.resizeImage(image, imageSize_x, imageSize_y, parent));
+		if(item.getIcon()==null || !enabled) image = new Image(button.getParent().getDisplay(), "image\\default.png");
+		else image = new Image(button.getParent().getDisplay(), item.getIcon());
+		//button.setImage(image);
+		button.setImage(ItemButton.resizeImage(image, imageSize_x, imageSize_y, button.getParent()));
 	}
 	
 	public boolean hasSetOption()
@@ -83,11 +81,11 @@ public class ItemButton<T extends IconObject>
 	}
 
 	public Composite getParent() {
-		return parent;
+		return button.getParent();
 	}
 
 	public void setParent(Composite parent) {
-		this.parent = parent;
+		this.button.setParent(parent);
 	}
 	public int getImageSize_y() {
 		return imageSize_y;
