@@ -59,8 +59,8 @@ public class Vault extends Dialog
 		});
 		vaultComposite = new Composite(scrollComposite, SWT.BORDER);
 		GridLayout inventoryLayout = new GridLayout(vaultCol, true);
-		inventoryLayout.horizontalSpacing=0;
-		inventoryLayout.verticalSpacing=0;
+		inventoryLayout.horizontalSpacing=3;
+		inventoryLayout.verticalSpacing=3;
 		inventoryLayout.marginHeight=0;
 		inventoryLayout.marginWidth=0;
 		vaultComposite.setLayout(inventoryLayout);
@@ -70,7 +70,7 @@ public class Vault extends Dialog
 		int index=0;
 		
 		for(Item i : itemList){
-			vault[index] = new ItemButton<Item>(vaultComposite, i, InterfaceSize.INVENTORY_BUTTON_SIZE, InterfaceSize.INVENTORY_BUTTON_SIZE, true);
+			vault[index] = new ItemButton<Item>(vaultComposite, i, InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE, true);
 			
 			if(!i.getName().equals("이름없음"))
 			{
@@ -100,7 +100,7 @@ public class Vault extends Dialog
 		}
 		
 		for(; index<vaultSize; index++)
-			vault[index] = new ItemButton<Item>(vaultComposite, new Item(), InterfaceSize.INVENTORY_BUTTON_SIZE, InterfaceSize.INVENTORY_BUTTON_SIZE, false);
+			vault[index] = new ItemButton<Item>(vaultComposite, new Item(), InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE, false);
 		
 		scrollComposite.setContent(vaultComposite);
 		vaultComposite.setSize(vaultComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));

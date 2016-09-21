@@ -35,8 +35,8 @@ public class SubInventory
 		
 		inventoryComposite = new Composite(parent, SWT.BORDER);
 		GridLayout inventoryLayout = new GridLayout(inventoryCol, true);
-		inventoryLayout.horizontalSpacing=0;
-		inventoryLayout.verticalSpacing=0;
+		inventoryLayout.horizontalSpacing=3;
+		inventoryLayout.verticalSpacing=3;
 		inventoryLayout.marginHeight=0;
 		inventoryLayout.marginWidth=0;
 		inventoryComposite.setLayout(inventoryLayout);
@@ -50,7 +50,7 @@ public class SubInventory
 		
 		for(Item i : itemList){
 			inventoryList[index] =
-					new ItemButton<Item>(inventoryComposite, i, InterfaceSize.INVENTORY_BUTTON_SIZE, InterfaceSize.INVENTORY_BUTTON_SIZE, true);
+					new ItemButton<Item>(inventoryComposite, i, InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE, true);
 			
 			if(!i.getName().equals("이름없음"))
 			{
@@ -66,7 +66,7 @@ public class SubInventory
 		}
 		
 		for(; index<inventorySize; index++)
-			inventoryList[index] = new ItemButton<Item>(inventoryComposite, new Item(), InterfaceSize.INVENTORY_BUTTON_SIZE, InterfaceSize.INVENTORY_BUTTON_SIZE, false);
+			inventoryList[index] = new ItemButton<Item>(inventoryComposite, new Item(), InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE, false);
 	}
 	
 	public Composite getComposite() {return inventoryComposite;}

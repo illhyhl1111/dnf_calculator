@@ -2,13 +2,14 @@ package dnf_UI;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
 import dnf_InterfacesAndExceptions.SetName;
 import dnf_class.IconObject;
 import dnf_class.Item;
+import dnf_infomation.GetDictionary;
 
 public class ItemButton<T extends IconObject>
 {
@@ -23,6 +24,8 @@ public class ItemButton<T extends IconObject>
 		imageSize_x=x;
 		imageSize_y=y;
 		button = new Button(parent, SWT.PUSH);
+		GridData buttonGridData = new GridData(x, y);
+		button.setLayoutData(buttonGridData);
 		if(item instanceof Item) renewImage(((Item) item).getEnabled());
 		else renewImage(true);
 	}
@@ -32,30 +35,18 @@ public class ItemButton<T extends IconObject>
 		imageSize_x=x;
 		imageSize_y=y;
 		button = new Button(parent, SWT.PUSH);
+		GridData buttonGridData = new GridData(x, y);
+		button.setLayoutData(buttonGridData);
+		
 		renewImage(enabled);
-	}
-	
-	public static Image resizeImage(Image image, int x, int y, Composite parent)
-	{
-		ImageData data = image.getImageData();
-		data = data.scaledTo(x, y);
-		return new Image(parent.getDisplay(), data);
-	}
-	public static Image resizeToButtonSize(Image image, Button button, Composite parent)
-	{
-		ImageData data = image.getImageData();
-		data = data.scaledTo(button.getSize().x, button.getSize().y);
-		return new Image(parent.getDisplay(), data);
 	}
 	
 	public void renewImage(boolean enabled)
 	{
-		if(button.getImage()!=null) button.getImage().dispose();
 		Image image;
-		if(item.getIcon()==null || !enabled) image = new Image(button.getParent().getDisplay(), "image\\default.png");
-		else image = new Image(button.getParent().getDisplay(), item.getIcon());
-		//button.setImage(image);
-		button.setImage(ItemButton.resizeImage(image, imageSize_x, imageSize_y, button.getParent()));
+		if(item.getIcon()==null || !enabled) image = GetDictionary.iconDictionary.get("디폴트");
+		else image = GetDictionary.iconDictionary.get(item.getName());
+		button.setImage(image);
 	}
 	
 	public boolean hasSetOption()

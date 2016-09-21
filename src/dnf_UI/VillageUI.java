@@ -46,7 +46,7 @@ public class VillageUI
 		villageComposite = new Composite(shell, SWT.NONE);
 		villageComposite.setLayout(new FormLayout());
 		
-		vault = new Vault(shell, character.userItemList.getVaultItemList());
+		vault = new Vault(shell, character.userItemList.getVaultItemList(character.getJob()));
 		
 		toDungeonButton = new Button(villageComposite, SWT.PUSH);
 		toDungeonButton.setText("수련의 방 입장");
@@ -101,6 +101,8 @@ public class VillageUI
 		selectCharBData.left = new FormAttachment(villageFolder, 10);
 		selectCharBData.top = new FormAttachment(toDungeonButton, 10);
 		selectCharacterButton.setLayoutData(selectCharBData);
+		
+		villageComposite.layout();
 	}
 	
 	public void disposeContent()
@@ -119,8 +121,6 @@ class VillageUILoad
 {
 	public static void main(String[] args)
 	{
-		GetDictionary.readFile();
-
 		Display display = new Display();
 
         Shell shell = new Shell(display);
@@ -135,6 +135,7 @@ class VillageUILoad
 			character = (Characters)temp;
 
 			in.close();
+			GetDictionary.readFile(character.getJob());
 	        
 			VillageUI villageUI = new VillageUI(shell, character);
 			

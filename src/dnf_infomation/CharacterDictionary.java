@@ -12,7 +12,6 @@ import java.util.LinkedList;
 
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_InterfacesAndExceptions.JobList;
-import dnf_InterfacesAndExceptions.SkillInfoNotFounded;
 import dnf_calculator.StatusList;
 import dnf_class.Skill;
 

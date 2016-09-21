@@ -82,7 +82,6 @@ class UserItemInfo implements Info
 		itemButtonList[11] = new ItemButton<Item>(rightItemInfoComposite, character.getEquipmentList().get(Equip_part.EARRING), BUTTON_SIZE, BUTTON_SIZE, true);
 		itemButtonList[12] = new ItemButton<Item>(rightItemInfoComposite, character.getEquipmentList().get(Equip_part.MAGICSTONE), BUTTON_SIZE, BUTTON_SIZE, true);
 		
-		
 		Point buttonS = itemButtonList[0].getButton().computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		buttonS.x+=3; buttonS.y+=3;
 		for(int i=0; i<ITEMNUM; i++)
@@ -97,6 +96,8 @@ class UserItemInfo implements Info
 		}
 		
 		GridData buttonGridData = new GridData(SWT.LEFT, SWT.TOP, false, false);
+		buttonGridData.heightHint = BUTTON_SIZE;
+		buttonGridData.widthHint = BUTTON_SIZE;
 		for(int i=0; i<ITEMNUM; i++){
 			itemButtonList[i].getButton().setData(buttonGridData);
 		}
@@ -176,18 +177,18 @@ class UserAvatarInfo implements Info
 		creatureButton = new ItemButton<Item>(wholeComposite, character.getCreature(), BUTTON_SIZE, BUTTON_SIZE);
 		drapeButton = new ItemButton<Item>(wholeComposite, character.getDrape(), BUTTON_SIZE, BUTTON_SIZE);
 		
-		Point buttonS = itemButtonList[0].getButton().computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		Point buttonS = itemButtonList[0].getButton().computeSize(BUTTON_SIZE, BUTTON_SIZE);
 		buttonS.x+=3; buttonS.y+=3;
 		
 		avatarInfoComposite.setLayoutData(new FormData());
 		
-		FormData creatureInfoData = new FormData();
+		FormData creatureInfoData = new FormData(BUTTON_SIZE, BUTTON_SIZE);
 		creatureInfoData.left = new FormAttachment(0, buttonS.x);
 		creatureInfoData.top = new FormAttachment(0, buttonS.y*3);
 		creatureButton.getButton().setLayoutData(creatureInfoData);
 		creatureButton.getButton().moveAbove(avatarInfoComposite);
 		
-		FormData drapeInfoData = new FormData();
+		FormData drapeInfoData = new FormData(BUTTON_SIZE, BUTTON_SIZE);
 		drapeInfoData.left = new FormAttachment(creatureButton.getButton(), 3);
 		drapeInfoData.top = new FormAttachment(0, buttonS.y*3);
 		drapeButton.getButton().setLayoutData(drapeInfoData);

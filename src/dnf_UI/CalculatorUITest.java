@@ -6,6 +6,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.graphics.DeviceData;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
@@ -27,13 +28,22 @@ import dnf_infomation.GetDictionary;
 
 public class CalculatorUITest {
 	public static void main(String[] args) {
-
+		final boolean openSleak = true;
 		try{
-
-			GetDictionary.readFile();
+			Display display;
+			
+			if(openSleak)
+			{
+				DeviceData data = new DeviceData();
+				data.tracking = true;
+			    display = new Display(data);
+			    Sleak sleak = new Sleak();
+			    sleak.open();
+			}
+			else display = new Display(); 
+			
+			GetDictionary.readFile(JobList.LAUNCHER_F);
 			Characters character = new Characters(90, JobList.LAUNCHER_F, "명속은거들뿐");
-
-			Display display = new Display();
 
 	        Shell shell = new Shell(display);
 	        final StackLayout stackLayout = new StackLayout();

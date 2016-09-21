@@ -12,7 +12,7 @@ public abstract class IconObject implements Cloneable, java.io.Serializable
 	protected IconObject()
 	{
 		name="없음";
-		iconAddress="image\\default.png";
+		iconAddress=null;
 	}
 	
 	public String getName() { return name;}

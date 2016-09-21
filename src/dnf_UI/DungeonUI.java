@@ -76,7 +76,6 @@ public class DungeonUI {
 		buttonData.bottom = new FormAttachment(100, -10);
 		buttonData.right = new FormAttachment(100, -10);
 		toVillageButton.setLayoutData(buttonData);
-		toVillageButton.moveAbove(null);
 	}
 	
 	public void disposeContent()

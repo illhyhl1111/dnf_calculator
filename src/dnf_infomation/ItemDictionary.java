@@ -12,6 +12,7 @@ import java.util.LinkedList;
 
 import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.ItemFileNotFounded;
+import dnf_InterfacesAndExceptions.JobList;
 import dnf_InterfacesAndExceptions.SetName;
 import dnf_class.Avatar;
 import dnf_class.Card;
@@ -90,7 +91,7 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 		jamList = new HashSet<Jam>();
 	}
 	
-	public LinkedList<Item> getVaultItemList()
+	public LinkedList<Item> getVaultItemList(JobList job)
 	{
 		LinkedList<Item> list = new LinkedList<Item>();
 		for(Equipment e : equipList)
