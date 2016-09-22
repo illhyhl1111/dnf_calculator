@@ -36,6 +36,23 @@ public class SkillLevelInfo implements java.io.Serializable{
 		stat = new StatusList();
 		fromDictionary=true;
 	}
+	
+	public boolean hasPhy_per(){
+		if(phy_atk==0) return false;
+		return true;
+	}
+	public boolean hasPhy_fix(){
+		if(phy_fix==0) return false;
+		return true;
+	}
+	public boolean hasMag_per(){
+		if(mag_atk==0) return false;
+		return true;
+	}
+	public boolean hasMag_fix(){
+		if(mag_fix==0) return false;
+		return true;
+	}
 }
 
 class TPSkillLevelInfo implements java.io.Serializable{

@@ -340,9 +340,9 @@ public class Characters implements java.io.Serializable
 		getSkillLevel(true, list);
 		
 		for(Skill skill : skillList){
-			if(skill.type==Skill_type.PASSIVE && skill.buff_enabled)
+			if(skill.type==Skill_type.PASSIVE && skill.getBuffEnabled())
 				skill.getSkillLevelInfo(false).stat.addListToStat(villageStatus);
-			if(skill.hasBuff() && skill.buff_enabled)
+			if(skill.hasBuff() && skill.getBuffEnabled())
 				skill.getSkillLevelInfo(true).stat.addListToStat(dungeonStatus);
 		}
 	}

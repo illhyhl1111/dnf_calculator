@@ -61,7 +61,7 @@ public class Calculator_test {
 			Characters character = new Characters(86, JobList.LAUNCHER_F, "명속은거들뿐");
 			character.villageStatus=charStat;
 			
-			Monster object = new Monster(new Status());
+			Monster object = new Monster("asdf");
 			object.setBooleanStat(Monster_StatList.BACKATK, true);
 			object.setBooleanStat(Monster_StatList.COUNTER, true);
 			object.setStat(Monster_StatList.DIFFICULTY, DefenceIgnorePenalty.ANTON_NOR);

@@ -15,21 +15,18 @@ import dnf_class.Characters;
 import dnf_class.Item;
 import dnf_class.ItemConstraint;
 
-public class InventoryCardPack
+public class InventoryCardPack extends DnFComposite
 {
 	Inventory[] inventoryList;
 	SubInventory[] subInventoryList;
 	Composite[] pack;
 	TabItem[] inventoryTabList;
-	TabFolder inventoryFolder;
 	Characters character;
-	UserInfo itemInfo;
 	
-	public InventoryCardPack(TabFolder inventoryFolder, Characters character, UserInfo itemInfo)
+	public InventoryCardPack(TabFolder mainComposite, Characters character)
 	{		
-		this.inventoryFolder=inventoryFolder;
+		this.mainComposite=mainComposite;
 		this.character=character;
-		this.itemInfo=itemInfo;
 	}
 	
 	private ItemConstraint[] setConstraintList(int length)
@@ -85,7 +82,7 @@ public class InventoryCardPack
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void setDungeonMode()
+	public void setDungeonMode(DungeonUI dungeonUI)
 	{
 		String[] tabNameList = {"무기", "방어구 1", "악세서리 1", "악세서리 2", "칭호", "기타", "아바타", "크리쳐", "휘장"};
 		final int inventoryListNum = tabNameList.length;
@@ -109,18 +106,27 @@ public class InventoryCardPack
 		
 		for(int i=0; i<inventoryListNum; i++)
 		{
-			pack[i] = new Composite(inventoryFolder, SWT.NONE);
+			pack[i] = new Composite(mainComposite, SWT.NONE);
 			pack[i].setLayout(packLayout);
 			
-			inventoryTabList[i]= new TabItem(inventoryFolder, SWT.NONE);
+			inventoryTabList[i]= new TabItem((TabFolder) mainComposite, SWT.NONE);
 			inventoryTabList[i].setText(tabNameList[i]);
 
-			inventoryList[i] = new Inventory(pack[i], character, itemInfo, (LinkedList<Item>) itemList[i], 0);			
+			inventoryList[i] = new Inventory(pack[i], character, dungeonUI, (LinkedList<Item>) itemList[i], 0);
 			inventoryTabList[i].setControl(pack[i]);
 		}
 	}
 	
-	public void setEquipmentMode()
+	public String[] getAvatarModeList()
+	{
+		return new String[] {"아바타", "크리쳐", "휘장"};
+	}
+	public int getAvatarTabIndex()
+	{
+		return inventoryTabList.length-3;
+	}
+	
+	public void setEquipmentMode(UserInfo itemInfo)
 	{
 		String[] tabNameList = {"무기", "방어구 1", "악세서리 1", "악세서리 2", "칭호", "기타"};
 		final int inventoryListNum = tabNameList.length;
@@ -140,10 +146,10 @@ public class InventoryCardPack
 		
 		for(int i=0; i<inventoryListNum; i++)
 		{
-			pack[i] = new Composite(inventoryFolder, SWT.NONE);
+			pack[i] = new Composite(mainComposite, SWT.NONE);
 			pack[i].setLayout(packLayout);
 			
-			inventoryTabList[i]= new TabItem(inventoryFolder, SWT.NONE);
+			inventoryTabList[i]= new TabItem((TabFolder) mainComposite, SWT.NONE);
 			inventoryTabList[i].setText(tabNameList[i]);
 			
 			inventoryList[i] = new Inventory(pack[i], character, itemInfo, itemList[i], 0);
@@ -154,7 +160,7 @@ public class InventoryCardPack
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void setAvatarMode()
+	public void setAvatarMode(UserInfo itemInfo)
 	{
 		String[] tabNameList = {"아바타", "크리쳐", "휘장"};
 		final int inventoryListNum = tabNameList.length;
@@ -177,10 +183,10 @@ public class InventoryCardPack
 		
 		for(int i=0; i<inventoryListNum; i++)
 		{
-			pack[i] = new Composite(inventoryFolder, SWT.NONE);
+			pack[i] = new Composite(mainComposite, SWT.NONE);
 			pack[i].setLayout(packLayout);
 			
-			inventoryTabList[i]= new TabItem(inventoryFolder, SWT.NONE);
+			inventoryTabList[i]= new TabItem((TabFolder) mainComposite, SWT.NONE);
 			inventoryTabList[i].setText(tabNameList[i]);
 			
 			inventoryList[i] = new Inventory(pack[i], character, itemInfo, (LinkedList<Item>) itemList[i], 1);
@@ -240,5 +246,9 @@ public class InventoryCardPack
 		}
 		
 		return enabledList;
+	}
+
+	@Override
+	public void renew() {
 	}
 }

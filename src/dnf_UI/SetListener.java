@@ -28,7 +28,7 @@ import dnf_class.Skill;
 public class SetListener {
 	ItemButton<? extends IconObject> itemButton_wildCard;
 	Characters character;
-	UserInfo superInfo;
+	DnFComposite superInfo;
 	Composite itemInfo;
 	Boolean hasSetOption;
 	Composite setInfo;
@@ -39,7 +39,7 @@ public class SetListener {
 	static final int mouseInterval_hor = 7;
 	static final int mouseInterval_ver = 5;
 	
-	public SetListener(ItemButton<? extends IconObject> itemButton, Characters character, UserInfo superInfo, Composite itemInfo,
+	public SetListener(ItemButton<? extends IconObject> itemButton, Characters character, DnFComposite superInfo, Composite itemInfo,
 			Composite setInfo, Composite parent)
 	{
 		this.itemButton_wildCard=itemButton;
@@ -91,7 +91,7 @@ public class SetListener {
 	public Listener equipListener(Vault vault)
 	{
 		ItemButton<Item> itemButton;
-		if(itemButton_wildCard.getItem() instanceof Item) itemButton = (ItemButton<Item>) itemButton_wildCard;
+		if(itemButton_wildCard.getItem() instanceof Item && superInfo instanceof UserInfo) itemButton = (ItemButton<Item>) itemButton_wildCard;
 		else return null;
 		
 		return new Listener() {
@@ -105,7 +105,7 @@ public class SetListener {
 	        		 else{
 	        			 itemButton.getItem().setEnabled(false);
 	        			 itemButton.renewImage(false);
-	        			 if(((UserItemInfo)superInfo.userItemInfo).equiped(itemButton.getItem())){
+	        			 if(((UserItemInfo)((UserInfo)superInfo).userItemInfo).equiped(itemButton.getItem())){
 	        				 character.unequip(itemButton.getItem());
 	        				 superInfo.renew();
 	        				 if(!itemInfo.isDisposed()) itemInfo.dispose();

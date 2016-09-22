@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_InterfacesAndExceptions.JobList;
 import dnf_calculator.StatusList;
+import dnf_class.Monster;
 import dnf_class.Skill;
 
 class CharInfoBox implements java.io.Serializable
@@ -39,8 +40,9 @@ public class CharacterDictionary implements java.io.Serializable, Cloneable
 	 * 
 	 */
 	private static final long serialVersionUID = -2541411296068975333L;
-	public HashSet<Skill> skillList;
-	public HashSet<CharInfoBox> basicStatList;
+	public final HashSet<Skill> skillList;
+	private HashSet<CharInfoBox> basicStatList;
+	public final HashSet<Monster> monsterList;
 	
 	public CharacterDictionary() 
 	{
@@ -49,6 +51,9 @@ public class CharacterDictionary implements java.io.Serializable, Cloneable
 		
 		basicStatList = new HashSet<CharInfoBox>();
 		CharacterInfo.getInfo(basicStatList);
+		
+		monsterList = new HashSet<Monster>();
+		MonsterInfo.getInfo(monsterList);
 	}
 	
 	public LinkedList<Skill> getSkillList(JobList job, int level)
@@ -71,6 +76,14 @@ public class CharacterDictionary implements java.io.Serializable, Cloneable
 			if(b.job==job && b.level==level) return b.statList;
 		
 		throw new ItemNotFoundedException(job.toString()+", level "+level);
+	}
+	
+	public Monster getMonsterInfo(String name) throws ItemNotFoundedException
+	{
+		for(Monster monster : monsterList)
+			if(name.equals(monster.name)) return monster;
+		
+		throw new ItemNotFoundedException(name);
 	}
 	
 	@Override

@@ -13,42 +13,39 @@ import org.eclipse.swt.widgets.TabFolder;
 import dnf_InterfacesAndExceptions.Location;
 import dnf_class.Characters;
 
-public class EquipmentInfoUI {
+public class EquipmentInfoUI extends DnFComposite{
 	Characters character;
 	UserInfo itemInfo;
 	InventoryCardPack inventoryPack;
 	Vault vault;
-	SkillTree skillTree;
-	
+
 	Button vaultButton;
 	Button batchModify;
 	Button emblemModity;
 	Button skillButton;
-
-	private Composite villageComposite;
 	
-	public EquipmentInfoUI(TabFolder parent, Characters character, Vault vault, int mode)
+	public EquipmentInfoUI(TabFolder parent, Characters character, Vault vault, SkillTree skillTree, int mode)
 	{
 		this.character=character;
 		this.vault=vault;
 		
-		villageComposite = new Composite(parent, SWT.BORDER);
-		villageComposite.setLayout(new FormLayout());
+		mainComposite = new Composite(parent, SWT.BORDER);
+		mainComposite.setLayout(new FormLayout());
 		
-		itemInfo = new UserInfo(villageComposite, character, Location.VILLAGE, mode);
+		itemInfo = new UserInfo(mainComposite, character, Location.VILLAGE, mode);
 		
-		TabFolder inventoryFolder = new TabFolder(villageComposite, SWT.NONE);
+		TabFolder inventoryFolder = new TabFolder(mainComposite, SWT.NONE);
 		
-		inventoryPack = new InventoryCardPack(inventoryFolder, character, itemInfo);
+		inventoryPack = new InventoryCardPack(inventoryFolder, character);
 		
 		if(mode==0){
-			inventoryPack.setEquipmentMode();
+			inventoryPack.setEquipmentMode(itemInfo);
 			vault.setInventoryPack(inventoryPack);
-			inventoryPack.setVaultListener(vault, villageComposite);
+			inventoryPack.setVaultListener(vault, mainComposite);
 		}
 		else{
-			inventoryPack.setAvatarMode();
-			inventoryPack.setListener(villageComposite);
+			inventoryPack.setAvatarMode(itemInfo);
+			inventoryPack.setListener(mainComposite);
 		}
 
 		itemInfo.getComposite().setLayoutData(new FormData());
@@ -57,26 +54,24 @@ public class EquipmentInfoUI {
 		inventoryData.top = new FormAttachment(itemInfo.getComposite(), 5);
 		inventoryFolder.setLayoutData(inventoryData);
 		
-		skillButton = new Button(villageComposite, SWT.PUSH);
+		skillButton = new Button(mainComposite, SWT.PUSH);
 		skillButton.setText("스킬트리");
 		FormData skillButtonData = new FormData();
 		skillButtonData.left = new FormAttachment(itemInfo.getComposite(), 10);
 		skillButton.setLayoutData(skillButtonData);
-		
-		skillTree = new SkillTree(parent.getShell(), character, itemInfo);
 		
 		skillButton.addListener(SWT.Selection, new Listener(){
 			 @Override
 	         public void handleEvent(Event e) {
 				 if(skillTree.getShell()==null)
 					skillTree.open();
-            	else
-            		skillTree.close();
+           	else
+           		skillTree.close();
 			 }
 		});
 		
 		if(mode==0){
-			vaultButton = new Button(villageComposite, SWT.PUSH);
+			vaultButton = new Button(mainComposite, SWT.PUSH);
 			vaultButton.setText("금고 열기");
 			FormData vaultButtonData = new FormData();
 			vaultButtonData.left = new FormAttachment(itemInfo.getComposite(), 10);
@@ -93,7 +88,7 @@ public class EquipmentInfoUI {
 				 }
 			});
 			
-			batchModify = new Button(villageComposite, SWT.PUSH);
+			batchModify = new Button(mainComposite, SWT.PUSH);
 			batchModify.setText("일괄 강화/마법부여");
 			FormData batchButtonData = new FormData();	
 			batchButtonData.left = new FormAttachment(itemInfo.getComposite(), 10);
@@ -115,7 +110,7 @@ public class EquipmentInfoUI {
 		
 		else if(mode==1)
 		{
-			emblemModity = new Button(villageComposite, SWT.PUSH);
+			emblemModity = new Button(mainComposite, SWT.PUSH);
 			emblemModity.setText("엠블렘 옵션 최적화");
 			FormData emblemButtonData = new FormData();
 			emblemButtonData.top = new FormAttachment(skillButton);
@@ -135,6 +130,8 @@ public class EquipmentInfoUI {
 			});
 		}
 	}
-	
-	public Composite getComposite(){ return villageComposite; }
+
+	@Override
+	public void renew() {		
+	}
 }

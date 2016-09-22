@@ -26,8 +26,8 @@ public class Skill extends IconObject implements Comparable<Skill>{
 	
 	public LinkedList<SkillLevelInfo> skillInfo;
 	
-	public boolean active_enabled;
-	public boolean buff_enabled;
+	private boolean active_enabled;
+	private boolean buff_enabled;
 	
 	public int villageLevel;
 	public double villageIncrease;
@@ -156,6 +156,7 @@ public class Skill extends IconObject implements Comparable<Skill>{
 	{
 		skillLevel = (int)((charLevel-firstLevel)/levelInterval);
 		if(skillLevel>masterLevel) skillLevel = masterLevel;
+		active_enabled=true;
 		return skillLevel;
 	}
 	
@@ -169,17 +170,21 @@ public class Skill extends IconObject implements Comparable<Skill>{
 	public int getSkillLevel() { return skillLevel;}
 	public void setSkillLevel(int skillLevel){
 		this.skillLevel=skillLevel;
+		if(skillLevel==0) active_enabled=false;
+		else active_enabled=true;
 	}
 	
 	public void increaseLevel_char()
 	{
 		if(skillLevel<masterLevel)
 			skillLevel++;
+		active_enabled=true;
 	}
 	public void decreaseLevel_char()
 	{
 		if(skillLevel>0)
 			skillLevel--;
+		if(skillLevel==0) active_enabled=false;
 	}
 	
 	public boolean getActiveEnabled() {return active_enabled;}

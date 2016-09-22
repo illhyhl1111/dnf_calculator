@@ -23,37 +23,36 @@ import dnf_class.Characters;
 import dnf_class.Emblem;
 import dnf_class.Item;
 
-public class Inventory 
+public class Inventory extends DnFComposite
 {
 	LinkedList<Item> itemList;
 	ItemButton<Item>[] inventoryList;
 	final static int inventoryCol=15;
 	final static int inventoryRow=5;
 	final static int inventorySize=inventoryCol*inventoryRow;
-	private Composite inventoryComposite;
 	Characters character;
-	UserInfo userInfo;
+	DnFComposite superInfo;
 	Composite parent;
 	private Composite itemInfo;
 	private Composite setInfo;
 	final int mode;
 	
 	@SuppressWarnings("unchecked")
-	public Inventory(Composite parent, Characters character, UserInfo userInfo, LinkedList<Item> itemList, int mode)
+	public Inventory(Composite parent, Characters character, DnFComposite superInfo, LinkedList<Item> itemList, int mode)
 	{
 		this.itemList=itemList;
 		this.character=character;
-		this.userInfo=userInfo;
+		this.superInfo=superInfo;
 		this.parent=parent;
 		this.mode=mode;
 		
-		inventoryComposite = new Composite(parent, SWT.BORDER);
+		mainComposite = new Composite(parent, SWT.BORDER);
 		GridLayout inventoryLayout = new GridLayout(inventoryCol, true);
 		inventoryLayout.horizontalSpacing=3;
 		inventoryLayout.verticalSpacing=3;
 		inventoryLayout.marginHeight=0;
 		inventoryLayout.marginWidth=0;
-		inventoryComposite.setLayout(inventoryLayout);
+		mainComposite.setLayout(inventoryLayout);
 		
 		inventoryList = (ItemButton<Item>[]) new ItemButton<?>[inventorySize];
 	}
@@ -65,13 +64,13 @@ public class Inventory
 		for(Item i : itemList)
 		{
 			inventoryList[index] =
-					new ItemButton<Item>(inventoryComposite, i, InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE);
+					new ItemButton<Item>(mainComposite, i, InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE);
 			
 			if(!i.getName().equals("이름없음"))
 			{
 				if(mode!=2) setDrop(inventoryList[index], mode);
 
-				SetListener listenerGroup = new SetListener(inventoryList[index], character, userInfo, itemInfo, setInfo, parent);
+				SetListener listenerGroup = new SetListener(inventoryList[index], character, superInfo, itemInfo, setInfo, parent);
 				
 				if(mode==0) inventoryList[index].getButton().addListener(SWT.MouseDown, listenerGroup.equipListener(vault)); 			// add MouseDown Event - unequip
 				else if(mode==1) inventoryList[index].getButton().addListener(SWT.MouseDown, listenerGroup.equipListener()); 			// add MouseDown Event - unequip
@@ -85,12 +84,10 @@ public class Inventory
 		}
 		
 		for(; index<inventorySize; index++){
-			inventoryList[index] = new ItemButton<Item>(inventoryComposite, new Item(), InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE, false);
+			inventoryList[index] = new ItemButton<Item>(mainComposite, new Item(), InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE, false);
 		}
 	}
-	
-	public Composite getComposite() {return inventoryComposite;}
-	
+		
 	public ItemButton<Item> getItem(String name) throws ItemNotFoundedException
 	{
 		for(ItemButton<Item> i : inventoryList)
@@ -122,7 +119,7 @@ public class Inventory
 							{
 								boolean succeed= itemButton.getItem().setCard(card);
 								if(succeed){
-									userInfo.renew();
+									superInfo.renew();
 									MessageDialog dialog = new MessageDialog(parent.getShell(), "성☆공", null,
 										    "마법부여에 성공하였습니다!\n\n보주 : "+(String)event.data+"\n아이템 : "+itemButton.getItem().getName(),
 										    MessageDialog.INFORMATION, new String[] { "ㅇㅋ" }, 0);
@@ -155,7 +152,7 @@ public class Inventory
 							}
 							
 							if(succeed){
-								userInfo.renew();
+								superInfo.renew();
 								MessageDialog dialog = new MessageDialog(parent.getShell(), "성☆공", null,
 									    "엠블렘 장착에 성공하였습니다!\n\n엠블렘 : "+(String)event.data+"\n아이템 : "+itemButton.getItem().getName(),
 									    MessageDialog.INFORMATION, new String[] { "ㅇㅋ" }, 0);
@@ -184,5 +181,9 @@ public class Inventory
 			if(part.contains(i.getItem().getPart()) && i.getItem().getEnabled()) enabledList.add(i.getItem());
 		
 		return enabledList;
+	}
+
+	@Override
+	public void renew() {		
 	}
 }

@@ -20,14 +20,8 @@ import dnf_InterfacesAndExceptions.Location;
 import dnf_class.Characters;
 import dnf_class.Item;
 
-interface Info{
-	public Composite getComposite();
-	public void renew();
-}
-
-class UserItemInfo implements Info
+class UserItemInfo extends DnFComposite
 {
-	private Composite itemInfoComposite;
 	private Composite leftItemInfoComposite;
 	private Composite rightItemInfoComposite;
 	private ItemButton<Item>[] itemButtonList;
@@ -37,21 +31,21 @@ class UserItemInfo implements Info
 	private Composite setInfo;
 	
 	@SuppressWarnings("unchecked")
-	public UserItemInfo(Composite parent, Characters character, UserInfo superInfo)
+	public UserItemInfo(Composite parent, Characters character, DnFComposite superInfo)
 	{
 		this.character=character;
-		itemInfoComposite = new Composite(parent, SWT.BORDER);
+		mainComposite = new Composite(parent, SWT.BORDER);
 		FillLayout wholeLayout = new FillLayout();
 		wholeLayout.marginWidth=0;
 		//wholeLayout.wrap=false;
 		//wholeLayout.pack=true;
-		itemInfoComposite.setLayout(wholeLayout);
+		mainComposite.setLayout(wholeLayout);
 		
-		//TODO itemInfoComposite.setBackgroundImage(배경그림);
+		//TODO mainComposite.setBackgroundImage(배경그림);
 		
-		leftItemInfoComposite = new Composite(itemInfoComposite, SWT.NONE);
-		Composite characterImageComposite = new Composite(itemInfoComposite, SWT.NONE);
-		rightItemInfoComposite = new Composite(itemInfoComposite, SWT.NONE);
+		leftItemInfoComposite = new Composite(mainComposite, SWT.NONE);
+		Composite characterImageComposite = new Composite(mainComposite, SWT.NONE);
+		rightItemInfoComposite = new Composite(mainComposite, SWT.NONE);
 		
 		//characterImageComposite.setBackgroundImage(new Image(parent.getDisplay(), character.getCharImageAddress()));		//가운데 이미지 ->캐릭터 이미지
 		
@@ -90,7 +84,7 @@ class UserItemInfo implements Info
 			
 			itemButtonList[i].getButton().addListener(SWT.MouseDown, listenerGroup.unequipListener()); 				// add MouseDown Event - unequip
 			itemButtonList[i].getButton().addListener(SWT.MouseDoubleClick, listenerGroup.modifyListener());		// add MouseDoubleClick - modify
-			itemButtonList[i].getButton().addListener(SWT.MouseEnter, listenerGroup.makeItemInfoListener(superInfo.getComposite().getParent()));		// add MouseEnter Event - make composite
+			itemButtonList[i].getButton().addListener(SWT.MouseEnter, listenerGroup.makeItemInfoListener(superInfo.getComposite().getShell()));		// add MouseEnter Event - make composite
 			itemButtonList[i].getButton().addListener(SWT.MouseExit, listenerGroup.disposeItemInfoListener()); 		// add MouseExit Event - dispose composite
 			itemButtonList[i].getButton().addListener(SWT.MouseMove, listenerGroup.moveItemInfoListener());			// add MouseMove Event - move composite
 		}
@@ -126,8 +120,6 @@ class UserItemInfo implements Info
 		}
 	}
 	
-	public Composite getComposite() {return itemInfoComposite;}
-	
 	public boolean equiped(Item item)
 	{
 		for(ItemButton<Item> i : itemButtonList)
@@ -136,9 +128,8 @@ class UserItemInfo implements Info
 	}
 }
 
-class UserAvatarInfo implements Info
+class UserAvatarInfo extends DnFComposite
 {
-	private Composite wholeComposite;
 	private Composite avatarInfoComposite;
 	private ItemButton<Item>[] itemButtonList;
 	private ItemButton<Item> creatureButton;
@@ -151,16 +142,16 @@ class UserAvatarInfo implements Info
 			Avatar_part.SKIN, Avatar_part.BELT, Avatar_part.PANTS, Avatar_part.SHOES, Avatar_part.AURA};
 	
 	@SuppressWarnings("unchecked")
-	public UserAvatarInfo(Composite parent, Characters character, UserInfo superInfo)
+	public UserAvatarInfo(Composite parent, Characters character, DnFComposite superInfo)
 	{
 		this.character=character;
 		int BUTTON_SIZE = InterfaceSize.INFO_BUTTON_SIZE;
-		wholeComposite = new Composite(parent, SWT.BORDER);
-		wholeComposite.setLayout(new FormLayout());
+		mainComposite = new Composite(parent, SWT.BORDER);
+		mainComposite.setLayout(new FormLayout());
 		
-		//TODO wholeComposite.setBackgroundImage(배경그림);
+		//TODO mainComposite.setBackgroundImage(배경그림);
 		
-		avatarInfoComposite = new Composite(wholeComposite, SWT.NONE);
+		avatarInfoComposite = new Composite(mainComposite, SWT.NONE);
 
 		GridLayout avatarInfoLayout = new GridLayout(3, true);
 		avatarInfoLayout.horizontalSpacing=3;
@@ -174,8 +165,8 @@ class UserAvatarInfo implements Info
 		for(int i=0; i<AVATARNUM; i++)
 			itemButtonList[i] = new ItemButton<Item>(avatarInfoComposite, character.getAvatarList().get(partOrder[i]), BUTTON_SIZE, BUTTON_SIZE);
 		
-		creatureButton = new ItemButton<Item>(wholeComposite, character.getCreature(), BUTTON_SIZE, BUTTON_SIZE);
-		drapeButton = new ItemButton<Item>(wholeComposite, character.getDrape(), BUTTON_SIZE, BUTTON_SIZE);
+		creatureButton = new ItemButton<Item>(mainComposite, character.getCreature(), BUTTON_SIZE, BUTTON_SIZE);
+		drapeButton = new ItemButton<Item>(mainComposite, character.getDrape(), BUTTON_SIZE, BUTTON_SIZE);
 		
 		Point buttonS = itemButtonList[0].getButton().computeSize(BUTTON_SIZE, BUTTON_SIZE);
 		buttonS.x+=3; buttonS.y+=3;
@@ -201,7 +192,7 @@ class UserAvatarInfo implements Info
 			
 			itemButtonList[i].getButton().addListener(SWT.MouseDown, listenerGroup.unequipListener()); 				// add MouseDown Event - unequip
 			itemButtonList[i].getButton().addListener(SWT.MouseDoubleClick, listenerGroup.modifyListener());		// add MouseDoubleClick - modify
-			itemButtonList[i].getButton().addListener(SWT.MouseEnter, listenerGroup.makeItemInfoListener(superInfo.getComposite().getParent()));		// add MouseEnter Event - make composite
+			itemButtonList[i].getButton().addListener(SWT.MouseEnter, listenerGroup.makeItemInfoListener(superInfo.getComposite().getShell()));		// add MouseEnter Event - make composite
 			itemButtonList[i].getButton().addListener(SWT.MouseExit, listenerGroup.disposeItemInfoListener()); 		// add MouseExit Event - dispose composite
 			itemButtonList[i].getButton().addListener(SWT.MouseMove, listenerGroup.moveItemInfoListener());			// add MouseMove Event - move composite
 		}
@@ -209,13 +200,13 @@ class UserAvatarInfo implements Info
 		SetListener listenerGroup = new SetListener(creatureButton, character, superInfo, avatarInfo, null, parent);
 		creatureButton.getButton().addListener(SWT.MouseDown, listenerGroup.unequipListener());					// add MouseDown Event - unequip
 		creatureButton.getButton().addListener(SWT.MouseDoubleClick, listenerGroup.modifyListener());			// add MouseDoubleClick - modify
-		creatureButton.getButton().addListener(SWT.MouseEnter, listenerGroup.makeItemInfoListener(superInfo.getComposite().getParent()));		// add MouseEnter Event - make composite
+		creatureButton.getButton().addListener(SWT.MouseEnter, listenerGroup.makeItemInfoListener(superInfo.getComposite().getShell()));		// add MouseEnter Event - make composite
 		creatureButton.getButton().addListener(SWT.MouseExit, listenerGroup.disposeItemInfoListener()); 		// add MouseExit Event - dispose composite
 		creatureButton.getButton().addListener(SWT.MouseMove, listenerGroup.moveItemInfoListener());			// add MouseMove Event - move composite
 		
 		listenerGroup = new SetListener(drapeButton, character, superInfo, avatarInfo, null, parent);
 		drapeButton.getButton().addListener(SWT.MouseDown, listenerGroup.unequipListener());					// add MouseDown Event - unequip
-		drapeButton.getButton().addListener(SWT.MouseEnter, listenerGroup.makeItemInfoListener(superInfo.getComposite().getParent()));		// add MouseEnter Event - make composite
+		drapeButton.getButton().addListener(SWT.MouseEnter, listenerGroup.makeItemInfoListener(superInfo.getComposite().getShell()));		// add MouseEnter Event - make composite
 		drapeButton.getButton().addListener(SWT.MouseExit, listenerGroup.disposeItemInfoListener()); 		// add MouseExit Event - dispose composite
 		drapeButton.getButton().addListener(SWT.MouseMove, listenerGroup.moveItemInfoListener());			// add MouseMove Event - move composite
 		
@@ -238,8 +229,6 @@ class UserAvatarInfo implements Info
 		drapeButton.renewImage(true);
 	}
 	
-	public Composite getComposite() {return wholeComposite;}
-	
 	public boolean equiped(Item item)
 	{
 		for(ItemButton<Item> i : itemButtonList)
@@ -249,33 +238,59 @@ class UserAvatarInfo implements Info
 }
 
 
-public class UserInfo
+public class UserInfo extends DnFComposite
 {
-	Info userItemInfo;
+	DnFComposite userItemInfo;
 	Composite selectModeComposite;
 	InfoStatus infoStatus;
 	NonInfoStatus nonInfoStatus;
-	private Composite userInfoComposite;
 	private boolean dungeonMode = false;
 	private Characters character;
 	int mode;
 	Location location;
+	
+	public UserInfo(Composite parent, Characters character, Location location, DnFComposite superInfo, int mode)
+	{
+		this.character=character;
+		this.location=location;
+		this.mode=mode;
+		mainComposite = new Composite(parent, SWT.BORDER);
+		mainComposite.setLayout(new FormLayout());
+		
+		if(mode==0)				//장비
+			userItemInfo = new UserItemInfo(mainComposite, character, superInfo);
+		else if(mode==1)		//아바타
+			userItemInfo = new UserAvatarInfo(mainComposite, character, superInfo);
+		
+		infoStatus = new InfoStatus(mainComposite, character, dungeonMode);
+		nonInfoStatus = new NonInfoStatus(mainComposite, character, dungeonMode);
+		
+		switch(location)
+		{
+		case VILLAGE:
+			init_village();
+			break;
+		case DUNGEON:
+			init_dungeon();
+			break;
+		}
+	}
 	
 	public UserInfo(Composite parent, Characters character, Location location, int mode)
 	{
 		this.character=character;
 		this.location=location;
 		this.mode=mode;
-		userInfoComposite = new Composite(parent, SWT.BORDER);
-		userInfoComposite.setLayout(new FormLayout());
+		mainComposite = new Composite(parent, SWT.BORDER);
+		mainComposite.setLayout(new FormLayout());
 		
 		if(mode==0)				//장비
-			userItemInfo = new UserItemInfo(userInfoComposite, character, this);
+			userItemInfo = new UserItemInfo(mainComposite, character, this);
 		else if(mode==1)		//아바타
-			userItemInfo = new UserAvatarInfo(userInfoComposite, character, this);
+			userItemInfo = new UserAvatarInfo(mainComposite, character, this);
 		
-		infoStatus = new InfoStatus(userInfoComposite, character, dungeonMode);
-		nonInfoStatus = new NonInfoStatus(userInfoComposite, character, dungeonMode);
+		infoStatus = new InfoStatus(mainComposite, character, dungeonMode);
+		nonInfoStatus = new NonInfoStatus(mainComposite, character, dungeonMode);
 		
 		switch(location)
 		{
@@ -294,7 +309,7 @@ public class UserInfo
 		
 		userItemInfo.getComposite().setLayoutData(new FormData(InterfaceSize.USER_INFO_ITEM_SIZE_X, InterfaceSize.USER_INFO_ITEM_SIZE_Y));
 		
-		selectModeComposite = new Composite (userInfoComposite, SWT.BORDER | SWT.NO_RADIO_GROUP);
+		selectModeComposite = new Composite (mainComposite, SWT.BORDER | SWT.NO_RADIO_GROUP);
 		selectModeComposite.setLayout (new GridLayout(2, true));
 		Listener radioGroup = event -> {
 			Control [] children = selectModeComposite.getChildren ();
@@ -366,10 +381,5 @@ public class UserInfo
 		userItemInfo.renew();
 		infoStatus.renew();
 		nonInfoStatus.renew();
-	}
-	
-	public Composite getComposite()
-	{
-		return userInfoComposite;
 	}
 }

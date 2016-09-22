@@ -34,13 +34,13 @@ public class SkillTree extends Dialog{
 	int[] skillLevel;
 	Point contentSize;
 	private Composite itemInfo;
-	UserInfo userInfo;
+	DnFComposite superInfo;
 	
-	public SkillTree(Shell parent, Characters character, UserInfo userInfo)
+	public SkillTree(Shell parent, Characters character, DnFComposite superInfo)
 	{
 		super(parent);
 		this.character=character;
-		this.userInfo=userInfo;
+		this.superInfo=superInfo;
 		
 		skillLevel = new int[] { 1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 48, 50, 55, 60, 70, 75, 80, 85 };
 	}
@@ -113,7 +113,7 @@ public class SkillTree extends Dialog{
 				button.getButton().setLayoutData(buttonData);
 				leftButton = button.getButton();
 				
-				SetListener listenerGroup = new SetListener(button, character, userInfo, itemInfo, null, parent);
+				SetListener listenerGroup = new SetListener(button, character, superInfo, itemInfo, null, parent);
 				
 				button.getButton().addListener(SWT.MouseEnter, listenerGroup.makeSkillInfoListener(content));		// add MouseEnter Event - make composite
 				button.getButton().addListener(SWT.MouseExit, listenerGroup.disposeItemInfoListener()); 		// add MouseExit Event - dispose composite
@@ -136,7 +136,7 @@ public class SkillTree extends Dialog{
 			ItemButton<Skill> temp = new ItemButton<Skill>(TPSkillGroup, skill, bSize, bSize);
 			temp.getButton().setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
 			
-			SetListener listenerGroup = new SetListener(temp, character, userInfo, itemInfo, null, parent);
+			SetListener listenerGroup = new SetListener(temp, character, superInfo, itemInfo, null, parent);
 			temp.getButton().addListener(SWT.MouseEnter, listenerGroup.makeSkillInfoListener(content));		// add MouseEnter Event - make composite
 			temp.getButton().addListener(SWT.MouseExit, listenerGroup.disposeItemInfoListener()); 		// add MouseExit Event - dispose composite
 			temp.getButton().addListener(SWT.MouseMove, listenerGroup.moveItemInfoListener());			// add MouseMove Event - move composite
@@ -181,7 +181,7 @@ public class SkillTree extends Dialog{
 		Collections.sort(list);
 		
 		character.setSkillLevel(list);
-		userInfo.renew();
+		superInfo.renew();
 		return super.close();
 	}
 }

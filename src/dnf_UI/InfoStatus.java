@@ -15,14 +15,11 @@ import dnf_class.Characters;
 import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 import dnf_InterfacesAndExceptions.UndefinedStatusKey;
 
-abstract class StatusUI
+abstract class StatusUI extends DnFComposite
 {
 	Characters character;
-	Composite infoStatusComposite;
 	LabelAndInput[] infoStatusText;
 	public abstract void setStatus(); 
-	public Composite getComposite() {return infoStatusComposite;}
-	public abstract void renew();
 	public boolean isDungeon;
 }
 
@@ -32,18 +29,18 @@ public class InfoStatus extends StatusUI
 	{
 		this.character=character;
 		this.isDungeon=isDungeon;
-		infoStatusComposite = new Composite(parent, SWT.BORDER);
+		mainComposite = new Composite(parent, SWT.BORDER);
 		GridLayout infoLayout = new GridLayout(2, true);
 		infoLayout.horizontalSpacing=5;
 		infoLayout.verticalSpacing=0;
-		infoStatusComposite.setLayout(infoLayout);
+		mainComposite.setLayout(infoLayout);
 		infoStatusText = new LabelAndInput[Status.infoStatNum];
 		GridData statusGridData = new GridData(SWT.FILL, SWT.TOP, true, false);
 		
 		int i;
 		//TextInputOnlyNumbers floatFormat = new TextInputOnlyNumbers();
 		for(i=0; i<Status.infoStatNum; i++){
-			infoStatusText[i] = new LabelAndText(infoStatusComposite, Status.infoStatOrder[i], "");
+			infoStatusText[i] = new LabelAndText(mainComposite, Status.infoStatOrder[i], "");
 			infoStatusText[i].composite.setLayoutData(statusGridData);
 			//((Text) infoStatusText[i].input).addVerifyListener(floatFormat);
 			

@@ -11,14 +11,13 @@ import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_class.Characters;
 import dnf_class.Item;
 
-public class SubInventory 
+public class SubInventory extends DnFComposite
 {
 	LinkedList<Item> itemList;
 	ItemButton<Item>[] inventoryList;
 	final static int inventoryCol=15;
 	final static int inventoryRow=2;
 	final static int inventorySize=inventoryCol*inventoryRow;
-	private Composite inventoryComposite;
 	Characters character;
 	UserInfo userInfo;
 	Composite parent;
@@ -33,13 +32,13 @@ public class SubInventory
 		this.userInfo=userInfo;
 		this.parent=parent;
 		
-		inventoryComposite = new Composite(parent, SWT.BORDER);
+		mainComposite = new Composite(parent, SWT.BORDER);
 		GridLayout inventoryLayout = new GridLayout(inventoryCol, true);
 		inventoryLayout.horizontalSpacing=3;
 		inventoryLayout.verticalSpacing=3;
 		inventoryLayout.marginHeight=0;
 		inventoryLayout.marginWidth=0;
-		inventoryComposite.setLayout(inventoryLayout);
+		mainComposite.setLayout(inventoryLayout);
 		
 		inventoryList = (ItemButton<Item>[]) new ItemButton<?>[inventorySize];
 	}
@@ -50,7 +49,7 @@ public class SubInventory
 		
 		for(Item i : itemList){
 			inventoryList[index] =
-					new ItemButton<Item>(inventoryComposite, i, InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE, true);
+					new ItemButton<Item>(mainComposite, i, InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE, true);
 			
 			if(!i.getName().equals("이름없음"))
 			{
@@ -66,10 +65,8 @@ public class SubInventory
 		}
 		
 		for(; index<inventorySize; index++)
-			inventoryList[index] = new ItemButton<Item>(inventoryComposite, new Item(), InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE, false);
+			inventoryList[index] = new ItemButton<Item>(mainComposite, new Item(), InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE, false);
 	}
-	
-	public Composite getComposite() {return inventoryComposite;}
 	
 	public ItemButton<Item> getItem(String name) throws ItemNotFoundedException
 	{
@@ -78,5 +75,9 @@ public class SubInventory
 			if(i.getItem().getName().equals(name)) return i;
 		}
 		throw new ItemNotFoundedException(name);
+	}
+
+	@Override
+	public void renew() {
 	}
 }

@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.TabItem;
 import dnf_class.Characters;
 import dnf_infomation.GetDictionary;
 
-public class VillageUI
+public class VillageUI extends DnFComposite
 {
 	private TabFolder villageFolder;
 	
@@ -34,24 +34,24 @@ public class VillageUI
 	private TabItem equipTab;
 	private EquipmentInfoUI avatarUI;
 	private TabItem avatarTab;
-	private Composite villageComposite;
 	private Button toDungeonButton;
 	private Button selectCharacterButton;
 	private Characters character;
 	private Vault vault;
+	public SkillTree skillTree;
 	
 	VillageUI(Shell shell, Characters character)
 	{
 		this.character=character;
-		villageComposite = new Composite(shell, SWT.NONE);
-		villageComposite.setLayout(new FormLayout());
+		mainComposite = new Composite(shell, SWT.NONE);
+		mainComposite.setLayout(new FormLayout());
 		
 		vault = new Vault(shell, character.userItemList.getVaultItemList(character.getJob()));
 		
-		toDungeonButton = new Button(villageComposite, SWT.PUSH);
+		toDungeonButton = new Button(mainComposite, SWT.PUSH);
 		toDungeonButton.setText("수련의 방 입장");
 		
-		selectCharacterButton = new Button(villageComposite, SWT.PUSH);
+		selectCharacterButton = new Button(mainComposite, SWT.PUSH);
 		selectCharacterButton.setText("캐릭터 선택");
 		
 	}
@@ -69,21 +69,21 @@ public class VillageUI
 		}
 	}
 	
-	public void renew()
+	public void makeComposite(SkillTree skillTree)
 	{
-		villageFolder = new TabFolder(villageComposite, SWT.NONE);
+		villageFolder = new TabFolder(mainComposite, SWT.NONE);
 		villageFolder.setLayoutData(new FormData());
 		
 		equipTab = new TabItem(villageFolder, SWT.NONE);
 		String str1 = "장비";
 		equipTab.setText(str1);
-		equipUI = new EquipmentInfoUI(villageFolder, character, vault, 0);
+		equipUI = new EquipmentInfoUI(villageFolder, character, vault, skillTree, 0);
 		equipTab.setControl(equipUI.getComposite());
 		
 		avatarTab = new TabItem(villageFolder, SWT.NONE);
 		String str2 = "아바타/크리쳐/휘장";
 		avatarTab.setText(str2);
-		avatarUI = new EquipmentInfoUI(villageFolder, character, vault, 1);
+		avatarUI = new EquipmentInfoUI(villageFolder, character, vault, skillTree, 1);
 		avatarTab.setControl(avatarUI.getComposite());
 		
 		villageFolder.addSelectionListener(new SelectionAdapter() {
@@ -102,17 +102,22 @@ public class VillageUI
 		selectCharBData.top = new FormAttachment(toDungeonButton, 10);
 		selectCharacterButton.setLayoutData(selectCharBData);
 		
-		villageComposite.layout();
+		mainComposite.layout();
+	}
+	
+	@Override
+	public void renew()
+	{
+		equipUI.renew();
+		avatarUI.renew();
 	}
 	
 	public void disposeContent()
 	{
 		villageFolder.dispose();
 	}
-	
+
 	public Vault getVault() {return equipUI.vault;}
-	public SkillTree getSkillTree() {return equipUI.skillTree;}
-	public Composite getComposite() {return villageComposite;}
 	public Button get_toDungeonButton() {return toDungeonButton;}
 	public Button get_selectCharacterButton() {return selectCharacterButton;}
 }

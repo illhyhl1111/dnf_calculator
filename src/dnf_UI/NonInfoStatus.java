@@ -34,11 +34,11 @@ public class NonInfoStatus extends StatusUI
 		});
         
 		
-		infoStatusComposite = new Composite(scrollComposite, SWT.NONE);
-		scrollComposite.setContent(infoStatusComposite);
+		mainComposite = new Composite(scrollComposite, SWT.NONE);
+		scrollComposite.setContent(mainComposite);
 		GridLayout infoLayout = new GridLayout(2, true);
 		infoLayout.verticalSpacing=0;
-		infoStatusComposite.setLayout(infoLayout);
+		mainComposite.setLayout(infoLayout);
 		
 		infoStatusText = new LabelAndInput[Status.nonInfoStatNum];
 		GridData statusGridData = new GridData(SWT.FILL, SWT.TOP, true, false);
@@ -48,21 +48,21 @@ public class NonInfoStatus extends StatusUI
 		for(i=0; i<Status.nonInfoStatNum; i++){
 			if(Status.nonInfoStatOrder[i].contains("속성부여"))
 			{
-				infoStatusText[i] = new LabelAndCheckButton(infoStatusComposite, Status.nonInfoStatOrder[i], "");
+				infoStatusText[i] = new LabelAndCheckButton(mainComposite, Status.nonInfoStatOrder[i], "");
 				infoStatusText[i].composite.setLayoutData(statusGridData);
 				infoStatusText[i].setTextString("속성부여");
 			}
 			else
 			{
-				infoStatusText[i] = new LabelAndText(infoStatusComposite, Status.nonInfoStatOrder[i], "");
+				infoStatusText[i] = new LabelAndText(mainComposite, Status.nonInfoStatOrder[i], "");
 				infoStatusText[i].composite.setLayoutData(statusGridData);
 				//((Text) infoStatusText[i].input).addVerifyListener(floatFormat);
 			}
 		}
 		renew();
 		
-		infoStatusComposite.setSize(infoStatusComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-		scrollComposite.setMinSize(infoStatusComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		mainComposite.setSize(mainComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		scrollComposite.setMinSize(mainComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
 	
 	public void setStatus()
@@ -103,6 +103,7 @@ public class NonInfoStatus extends StatusUI
 		}
 	}
 	
+	@Override
 	public void renew()
 	{
 		try
@@ -137,5 +138,6 @@ public class NonInfoStatus extends StatusUI
 		}
 	}
 	
+	@Override
 	public Composite getComposite() {return scrollComposite;}
 }

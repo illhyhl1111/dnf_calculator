@@ -33,15 +33,15 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 	 * 
 	 */
 	private static final long serialVersionUID = -4213722159864758338L;
-	public HashSet<Equipment> equipList;
-	public HashSet<Title> titleList;
-	public HashSet<SetOption> setOptionList;
-	public HashSet<Card> cardList;
-	public HashSet<Avatar> avatarList;
-	public HashSet<Creature> creatureList;
-	public HashSet<Drape> drapeList;
-	public HashSet<Emblem> emblemList;
-	public HashSet<Jam> jamList;
+	public final HashSet<Equipment> equipList;
+	public final HashSet<Title> titleList;
+	public final HashSet<SetOption> setOptionList;
+	public final HashSet<Card> cardList;
+	public final HashSet<Avatar> avatarList;
+	public final HashSet<Creature> creatureList;
+	public final HashSet<Drape> drapeList;
+	public final HashSet<Emblem> emblemList;
+	public final HashSet<Jam> jamList;
 	
 	public ItemDictionary() 
 	{
