@@ -12,6 +12,8 @@ import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_InterfacesAndExceptions.Item_rarity;
 import dnf_class.Characters;
+import dnf_class.Creature;
+import dnf_class.Drape;
 import dnf_class.Item;
 import dnf_class.ItemConstraint;
 
@@ -93,13 +95,22 @@ public class InventoryCardPack extends DnFComposite
 		pack = new Composite[inventoryListNum];
 		
 		ItemConstraint[] constraintList = setConstraintList(tabNameList.length-1-3);
-		LinkedList<Item>[] equipList = character.userItemList.separateList(constraintList);
+		LinkedList<Item>[] equipList = character.userItemList.separateList(constraintList, false);
+		LinkedList<Item>[] userEquipList = character.userItemList.separateList(constraintList, true);
+		
 		LinkedList<?>[] itemList = new LinkedList<?>[equipList.length+3];
 		for(int i=0; i<equipList.length; i++)
 			itemList[i]=equipList[i];
 		itemList[equipList.length] = character.userItemList.getHashSetToLinkedList(character.userItemList.avatarList);
 		itemList[equipList.length+1] = character.userItemList.getHashSetToLinkedList(character.userItemList.creatureList);
 		itemList[equipList.length+2] = character.userItemList.getHashSetToLinkedList(character.userItemList.drapeList); 
+		
+		LinkedList<?>[] userItemList = new LinkedList<?>[equipList.length+3];
+		for(int i=0; i<userEquipList.length; i++)
+			userItemList[i]=userEquipList[i];
+		userItemList[userEquipList.length] = character.userItemList.getHashSetToLinkedList(character.userItemList.avatarList_user);
+		userItemList[userEquipList.length+1] = new LinkedList<Creature>();
+		userItemList[userEquipList.length+2] = new LinkedList<Drape>(); 
 		
 		RowLayout packLayout = new RowLayout(SWT.VERTICAL);
 		packLayout.spacing=10;
@@ -112,7 +123,7 @@ public class InventoryCardPack extends DnFComposite
 			inventoryTabList[i]= new TabItem((TabFolder) mainComposite, SWT.NONE);
 			inventoryTabList[i].setText(tabNameList[i]);
 
-			inventoryList[i] = new Inventory(pack[i], character, dungeonUI, (LinkedList<Item>) itemList[i], 0);
+			inventoryList[i] = new Inventory(pack[i], character, dungeonUI, (LinkedList<Item>) itemList[i], (LinkedList<Item>)userItemList[i]);
 			inventoryTabList[i].setControl(pack[i]);
 		}
 	}
@@ -138,7 +149,8 @@ public class InventoryCardPack extends DnFComposite
 		
 		ItemConstraint[] constraintList = setConstraintList(tabNameList.length-1);
 		
-		LinkedList<Item>[] itemList = character.userItemList.separateList(constraintList); 
+		LinkedList<Item>[] itemList = character.userItemList.separateList(constraintList, false);
+		LinkedList<Item>[] userItemList = character.userItemList.separateList(constraintList, true);
 		LinkedList<Item>[] cardList = character.userItemList.separateCardList(constraintList);
 		
 		RowLayout packLayout = new RowLayout(SWT.VERTICAL);
@@ -152,7 +164,7 @@ public class InventoryCardPack extends DnFComposite
 			inventoryTabList[i]= new TabItem((TabFolder) mainComposite, SWT.NONE);
 			inventoryTabList[i].setText(tabNameList[i]);
 			
-			inventoryList[i] = new Inventory(pack[i], character, itemInfo, itemList[i], 0);
+			inventoryList[i] = new Inventory(pack[i], character, itemInfo, itemList[i], userItemList[i]);
 			subInventoryList[i] = new SubInventory(pack[i], character, itemInfo, cardList[i]);
 			
 			inventoryTabList[i].setControl(pack[i]);
@@ -177,6 +189,11 @@ public class InventoryCardPack extends DnFComposite
 				character.userItemList.getHashSetToLinkedList(character.userItemList.emblemList),
 				new LinkedList<Item>(), 
 				character.userItemList.getHashSetToLinkedList(character.userItemList.jamList) };
+		LinkedList<?>[] userItemList = {
+				character.userItemList.getHashSetToLinkedList(character.userItemList.avatarList_user),
+				new LinkedList<Creature>(),
+				new LinkedList<Drape>() 
+		};
 		
 		RowLayout packLayout = new RowLayout(SWT.VERTICAL);
 		packLayout.spacing=10;
@@ -189,7 +206,7 @@ public class InventoryCardPack extends DnFComposite
 			inventoryTabList[i]= new TabItem((TabFolder) mainComposite, SWT.NONE);
 			inventoryTabList[i].setText(tabNameList[i]);
 			
-			inventoryList[i] = new Inventory(pack[i], character, itemInfo, (LinkedList<Item>) itemList[i], 1);
+			inventoryList[i] = new Inventory(pack[i], character, itemInfo, (LinkedList<Item>) itemList[i], (LinkedList<Item>) userItemList[i]);
 			subInventoryList[i] = new SubInventory(pack[i], character, itemInfo, (LinkedList<Item>) cardList[i]);
 			
 			inventoryTabList[i].setControl(pack[i]);
@@ -241,7 +258,9 @@ public class InventoryCardPack extends DnFComposite
 		
 		for(Inventory inventory : inventoryList)
 		{
-			for(ItemButton<Item> i : inventory.inventoryList)
+			for(ItemButton<Item> i : inventory.inventoryList1)
+				if(part.contains(i.getItem().getPart()) && i.getItem().getEnabled()) enabledList.add(i.getItem());
+			for(ItemButton<Item> i : inventory.inventoryList2)
 				if(part.contains(i.getItem().getPart()) && i.getItem().getEnabled()) enabledList.add(i.getItem());
 		}
 		

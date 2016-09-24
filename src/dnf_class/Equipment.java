@@ -282,6 +282,14 @@ public class Equipment extends Item
 	@Override
 	public SetName getSetName() {return setName;}
 	
+	@Override
+	public Object clone()
+	{
+		Equipment temp = (Equipment) super.clone();
+		temp.card = (Card) this.card.clone();
+		return temp;
+	}
+	
 	//////정렬순서
 	// 1. 종류 : 장비->칭호->보주->아바타->엠블렘->크리쳐->비장비
 	// 2. 등급 : 에픽->레전더리->유니크->크로니클->레어->언커먼->커먼
@@ -301,6 +309,7 @@ public class Equipment extends Item
 		if(arg2.level!=level) return level-arg2.level;														// 4.
 		if(arg2.setName!=setName) return arg2.setName.compare(setName);										// 5.
 		if(arg2.part!=part) return part.order-arg2.part.order;												// 6.
-		else return reinforce-arg2.getReinforce();															// 7.
+		if(arg2.reinforce!=reinforce) return reinforce-arg2.getReinforce();									// 7.
+		else return arg2.getName().compareTo(this.getName());
 	}
 }

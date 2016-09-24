@@ -45,7 +45,7 @@ public class ItemButton<T extends IconObject>
 	{
 		Image image;
 		if(item.getIcon()==null || !enabled) image = GetDictionary.iconDictionary.get("디폴트");
-		else image = GetDictionary.iconDictionary.get(item.getName());
+		else image = GetDictionary.iconDictionary.get(item.getItemName());
 		button.setImage(image);
 	}
 	

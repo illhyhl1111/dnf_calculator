@@ -15,5 +15,8 @@ public interface InterfaceSize {
 	int ITEM_INFO_SIZE=250;
 	int SET_INFO_SIZE=250; int SET_ITEM_INTERVAL=5;
 	
+	int DEALCHART_DEALSIZE_X=220; int DEALCHART_HPSIZE_X=100;
+	int DEALCHART_Y=600;
+	
 	int MARGIN=5;
 }

@@ -17,8 +17,8 @@ import org.eclipse.swt.widgets.Shell;
 
 import dnf_InterfacesAndExceptions.InterfaceSize;
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
+import dnf_class.Characters;
 import dnf_class.Item;
-import dnf_infomation.GetDictionary;
 
 public class Vault extends Dialog 
 {
@@ -30,21 +30,21 @@ public class Vault extends Dialog
 	private Composite vaultComposite;
 	private ScrolledComposite scrollComposite;
 	private Composite itemInfo;
-	private Point itemInfoSize;
 	private Composite setInfo;
-	private Point setInfoSize;
 	private Integer X0;
 	private Integer Y0;
 	private Boolean hasSetOption;
 	private InventoryCardPack inventory;
+	static final int mouseInterval_hor = 7;
+	static final int mouseInterval_ver = 5;
 	
 	Shell save;
 	
 	@SuppressWarnings("unchecked")
-	public Vault(Shell parent, LinkedList<Item> itemList)
+	public Vault(Shell parent, Characters character)
 	{
 		super(parent);
-		this.itemList=itemList;
+		this.itemList=character.userItemList.getVaultItemList(character.getJob());
 	
 		save = new Shell(Display.getCurrent());
 		
@@ -74,6 +74,104 @@ public class Vault extends Dialog
 			
 			if(!i.getName().equals("이름없음"))
 			{
+				Integer indexBox = index;
+				
+				// add MouseDown Event - get item - inventory to vault
+				vault[index].getButton().addListener(SWT.MouseDown, new Listener() {
+					@Override
+			        public void handleEvent(Event e) {
+						if(e.button==3){
+							try{
+								ItemButton<Item> temp = inventory.getItem(i.getName());
+								temp.getItem().setEnabled(true);
+								temp.renewImage(true);
+							}
+							catch(ItemNotFoundedException e1){
+								e1.printStackTrace();
+							}
+						}
+			        }
+			    });
+				
+				// add MouseEnvet Event - make composite
+				vault[index].getButton().addListener(SWT.MouseEnter, new Listener() {
+			         @Override
+			         public void handleEvent(Event e) {
+			        	 if(i.getName().contains("없음")) return;
+			        	 
+			        	Point setInfoSize=null;
+			        	Point itemInfoSize=null;
+
+			        	itemInfo = new Composite(vaultComposite, SWT.BORDER);
+		        		GridLayout layout = new GridLayout(1, false);
+		        		layout.verticalSpacing=3;
+		        		itemInfo.setLayout(layout);
+		        		MakeComposite.setItemInfoComposite(itemInfo, i);
+		        		itemInfoSize = itemInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		        		itemInfo.moveAbove(null);
+		        		
+		        		hasSetOption = vault[indexBox].hasSetOption();
+		        		if(hasSetOption){
+		        			setInfo = new Composite(vaultComposite, SWT.BORDER);
+		        			setInfo.setLayout(layout);
+		        			int setNum;
+		        			if(character.getSetOptionList().get( i.getSetName() )==null) setNum=0;
+		        			else setNum=character.getSetOptionList().get( i.getSetName() );
+		        			
+		        			MakeComposite.setSetInfoComposite(setInfo, i, setNum, character.userItemList);
+			        		setInfoSize = setInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			        		setInfo.moveAbove(null);
+		        		}
+		        		 
+		        		setMousePoint(e, vaultComposite, itemInfoSize, setInfoSize);
+		        		itemInfo.setBounds((e.x+X0), (e.y+Y0), InterfaceSize.ITEM_INFO_SIZE, itemInfoSize.y);
+		        		if(hasSetOption) setInfo.setBounds((e.x+X0+InterfaceSize.SET_ITEM_INTERVAL+InterfaceSize.ITEM_INFO_SIZE), (e.y+Y0), InterfaceSize.SET_INFO_SIZE, setInfoSize.y);
+			        }
+			    });
+				
+				index++;
+			}
+		}
+		
+		for(; index<vaultSize; index++)
+			vault[index] = new ItemButton<Item>(vaultComposite, new Item(), InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE, false);
+		
+		scrollComposite.setContent(vaultComposite);
+		vaultComposite.setSize(vaultComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		scrollComposite.setMinSize(vaultComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		scrollComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+	}
+	
+	private void setMousePoint(Event e, Composite background, Point itemInfoSize, Point setInfoSize)
+	{
+		Point mousePoint = ((Control) e.widget).toDisplay(0, 0);
+    	mousePoint.x-=background.toDisplay(0, 0).x;
+    	mousePoint.y-=background.toDisplay(0, 0).y;
+   		
+   		if(setInfoSize!=null) Y0 = mousePoint.y-Math.max(setInfoSize.y, itemInfoSize.y)-mouseInterval_hor;
+		else Y0=mousePoint.y-itemInfoSize.y-mouseInterval_hor;
+		if(hasSetOption)
+			X0 = mousePoint.x-InterfaceSize.ITEM_INFO_SIZE-InterfaceSize.SET_INFO_SIZE-mouseInterval_ver-InterfaceSize.SET_ITEM_INTERVAL;
+		else X0 = mousePoint.x-InterfaceSize.ITEM_INFO_SIZE-mouseInterval_ver;
+		if(X0<0) X0 = mousePoint.x+mouseInterval_ver;
+		if(Y0<0) Y0 = mousePoint.y+mouseInterval_hor;
+	}
+	
+	public void setInventoryPack(InventoryCardPack inventory)
+	{
+		this.inventory=inventory;
+	}
+	
+	protected Control createDialogArea(Composite parent)
+	{
+		Composite composite = (Composite) super.createDialogArea(parent);
+		scrollComposite.setParent(composite);
+
+		int index=0;
+		for(Item i : itemList){
+			
+			if(!i.getName().equals("이름없음"))
+			{
 				// add MouseExit Event - dispose composite
 				vault[index].getButton().addListener(SWT.MouseExit, new Listener() {
 			         @Override
@@ -93,93 +191,6 @@ public class Vault extends Dialog
 			        		 itemInfo.setLocation((e.x+X0), (e.y+Y0));
 			        		 if(hasSetOption) setInfo.setLocation((e.x+X0+InterfaceSize.SET_ITEM_INTERVAL+InterfaceSize.ITEM_INFO_SIZE), (e.y+Y0));
 		        		 }
-			         }
-			     });			
-				index++;
-			}
-		}
-		
-		for(; index<vaultSize; index++)
-			vault[index] = new ItemButton<Item>(vaultComposite, new Item(), InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE, false);
-		
-		scrollComposite.setContent(vaultComposite);
-		vaultComposite.setSize(vaultComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-		scrollComposite.setMinSize(vaultComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-		scrollComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-	}
-	
-	public void setInventoryPack(InventoryCardPack inventory)
-	{
-		this.inventory=inventory;
-	}
-	
-	protected Control createDialogArea(Composite parent)
-	{
-		Composite composite = (Composite) super.createDialogArea(parent);
-		scrollComposite.setParent(composite);
-		
-		Point buttonS = vault[0].getButton().computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		
-		int index=0;
-		for(Item i : itemList){
-			
-			Integer indexBox = index;
-			Integer xButton = (index%vaultCol)*buttonS.x+15;
-			Integer yButton = (int)(index/vaultCol)*buttonS.y+17;
-			
-			if(!i.getName().equals("이름없음"))
-			{
-				// add MouseDown Event - get item - inventory to vault
-				vault[index].getButton().addListener(SWT.MouseDown, new Listener() {
-					@Override
-			        public void handleEvent(Event e) {
-						if(e.button==3){
-							try{
-								ItemButton<Item> temp = inventory.getItem(i.getName());
-								temp.getItem().setEnabled(true);
-								temp.renewImage(true);
-							}
-							catch(ItemNotFoundedException e1){
-								e1.printStackTrace();
-							}
-						}
-			        	 //System.out.println("Mouse Down (button: " + e.button + " x: " + e.x + " y: " + e.y + ")");
-			        }
-			    });
-				
-				// add MouseEnvet Event - make composite
-				vault[index].getButton().addListener(SWT.MouseEnter, new Listener() {
-			         @Override
-			         public void handleEvent(Event e) {
-			        	 itemInfo = new Composite(parent, SWT.BORDER);
-		        		 GridLayout layout = new GridLayout(1, false);
-		        		 layout.verticalSpacing=3;
-		        		 itemInfo.setLayout(layout);
-		        		 MakeComposite.setItemInfoComposite(itemInfo, vault[indexBox].getItem());
-		        		 itemInfoSize = itemInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		        		 itemInfo.moveAbove(null);
-		        		 
-		        		 boolean hasSet = vault[indexBox].hasSetOption();
-		        		 hasSetOption = hasSet;
-		        		 if(hasSet){
-		        			 setInfo = new Composite(parent, SWT.BORDER);
-		        			 setInfo.setLayout(layout);
-		        			 MakeComposite.setSetInfoComposite(setInfo, vault[indexBox].getItem(), 0, GetDictionary.itemDictionary);
-			        		 setInfoSize = setInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-			        		 setInfo.moveAbove(null);
-		        		 }
-		        		 
-		        		 int x0;
-		        		 int y0 = yButton-itemInfoSize.y-5;
-		        		 if(hasSet)
-		        			 x0 = xButton-InterfaceSize.ITEM_INFO_SIZE-InterfaceSize.SET_INFO_SIZE-5-InterfaceSize.SET_ITEM_INTERVAL;
-		        		 else x0 = xButton-InterfaceSize.ITEM_INFO_SIZE-5;
-		        		 if(x0<0) x0 = xButton+5;
-		        		 if(y0<0) y0 = yButton+5;
-		        		 itemInfo.setBounds((e.x+x0), (e.y+y0), InterfaceSize.ITEM_INFO_SIZE, itemInfoSize.y);
-		        		 if(hasSet) setInfo.setBounds((e.x+x0+InterfaceSize.SET_ITEM_INTERVAL+InterfaceSize.ITEM_INFO_SIZE), (e.y+y0), InterfaceSize.SET_INFO_SIZE, setInfoSize.y);
-		        		 X0=x0;
-		        		 Y0=y0;
 			         }
 			     });
 			}

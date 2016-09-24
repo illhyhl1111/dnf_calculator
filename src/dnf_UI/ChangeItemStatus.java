@@ -71,16 +71,18 @@ public class ChangeItemStatus extends Dialog{
 	private boolean hasSet;
 	private Dimension_stat currentDimStat;
 	private int currentReinforce;
+	private boolean replicateEnabled;
 	
-	public ChangeItemStatus(Shell parent, Item item, boolean hasSet)
+	public ChangeItemStatus(Shell parent, Item item, boolean hasSet, boolean replicateEnabled)
 	{
 		super(parent);
 		this.item=item;		
 		this.hasSet=hasSet;
+		this.replicateEnabled=replicateEnabled;
 		try {
-			if(item instanceof Equipment) originalItem=GetDictionary.getEquipment(item.getName());
-			else if(item instanceof Title) originalItem=GetDictionary.getTitle(item.getName());
-			else if(item instanceof Card) originalItem=GetDictionary.getCard(item.getName());
+			if(item instanceof Equipment) originalItem=GetDictionary.getEquipment(item.getItemName());
+			else if(item instanceof Title) originalItem=GetDictionary.getTitle(item.getItemName());
+			else if(item instanceof Card) originalItem=GetDictionary.getCard(item.getItemName());
 			else originalItem=null;
 		} catch (ItemFileNotReaded | ItemFileNotFounded e) {
 			e.printStackTrace();
@@ -746,6 +748,21 @@ public class ChangeItemStatus extends Dialog{
 	
 		    final GridData leftButtonData = new GridData(SWT.LEFT, SWT.CENTER, true, true);
 		    leftButton.setLayoutData(leftButtonData);
+	    }
+	    
+	    if(replicateEnabled){
+	    	int mode=3;
+		    String buttonStr="아이템 복제";
+		    if(item.replicateNum!=0){
+		    	mode=4;
+		    	buttonStr="아이템 삭제";
+		    }
+		    
+		    final Button replicateButton = createButton(buttonBar, mode, buttonStr, false);
+		    replicateButton.setText(buttonStr);
+		    
+		    final GridData leftButtonData = new GridData(SWT.LEFT, SWT.CENTER, true, true);
+		    replicateButton.setLayoutData(leftButtonData);
 	    }
 
 	    // add the dialog's button bar to the right

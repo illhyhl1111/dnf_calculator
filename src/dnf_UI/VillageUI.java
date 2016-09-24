@@ -46,7 +46,7 @@ public class VillageUI extends DnFComposite
 		mainComposite = new Composite(shell, SWT.NONE);
 		mainComposite.setLayout(new FormLayout());
 		
-		vault = new Vault(shell, character.userItemList.getVaultItemList(character.getJob()));
+		vault = new Vault(shell, character);
 		
 		toDungeonButton = new Button(mainComposite, SWT.PUSH);
 		toDungeonButton.setText("수련의 방 입장");

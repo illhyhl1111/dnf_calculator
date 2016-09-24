@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -32,7 +31,7 @@ public class DealChart extends DnFComposite {
 	{
 		this.character=character;
 		mainComposite = new Composite(parent, SWT.BORDER);
-		mainComposite.setLayout(new FillLayout(SWT.VERTICAL));
+		mainComposite.setLayout(new RowLayout(SWT.VERTICAL));
 		
 		skillList = new LinkedList<DealInfo>();
 	}
@@ -41,6 +40,29 @@ public class DealChart extends DnFComposite {
 	{
 		for(Control composite : mainComposite.getChildren())
 			composite.dispose();
+		
+		Composite explain = new Composite(mainComposite, SWT.NONE);
+		RowLayout layout = new RowLayout(SWT.HORIZONTAL);
+		layout.marginBottom=0;
+		layout.marginTop=0;
+		layout.wrap=false;
+		layout.justify=true;
+		explain.setLayout(layout);
+		
+		Label icon = new Label(explain, SWT.BORDER);
+		icon.setText("스킬");
+		icon.setAlignment(SWT.CENTER);
+		icon.setLayoutData(new RowData(InterfaceSize.SKILL_BUTTON_SIZE, 15));
+		
+		Label dealLabel = new Label(explain, SWT.BORDER);
+		dealLabel.setText("데미지");
+		dealLabel.setAlignment(SWT.CENTER);
+		dealLabel.setLayoutData(new RowData(InterfaceSize.DEALCHART_DEALSIZE_X, 15));
+		
+		Label hpLabel = new Label(explain, SWT.BORDER);
+		hpLabel.setText("깎은 체력량(%)");
+		hpLabel.setAlignment(SWT.CENTER);
+		hpLabel.setLayoutData(new RowData(InterfaceSize.DEALCHART_HPSIZE_X, 15));
 		
 		skillList = new LinkedList<DealInfo>();
 		
@@ -91,25 +113,28 @@ class DealInfo extends DnFComposite implements Comparable<DealInfo>{
 		
 		mainComposite = new Composite(parent, SWT.NONE);
 		RowLayout layout = new RowLayout(SWT.HORIZONTAL);
-		layout.marginWidth=20;
 		layout.wrap=false;
 		layout.justify=true;
 		mainComposite.setLayout(layout);
 		
 		icon = new Label(mainComposite, SWT.NONE);
 		icon.setLayoutData(new RowData(InterfaceSize.SKILL_BUTTON_SIZE, InterfaceSize.SKILL_BUTTON_SIZE));
+		icon.setAlignment(SWT.CENTER);
 		
 		dealLabel = new Label(mainComposite, SWT.NONE);
-		dealLabel.setLayoutData(new RowData());
+		dealLabel.setLayoutData(new RowData(InterfaceSize.DEALCHART_DEALSIZE_X, InterfaceSize.SKILL_BUTTON_SIZE));
+		dealLabel.setAlignment(SWT.CENTER);
 		
 		hpLabel = new Label(mainComposite, SWT.NONE);
-		hpLabel.setLayoutData(new RowData());
+		hpLabel.setLayoutData(new RowData(InterfaceSize.DEALCHART_HPSIZE_X, InterfaceSize.SKILL_BUTTON_SIZE));
+		hpLabel.setAlignment(SWT.CENTER);
 		
 		setMonster(monster);
 		mainComposite.layout();
 	}
 
 	public void setMonster(Monster monster) {
+		if(monster==null) return;
 		this.monster=monster;
 		renew();
 	}

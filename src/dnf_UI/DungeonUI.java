@@ -12,6 +12,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
+import dnf_InterfacesAndExceptions.InterfaceSize;
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_InterfacesAndExceptions.Location;
 import dnf_class.Characters;
@@ -109,6 +110,7 @@ public class DungeonUI extends DnFComposite{
 		dealChart = new DealChart(mainComposite, character);
 		formData = new FormData();
 		formData.left = new FormAttachment(inventoryFolder, 10);
+		formData.height=InterfaceSize.DEALCHART_Y;
 		try {
 			dealChart.setDealChart(GetDictionary.charDictionary.getMonsterInfo("임시몬스터"));
 			dealChart.getComposite().setLayoutData(formData);

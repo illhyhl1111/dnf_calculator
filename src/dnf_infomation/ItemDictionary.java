@@ -43,6 +43,10 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 	public final HashSet<Emblem> emblemList;
 	public final HashSet<Jam> jamList;
 	
+	public final HashSet<Equipment> equipList_user;
+	public final HashSet<Title> titleList_user;
+	public final HashSet<Avatar> avatarList_user;
+	
 	public ItemDictionary() 
 	{
 		equipList = new HashSet<Equipment>();	
@@ -89,6 +93,10 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 		EmblemInfo.getInfo(emblemList);
 		
 		jamList = new HashSet<Jam>();
+		
+		equipList_user = new HashSet<Equipment>();
+		titleList_user = new HashSet<Title>();
+		avatarList_user = new HashSet<Avatar>();
 	}
 	
 	public LinkedList<Item> getVaultItemList(JobList job)
@@ -141,13 +149,16 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 	}
 	
 	@SuppressWarnings("unchecked")
-	public LinkedList<Item>[] separateList(ItemConstraint[] constraintList)
+	public LinkedList<Item>[] separateList(ItemConstraint[] constraintList, boolean getUserItemMode)
 	{
 		LinkedList<?>[] list = new LinkedList<?>[constraintList.length+1];
 		for(int i=0; i<constraintList.length+1; i++)
 			list[i] = new LinkedList<Item>();
 		
 		int i;
+		HashSet<Equipment> equipList;
+		if(getUserItemMode) equipList = equipList_user;
+		else equipList=this.equipList;
 		for(Equipment e : equipList){
 			for(i=0; i<constraintList.length; i++){
 				if(constraintList[i].partList.contains(e.getPart()) && constraintList[i].rarityList.contains(e.getRarity()) 
@@ -198,12 +209,16 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 	{
 		for(Equipment e : equipList)
 			if(e.getName().equals(name)) return e;
+		for(Equipment e : equipList_user)
+			if(e.getName().equals(name)) return e;
 		throw new ItemFileNotFounded(name);
 	}
 	
 	public Title getTitle(String name) throws ItemFileNotFounded
 	{
 		for(Title t : titleList)
+			if(t.getName().equals(name)) return t;
+		for(Title t : titleList_user)
 			if(t.getName().equals(name)) return t;
 		throw new ItemFileNotFounded(name);
 	}
@@ -235,6 +250,8 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 	
 	public Avatar getAvatar(String name) throws ItemFileNotFounded {
 		for(Avatar a : avatarList)
+			if(a.getName().equals(name)) return a;
+		for(Avatar a : avatarList_user)
 			if(a.getName().equals(name)) return a;
 		throw new ItemFileNotFounded(name);
 	}
@@ -270,6 +287,53 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 		Collections.sort(aList);
 		Collections.reverse(aList);
 		return aList;
+	}
+	
+	public Item makeReplicate(Item item, int leftInventoryButtonNum)
+	{
+		if(leftInventoryButtonNum<=0) return null;
+		
+		HashSet<? extends Item> itemList;
+		if(item instanceof Equipment) itemList=equipList_user;
+		else if(item instanceof Title) itemList=titleList_user;
+		else if(item instanceof Avatar) itemList=avatarList_user;
+		else return null;
+		
+		LinkedList<Integer> replicateNumList = new LinkedList<Integer>();
+		int num=1;
+		
+		for(Item i : itemList)
+		{
+			if(i.getName().contains(item.getName()+"-복제")){
+				replicateNumList.add(i.replicateNum);
+			}
+		}
+		Collections.sort(replicateNumList);
+		for(Integer i : replicateNumList)
+			if(num==i) num++;
+			else break;
+		
+		Item replicate = (Item) item.clone();
+		replicate.replicateNum=num;
+		String index = "";
+		if(num!=1) index="("+num+")";
+		replicate.setName(replicate.getItemName() + "-복제"+index);
+		replicate.setEnabled(true);
+		
+		if(item instanceof Equipment) equipList_user.add((Equipment)replicate);
+		else if(item instanceof Title) titleList_user.add((Title)replicate);
+		else if(item instanceof Avatar) avatarList_user.add((Avatar)replicate);
+		
+		return replicate;
+	}
+	
+	public boolean deleteReplicate(Item item)
+	{
+		boolean result=false;
+		if(item instanceof Equipment) result = equipList_user.remove(item);
+		else if(item instanceof Title) result = titleList_user.remove(item);
+		else if(item instanceof Avatar) result = avatarList_user.remove(item);
+		return result;
 	}
 	
 	@Override

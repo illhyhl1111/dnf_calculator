@@ -74,6 +74,16 @@ public class Avatar extends Item
 		return true;
 	}
 	
+	@Override
+	public Object clone()
+	{
+		Avatar temp = (Avatar) super.clone();
+		temp.emblem1 = (Emblem) this.emblem1.clone();
+		temp.emblem2 = (Emblem) this.emblem2.clone();
+		temp.platinumEmblem = (Emblem) this.platinumEmblem.clone();
+		return temp;
+	}
+	
 	//////정렬순서
 	// 1. 종류 : 장비->칭호->보주->아바타->엠블렘->크리쳐->비장비
 	// 2. 아바타 종류 : 레어->상압 

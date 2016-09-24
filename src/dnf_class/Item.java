@@ -16,6 +16,7 @@ public class Item extends IconObject implements Comparable<Item>
 	public StatusList dStat;									//인던스탯
 	public FunctionStatusList fStat;							//조건부 스탯
 	public LinkedList<String> explanation;						//설명
+	public int replicateNum;
 	
 	public Item(String name, String icon, Item_rarity rarity)
 	{
@@ -26,6 +27,7 @@ public class Item extends IconObject implements Comparable<Item>
 		dStat = new StatusList();
 		fStat = new FunctionStatusList();
 		explanation = new LinkedList<String>();
+		replicateNum=0;
 	}
 	public Item()
 	{
@@ -35,18 +37,25 @@ public class Item extends IconObject implements Comparable<Item>
 		dStat = new StatusList();
 		fStat = new FunctionStatusList();
 		explanation = new LinkedList<String>();
+		replicateNum=0;
 	}
 	
 	public Item_rarity getRarity() { return rarity;}
 	public void setRarity(Item_rarity rarity) { this.rarity = rarity;}
 	
 	@Override
-	public Object clone() throws CloneNotSupportedException
+	public Object clone()
 	{
-		Item temp = (Item) super.clone();
-		temp.vStat = (StatusList) vStat.clone();
-		temp.dStat = (StatusList) dStat.clone();
-		return temp;
+		try {
+			Item temp = (Item) super.clone();
+			temp.vStat = (StatusList) vStat.clone();
+			temp.dStat = (StatusList) dStat.clone();
+			return temp;
+		} catch (CloneNotSupportedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	@Override

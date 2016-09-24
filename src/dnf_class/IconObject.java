@@ -16,6 +16,13 @@ public abstract class IconObject implements Cloneable, java.io.Serializable
 	}
 	
 	public String getName() { return name;}
+	public String getItemName() {
+		if(name.contains("-복제")){
+			int index = name.indexOf("-복제");
+			return name.substring(0, index);
+		}
+		else return name;	
+	}
 	public void setName(String name) { this.name = name;}
 	
 	public String getIcon() { return iconAddress;}

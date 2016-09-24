@@ -65,7 +65,7 @@ public class Title extends Item
 	}
 	
 	@Override
-	public Object clone() throws CloneNotSupportedException
+	public Object clone()
 	{
 		Title clone = (Title) super.clone();
 		clone.card = (Card) card.clone();

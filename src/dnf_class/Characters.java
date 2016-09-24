@@ -26,7 +26,6 @@ import dnf_infomation.CharacterDictionary;
 import dnf_infomation.GetDictionary;
 import dnf_infomation.ItemDictionary;
 
-
 public class Characters implements java.io.Serializable
 {
 	/**
@@ -37,20 +36,9 @@ public class Characters implements java.io.Serializable
 	public Status dungeonStatus;														//인던스탯
 	
 	private LinkedList<Skill> skillList;
-	private HashMap<Equip_part, Equipment> equipmentList;
-	static final int EQUIPNUM=11;
-	private Weapon weapon;
-	private HashMap<Avatar_part, Avatar> avatarList;
-	static final int AVATARNUM=10;
-	public boolean autoOptimize;
-	private int autoOptimizeMode;
-	private Item_rarity autoOptimizeRarity;
-	
+	private Setting itemSetting;
 	private HashMap<SetName, Integer> setOptionList;
-	private Creature creature;
-	private Title title;
-	private Drape drape;
-	private LinkedList<Consumeable> doping;
+	public LinkedList<Consumeable> doping;
 	private int level;
 	private final JobList job;
 	public final String name;
@@ -58,6 +46,10 @@ public class Characters implements java.io.Serializable
 	
 	public CharacterDictionary characterInfoList;
 	public ItemDictionary userItemList;
+	
+	public boolean autoOptimize;
+	private int autoOptimizeMode;
+	private Item_rarity autoOptimizeRarity;
 	
 	String charImageAddress;
 	
@@ -69,19 +61,9 @@ public class Characters implements java.io.Serializable
 		characterInfoList = (CharacterDictionary) GetDictionary.charDictionary.clone();
 		skillList = characterInfoList.getSkillList(job, level);
 		
-		equipmentList = new HashMap<Equip_part, Equipment>();					//key : 장비 부위, value : 장비. 장비와 장비부위의 type이 같은곳에 장착됨
+		itemSetting = new Setting();
 		setOptionList = new HashMap<SetName, Integer>();						//key : 셋옵 이름, value : 셋옵 보유 개수
-		avatarList = new HashMap<Avatar_part, Avatar>();
-		
-		for(Equip_part v : Equip_part.values())									//장비목록과 장착장비 초기화
-			equipmentList.put(v, new Equipment(v));
-		for(Avatar_part v : Avatar_part.values())
-			avatarList.put(v,  new Avatar(v));
-		
-		weapon = new Weapon();
-		creature = new Creature();
-		drape = new Drape();
-		title = new Title();
+	
 		doping = new LinkedList<Consumeable>();
 		this.setLevel(level);
 		
@@ -153,9 +135,9 @@ public class Characters implements java.io.Serializable
 		
 		if(item instanceof Weapon){
 			Weapon temp = (Weapon)item;
-			subtractSet(weapon);
+			subtractSet(itemSetting.weapon);
 		
-			if(temp.enabled(job)) weapon=temp;
+			if(temp.enabled(job)) itemSetting.weapon=temp;
 			else System.out.println("장착불가");
 			
 			addSet(temp);
@@ -164,15 +146,15 @@ public class Characters implements java.io.Serializable
 		else if(item instanceof Equipment){
 			Equipment equipment = (Equipment)item; 
 			
-			subtractSet(equipmentList.get(equipment.part));
-			equipmentList.replace(equipment.part, equipment);
+			subtractSet(itemSetting.equipmentList.get(equipment.part));
+			itemSetting.equipmentList.replace(equipment.part, equipment);
 			addSet(equipment);
 		}
 		else if(item instanceof Avatar){
 			Avatar avatar = (Avatar)item; 
 			Avatar_part part = avatar.part;
-			subtractSet(avatarList.get(avatar.part));
-			avatarList.replace(part, avatar);
+			subtractSet(itemSetting.avatarList.get(avatar.part));
+			itemSetting.avatarList.replace(part, avatar);
 			
 			addSet(avatar);
 		}
@@ -180,8 +162,8 @@ public class Characters implements java.io.Serializable
 			Consumeable consume = (Consumeable)item; 
 			doping.add(consume);
 		}
-		else if(item instanceof Creature) creature = (Creature)item;
-		else if(item instanceof Title) title = (Title)item;
+		else if(item instanceof Creature) itemSetting.creature = (Creature)item;
+		else if(item instanceof Title) itemSetting.title = (Title)item;
 		
 		setStatus();
 		
@@ -194,8 +176,9 @@ public class Characters implements java.io.Serializable
 		if(autoOptimize && crt_before!=crt_after) optimizeEmblem(autoOptimizeMode, autoOptimizeRarity);
 	}
 	
-	public void unequip(Item item)
+	public boolean unequip(Item item)
 	{
+		boolean success=false;
 		double crt_before=0, crt_after=0;
 		try {
 			crt_before = dungeonStatus.getStat("물크");
@@ -205,30 +188,51 @@ public class Characters implements java.io.Serializable
 		
 		if(item instanceof Weapon){
 			Weapon weapon = (Weapon)item;
-			this.weapon = new Weapon();
-			subtractSet(weapon);
+			
+			if(weapon.getName().equals(itemSetting.weapon.getName())){
+				itemSetting.weapon = new Weapon();
+				subtractSet(weapon);
+				success = true;
+			}
 		}
 		
 		else if(item instanceof Equipment)
 		{
 			Equipment equipment = (Equipment)item; 
 			Equip_part part = equipment.part;
-			equipmentList.replace(part, new Equipment(part));
 			
-			subtractSet(equipment);
+			if(itemSetting.equipmentList.get(part).getName().equals(equipment.getName())){
+				itemSetting.equipmentList.replace(part, new Equipment(part));
+				subtractSet(equipment);
+				success = true;
+			}
 		}
 		else if(item instanceof Avatar){
 			Avatar avatar = (Avatar)item; 
 			Avatar_part part = avatar.part;
-			avatarList.replace(part, new Avatar(part));
-			subtractSet(avatar);
+			
+			if(itemSetting.avatarList.get(part).getName().equals(avatar.getName())){
+				itemSetting.avatarList.replace(part, new Avatar(part));
+				subtractSet(avatar);
+				success = true;
+			}
 		}
 		else if(item instanceof Consumeable){
 			Consumeable consume = (Consumeable)item; 
-			doping.remove(consume);
+			success = doping.remove(consume);
 		}
-		else if(item instanceof Creature) creature = new Creature();
-		else if(item instanceof Title) title = new Title();
+		else if(item instanceof Creature){
+			if(item.getName().equals(itemSetting.creature.getName())){
+				itemSetting.creature = new Creature();
+				success = true;
+			}
+		}
+		else if(item instanceof Title){
+			if(item.getName().equals(itemSetting.title.getName())){
+				itemSetting.title = new Title();
+				success = true;
+			}
+		}
 		
 		setStatus();
 		
@@ -239,6 +243,8 @@ public class Characters implements java.io.Serializable
 		}
 		
 		if(autoOptimize && crt_before!=crt_after) optimizeEmblem(autoOptimizeMode, autoOptimizeRarity);
+		
+		return success;
 	}
 	
 	private void itemStatUpdate(Item item)
@@ -270,12 +276,12 @@ public class Characters implements java.io.Serializable
 	{
 		initStatus();
 		
-		itemStatUpdate(weapon);
+		itemStatUpdate(itemSetting.weapon);
 		
-		for(Equipment e : equipmentList.values())
+		for(Equipment e : itemSetting.equipmentList.values())
 			itemStatUpdate(e);														//equipmentList(장비목록)에 포함된 모든 장비 스탯 더하기
 		
-		for(Avatar a : avatarList.values()) itemStatUpdate(a);
+		for(Avatar a : itemSetting.avatarList.values()) itemStatUpdate(a);
 		
 		for(Entry<SetName,Integer> e : setOptionList.entrySet())				//setOptionList(셋옵목록)에 포함된 모든 셋옵 e에 대해
 		{
@@ -292,11 +298,11 @@ public class Characters implements java.io.Serializable
 			
 		}
 		
-		itemStatUpdate(title);
-		itemStatUpdate(creature);
+		itemStatUpdate(itemSetting.title);
+		itemStatUpdate(itemSetting.creature);
 		
-		weapon.fStat.addListToStat(dungeonStatus, this, target, weapon);
-		for(Equipment e : equipmentList.values())
+		itemSetting.weapon.fStat.addListToStat(dungeonStatus, this, target, itemSetting.weapon);
+		for(Equipment e : itemSetting.equipmentList.values())
 			e.fStat.addListToStat(dungeonStatus, this, target, e);
 		for(Entry<SetName,Integer> e : setOptionList.entrySet())				//setOptionList(셋옵목록)에 포함된 모든 셋옵 e에 대해
 		{
@@ -390,6 +396,22 @@ public class Characters implements java.io.Serializable
 		}
 	}
 	
+	public void setItemSettings(Setting itemSetting) {
+		try{
+			String theType = "dnf_class.Item";
+			Class<? extends Item> theClass;
+			theClass = Class.forName(theType).asSubclass(Item.class);
+			
+			for(Item item : itemSetting.getWholeItemList()){
+				Object clone = item.clone();
+				Item castedItem = theClass.cast(clone);
+				equip(castedItem);
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void optimizeEmblem(int mode, Item_rarity rarity)
 	{
 		double crt, redGreenCrt, greenCrt;
@@ -442,8 +464,8 @@ public class Characters implements java.io.Serializable
 			
 			for(int i=0; i<order.length; i++)
 			{
-				if(avatarList.get(order[i]).getName().contains("없음")) continue;
-				else avatar = userItemList.getAvatar(avatarList.get(order[i]).getName());
+				if(itemSetting.avatarList.get(order[i]).getName().contains("없음")) continue;
+				else avatar = userItemList.getAvatar(itemSetting.avatarList.get(order[i]).getName());
 				
 				//첫번째 엠블렘
 				if(crt>=97-4*redGreenCrt) {															// 크리 초과시 (상하의로 최소 4*듀얼물크만큼은 크리가 오름)
@@ -501,7 +523,7 @@ public class Characters implements java.io.Serializable
 	public double getEmblemCRT(int mode)
 	{
 		double temp=0;
-		for(Avatar avatar : avatarList.values())
+		for(Avatar avatar : itemSetting.avatarList.values())
 		{
 			for(Emblem emblem : avatar.getEmblem())
 			{
@@ -518,19 +540,20 @@ public class Characters implements java.io.Serializable
 	public Character_type getCharType() { return characterType; }
 	public String getCharImageAddress() {return charImageAddress;}
 	public void setCharImageAddress(String charImageAddress) {this.charImageAddress = charImageAddress;}
-	public HashMap<Equip_part, Equipment> getEquipmentList() {return equipmentList;}
-	public HashMap<Avatar_part, Avatar> getAvatarList() {return avatarList;}
+	public HashMap<Equip_part, Equipment> getEquipmentList() {return itemSetting.equipmentList;}
+	public HashMap<Avatar_part, Avatar> getAvatarList() {return itemSetting.avatarList;}
 	public HashMap<SetName, Integer> getSetOptionList() {return setOptionList;}
-	public Creature getCreature() {return creature;}
-	public Title getTitle() {return title;}
+	public Creature getCreature() {return itemSetting.creature;}
+	public Title getTitle() {return itemSetting.title;}
 	public LinkedList<Consumeable> getDoping() {return doping;}
-	public Weapon getWeapon() {return weapon;}
-	public void setWeapon(Weapon weapon) {this.weapon = weapon;}
-	public void setCreature(Creature creature) {this.creature = creature;}
-	public void setTitle(Title title) {this.title = title;}
-	public Drape getDrape() {return drape;}
-	public void setDrape(Drape drape) {this.drape = drape;}
-
+	public Weapon getWeapon() {return itemSetting.weapon;}
+	public void setWeapon(Weapon weapon) {this.itemSetting.weapon = weapon;}
+	public void setCreature(Creature creature) {this.itemSetting.creature = creature;}
+	public void setTitle(Title title) {this.itemSetting.title = title;}
+	public Drape getDrape() {return itemSetting.drape;}
+	public void setDrape(Drape drape) {this.itemSetting.drape = drape;}
+	public String getSettingName() {return itemSetting.setting_name;}
+	public Setting getItemSetting() { return itemSetting; }
 	
 	public void setSkillLevel(LinkedList<Skill> list)
 	{
@@ -553,5 +576,4 @@ public class Characters implements java.io.Serializable
 	public void setAutoOptimizeRarity(Item_rarity autoOptimizeRarity) {
 		this.autoOptimizeRarity = autoOptimizeRarity;
 	}
-
 }

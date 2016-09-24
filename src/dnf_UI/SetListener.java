@@ -1,5 +1,6 @@
 package dnf_UI;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
@@ -119,7 +120,7 @@ public class SetListener {
 	         }
 		};
 	}
-	
+
 	public Listener equipListener()
 	{
 		ItemButton<Item> itemButton;
@@ -137,7 +138,7 @@ public class SetListener {
 		};
 	}
 	
-	public Listener modifyListener()
+	public Listener modifyListener(Inventory inventory)
 	{
 		ItemButton<Item> itemButton;
 		if(itemButton_wildCard.getItem() instanceof Item) itemButton = (ItemButton<Item>) itemButton_wildCard;
@@ -148,7 +149,10 @@ public class SetListener {
 			public void handleEvent(Event event) {
 				if(itemButton.getItem().getEnabled())
 	        	 {
-	        		ChangeItemStatus changeItem = new ChangeItemStatus(parent.getShell(), itemButton.getItem(), itemButton.hasSetOption());
+					boolean replicateEnabled=false;
+					if(inventory!=null) replicateEnabled=true;
+					
+	        		ChangeItemStatus changeItem = new ChangeItemStatus(parent.getShell(), itemButton.getItem(), itemButton.hasSetOption(), replicateEnabled);
 	        		int result = changeItem.open();
 					if (Window.OK == result) {
 						itemButton.setItem(changeItem.item);
@@ -168,6 +172,49 @@ public class SetListener {
 							}				
 						}
 					}
+					else if(result == 3 && inventory!=null)
+					{
+						Item replicate = character.userItemList.makeReplicate(itemButton.getItem(), inventory.inventoryList2.length-inventory.itemList2.size());
+						if(replicate!=null)
+						{
+							inventory.itemList2.add(replicate);
+							inventory.renew();
+							MessageDialog dialog = new MessageDialog(parent.getShell(), "성☆공", null,
+								    "아이템 복제에 성공하였습니다!\n\n아이템 : "+itemButton.getItem().getName(),
+								    MessageDialog.INFORMATION, new String[] { "ㅇㅋ" }, 0);
+							dialog.open();
+						}
+						else
+						{
+							MessageDialog dialog = new MessageDialog(parent.getShell(), "실★패", null,
+									"아이템 복제에 실패하였습니다.\n\n아이템 : "+itemButton.getItem().getName(),
+								    MessageDialog.ERROR, new String[] { "납득" }, 0);
+							dialog.open();
+						}
+					}
+					else if(result == 4 && inventory!=null)
+					{
+						boolean success = character.userItemList.deleteReplicate(itemButton.getItem());
+						if(success)
+						{
+							if(character.unequip(itemButton.getItem()))
+								superInfo.renew();;
+							inventory.itemList2.remove(itemButton.getItem());
+							inventory.renew();
+							MessageDialog dialog = new MessageDialog(parent.getShell(), "성☆공", null,
+								    "아이템을 삭제하였습니다!\n\n아이템 : "+itemButton.getItem().getName(),
+								    MessageDialog.INFORMATION, new String[] { "ㅇㅋ" }, 0);
+							dialog.open();
+						}
+						else
+						{
+							MessageDialog dialog = new MessageDialog(parent.getShell(), "실★패", null,
+									"아이템 삭제에 실패하였습니다.\n\n아이템 : "+itemButton.getItem().getName(),
+								    MessageDialog.ERROR, new String[] { "납득" }, 0);
+							dialog.open();
+						}
+					}
+					
 	        	 }
 			}
 		}; 

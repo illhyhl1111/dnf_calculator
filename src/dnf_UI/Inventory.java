@@ -10,8 +10,10 @@ import org.eclipse.swt.dnd.DropTargetAdapter;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 
 import dnf_InterfacesAndExceptions.Emblem_type;
 import dnf_InterfacesAndExceptions.Equip_part;
@@ -25,46 +27,103 @@ import dnf_class.Item;
 
 public class Inventory extends DnFComposite
 {
-	LinkedList<Item> itemList;
-	ItemButton<Item>[] inventoryList;
+	LinkedList<Item> itemList1;
+	LinkedList<Item> itemList2;
+	ItemButton<Item>[] inventoryList1;
+	ItemButton<Item>[] inventoryList2;
 	final static int inventoryCol=15;
+	final static int inventory2Col=2;
 	final static int inventoryRow=5;
 	final static int inventorySize=inventoryCol*inventoryRow;
+	final static int inventory2Size=inventory2Col*inventoryRow;
 	Characters character;
 	DnFComposite superInfo;
 	Composite parent;
+	Composite inventory1;
+	Composite inventory2;
 	private Composite itemInfo;
 	private Composite setInfo;
-	final int mode;
+	
+	int mode;
+	Vault vault;
+	Composite background;
 	
 	@SuppressWarnings("unchecked")
-	public Inventory(Composite parent, Characters character, DnFComposite superInfo, LinkedList<Item> itemList, int mode)
+	public Inventory(Composite parent, Characters character, DnFComposite superInfo, LinkedList<Item> itemList1, LinkedList<Item> itemList2)
 	{
-		this.itemList=itemList;
+		this.itemList1=itemList1;
+		this.itemList2=itemList2;
 		this.character=character;
 		this.superInfo=superInfo;
 		this.parent=parent;
-		this.mode=mode;
 		
-		mainComposite = new Composite(parent, SWT.BORDER);
+		mainComposite = new Composite(parent, SWT.NONE);
+		GridLayout mainLayout = new GridLayout();
+		mainLayout.numColumns=2;
+		mainLayout.horizontalSpacing=20;
+		mainLayout.marginWidth=0;
+		mainLayout.marginHeight=0;
+		mainComposite.setLayout(mainLayout);
+		
+		inventory1 = new Composite(mainComposite, SWT.BORDER);
+		inventory2 = new Composite(mainComposite, SWT.BORDER);
 		GridLayout inventoryLayout = new GridLayout(inventoryCol, true);
 		inventoryLayout.horizontalSpacing=3;
 		inventoryLayout.verticalSpacing=3;
 		inventoryLayout.marginHeight=0;
 		inventoryLayout.marginWidth=0;
-		mainComposite.setLayout(inventoryLayout);
+		inventory1.setLayout(inventoryLayout);
+		inventory1.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
 		
-		inventoryList = (ItemButton<Item>[]) new ItemButton<?>[inventorySize];
+		inventoryLayout = new GridLayout(inventory2Col, true);
+		inventoryLayout.horizontalSpacing=3;
+		inventoryLayout.verticalSpacing=3;
+		inventoryLayout.marginHeight=0;
+		inventoryLayout.marginWidth=0;
+		inventory2.setLayout(inventoryLayout);
+		inventory2.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
+		
+		inventoryList1 = (ItemButton<Item>[]) new ItemButton<?>[inventorySize];
+		inventoryList2 = (ItemButton<Item>[]) new ItemButton<?>[inventory2Size];
 	}
 	
 	public void setListener(int mode, Composite background, Vault vault)
 	{
+		this.mode=mode;
+		this.vault=vault;
+		this.background=background;
+		setInventoryBlocks(mode, background, vault, false);
+		setInventoryBlocks(mode, background, vault, true);
+	}
+	
+	private void setInventoryBlocks(int mode, Composite background, Vault vault, boolean getUserItemMode)
+	{
 		int index=0;
+		ItemButton<Item>[] inventoryList;
+		LinkedList<Item> itemList;
+		Composite inventory;
+		int size;
+		
+		if(!getUserItemMode){
+			inventoryList=inventoryList1;
+			itemList=itemList1;
+			inventory=inventory1;
+			size=inventorySize;
+		}
+		else{
+			inventoryList=inventoryList2;
+			itemList=itemList2;
+			inventory=inventory2;
+			size=inventory2Size;
+		}
+		
+		for(Control control : inventory.getChildren())
+			control.dispose();
 		
 		for(Item i : itemList)
 		{
 			inventoryList[index] =
-					new ItemButton<Item>(mainComposite, i, InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE);
+					new ItemButton<Item>(inventory, i, InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE);
 			
 			if(!i.getName().equals("이름없음"))
 			{
@@ -75,7 +134,7 @@ public class Inventory extends DnFComposite
 				if(mode==0) inventoryList[index].getButton().addListener(SWT.MouseDown, listenerGroup.equipListener(vault)); 			// add MouseDown Event - unequip
 				else if(mode==1) inventoryList[index].getButton().addListener(SWT.MouseDown, listenerGroup.equipListener()); 			// add MouseDown Event - unequip
 				else if(mode==2) inventoryList[index].getButton().addListener(SWT.MouseDown, listenerGroup.equipListener());
-				inventoryList[index].getButton().addListener(SWT.MouseDoubleClick, listenerGroup.modifyListener());			// add MouseDoubleClick - modify
+				inventoryList[index].getButton().addListener(SWT.MouseDoubleClick, listenerGroup.modifyListener(this));			// add MouseDoubleClick - modify
 				inventoryList[index].getButton().addListener(SWT.MouseEnter, listenerGroup.makeItemInfoListener(background));			// add MouseEnter Event - make composite
 				inventoryList[index].getButton().addListener(SWT.MouseExit, listenerGroup.disposeItemInfoListener()); 		// add MouseExit Event - dispose composite
 				inventoryList[index].getButton().addListener(SWT.MouseMove, listenerGroup.moveItemInfoListener());			// add MouseMove Event - move composite
@@ -83,14 +142,18 @@ public class Inventory extends DnFComposite
 			index++;
 		}
 		
-		for(; index<inventorySize; index++){
-			inventoryList[index] = new ItemButton<Item>(mainComposite, new Item(), InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE, false);
+		for(; index<size; index++){
+			inventoryList[index] = new ItemButton<Item>(inventory, new Item(), InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE, false);
 		}
 	}
 		
 	public ItemButton<Item> getItem(String name) throws ItemNotFoundedException
 	{
-		for(ItemButton<Item> i : inventoryList)
+		for(ItemButton<Item> i : inventoryList1)
+		{
+			if(i.getItem().getName().equals(name)) return i;
+		}
+		for(ItemButton<Item> i : inventoryList2)
 		{
 			if(i.getItem().getName().equals(name)) return i;
 		}
@@ -177,13 +240,16 @@ public class Inventory extends DnFComposite
 	{
 		LinkedList<Item> enabledList = new LinkedList<Item>();
 		
-		for(ItemButton<Item> i : inventoryList)
+		for(ItemButton<Item> i : inventoryList1)
 			if(part.contains(i.getItem().getPart()) && i.getItem().getEnabled()) enabledList.add(i.getItem());
 		
 		return enabledList;
 	}
 
 	@Override
-	public void renew() {		
+	public void renew() {	
+		setInventoryBlocks(mode, background, vault, true);
+		inventory2.layout();
+		parent.layout();
 	}
 }
