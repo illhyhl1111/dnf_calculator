@@ -2,7 +2,11 @@ package dnf_UI;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
@@ -24,8 +28,14 @@ public class ItemButton<T extends IconObject>
 		imageSize_x=x;
 		imageSize_y=y;
 		button = new Button(parent, SWT.PUSH);
-		GridData buttonGridData = new GridData(x, y);
-		button.setLayoutData(buttonGridData);
+		if(parent.getLayout() instanceof GridLayout){
+			GridData buttonGridData = new GridData(x, y);
+			button.setLayoutData(buttonGridData);
+		}
+		else if(parent.getLayout() instanceof FormLayout){
+			FormData buttonFormData = new FormData(x, y);
+			button.setLayoutData(buttonFormData);
+		}
 		if(item instanceof Item) renewImage(((Item) item).getEnabled());
 		else renewImage(true);
 	}
@@ -35,8 +45,14 @@ public class ItemButton<T extends IconObject>
 		imageSize_x=x;
 		imageSize_y=y;
 		button = new Button(parent, SWT.PUSH);
-		GridData buttonGridData = new GridData(x, y);
-		button.setLayoutData(buttonGridData);
+		if(parent.getLayout() instanceof GridLayout){
+			GridData buttonGridData = new GridData(x, y);
+			button.setLayoutData(buttonGridData);
+		}
+		else if(parent.getLayout() instanceof FormLayout){
+			FormData buttonFormData = new FormData(x, y);
+			button.setLayoutData(buttonFormData);
+		}
 		
 		renewImage(enabled);
 	}

@@ -43,6 +43,7 @@ public class Item extends IconObject implements Comparable<Item>
 	public Item_rarity getRarity() { return rarity;}
 	public void setRarity(Item_rarity rarity) { this.rarity = rarity;}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object clone()
 	{
@@ -50,6 +51,7 @@ public class Item extends IconObject implements Comparable<Item>
 			Item temp = (Item) super.clone();
 			temp.vStat = (StatusList) vStat.clone();
 			temp.dStat = (StatusList) dStat.clone();
+			temp.explanation = (LinkedList<String>) explanation.clone();
 			return temp;
 		} catch (CloneNotSupportedException e) {
 			// TODO Auto-generated catch block

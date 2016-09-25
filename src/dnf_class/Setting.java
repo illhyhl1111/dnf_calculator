@@ -7,7 +7,7 @@ import java.util.Map.Entry;
 import dnf_InterfacesAndExceptions.Avatar_part;
 import dnf_InterfacesAndExceptions.Equip_part;
 
-public class Setting implements java.io.Serializable{
+public class Setting implements java.io.Serializable, Cloneable{
 	/**
 	 * 
 	 */
@@ -56,13 +56,20 @@ public class Setting implements java.io.Serializable{
 		return list;
 	}
 	
-	private Item makeReplicate(Item item)
+	private Item makeReplicate(Item item, String name)
 	{
 		Item i = (Item) item.clone();
 		i.replicateNum=1;
-		i.setName(i.getItemName() + "-복제:"+setting_name);
+		i.setName(i.getItemName() + "-복제 : "+name);
 		i.setEnabled(true);
-		i.explanation.add(setting_name+" 세팅 저장 당시의 아이템 정보입니다.");
+		
+		int index=0;
+		for(String s : i.explanation){
+			if(s.contains("세팅 저장 당시의 아이템 정보입니다."))
+				i.explanation.remove(index);
+			index++;
+		}
+		i.explanation.add(name+" 세팅 저장 당시의 아이템 정보입니다.");
 		return i;
 	}
 	
@@ -75,14 +82,33 @@ public class Setting implements java.io.Serializable{
 		replicate.drape = this.drape;
 		
 		for(Entry<Equip_part, Equipment> entry : equipmentList.entrySet())
-			replicate.equipmentList.replace(entry.getKey(), (Equipment) makeReplicate(entry.getValue()));
+			replicate.equipmentList.replace(entry.getKey(), (Equipment) makeReplicate(entry.getValue(), name));
 		
 		for(Entry<Avatar_part, Avatar> entry : avatarList.entrySet())
-			replicate.avatarList.replace(entry.getKey(), (Avatar) makeReplicate(entry.getValue()));
+			replicate.avatarList.replace(entry.getKey(), (Avatar) makeReplicate(entry.getValue(), name));
 		
-		replicate.weapon=(Weapon) makeReplicate(weapon);
-		replicate.title=(Title) makeReplicate(title);
+		replicate.weapon=(Weapon) makeReplicate(weapon, name);
+		replicate.title=(Title) makeReplicate(title, name);
 			
 		return replicate;
+	}
+	
+	@Override
+	public boolean equals(Object o)
+	{
+		if(o instanceof Setting)
+			return ((Setting) o).setting_name.equals(setting_name);
+		else return false;
+	}
+	
+	@Override
+	public Object clone()
+	{
+		try {
+			return super.clone();
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

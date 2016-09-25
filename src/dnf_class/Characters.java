@@ -138,7 +138,7 @@ public class Characters implements java.io.Serializable
 			subtractSet(itemSetting.weapon);
 		
 			if(temp.enabled(job)) itemSetting.weapon=temp;
-			else System.out.println("장착불가");
+			else System.out.println("장착불가 - "+item.getName());
 			
 			addSet(temp);
 		}
@@ -396,19 +396,25 @@ public class Characters implements java.io.Serializable
 		}
 	}
 	
-	public void setItemSettings(Setting itemSetting) {
-		try{
-			String theType = "dnf_class.Item";
-			Class<? extends Item> theClass;
-			theClass = Class.forName(theType).asSubclass(Item.class);
-			
-			for(Item item : itemSetting.getWholeItemList()){
-				Object clone = item.clone();
-				Item castedItem = theClass.cast(clone);
-				equip(castedItem);
+	public void setItemSettings(Setting itemSetting, boolean makeClone) {
+		if(makeClone){
+			try{
+				String theType = "dnf_class.Item";
+				Class<? extends Item> theClass;
+				theClass = Class.forName(theType).asSubclass(Item.class);
+				
+				for(Item item : itemSetting.getWholeItemList()){
+					Object clone = item.clone();
+					Item castedItem = theClass.cast(clone);
+					equip(castedItem);
+				}
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
 			}
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+		}
+		else{
+			for(Item item : itemSetting.getWholeItemList())
+				equip(item);
 		}
 	}
 	

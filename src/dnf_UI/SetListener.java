@@ -240,7 +240,7 @@ public class SetListener {
 	        		layout.verticalSpacing=3;
 	        		itemInfo.setLayout(layout);
 	        		MakeComposite.setItemInfoComposite(itemInfo, itemButton.getItem());
-	        		itemInfoSize = itemInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+	        		itemInfoSize = itemInfo.computeSize(InterfaceSize.ITEM_INFO_SIZE, SWT.DEFAULT);
 	        		itemInfo.moveAbove(null);
 	        		
 	        		hasSetOption = itemButton.hasSetOption();

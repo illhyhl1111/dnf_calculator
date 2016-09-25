@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -18,6 +20,7 @@ import dnf_InterfacesAndExceptions.UndefinedStatusKey;
 import dnf_calculator.Calculator;
 import dnf_class.Characters;
 import dnf_class.Monster;
+import dnf_class.Setting;
 import dnf_class.Skill;
 import dnf_class.SkillLevelInfo;
 import dnf_infomation.GetDictionary;
@@ -26,6 +29,7 @@ public class DealChart extends DnFComposite {
 	Characters character;
 	LinkedList<DealInfo> skillList;
 	Monster monster;
+	private Setting compareSetting;
 	
 	public DealChart(Composite parent, Characters character)
 	{
@@ -34,6 +38,8 @@ public class DealChart extends DnFComposite {
 		mainComposite.setLayout(new RowLayout(SWT.VERTICAL));
 		
 		skillList = new LinkedList<DealInfo>();
+		monster = new Monster("default");
+		compareSetting = null;
 	}
 	
 	public void setDealChart(Monster monster)
@@ -55,7 +61,9 @@ public class DealChart extends DnFComposite {
 		icon.setLayoutData(new RowData(InterfaceSize.SKILL_BUTTON_SIZE, 15));
 		
 		Label dealLabel = new Label(explain, SWT.BORDER);
-		dealLabel.setText("데미지");
+		String compareName = "( 비교 대상 없음 )";
+		if(compareSetting!=null) compareName="( vs "+compareSetting.setting_name+" )";
+		dealLabel.setText("데미지 "+compareName);
 		dealLabel.setAlignment(SWT.CENTER);
 		dealLabel.setLayoutData(new RowData(InterfaceSize.DEALCHART_DEALSIZE_X, 15));
 		
@@ -66,10 +74,28 @@ public class DealChart extends DnFComposite {
 		
 		skillList = new LinkedList<DealInfo>();
 		
-		for(Skill skill : character.getSkillList())
-			if(skill.hasDamage() && skill.getActiveEnabled()){
-				skillList.add(new DealInfo(mainComposite, skill, character, monster));
-			}
+		if(compareSetting!=null)
+		{
+			Setting tempSetting = (Setting) character.getItemSetting().clone();
+			character.setItemSettings(compareSetting, true);
+			
+			for(Skill skill : character.getSkillList())
+				if(skill.hasDamage() && skill.getActiveEnabled()){
+					skillList.add(new DealInfo(mainComposite, skill, character, monster,
+							Calculator.getDamage(skill.getSkillLevelInfo(true), monster, character)));
+				}
+			
+			character.setItemSettings(tempSetting, false);
+		}
+		else
+		{
+			for(Skill skill : character.getSkillList())
+				if(skill.hasDamage() && skill.getActiveEnabled()){
+					skillList.add(new DealInfo(mainComposite, skill, character, monster));
+				}
+		}
+		for(DealInfo dInfo : skillList)
+			dInfo.renew();
 		
 		if(skillList.size()>1){
 			Collections.sort(skillList);
@@ -87,6 +113,12 @@ public class DealChart extends DnFComposite {
 		
 		mainComposite.layout();
 	}
+	
+	public void setCompareSetting(Setting setting)
+	{
+		this.compareSetting=setting;
+		renew();
+	}
 
 	@Override
 	public void renew() {
@@ -99,15 +131,15 @@ class DealInfo extends DnFComposite implements Comparable<DealInfo>{
 	private Characters character;
 	private Monster monster;
 	Label icon;
-	Label dealLabel;
-	Label hpLabel;
+	CLabel dealLabel;
+	CLabel hpLabel;
 	long deal;
 	private long deal_compare;
 	
-	public DealInfo(Composite parent, Skill skill, Characters character, Monster monster)
+	public DealInfo(Composite parent, Skill skill, Characters character, Monster monster, long deal_compare)
 	{
 		deal=0;
-		deal_compare=-1;
+		this.deal_compare=deal_compare;
 		this.skill=skill;
 		this.character=character;
 		
@@ -115,28 +147,34 @@ class DealInfo extends DnFComposite implements Comparable<DealInfo>{
 		RowLayout layout = new RowLayout(SWT.HORIZONTAL);
 		layout.wrap=false;
 		layout.justify=true;
+		layout.marginWidth=3;
 		mainComposite.setLayout(layout);
 		
 		icon = new Label(mainComposite, SWT.NONE);
 		icon.setLayoutData(new RowData(InterfaceSize.SKILL_BUTTON_SIZE, InterfaceSize.SKILL_BUTTON_SIZE));
 		icon.setAlignment(SWT.CENTER);
 		
-		dealLabel = new Label(mainComposite, SWT.NONE);
+		dealLabel = new CLabel(mainComposite, SWT.NONE);
+		dealLabel.setMargins(0, 15, 0, 0);
 		dealLabel.setLayoutData(new RowData(InterfaceSize.DEALCHART_DEALSIZE_X, InterfaceSize.SKILL_BUTTON_SIZE));
 		dealLabel.setAlignment(SWT.CENTER);
 		
-		hpLabel = new Label(mainComposite, SWT.NONE);
+		hpLabel = new CLabel(mainComposite, SWT.NONE);
+		hpLabel.setMargins(0, 15, 0, 0);
 		hpLabel.setLayoutData(new RowData(InterfaceSize.DEALCHART_HPSIZE_X, InterfaceSize.SKILL_BUTTON_SIZE));
 		hpLabel.setAlignment(SWT.CENTER);
 		
 		setMonster(monster);
 		mainComposite.layout();
 	}
+	public DealInfo(Composite parent, Skill skill, Characters character, Monster monster)
+	{
+		this(parent, skill, character, monster, -1);
+	}
 
 	public void setMonster(Monster monster) {
 		if(monster==null) return;
 		this.monster=monster;
-		renew();
 	}
 
 	@Override
@@ -144,14 +182,11 @@ class DealInfo extends DnFComposite implements Comparable<DealInfo>{
 		icon.setImage(GetDictionary.iconDictionary.get(skill.getName()));
 		
 		SkillLevelInfo skillInfo = skill.getSkillLevelInfo(true);
-		if(skillInfo.hasPhy_per()) deal += Calculator.percentDamage_physical(skillInfo.phy_atk, monster, character);
-		if(skillInfo.hasPhy_fix()) deal += Calculator.fixedDamage_physical(skillInfo.phy_fix, monster, character);
-		if(skillInfo.hasMag_per()) deal += Calculator.percentDamage_magical(skillInfo.mag_atk, monster, character);
-		if(skillInfo.hasMag_fix()) deal += Calculator.fixedDamage_magical(skillInfo.phy_atk, monster, character);
+		deal = Calculator.getDamage(skillInfo, monster, character);
 		
 		String compareStr;
 		if(deal_compare==-1){
-			compareStr = " (비교 대상 없음)";
+			compareStr = " ( 비교 대상 없음 )";
 			dealLabel.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
 		}
 		else if(deal>deal_compare){
@@ -182,7 +217,10 @@ class DealInfo extends DnFComposite implements Comparable<DealInfo>{
 		}
 	}
 	
-	public void setCompare(long deal) {deal_compare=deal;}
+	public void setCompare(long deal) {
+		deal_compare=deal;
+		
+	}
 
 	@Override
 	public int compareTo(DealInfo o) {

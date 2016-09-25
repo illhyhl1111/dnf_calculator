@@ -11,11 +11,10 @@ import dnf_InterfacesAndExceptions.UndefinedStatusKey;
 import dnf_calculator.StatusInfo;
 import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 
-public class Monster implements java.io.Serializable{							/**
+public class Monster extends IconObject implements java.io.Serializable{							/**
 	 * 
 	 */
 	private static final long serialVersionUID = -207946696464873997L;
-// 피격자 class
 
 	public final String name;
 	private AbstractStatusInfo[] monstInfo;

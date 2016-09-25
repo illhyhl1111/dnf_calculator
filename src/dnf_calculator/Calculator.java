@@ -6,8 +6,22 @@ import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 import dnf_InterfacesAndExceptions.UndefinedStatusKey;
 import dnf_class.Characters;
 import dnf_class.Monster;
+import dnf_class.SkillLevelInfo;
 
 public class Calculator {
+	
+	public static long getDamage(SkillLevelInfo skill, Monster objcet, Characters character, int mode)
+	{
+		long deal=0;
+		if(skill.hasPhy_per()) deal += Calculator.percentDamage_physical(skill.phy_atk, objcet, character, mode);
+		if(skill.hasPhy_fix()) deal += Calculator.fixedDamage_physical(skill.phy_fix, objcet, character, mode);
+		if(skill.hasMag_per()) deal += Calculator.percentDamage_magical(skill.mag_atk, objcet, character, mode);
+		if(skill.hasMag_fix()) deal += Calculator.fixedDamage_magical(skill.phy_atk, objcet, character, mode);
+		
+		return deal;
+	}
+	public static long getDamage(SkillLevelInfo skill, Monster object, Characters character)
+	{ return getDamage(skill, object, character, 1); }
 	
 	public static long percentDamage_physical(int skillPercent, Monster object, Characters character, int mode)
 	{

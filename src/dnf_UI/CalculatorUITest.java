@@ -54,6 +54,7 @@ public class CalculatorUITest {
 			skillTree.superInfo=dungeonUI;
 			shell.setText("수련의 방");
 			shell.layout();
+			shell.pack();
 		});
 		
 		dungeonUI.get_toVillageButton().addListener(SWT.Selection, event -> {
@@ -62,6 +63,7 @@ public class CalculatorUITest {
 			stackLayout.topControl = villageUI.getComposite();
 			shell.setText("인포창");
 			shell.layout();
+			shell.pack();
 		});
 		
 		display.addFilter(SWT.KeyDown, new Listener() {

@@ -49,6 +49,8 @@ public enum Weapon_detailType {
 			else return false;
 		}
 		
+		if(this==NONE) return true;
+		
 		switch(job.charType)
 		{
 		case SWORDMAN_M: case SWORDMAN_F: case KNIGHT:

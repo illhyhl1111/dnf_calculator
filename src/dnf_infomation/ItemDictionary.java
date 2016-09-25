@@ -24,6 +24,7 @@ import dnf_class.Item;
 import dnf_class.ItemConstraint;
 import dnf_class.Jam;
 import dnf_class.SetOption;
+import dnf_class.Setting;
 import dnf_class.Title;
 import dnf_class.Weapon;
 
@@ -46,6 +47,7 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 	public final HashSet<Equipment> equipList_user;
 	public final HashSet<Title> titleList_user;
 	public final HashSet<Avatar> avatarList_user;
+	public final HashSet<Setting> settingList;
 	
 	public ItemDictionary() 
 	{
@@ -97,6 +99,7 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 		equipList_user = new HashSet<Equipment>();
 		titleList_user = new HashSet<Title>();
 		avatarList_user = new HashSet<Avatar>();
+		settingList = new HashSet<Setting>();
 	}
 	
 	public LinkedList<Item> getVaultItemList(JobList job)
