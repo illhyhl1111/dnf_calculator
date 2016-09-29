@@ -73,7 +73,7 @@ public class Setting implements java.io.Serializable, Cloneable{
 		return i;
 	}
 	
-	public Setting makeClone(String name)
+	public Setting saveToClone(String name)
 	{
 		Setting replicate = new Setting();
 		replicate.setting_name=name;
@@ -101,11 +101,17 @@ public class Setting implements java.io.Serializable, Cloneable{
 		else return false;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object clone()
 	{
+		Setting replicate;
 		try {
-			return super.clone();
+			replicate = (Setting) super.clone();
+			replicate.equipmentList = (HashMap<Equip_part, Equipment>) equipmentList.clone();
+			replicate.avatarList = (HashMap<Avatar_part, Avatar>) avatarList.clone();
+			
+			return replicate;
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
 		}

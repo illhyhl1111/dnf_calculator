@@ -1,8 +1,7 @@
-package dnf_UI;
+package dnf_UI_32;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
@@ -13,6 +12,7 @@ import org.eclipse.swt.widgets.Composite;
 import dnf_InterfacesAndExceptions.SetName;
 import dnf_class.IconObject;
 import dnf_class.Item;
+import dnf_class.Monster;
 import dnf_infomation.GetDictionary;
 
 public class ItemButton<T extends IconObject>
@@ -36,6 +36,7 @@ public class ItemButton<T extends IconObject>
 			FormData buttonFormData = new FormData(x, y);
 			button.setLayoutData(buttonFormData);
 		}
+
 		if(item instanceof Item) renewImage(((Item) item).getEnabled());
 		else renewImage(true);
 	}
@@ -68,6 +69,7 @@ public class ItemButton<T extends IconObject>
 	public boolean hasSetOption()
 	{
 		if(item instanceof Item && ((Item)item).getSetName()==SetName.NONE) return false;
+		else if(item instanceof Monster && ((Monster)item).getAdditionalStatList().statList.size()==0) return false;
 		else return true;
 	}
 

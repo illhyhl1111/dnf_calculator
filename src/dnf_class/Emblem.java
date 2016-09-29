@@ -34,7 +34,7 @@ public class Emblem extends Item
 	@Override
 	public int compareTo(Item arg) {																		// 1.
 		if(! (arg instanceof Emblem)){
-			if(arg instanceof Creature | arg instanceof Consumeable) return 1;
+			if(arg instanceof Creature | arg instanceof Buff) return 1;
 			else return -1;
 		}
 		

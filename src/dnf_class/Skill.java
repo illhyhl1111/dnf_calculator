@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import dnf_InterfacesAndExceptions.Character_type;
-import dnf_InterfacesAndExceptions.JobList;
+import dnf_InterfacesAndExceptions.Job;
 import dnf_InterfacesAndExceptions.Skill_type;
 import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 import dnf_calculator.StatusAndName;
@@ -21,7 +21,7 @@ public class Skill extends IconObject implements Comparable<Skill>{
 	public final int maxLevel;
 	public final int masterLevel;
 	public final int levelInterval;
-	public final JobList job;
+	public final Job job;
 	public final Character_type char_type;
 	
 	public LinkedList<SkillLevelInfo> skillInfo;
@@ -34,7 +34,7 @@ public class Skill extends IconObject implements Comparable<Skill>{
 	public int dungeonLevel;
 	public double dungeonIncrease;
 	
-	public Skill(String name, Skill_type type, String icon, JobList job, int firstLevel, int maxLevel, int masterLevel, int levelInterval)
+	public Skill(String name, Skill_type type, String icon, Job job, int firstLevel, int maxLevel, int masterLevel, int levelInterval)
 	{
 		super();
 		this.name=name;
@@ -83,7 +83,17 @@ public class Skill extends IconObject implements Comparable<Skill>{
 		this.dungeonIncrease=1;
 	}
 	
-	public boolean isSkillOfChar(JobList job)
+	public Skill() {
+		super();
+		firstLevel=0;
+		maxLevel=0;
+		masterLevel=0;
+		levelInterval=0;
+		job = null;
+		char_type=Character_type.ALL;
+	}
+
+	public boolean isSkillOfChar(Job job)
 	{
 		if(this.job!=null) return (this.job==job);
 		else {

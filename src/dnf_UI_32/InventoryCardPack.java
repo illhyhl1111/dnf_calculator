@@ -1,4 +1,4 @@
-package dnf_UI;
+package dnf_UI_32;
 
 import java.util.LinkedList;
 
@@ -11,6 +11,7 @@ import org.eclipse.swt.widgets.TabItem;
 import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_InterfacesAndExceptions.Item_rarity;
+import dnf_InterfacesAndExceptions.Location;
 import dnf_class.Characters;
 import dnf_class.Creature;
 import dnf_class.Drape;
@@ -123,7 +124,7 @@ public class InventoryCardPack extends DnFComposite
 			inventoryTabList[i]= new TabItem((TabFolder) mainComposite, SWT.NONE);
 			inventoryTabList[i].setText(tabNameList[i]);
 
-			inventoryList[i] = new Inventory(pack[i], character, dungeonUI, (LinkedList<Item>) itemList[i], (LinkedList<Item>)userItemList[i]);
+			inventoryList[i] = new Inventory(pack[i], character, dungeonUI, (LinkedList<Item>) itemList[i], (LinkedList<Item>)userItemList[i], Location.DUNGEON);
 			inventoryTabList[i].setControl(pack[i]);
 		}
 	}
@@ -164,7 +165,7 @@ public class InventoryCardPack extends DnFComposite
 			inventoryTabList[i]= new TabItem((TabFolder) mainComposite, SWT.NONE);
 			inventoryTabList[i].setText(tabNameList[i]);
 			
-			inventoryList[i] = new Inventory(pack[i], character, itemInfo, itemList[i], userItemList[i]);
+			inventoryList[i] = new Inventory(pack[i], character, itemInfo, itemList[i], userItemList[i], Location.VILLAGE);
 			subInventoryList[i] = new SubInventory(pack[i], character, itemInfo, cardList[i]);
 			
 			inventoryTabList[i].setControl(pack[i]);
@@ -206,7 +207,7 @@ public class InventoryCardPack extends DnFComposite
 			inventoryTabList[i]= new TabItem((TabFolder) mainComposite, SWT.NONE);
 			inventoryTabList[i].setText(tabNameList[i]);
 			
-			inventoryList[i] = new Inventory(pack[i], character, itemInfo, (LinkedList<Item>) itemList[i], (LinkedList<Item>) userItemList[i]);
+			inventoryList[i] = new Inventory(pack[i], character, itemInfo, (LinkedList<Item>) itemList[i], (LinkedList<Item>) userItemList[i], Location.VILLAGE);
 			subInventoryList[i] = new SubInventory(pack[i], character, itemInfo, (LinkedList<Item>) cardList[i]);
 			
 			inventoryTabList[i].setControl(pack[i]);

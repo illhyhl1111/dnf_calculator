@@ -1,7 +1,7 @@
 package dnf_calculator;
 
 import dnf_InterfacesAndExceptions.DefenceIgnorePenalty;
-import dnf_InterfacesAndExceptions.JobList;
+import dnf_InterfacesAndExceptions.Job;
 import dnf_InterfacesAndExceptions.MonsterType;
 import dnf_InterfacesAndExceptions.Monster_StatList;
 import dnf_InterfacesAndExceptions.StatusTypeMismatch;
@@ -58,7 +58,7 @@ public class Calculator_test {
 			charStat.setDoubleStat("독공뻥", 15);
 			charStat.setDoubleStat("물리마스터리2", 1);
 			
-			Characters character = new Characters(86, JobList.LAUNCHER_F, "명속은거들뿐");
+			Characters character = new Characters(86, Job.LAUNCHER_F, "명속은거들뿐");
 			character.villageStatus=charStat;
 			
 			Monster object = new Monster("asdf");

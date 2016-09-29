@@ -1,4 +1,4 @@
-package dnf_UI;
+package dnf_UI_32;
 
 /*
  * Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.

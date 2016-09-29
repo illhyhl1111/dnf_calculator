@@ -2,7 +2,7 @@ package dnf_infomation;
 
 import java.util.HashSet;
 
-import dnf_InterfacesAndExceptions.JobList;
+import dnf_InterfacesAndExceptions.Job;
 import dnf_InterfacesAndExceptions.Skill_type;
 import dnf_class.Skill;
 import dnf_class.SkillLevelInfo;
@@ -14,10 +14,10 @@ public class SkillInfo_gunner {
 		Skill skill;
 		SkillLevelInfo levelInfo;
 		String icon=null;
-		JobList job;
+		Job job;
 		
 		//////////// 여런처
-		job = JobList.LAUNCHER_F;
+		job = Job.LAUNCHER_F;
 		
 		///임시
 		skill = new Skill("임시스킬", Skill_type.ACTIVE, icon, job, 25, 50, 40, 2);

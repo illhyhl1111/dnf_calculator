@@ -12,9 +12,10 @@ import java.util.LinkedList;
 
 import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.ItemFileNotFounded;
-import dnf_InterfacesAndExceptions.JobList;
+import dnf_InterfacesAndExceptions.Job;
 import dnf_InterfacesAndExceptions.SetName;
 import dnf_class.Avatar;
+import dnf_class.Buff;
 import dnf_class.Card;
 import dnf_class.Creature;
 import dnf_class.Drape;
@@ -43,6 +44,7 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 	public final HashSet<Drape> drapeList;
 	public final HashSet<Emblem> emblemList;
 	public final HashSet<Jam> jamList;
+	public final HashSet<Buff> buffList;
 	
 	public final HashSet<Equipment> equipList_user;
 	public final HashSet<Title> titleList_user;
@@ -96,13 +98,15 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 		
 		jamList = new HashSet<Jam>();
 		
+		buffList = new HashSet<Buff>();
+		
 		equipList_user = new HashSet<Equipment>();
 		titleList_user = new HashSet<Title>();
 		avatarList_user = new HashSet<Avatar>();
 		settingList = new HashSet<Setting>();
 	}
 	
-	public LinkedList<Item> getVaultItemList(JobList job)
+	public LinkedList<Item> getVaultItemList(Job job)
 	{
 		LinkedList<Item> list = new LinkedList<Item>();
 		for(Equipment e : equipList)
@@ -205,6 +209,16 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 			list.add(e);
 		//for(Item e : etcList)
 			//list.add(e);
+		return list;
+	}
+	
+	public LinkedList<Buff> getAllBuffList()
+	{
+		LinkedList<Buff> list = new LinkedList<Buff>();
+		for(Buff b : buffList)
+			list.add(b);
+		
+		Collections.sort(list);
 		return list;
 	}
 		

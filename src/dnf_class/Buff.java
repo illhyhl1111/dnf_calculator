@@ -3,20 +3,25 @@ package dnf_class;
 import dnf_InterfacesAndExceptions.Item_rarity;
 
 @SuppressWarnings("serial")
-public class Consumeable extends Item
+public class Buff extends Item 
 {
-	public Consumeable(String name, String icon, Item_rarity rarity)
+	public Buff(String name, String icon, Item_rarity rarity)
 	{
 		super(name, icon, rarity);
 	}
-	public Consumeable(){ super();}
+	public Buff(){ super();}
 	
 	@Override
 	public boolean equals(Object o)
 	{
-		if(o instanceof Consumeable)
-			if(this.getName().equals(((Consumeable) o).getName())) return true;
+		if(o instanceof Buff)
+			if(this.getName().equals(((Buff) o).getName())) return true;
 		return false;
+	}
+	
+	@Override
+	public int compareTo(Item arg) {
+		return 1;
 	}
 	
 	@Override

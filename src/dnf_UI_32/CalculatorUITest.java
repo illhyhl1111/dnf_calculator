@@ -1,4 +1,4 @@
-package dnf_UI;
+package dnf_UI_32;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
@@ -10,7 +10,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
-import dnf_InterfacesAndExceptions.JobList;
+import dnf_InterfacesAndExceptions.Job;
 import dnf_class.Characters;
 import dnf_infomation.GetDictionary;
 
@@ -29,8 +29,8 @@ public class CalculatorUITest {
 		}
 		else display = new Display(); 
 		
-		GetDictionary.readFile(JobList.LAUNCHER_F);
-		Characters character = new Characters(90, JobList.LAUNCHER_F, "명속은거들뿐");
+		GetDictionary.readFile(Job.LAUNCHER_F);
+		Characters character = new Characters(90, Job.LAUNCHER_F, "명속은거들뿐");
 
 		Shell shell = new Shell(display);
 		final StackLayout stackLayout = new StackLayout();
@@ -41,8 +41,7 @@ public class CalculatorUITest {
 		SkillTree skillTree = new SkillTree(shell, character, villageUI);
 		
 		villageUI.makeComposite(skillTree);
-		
-		
+	
 		
 		stackLayout.topControl = villageUI.getComposite();
 		shell.setText("인포창");

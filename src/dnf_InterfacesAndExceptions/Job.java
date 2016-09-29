@@ -1,6 +1,6 @@
 package dnf_InterfacesAndExceptions;
 
-public enum JobList implements java.io.Serializable
+public enum Job implements java.io.Serializable
 {
 	LAUNCHER_F(Character_type.GUNNER_F),
 	
@@ -14,7 +14,7 @@ public enum JobList implements java.io.Serializable
 	UNIMPLEMENTED_THIEF(Character_type.THIEF),
 	UNIMPLEMENTED_DEMONICLANCER(Character_type.DEMONICLANCER);
 	
-	JobList(Character_type type)
+	Job(Character_type type)
 	{
 		charType=type;
 	}

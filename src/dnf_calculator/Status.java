@@ -3,7 +3,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
-import dnf_InterfacesAndExceptions.JobList;
+import dnf_InterfacesAndExceptions.Job;
 import dnf_InterfacesAndExceptions.StatList;
 import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 import dnf_InterfacesAndExceptions.UndefinedStatusKey;
@@ -66,7 +66,7 @@ public class Status implements Cloneable, java.io.Serializable {
 		skillInfo = new LinkedList<AbstractStatusInfo>();
 	}
 	
-	public Status(JobList job, int level) throws ItemNotFoundedException
+	public Status(Job job, int level) throws ItemNotFoundedException
 	{
 		this();
 		GetDictionary.charDictionary.getBasicStat(job, level).addListToStat(this);

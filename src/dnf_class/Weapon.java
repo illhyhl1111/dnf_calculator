@@ -3,7 +3,7 @@ package dnf_class;
 import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.Equip_type;
 import dnf_InterfacesAndExceptions.Item_rarity;
-import dnf_InterfacesAndExceptions.JobList;
+import dnf_InterfacesAndExceptions.Job;
 import dnf_InterfacesAndExceptions.SetName;
 import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 import dnf_InterfacesAndExceptions.UnknownInformationException;
@@ -83,7 +83,7 @@ public class Weapon extends Equipment{
 		return 0;
 	}
 	
-	public boolean enabled(JobList job)
+	public boolean enabled(Job job)
 	{
 		return weaponType.enabled(job);
 	}

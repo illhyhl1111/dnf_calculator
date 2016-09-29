@@ -1,4 +1,4 @@
-package dnf_UI;
+package dnf_UI_32;
 
 import java.util.LinkedList;
 
@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import dnf_InterfacesAndExceptions.InterfaceSize;
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
+import dnf_InterfacesAndExceptions.Location;
 import dnf_class.Characters;
 import dnf_class.Item;
 
@@ -173,7 +174,7 @@ public class Vault extends Dialog
 		        		GridLayout layout = new GridLayout(1, false);
 		        		layout.verticalSpacing=3;
 		        		itemInfo.setLayout(layout);
-		        		MakeComposite.setItemInfoComposite(itemInfo, i);
+		        		MakeComposite.setItemInfoComposite(itemInfo, i, Location.VILLAGE, character);
 		        		itemInfoSize = itemInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		        		itemInfo.moveAbove(null);
 		        		

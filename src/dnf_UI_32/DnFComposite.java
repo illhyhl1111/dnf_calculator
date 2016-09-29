@@ -1,4 +1,4 @@
-package dnf_UI;
+package dnf_UI_32;
 
 import org.eclipse.swt.widgets.Composite;
 

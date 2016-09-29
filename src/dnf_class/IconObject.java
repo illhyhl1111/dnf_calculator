@@ -33,4 +33,12 @@ public abstract class IconObject implements Cloneable, java.io.Serializable
 	{
 		return super.clone();
 	}
+	
+	@Override
+	public boolean equals(Object o)
+	{
+		if(o instanceof IconObject)
+			if(((IconObject) o).getName().equals(name)) return true;
+		return false;
+	}
 }

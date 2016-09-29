@@ -7,7 +7,8 @@ public interface Monster_StatList
 	int DIFFICULTY=1006; int HP=1007; 																		// 난이도, 체력, 
 	int DEFENSIVE_PHY=1008; int DEFENSIVE_MAG=1009;															// 물방, 마방
 	int LEVEL=1010;	int TYPE=1011;																			// 몹 레벨, 등급
+	
 	int DEFENCE_LIMIT=1012;																					// 방깍하한선
 	
-	int STARTNUM=1000; int STATNUM=13;	int BOOLNUM=2;		//StatList와 겹치지 않는 시작번호, 스탯개수, bool형 스탯 개수
+	int STARTNUM=1000; int STATNUM=13;	int BOOLNUM=2; int INTNUM=10; int DOUBLENUM=1; 	//StatList와 겹치지 않는 시작번호, 스탯개수, bool형 스탯 개수
 }

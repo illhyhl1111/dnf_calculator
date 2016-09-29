@@ -1,14 +1,17 @@
 package dnf_class;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map.Entry;
 
 import dnf_calculator.AbstractStatusInfo;
 import dnf_calculator.BooleanInfo;
-import dnf_calculator.StatusList;
+import dnf_calculator.DoubleStatusInfo;
 import dnf_InterfacesAndExceptions.MonsterType;
 import dnf_InterfacesAndExceptions.Monster_StatList;
 import dnf_InterfacesAndExceptions.UndefinedStatusKey;
 import dnf_calculator.StatusInfo;
+import dnf_calculator.StatusList;
 import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 
 public class Monster extends IconObject implements java.io.Serializable{							/**
@@ -16,25 +19,54 @@ public class Monster extends IconObject implements java.io.Serializable{							/
 	 */
 	private static final long serialVersionUID = -207946696464873997L;
 
-	public final String name;
 	private AbstractStatusInfo[] monstInfo;
-	public StatusList monsterFeature;
+	public final HashMap<MonsterOption, StatusList> monsterFeature;
+	private StatusList additionalStatList;
 	private static HashMap<String, Integer> statHash = new HashMap<String, Integer>(); 
 	private static boolean statHashSetted = false;
+	private MonsterOption monsterOption;
+	public LinkedList<String> explanation;						//설명
 	
 	public Monster(String name)								
 	{
+		super();
 		this.name=name;
 		monstInfo = new AbstractStatusInfo[Monster_StatList.STATNUM];
 		int i;
 		for(i=0; i<Monster_StatList.BOOLNUM; i++)
 			monstInfo[i] = new BooleanInfo(false);
 		
-		for(; i<Monster_StatList.STATNUM; i++)
+		for(; i<Monster_StatList.STATNUM-Monster_StatList.DOUBLENUM; i++)
 			monstInfo[i] = new StatusInfo(0);
 		
+		for(; i<Monster_StatList.STATNUM; i++)
+			monstInfo[i] = new DoubleStatusInfo(0.0);
+		
 		monstInfo[Monster_StatList.TYPE-Monster_StatList.STARTNUM] = new StatusInfo(MonsterType.NORMAL);
-		monsterFeature = new StatusList();
+		monsterFeature = new HashMap<MonsterOption, StatusList>();
+		additionalStatList = new StatusList();
+		explanation = new LinkedList<String>();
+		monsterOption = new MonsterOption(this);
+	}
+	public Monster()								
+	{
+		super();
+		monstInfo = new AbstractStatusInfo[Monster_StatList.STATNUM];
+		int i;
+		for(i=0; i<Monster_StatList.BOOLNUM; i++)
+			monstInfo[i] = new BooleanInfo(false);
+		
+		for(; i<Monster_StatList.STATNUM-Monster_StatList.DOUBLENUM; i++)
+			monstInfo[i] = new StatusInfo(0);
+		
+		for(; i<Monster_StatList.STATNUM; i++)
+			monstInfo[i] = new DoubleStatusInfo(0.0);
+		
+		monstInfo[Monster_StatList.TYPE-Monster_StatList.STARTNUM] = new StatusInfo(MonsterType.NORMAL);
+		monsterFeature = new HashMap<MonsterOption, StatusList>();
+		additionalStatList = new StatusList();
+		explanation = new LinkedList<String>();
+		monsterOption = new MonsterOption(this);
 	}
 	
 	public static HashMap<String, Integer> getStatHash()
@@ -54,8 +86,44 @@ public class Monster extends IconObject implements java.io.Serializable{							/
 		statHash.put("물방", Monster_StatList.DEFENSIVE_PHY); statHash.put("물리방어력", Monster_StatList.DEFENSIVE_PHY);
 		statHash.put("마방", Monster_StatList.DEFENSIVE_MAG); statHash.put("마법방어력", Monster_StatList.DEFENSIVE_MAG);
 		statHash.put("레벨", Monster_StatList.LEVEL); statHash.put("타입", Monster_StatList.TYPE); statHash.put("방깍패널티", Monster_StatList.TYPE);
-		statHash.put("레벨", Monster_StatList.DEFENCE_LIMIT);
+		statHash.put("방깍제한", Monster_StatList.DEFENCE_LIMIT);
 	}
+	
+	public void setSubMonster(MonsterOption monsterOption)
+	{
+		additionalStatList = monsterFeature.get(monsterOption);
+		if(additionalStatList==null){
+			additionalStatList=new StatusList();
+			this.monsterOption = new MonsterOption(this);
+		}
+		else this.monsterOption = monsterOption; 
+	}
+	public void setSubMonster(String name)
+	{
+		MonsterOption temp=null;
+		for(Entry<MonsterOption, StatusList> entry : monsterFeature.entrySet()){
+			if(entry.getKey().getName().equals(name)){
+				temp=entry.getKey();
+				additionalStatList = entry.getValue();
+			}
+			break;
+		}
+		
+		if(temp==null){
+			additionalStatList=new StatusList();
+			this.monsterOption = new MonsterOption(this);
+			return;
+		}
+		if(additionalStatList==null) additionalStatList=new StatusList();
+		this.monsterOption = temp; 
+	}
+	
+	public StatusList getAdditionalStatList() {
+		if(additionalStatList==null) return new StatusList();
+		return additionalStatList;
+	}
+	
+	public MonsterOption getMonsterOption() {return monsterOption;}
 	
 	public int getStat(int stat) throws StatusTypeMismatch
 	{
@@ -66,6 +134,13 @@ public class Monster extends IconObject implements java.io.Serializable{							/
 	public int getStat(String stat) throws UndefinedStatusKey, StatusTypeMismatch
 	{
 		if(getStatHash().containsKey(stat)) return getStat(getStatHash().get(stat));
+		else throw new UndefinedStatusKey(stat);
+	}
+	
+	public double getDoubleStat(String stat) throws UndefinedStatusKey, StatusTypeMismatch
+	{
+		if(getStatHash().containsKey(stat))
+			return monstInfo[getStatHash().get(stat)-Monster_StatList.STARTNUM].getStatToDouble();
 		else throw new UndefinedStatusKey(stat);
 	}
 	
@@ -94,6 +169,14 @@ public class Monster extends IconObject implements java.io.Serializable{							/
 			((BooleanInfo)monstInfo[stat-Monster_StatList.STARTNUM]).setBooleanStat(bool);
 		else throw new StatusTypeMismatch("Boolean");
 	}
+	
+	public void setDoubleStat(int stat, double strength) throws StatusTypeMismatch
+	{
+		if(monstInfo[stat-Monster_StatList.STARTNUM] instanceof DoubleStatusInfo)
+			((DoubleStatusInfo)monstInfo[stat-Monster_StatList.STARTNUM]).setInfo(strength);
+		else throw new StatusTypeMismatch("Double");
+	}
+	
 	public void setStat(String stat, Object strength) throws UndefinedStatusKey, StatusTypeMismatch
 	{
 		if(getStatHash().containsKey(stat)){
@@ -102,6 +185,8 @@ public class Monster extends IconObject implements java.io.Serializable{							/
 				setStat(getStatHash().get(stat), (int)strength);
 			else if(monstInfo[statNum-Monster_StatList.STARTNUM] instanceof BooleanInfo && strength instanceof Boolean)
 				setBooleanStat(getStatHash().get(stat), (boolean)strength);
+			else if(monstInfo[statNum-Monster_StatList.STARTNUM] instanceof DoubleStatusInfo && strength instanceof Double)
+				setDoubleStat(getStatHash().get(stat), (double)strength);
 			else throw new StatusTypeMismatch(strength.getClass().getName());
 		}
 		else throw new UndefinedStatusKey(stat);

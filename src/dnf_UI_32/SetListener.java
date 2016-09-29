@@ -1,4 +1,4 @@
-package dnf_UI;
+package dnf_UI_32;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
@@ -18,11 +18,14 @@ import org.eclipse.swt.widgets.Listener;
 
 import dnf_InterfacesAndExceptions.InterfaceSize;
 import dnf_InterfacesAndExceptions.ItemFileNotFounded;
+import dnf_InterfacesAndExceptions.Location;
 import dnf_InterfacesAndExceptions.SetName;
 import dnf_class.Card;
 import dnf_class.Characters;
 import dnf_class.IconObject;
 import dnf_class.Item;
+import dnf_class.Monster;
+import dnf_class.MonsterOption;
 import dnf_class.Skill;
 
 @SuppressWarnings("unchecked")
@@ -147,7 +150,7 @@ public class SetListener {
 		return new Listener() {
 			@Override
 			public void handleEvent(Event event) {
-				if(itemButton.getItem().getEnabled())
+				if(event.button== 1 && itemButton.getItem().getEnabled())
 	        	 {
 					boolean replicateEnabled=false;
 					if(inventory!=null) replicateEnabled=true;
@@ -220,7 +223,7 @@ public class SetListener {
 		}; 
 	}
 	
-	public Listener makeItemInfoListener(Composite background)
+	public Listener makeItemInfoListener(Composite background, Location location)
 	{	     
 		ItemButton<Item> itemButton;
 		if(itemButton_wildCard.getItem() instanceof Item) itemButton = (ItemButton<Item>) itemButton_wildCard;
@@ -239,7 +242,7 @@ public class SetListener {
 	        		GridLayout layout = new GridLayout(1, false);
 	        		layout.verticalSpacing=3;
 	        		itemInfo.setLayout(layout);
-	        		MakeComposite.setItemInfoComposite(itemInfo, itemButton.getItem());
+	        		MakeComposite.setItemInfoComposite(itemInfo, itemButton.getItem(), location, character);
 	        		itemInfoSize = itemInfo.computeSize(InterfaceSize.ITEM_INFO_SIZE, SWT.DEFAULT);
 	        		itemInfo.moveAbove(null);
 	        		
@@ -263,6 +266,10 @@ public class SetListener {
 	        }
 	    };
 	}
+	public Listener makeItemInfoListener(Composite background)
+	{
+		return makeItemInfoListener(background, Location.VILLAGE);
+	}
 	
 	public Listener makeCardInfoListener(Composite background)
 	{
@@ -280,7 +287,7 @@ public class SetListener {
 	       		GridLayout layout = new GridLayout(1, false);
 	       		layout.verticalSpacing=3;
 	       		itemInfo.setLayout(layout);
-	       		MakeComposite.setItemInfoComposite(itemInfo, card);
+	       		MakeComposite.setItemInfoComposite(itemInfo, card, Location.VILLAGE, character);
 	       		Point itemInfoSize = itemInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 	       		setMousePoint(e, background, itemInfoSize, null);
 	       		itemInfo.setBounds((e.x+x0), (e.y+y0), InterfaceSize.ITEM_INFO_SIZE, itemInfoSize.y);
@@ -297,7 +304,8 @@ public class SetListener {
 		
 		return new Listener() {
 	        @Override
-	        public void handleEvent(Event e) {	        	
+	        public void handleEvent(Event e) {
+	        	if(skillButton.getItem().getName().contains("없음")) return;
 	       		itemInfo = new Composite(background, SWT.BORDER);
 	       		GridLayout layout = new GridLayout(1, false);
 	       		layout.verticalSpacing=3;
@@ -309,6 +317,52 @@ public class SetListener {
 	       		itemInfo.moveAbove(null);
 	        }
 	    };
+	}
+	
+	public Listener makeMonsterInfoListener(Composite background)
+	{
+		ItemButton<Monster> monsterButton;
+		if(itemButton_wildCard.getItem() instanceof Monster) monsterButton = (ItemButton<Monster>) itemButton_wildCard;
+		else return null;
+		
+		return new Listener() {
+			@Override
+			public void handleEvent(Event e) {
+				itemInfo = new Composite(background, SWT.BORDER);
+        		GridLayout layout = new GridLayout(1, false);
+        		layout.verticalSpacing=3;
+        		itemInfo.setLayout(layout);
+        		MakeComposite.setMonsterInfoComposite(itemInfo, monsterButton.getItem());
+        		Point itemInfoSize = itemInfo.computeSize(InterfaceSize.MONSTER_INFO_SIZE, SWT.DEFAULT);
+        		itemInfo.moveAbove(null);
+        		 
+        		setMousePoint(e, background, itemInfoSize, null);
+        		itemInfo.setBounds((e.x+x0), (e.y+y0), InterfaceSize.MONSTER_INFO_SIZE, itemInfoSize.y);
+			}
+		};
+	}
+	
+	public Listener makeMonsterOptionInfoListener(Composite background)
+	{
+		ItemButton<MonsterOption> optionButton;
+		if(itemButton_wildCard.getItem() instanceof MonsterOption) optionButton = (ItemButton<MonsterOption>) itemButton_wildCard;
+		else return null;
+		
+		return new Listener() {
+			@Override
+			public void handleEvent(Event e) {
+				itemInfo = new Composite(background, SWT.BORDER);
+        		GridLayout layout = new GridLayout(1, false);
+        		layout.verticalSpacing=3;
+        		itemInfo.setLayout(layout);
+        		MakeComposite.setMonsterOptionInfoComposite(itemInfo, optionButton.getItem());
+        		Point itemInfoSize = itemInfo.computeSize(InterfaceSize.MONSTER_INFO_SIZE, SWT.DEFAULT);
+        		itemInfo.moveAbove(null);
+        		 
+        		setMousePoint(e, background, itemInfoSize, null);
+        		itemInfo.setBounds((e.x+x0), (e.y+y0), InterfaceSize.MONSTER_INFO_SIZE, itemInfoSize.y);
+			}
+		};
 	}
 	
 	public Listener skillLevelModifyListener(Composite background, boolean TPMode)

@@ -1,4 +1,4 @@
-package dnf_UI;
+package dnf_UI_32;
 
 import java.util.LinkedList;
 
@@ -12,18 +12,23 @@ import org.eclipse.swt.widgets.Label;
 import dnf_InterfacesAndExceptions.Dimension_stat;
 import dnf_InterfacesAndExceptions.InterfaceSize;
 import dnf_InterfacesAndExceptions.ItemFileNotFounded;
+import dnf_InterfacesAndExceptions.Location;
 import dnf_InterfacesAndExceptions.Skill_type;
 import dnf_InterfacesAndExceptions.StatList;
 import dnf_InterfacesAndExceptions.StatusTypeMismatch;
+import dnf_InterfacesAndExceptions.UndefinedStatusKey;
 import dnf_calculator.Calculator;
 import dnf_calculator.ElementInfo;
 import dnf_calculator.SkillStatusInfo;
 import dnf_calculator.Status;
 import dnf_calculator.StatusAndName;
 import dnf_class.Card;
+import dnf_class.Characters;
 import dnf_class.Emblem;
 import dnf_class.Equipment;
 import dnf_class.Item;
+import dnf_class.Monster;
+import dnf_class.MonsterOption;
 import dnf_class.SetOption;
 import dnf_class.Skill;
 import dnf_class.SkillLevelInfo;
@@ -119,8 +124,14 @@ public class MakeComposite {
 		}
 	}
 	
-	public static void setItemInfoComposite(Composite itemInfo, Item item)
+	public static void setItemInfoComposite(Composite itemInfo, Item item, Location location, Characters character)
 	{	
+		if(item.getName().contains("없음"))
+		{
+			itemInfo.dispose();
+			return;
+		}
+		
 		Label stat = new Label(itemInfo, SWT.WRAP);
 		String temp = item.getName();
 		if(item instanceof Equipment && ((Equipment)item).getReinforce()!=0) temp = "+"+((Equipment)item).getReinforce()+" "+temp;
@@ -153,6 +164,14 @@ public class MakeComposite {
 			rarity.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_CYAN));
 			break;
 		default:
+		}
+		
+		if(location==Location.DUNGEON)
+		{
+			String compare = character.compareItem(item);
+			stat.setText(temp+compare);
+			if(compare.contains("▲")) stat.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GREEN));
+			else if(compare.contains("▼")) stat.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
 		}
 		
 		Label type = new Label(itemInfo, SWT.WRAP);
@@ -322,6 +341,12 @@ public class MakeComposite {
 	
 	public static void setSkillInfoComposite(Composite composite, Skill skill, Status stat)
 	{
+		if(skill.getName().contains("없음"))
+		{
+			composite.dispose();
+			return;
+		}
+		
 		GridData leftData = new GridData(SWT.FILL, SWT.TOP, true, false);
 		
 		Label label = new Label(composite, SWT.WRAP);
@@ -400,6 +425,107 @@ public class MakeComposite {
 			label.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		}
 		composite.setSize(composite.computeSize(SWT.NONE, SWT.NONE));
+	}
+	
+	public static void setMonsterInfoComposite(Composite itemInfo, Monster monster)
+	{
+		GridData leftData = new GridData(SWT.LEFT, SWT.TOP, true, false);
+		leftData.widthHint=InterfaceSize.MONSTER_INFO_SIZE-10;
+		
+		Label name = new Label(itemInfo, SWT.WRAP);
+		name.setText(monster.getName());
+		name.setLayoutData(leftData);
+		name.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_DARK_YELLOW));
+		
+		String[] statList = new String[]{
+				"레벨", "타입", "체력", "", "물리방어력", "마법방어력", "화속저", "수속저", "명속저", "암속저", "", "카운터", "백어택", "난이도", "방깍제한"
+			};
+		
+		for(String stat : statList)
+			setMonsterText(itemInfo, monster, stat, Display.getCurrent().getSystemColor(SWT.COLOR_BLACK), InterfaceSize.MONSTER_INFO_SIZE-10);
+		
+		if(!monster.explanation.isEmpty()){
+			Label label = new Label(itemInfo, SWT.WRAP);
+			label.setText("");
+		}
+		for(String str : monster.explanation){
+			Label exp = new Label(itemInfo, SWT.WRAP);
+			exp.setText(str);
+			leftData = new GridData();
+			leftData.widthHint=InterfaceSize.SET_INFO_SIZE-10;
+			exp.setLayoutData(leftData);
+			exp.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+		}
+	}
+	
+	public static void setMonsterOptionInfoComposite(Composite itemInfo, MonsterOption option)
+	{
+		GridData leftData = new GridData(SWT.LEFT, SWT.TOP, true, false);
+		leftData.widthHint=InterfaceSize.MONSTER_INFO_SIZE-10;
+		
+		Label name = new Label(itemInfo, SWT.WRAP);
+		name.setText(option.getName());
+		name.setLayoutData(leftData);
+		name.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_DARK_YELLOW));
+		
+		for(StatusAndName s : option.monster.getAdditionalStatList().statList)
+			try {
+				setText(itemInfo, s, Display.getCurrent().getSystemColor(SWT.COLOR_BLACK), InterfaceSize.MONSTER_INFO_SIZE);
+			} catch (StatusTypeMismatch e) {
+				e.printStackTrace();
+			}
+		
+		if(!option.explanation.isEmpty()){
+			Label label = new Label(itemInfo, SWT.WRAP);
+			label.setText("");
+		}
+		for(String str : option.explanation){
+			Label exp = new Label(itemInfo, SWT.WRAP);
+			exp.setText(str);
+			leftData = new GridData();
+			leftData.widthHint=InterfaceSize.SET_INFO_SIZE-10;
+			exp.setLayoutData(leftData);
+			exp.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+		}
+	}
+	
+	private static void setMonsterText(Composite itemInfo, Monster monster, String name, Color textColor, int xSize)
+	{
+		String strength="";
+		Label label;
+		
+		try{
+			strength = String.format("%.1f", monster.getDoubleStat(name));
+			if(strength.contains(".0"))
+				strength=strength.substring(0, strength.length()-2);
+		}
+		catch(StatusTypeMismatch e)
+		{
+			try{
+				boolean enabled = monster.getBool(name);
+				if(enabled) strength = "O";
+				else strength = "X";
+			}catch(StatusTypeMismatch e2) {
+				e2.printStackTrace();
+			}catch(UndefinedStatusKey e3) {}
+		}
+		catch(UndefinedStatusKey e) {}
+		
+		label = new Label(itemInfo, SWT.WRAP);
+		GridData gridData = new GridData();
+		gridData.widthHint=xSize;
+		label.setLayoutData(gridData); 
+			
+	
+		if(name.equals("")) label.setText("");
+		else if(name.equals("타입")){
+			if(strength.equals("50")) label.setText(name+" : 보스");
+			else if(strength.equals("75")) label.setText(name+" : 네임드");
+			else label.setText(name+" : 일반");
+		}
+		else label.setText(name+" : "+strength);
+
+		label.setForeground(textColor);
 	}
 	
 	

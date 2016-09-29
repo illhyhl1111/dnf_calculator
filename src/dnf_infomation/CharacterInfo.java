@@ -2,18 +2,18 @@ package dnf_infomation;
 
 import java.util.HashSet;
 
-import dnf_InterfacesAndExceptions.JobList;
+import dnf_InterfacesAndExceptions.Job;
 import dnf_calculator.StatusList;
 
 public class CharacterInfo {
 	public static void getInfo(HashSet<CharInfoBox> infoList)
 	{
 		CharInfoBox temp;
-		JobList job;
+		Job job;
 		
 		////////// 거너
 		/////여런처
-		job = JobList.LAUNCHER_F;
+		job = Job.LAUNCHER_F;
 		
 		//90레벨
 		temp = new CharInfoBox(job, 90, new StatusList());

@@ -18,7 +18,7 @@ import dnf_InterfacesAndExceptions.InterfaceSize;
 import dnf_InterfacesAndExceptions.ItemFileNotFounded;
 import dnf_InterfacesAndExceptions.ItemFileNotReaded;
 import dnf_InterfacesAndExceptions.Item_rarity;
-import dnf_InterfacesAndExceptions.JobList;
+import dnf_InterfacesAndExceptions.Job;
 import dnf_InterfacesAndExceptions.SetName;
 import dnf_InterfacesAndExceptions.UnknownInformationException;
 import dnf_InterfacesAndExceptions.Weapon_detailType;
@@ -30,7 +30,7 @@ public class GetDictionary
 	public static HashMap<String, Image> iconDictionary;
 	static boolean readed=false;
 
-	public static void readFile(JobList job)
+	public static void readFile(Job job)
 	{
 		if(readed) return;
 		

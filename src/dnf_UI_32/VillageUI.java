@@ -1,4 +1,4 @@
-package dnf_UI;
+package dnf_UI_32;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

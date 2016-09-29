@@ -1,4 +1,4 @@
-package dnf_UI;
+package dnf_UI_32;
 
 import java.util.LinkedList;
 
@@ -26,11 +26,9 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 
 import dnf_InterfacesAndExceptions.InterfaceSize;
-import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_InterfacesAndExceptions.Location;
 import dnf_class.Characters;
 import dnf_class.Setting;
-import dnf_infomation.GetDictionary;
 
 public class DungeonUI extends DnFComposite{
 	Button toVillageButton;
@@ -40,6 +38,7 @@ public class DungeonUI extends DnFComposite{
 	UserInfo avatarInfo;
 	DealChart dealChart;
 	TrainingRoom trainingRoom;
+	BuffInventory buffInventory;
 	
 	TabFolder inventoryFolder;
 	
@@ -120,18 +119,21 @@ public class DungeonUI extends DnFComposite{
 		formData = new FormData();
 		formData.left = new FormAttachment(inventoryFolder, 10);
 		formData.height=InterfaceSize.DEALCHART_Y;
-		try {
-			dealChart.setDealChart(GetDictionary.charDictionary.getMonsterInfo("임시몬스터"));
-			dealChart.getComposite().setLayoutData(formData);
-		} catch (ItemNotFoundedException e) {
-			e.printStackTrace();
-		}
+		dealChart.setDealChart();
+		dealChart.getComposite().setLayoutData(formData);
 		
-		trainingRoom = new TrainingRoom(mainComposite);
+		trainingRoom = new TrainingRoom(mainComposite, this, character);
 		formData = new FormData(InterfaceSize.TRAININGROOM_SIZE_X, InterfaceSize.TRAININGROOM_SIZE_Y);
 		formData.left = new FormAttachment(infoFolder, 10);
 		formData.top = new FormAttachment(0, 5);
 		trainingRoom.getComposite().setLayoutData(formData);
+		
+		buffInventory = new BuffInventory(mainComposite, character, trainingRoom, this);
+		buffInventory.setListener(this.getComposite());
+		formData = new FormData();
+		formData.top = new FormAttachment(trainingRoom.getComposite(), 5);
+		formData.left = new FormAttachment(infoFolder, 10);
+		buffInventory.getComposite().setLayoutData(formData);
 		
 		setItemSettingControls(infoFolder, dealChart);
 		
@@ -196,7 +198,7 @@ public class DungeonUI extends DnFComposite{
 				dialog.create();
 				
 				if (dialog.open() == Window.OK) {
-			        Setting setting = character.getItemSetting().makeClone(dialog.getName());
+			        Setting setting = character.getItemSetting().saveToClone(dialog.getName());
 			        character.userItemList.settingList.add(setting);
 			        settings.add(dialog.getName());
 					combo.setItems(settings.toArray(new String[0]));
@@ -295,7 +297,9 @@ public class DungeonUI extends DnFComposite{
 	{
 		itemInfo.renew();
 		avatarInfo.renew();
+		dealChart.setMonster(trainingRoom.getMonster());
 		dealChart.renew();
+		trainingRoom.renew();
 	}
 	
 	public void disposeContent()

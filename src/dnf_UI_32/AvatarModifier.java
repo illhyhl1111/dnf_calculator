@@ -1,4 +1,4 @@
-package dnf_UI;
+package dnf_UI_32;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;

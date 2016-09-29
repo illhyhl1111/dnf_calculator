@@ -1,4 +1,4 @@
-package dnf_UI;
+package dnf_UI_32;
 
 import java.util.LinkedList;
 
@@ -20,6 +20,7 @@ import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.InterfaceSize;
 import dnf_InterfacesAndExceptions.ItemFileNotFounded;
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
+import dnf_InterfacesAndExceptions.Location;
 import dnf_class.Card;
 import dnf_class.Characters;
 import dnf_class.Emblem;
@@ -43,19 +44,21 @@ public class Inventory extends DnFComposite
 	Composite inventory2;
 	private Composite itemInfo;
 	private Composite setInfo;
+	public final Location location;
 	
 	int mode;
 	Vault vault;
 	Composite background;
 	
 	@SuppressWarnings("unchecked")
-	public Inventory(Composite parent, Characters character, DnFComposite superInfo, LinkedList<Item> itemList1, LinkedList<Item> itemList2)
+	public Inventory(Composite parent, Characters character, DnFComposite superInfo, LinkedList<Item> itemList1, LinkedList<Item> itemList2, Location location)
 	{
 		this.itemList1=itemList1;
 		this.itemList2=itemList2;
 		this.character=character;
 		this.superInfo=superInfo;
 		this.parent=parent;
+		this.location=location;
 		
 		mainComposite = new Composite(parent, SWT.NONE);
 		GridLayout mainLayout = new GridLayout();
@@ -135,7 +138,7 @@ public class Inventory extends DnFComposite
 				else if(mode==1) inventoryList[index].getButton().addListener(SWT.MouseDown, listenerGroup.equipListener()); 			// add MouseDown Event - unequip
 				else if(mode==2) inventoryList[index].getButton().addListener(SWT.MouseDown, listenerGroup.equipListener());
 				inventoryList[index].getButton().addListener(SWT.MouseDoubleClick, listenerGroup.modifyListener(this));			// add MouseDoubleClick - modify
-				inventoryList[index].getButton().addListener(SWT.MouseEnter, listenerGroup.makeItemInfoListener(background));			// add MouseEnter Event - make composite
+				inventoryList[index].getButton().addListener(SWT.MouseEnter, listenerGroup.makeItemInfoListener(background, location));			// add MouseEnter Event - make composite
 				inventoryList[index].getButton().addListener(SWT.MouseExit, listenerGroup.disposeItemInfoListener()); 		// add MouseExit Event - dispose composite
 				inventoryList[index].getButton().addListener(SWT.MouseMove, listenerGroup.moveItemInfoListener());			// add MouseMove Event - move composite
 			}
