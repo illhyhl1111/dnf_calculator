@@ -33,7 +33,6 @@ public class SkillTree extends Dialog{
 	LinkedList<ItemButton<Skill>> TPSkillList;
 	int[] skillLevel;
 	Point contentSize;
-	private Composite itemInfo;
 	DnFComposite superInfo;
 	
 	public SkillTree(Shell parent, Characters character, DnFComposite superInfo)
@@ -113,7 +112,7 @@ public class SkillTree extends Dialog{
 				button.getButton().setLayoutData(buttonData);
 				leftButton = button.getButton();
 				
-				SetListener listenerGroup = new SetListener(button, character, superInfo, itemInfo, null, parent);
+				SetListener listenerGroup = new SetListener(button, character, superInfo, parent);
 				
 				button.getButton().addListener(SWT.MouseEnter, listenerGroup.makeSkillInfoListener(content));		// add MouseEnter Event - make composite
 				button.getButton().addListener(SWT.MouseExit, listenerGroup.disposeItemInfoListener()); 		// add MouseExit Event - dispose composite
@@ -136,7 +135,7 @@ public class SkillTree extends Dialog{
 			ItemButton<Skill> temp = new ItemButton<Skill>(TPSkillGroup, skill, bSize, bSize);
 			temp.getButton().setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
 			
-			SetListener listenerGroup = new SetListener(temp, character, superInfo, itemInfo, null, parent);
+			SetListener listenerGroup = new SetListener(temp, character, superInfo, parent);
 			temp.getButton().addListener(SWT.MouseEnter, listenerGroup.makeSkillInfoListener(content));		// add MouseEnter Event - make composite
 			temp.getButton().addListener(SWT.MouseExit, listenerGroup.disposeItemInfoListener()); 		// add MouseExit Event - dispose composite
 			temp.getButton().addListener(SWT.MouseMove, listenerGroup.moveItemInfoListener());			// add MouseMove Event - move composite

@@ -86,6 +86,7 @@ public class Item extends IconObject implements Comparable<Item>
 	public int getDimStatIndex(){ return -1;}
 	public int getEarringStatIndex() { return -1;}
 	public int getIgnIndex(){ return -1;}
+	public int getReforgeIndex() { return -1;}
 	public int getItemStatIndex() { return 0;}
 	
 	

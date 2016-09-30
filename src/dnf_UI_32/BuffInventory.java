@@ -29,7 +29,6 @@ public class BuffInventory extends DnFComposite{
 	private DnFComposite superInfo;
 	private Composite parent;
 	private final TrainingRoom trainingRoom;
-	private Composite itemInfo;
 
 	Composite background;
 	
@@ -81,7 +80,7 @@ public class BuffInventory extends DnFComposite{
 				inventoryList[index] =
 						new ItemButton<IconObject>(mainComposite, i, InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE);
 				
-				SetListener listenerGroup = new SetListener(inventoryList[index], character, superInfo, itemInfo, null, parent);
+				SetListener listenerGroup = new SetListener(inventoryList[index], character, superInfo, parent);
 				if(i instanceof Item)
 					inventoryList[index].getButton().addListener(SWT.MouseEnter, listenerGroup.makeItemInfoListener(background));	// add MouseEnter Event - make composite
 				else if(i instanceof Skill)
@@ -98,7 +97,7 @@ public class BuffInventory extends DnFComposite{
 				else i = new Skill();
 				inventoryList[index] = new ItemButton<IconObject>(mainComposite, i, InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE, false);
 				
-				SetListener listenerGroup = new SetListener(inventoryList[index], character, superInfo, itemInfo, null, parent);
+				SetListener listenerGroup = new SetListener(inventoryList[index], character, superInfo, parent);
 				
 				if(i instanceof Item)
 					inventoryList[index].getButton().addListener(SWT.MouseEnter, listenerGroup.makeItemInfoListener(background));	// add MouseEnter Event - make composite

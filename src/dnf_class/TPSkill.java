@@ -2,7 +2,6 @@ package dnf_class;
 
 import dnf_InterfacesAndExceptions.Job;
 import dnf_InterfacesAndExceptions.Skill_type;
-import dnf_calculator.StatusList;
 
 public class TPSkill extends Skill implements java.io.Serializable{
 	

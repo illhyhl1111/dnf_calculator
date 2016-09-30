@@ -137,6 +137,10 @@ public class Monster extends IconObject implements java.io.Serializable{							/
 		else throw new UndefinedStatusKey(stat);
 	}
 	
+	public double getDoubleStat(int stat) throws StatusTypeMismatch
+	{
+		return monstInfo[stat-Monster_StatList.STARTNUM].getStatToDouble();
+	}
 	public double getDoubleStat(String stat) throws UndefinedStatusKey, StatusTypeMismatch
 	{
 		if(getStatHash().containsKey(stat))

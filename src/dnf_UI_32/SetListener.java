@@ -43,14 +43,13 @@ public class SetListener {
 	static final int mouseInterval_hor = 7;
 	static final int mouseInterval_ver = 5;
 	
-	public SetListener(ItemButton<? extends IconObject> itemButton, Characters character, DnFComposite superInfo, Composite itemInfo,
-			Composite setInfo, Composite parent)
+	public SetListener(ItemButton<? extends IconObject> itemButton, Characters character, DnFComposite superInfo, Composite parent)
 	{
 		this.itemButton_wildCard=itemButton;
 		this.character=character;
 		this.superInfo=superInfo;
-		this.itemInfo=itemInfo;
-		this.setInfo=setInfo;
+		this.itemInfo=null;
+		this.setInfo=null;
 		this.parent=parent;
 		
 		hasSetOption=false;

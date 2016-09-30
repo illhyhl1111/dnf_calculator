@@ -30,11 +30,15 @@ public class Status implements Cloneable, java.io.Serializable {
 		"지능", "지능 %증가",
 		"무기물공합", "물리방무뎀",
 		"무기마공합", "마법방무뎀", 
-		"재련독공수치", "독공뻥",
+		"독공", "재련독공수치",
+		"독공 %증가", "크리저항감소",
 		"물리마스터리", "물리마스터리2",
 		"마법마스터리", "마법마스터리2",
-		"증뎀", "크증뎀",
+		"물리방무증가", "마법방무증가", 
+		"증뎀", "증뎀 추가증가",
+		"크증뎀", "크증 추가증가",
 		"추뎀", "스증뎀",
+		"모든공격력 증가", "투함포항",
 		"증뎀버프", "크증뎀버프",
 		"화속성부여", "수속성부여",
 		"명속성부여", "암속성부여",
@@ -45,7 +49,8 @@ public class Status implements Cloneable, java.io.Serializable {
 		"고정물방깍", "고정마방깍",
 		"%물방깍_템", "%마방깍_템",
 		"%물방깍_스킬", "%마방깍_스킬",
-		"크리저항감소", "투함포항"
+		"적 방어력 무시"
+		
 	};
 	public static final int nonInfoStatNum=nonInfoStatOrder.length;
 	
@@ -120,13 +125,20 @@ public class Status implements Cloneable, java.io.Serializable {
 		statHash.put("물크", StatList.CRT_PHY); statHash.put("마크", StatList.CRT_MAG); statHash.put("크리저항", StatList.CRT_LOW); statHash.put("크리저항감소", StatList.CRT_LOW);
 		statHash.put("물리크리티컬", StatList.CRT_PHY); statHash.put("마법크리티컬", StatList.CRT_MAG);
 		statHash.put("백물크", StatList.CRT_BACK_PHY); statHash.put("백마크", StatList.CRT_BACK_MAG);
-		statHash.put("물리마스터리", StatList.MAST_PHY); statHash.put("마법마스터리", StatList.MAST_MAG); statHash.put("독공뻥", StatList.MAST_IND);
+		statHash.put("물리마스터리", StatList.MAST_PHY); statHash.put("마법마스터리", StatList.MAST_MAG);
+		statHash.put("독공뻥", StatList.MAST_IND); statHash.put("독공 %증가", StatList.MAST_IND);
 		statHash.put("물리마스터리2", StatList.MAST_PHY_2); statHash.put("마법마스터리2", StatList.MAST_MAG_2);
 		
 		statHash.put("모속강", StatList.ELEM_ALL); statHash.put("모속", StatList.ELEM_ALL);
 		
 		statHash.put("스킬", StatList.SKILL); statHash.put("스킬레벨", StatList.SKILL);  
 		statHash.put("스킬범위", StatList.SKILL_RANGE); 
+		
+		statHash.put("모공증", StatList.DAM_INC_ALL); statHash.put("모든공격력 증가", StatList.DAM_INC_ALL);
+		statHash.put("증뎀 추가증가", StatList.DAM_INC_ADD); statHash.put("추증뎀", StatList.DAM_INC_ADD);
+		statHash.put("크증 추가증가", StatList.DAM_CRT_ADD); statHash.put("추크증", StatList.DAM_CRT_ADD);
+		statHash.put("방무", StatList.DEF_DEC_IGN);	 statHash.put("적방무", StatList.DEF_DEC_IGN); statHash.put("적 방어력 무시", StatList.DEF_DEC_IGN);
+		statHash.put("물리방무증가", StatList.WEP_NODEF_PHY_INC); statHash.put("마법방무증가", StatList.WEP_NODEF_MAG_INC);
 		
 		statHashsetted=true;
 	}
@@ -233,6 +245,7 @@ public class Status implements Cloneable, java.io.Serializable {
 						
 					case StatList.DAM_INC: case StatList.DAM_CRT:										//중첩불가항
 					case StatList.DAM_INC_BACK: case StatList.DAM_CRT_BACK:
+					case StatList.DEF_DEC_IGN:
 						if(stat2.getStatToDouble()>stat1.getStatToDouble()) stat1.setInfo(stat2.getStatToDouble()); 
 						break;
 						

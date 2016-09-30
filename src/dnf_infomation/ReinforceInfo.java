@@ -102,5 +102,10 @@ public class ReinforceInfo {
 		if(temp==-1) throw new UnknownInformationException();
 		return temp;
 	}
+	
+	public static int getReforgeInfo(int num, Item_rarity rarity, int level)  throws UnknownInformationException
+	{
+		return num*level;
+	}
 
 }

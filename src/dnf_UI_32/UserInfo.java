@@ -27,8 +27,6 @@ class UserItemInfo extends DnFComposite
 	private ItemButton<Item>[] itemButtonList;
 	static final int ITEMNUM=13;
 	private Characters character;
-	private Composite itemInfo;
-	private Composite setInfo;
 	
 	@SuppressWarnings("unchecked")
 	public UserItemInfo(Composite parent, Characters character, DnFComposite superInfo)
@@ -80,7 +78,7 @@ class UserItemInfo extends DnFComposite
 		buttonS.x+=3; buttonS.y+=3;
 		for(int i=0; i<ITEMNUM; i++)
 		{
-			SetListener listenerGroup = new SetListener(itemButtonList[i], character, superInfo, itemInfo, setInfo, parent);
+			SetListener listenerGroup = new SetListener(itemButtonList[i], character, superInfo, parent);
 			
 			itemButtonList[i].getButton().addListener(SWT.MouseDown, listenerGroup.unequipListener()); 				// add MouseDown Event - unequip
 			itemButtonList[i].getButton().addListener(SWT.MouseDoubleClick, listenerGroup.modifyListener(null));		// add MouseDoubleClick - modify
@@ -136,8 +134,6 @@ class UserAvatarInfo extends DnFComposite
 	private ItemButton<Item> drapeButton;
 	static final int AVATARNUM=10;
 	private Characters character;
-	private Composite avatarInfo;
-	private Composite setInfo;
 	Avatar_part[] partOrder= { Avatar_part.CAP, Avatar_part.HAIR, Avatar_part.FACE, Avatar_part.NECK, Avatar_part.COAT,
 			Avatar_part.SKIN, Avatar_part.BELT, Avatar_part.PANTS, Avatar_part.SHOES, Avatar_part.AURA};
 	
@@ -188,7 +184,7 @@ class UserAvatarInfo extends DnFComposite
 		
 		for(int i=0; i<AVATARNUM; i++)
 		{
-			SetListener listenerGroup = new SetListener(itemButtonList[i], character, superInfo, avatarInfo, setInfo, parent);
+			SetListener listenerGroup = new SetListener(itemButtonList[i], character, superInfo, parent);
 			
 			itemButtonList[i].getButton().addListener(SWT.MouseDown, listenerGroup.unequipListener()); 				// add MouseDown Event - unequip
 			itemButtonList[i].getButton().addListener(SWT.MouseDoubleClick, listenerGroup.modifyListener(null));		// add MouseDoubleClick - modify
@@ -197,14 +193,14 @@ class UserAvatarInfo extends DnFComposite
 			itemButtonList[i].getButton().addListener(SWT.MouseMove, listenerGroup.moveItemInfoListener());			// add MouseMove Event - move composite
 		}
 		
-		SetListener listenerGroup = new SetListener(creatureButton, character, superInfo, avatarInfo, null, parent);
+		SetListener listenerGroup = new SetListener(creatureButton, character, superInfo, parent);
 		creatureButton.getButton().addListener(SWT.MouseDown, listenerGroup.unequipListener());					// add MouseDown Event - unequip
 		creatureButton.getButton().addListener(SWT.MouseDoubleClick, listenerGroup.modifyListener(null));			// add MouseDoubleClick - modify
 		creatureButton.getButton().addListener(SWT.MouseEnter, listenerGroup.makeItemInfoListener(superInfo.getComposite().getShell()));		// add MouseEnter Event - make composite
 		creatureButton.getButton().addListener(SWT.MouseExit, listenerGroup.disposeItemInfoListener()); 		// add MouseExit Event - dispose composite
 		creatureButton.getButton().addListener(SWT.MouseMove, listenerGroup.moveItemInfoListener());			// add MouseMove Event - move composite
 		
-		listenerGroup = new SetListener(drapeButton, character, superInfo, avatarInfo, null, parent);
+		listenerGroup = new SetListener(drapeButton, character, superInfo, parent);
 		drapeButton.getButton().addListener(SWT.MouseDown, listenerGroup.unequipListener());					// add MouseDown Event - unequip
 		drapeButton.getButton().addListener(SWT.MouseEnter, listenerGroup.makeItemInfoListener(superInfo.getComposite().getShell()));		// add MouseEnter Event - make composite
 		drapeButton.getButton().addListener(SWT.MouseExit, listenerGroup.disposeItemInfoListener()); 		// add MouseExit Event - dispose composite

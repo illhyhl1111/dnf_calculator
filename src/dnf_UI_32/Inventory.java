@@ -42,8 +42,6 @@ public class Inventory extends DnFComposite
 	Composite parent;
 	Composite inventory1;
 	Composite inventory2;
-	private Composite itemInfo;
-	private Composite setInfo;
 	public final Location location;
 	
 	int mode;
@@ -132,7 +130,7 @@ public class Inventory extends DnFComposite
 			{
 				if(mode!=2) setDrop(inventoryList[index], mode);
 
-				SetListener listenerGroup = new SetListener(inventoryList[index], character, superInfo, itemInfo, setInfo, parent);
+				SetListener listenerGroup = new SetListener(inventoryList[index], character, superInfo, parent);
 				
 				if(mode==0) inventoryList[index].getButton().addListener(SWT.MouseDown, listenerGroup.equipListener(vault)); 			// add MouseDown Event - unequip
 				else if(mode==1) inventoryList[index].getButton().addListener(SWT.MouseDown, listenerGroup.equipListener()); 			// add MouseDown Event - unequip

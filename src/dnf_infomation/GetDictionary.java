@@ -176,4 +176,9 @@ public class GetDictionary
 	{
 		return ReinforceInfo.getEarringStatInfo(num, rarity, level);
 	}
+	
+	public static int getReforgeInfo (int num, Item_rarity rarity, int level) throws UnknownInformationException
+	{
+		return ReinforceInfo.getReforgeInfo(num, rarity, level);
+	}
 }

@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.ItemFileNotFounded;
 import dnf_InterfacesAndExceptions.Job;
+import dnf_InterfacesAndExceptions.ParsingException;
 import dnf_InterfacesAndExceptions.SetName;
 import dnf_class.Avatar;
 import dnf_class.Buff;
@@ -55,6 +56,12 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 	{
 		equipList = new HashSet<Equipment>();	
 		
+		try {
+			EquipInfo_heavy.getInfo(equipList, EquipInfo_heavy.equipInfo_heavy());
+		} catch (ParsingException e) {
+			e.printStackTrace();
+		}
+		
 		//EquipInfo_sword.getInfo(equipList);
 		//EquipInfo_fighter.getInfo(equipList);
 		WeaponInfo_gun.getInfo(equipList);
@@ -66,7 +73,6 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 		EquipInfo_fabric.getInfo(equipList);
 		EquipInfo_leather.getInfo(equipList);
 		EquipInfo_mail.getInfo(equipList);
-		EquipInfo_heavy.getInfo(equipList);
 		EquipInfo_plate.getInfo(equipList);
 		
 		EquipInfo_necklace.getInfo(equipList);

@@ -21,9 +21,7 @@ public class SubInventory extends DnFComposite
 	Characters character;
 	UserInfo userInfo;
 	Composite parent;
-	private Composite itemInfo;
-	private Composite setInfo;
-	
+
 	@SuppressWarnings("unchecked")
 	public SubInventory(Composite parent, Characters character, UserInfo userInfo, LinkedList<Item> itemList)
 	{
@@ -53,7 +51,7 @@ public class SubInventory extends DnFComposite
 			
 			if(!i.getName().equals("이름없음"))
 			{
-				SetListener listenerGroup = new SetListener(inventoryList[index], character, userInfo, itemInfo, setInfo, parent);
+				SetListener listenerGroup = new SetListener(inventoryList[index], character, userInfo, parent);
 				
 				inventoryList[index].getButton().addListener(SWT.MouseDoubleClick, listenerGroup.modifyListener(null));					// add MouseDoubleClick - modify
 				inventoryList[index].getButton().addListener(SWT.MouseEnter, listenerGroup.makeItemInfoListener(background));		// add MouseEnter Event - make composite

@@ -67,8 +67,8 @@ public class StatusAndName implements java.io.Serializable, Cloneable
 	}
 	public StatusAndName(String name, double stat, boolean changeable, boolean enableable) throws UndefinedStatusKey, StatusTypeMismatch
 	{
-		changeable=false;
-		enableable=false;
+		this.changeable=changeable;
+		this.enableable=enableable;
 		enabled=true;
 		
 		if(Status.getStatHash().containsKey(name)) this.name = Status.getStatHash().get(name);
@@ -135,6 +135,11 @@ public class StatusAndName implements java.io.Serializable, Cloneable
 		reverseHash.put(StatList.BUF_INC, "데미지 증가 버프(%) +"); reverseHash.put(StatList.BUF_CRT, "크리티컬 데미지 증가 버프(%) +");
 		
 		reverseHash.put(StatList.SKILL, " Lv + "); reverseHash.put(StatList.SKILL_RANGE, " 스킬 Lv + ");
+		
+		reverseHash.put(StatList.DAM_INC_ALL, "모든 공격력 증가(%) +");
+		reverseHash.put(StatList.DAM_INC_ADD, "데미지 추가 증가(%) +"); reverseHash.put(StatList.DAM_CRT_ADD, "크리티컬 데미지 추가 증가(%) +");
+		reverseHash.put(StatList.DEF_DEC_IGN, "적 방어력 무시(%) -");
+		reverseHash.put(StatList.WEP_NODEF_PHY_INC, "방어무시 물리 공격력 증가(%)"); reverseHash.put(StatList.WEP_NODEF_MAG_INC, "방어무시 마법 공격력 증가(%)");
 		
 		reverseHashsetted=true;
 	}

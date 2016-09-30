@@ -20,7 +20,7 @@ public class Weapon extends Equipment{
 	private static final long serialVersionUID = -2317758055158333589L;
 
 	public Weapon_detailType weaponType;
-	public int reforge;
+	private int reforge;
 	
 	public Weapon(String name, String icon,Item_rarity rarity, Card card, SetName setName, Weapon_detailType weaponType, int level, int reforge)
 	{	
@@ -30,6 +30,7 @@ public class Weapon extends Equipment{
 
 		vStat.addStatList("물리방무뎀", new StatusInfo(0), true);
 		vStat.addStatList("마법방무뎀", new StatusInfo(0), true);
+		vStat.addStatList("재련독공", 0, true);
 	}
 	public Weapon(String name, String icon, Item_rarity rarity, Weapon_detailType weaponType, int level)
 	{
@@ -42,6 +43,7 @@ public class Weapon extends Equipment{
 		
 		vStat.addStatList("물리방무뎀", new StatusInfo(0), true);
 		vStat.addStatList("마법방무뎀", new StatusInfo(0), true);
+		vStat.addStatList("재련독공", 0, true);
 	}
 	
 	@Override
@@ -62,6 +64,22 @@ public class Weapon extends Equipment{
 		}
 	}
 	
+	public void setReforge(int num) throws UnknownInformationException
+	{
+		reforge=num;
+		try {	
+			int refNum = GetDictionary.getReforgeInfo(num, super.getRarity(), level);
+			vStat.statList.get(getReforgeIndex()).stat.setInfo(refNum);
+		}
+		catch (StatusTypeMismatch e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void setReforgeNum(int num) { reforge=num; }
+	
+	public int getReforge() {return reforge;}
+	
 	@Override
 	public int getIgnIndex()
 	{
@@ -76,9 +94,23 @@ public class Weapon extends Equipment{
 	}
 	
 	@Override
+	public int getReforgeIndex()
+	{
+		int iter=0;
+		for(StatusAndName s : vStat.statList){
+			if(s.equals("재련독공")){
+				return iter;
+			}
+			iter++;
+		}
+		return -1;
+	}
+	
+	@Override
 	public int getItemStatIndex()
 	{
-		if(getIgnIndex()!=-1) return getIgnIndex()+2;
+		if(getReforgeIndex()!=-1) return getReforgeIndex()+1;
+		else if(getIgnIndex()!=-1) return getIgnIndex()+2;
 		else if(getDimStatIndex()!=-1) return getDimStatIndex()+1;
 		return 0;
 	}

@@ -28,8 +28,6 @@ public class TrainingRoom extends DnFComposite
 	private ItemButton<Monster> monsterButton;
 	private ItemButton<MonsterOption> subMonsterButton;
 	DnFComposite superInfo;
-	private Composite itemInfo;
-	private Composite setInfo;
 	Characters character;
 	private LinkedList<Skill> buffList1;
 	private LinkedList<Skill> buffList2;
@@ -62,12 +60,12 @@ public class TrainingRoom extends DnFComposite
 		subMonsterButton.getButton().moveAbove(monsterButton.getButton());
 		subMonsterButton.getButton().setVisible(!subMonsterButton.getItem().getName().contains("없음"));
 		
-		SetListener listenerGroup = new SetListener(monsterButton, character, superInfo, itemInfo, setInfo, parent);
+		SetListener listenerGroup = new SetListener(monsterButton, character, superInfo, parent);
 		monsterButton.getButton().addListener(SWT.MouseEnter, listenerGroup.makeMonsterInfoListener(superInfo.getComposite()));
 		monsterButton.getButton().addListener(SWT.MouseExit, listenerGroup.disposeItemInfoListener());
 		monsterButton.getButton().addListener(SWT.MouseMove, listenerGroup.moveItemInfoListener());
 		
-		listenerGroup = new SetListener(subMonsterButton, character, superInfo, itemInfo, setInfo, parent);
+		listenerGroup = new SetListener(subMonsterButton, character, superInfo, parent);
 		subMonsterButton.getButton().addListener(SWT.MouseEnter, listenerGroup.makeMonsterOptionInfoListener(superInfo.getComposite()));
 		subMonsterButton.getButton().addListener(SWT.MouseExit, listenerGroup.disposeItemInfoListener());
 		subMonsterButton.getButton().addListener(SWT.MouseMove, listenerGroup.moveItemInfoListener());

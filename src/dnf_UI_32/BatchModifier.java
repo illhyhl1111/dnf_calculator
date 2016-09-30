@@ -48,7 +48,6 @@ public class BatchModifier extends Dialog {
 	final Characters character;
 	final InventoryCardPack inventory;
 	final UserInfo userInfo;
-	Composite itemInfo;
 	Point itemInfoSize;
 	Point contentSize;
 	Equipment[] equipList;
@@ -347,7 +346,7 @@ public class BatchModifier extends Dialog {
 		for(i=0; i<UserItemInfo.ITEMNUM; i++)
 		{
 			setDrop(itemButtonList[i]);
-			SetListener listenerGroup = new SetListener(itemButtonList[i], character, userInfo, itemInfo, null, parent);
+			SetListener listenerGroup = new SetListener(itemButtonList[i], character, userInfo, parent);
 			
 			itemButtonList[i].getButton().addListener(SWT.MouseDown, listenerGroup.unequipCardListener()); 				// add MouseDown Event - unequip
 			itemButtonList[i].getButton().addListener(SWT.MouseEnter, listenerGroup.makeCardInfoListener(content));		// add MouseEnter Event - make composite

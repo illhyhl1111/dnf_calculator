@@ -122,7 +122,7 @@ public class StatusList implements java.io.Serializable, Cloneable {
 		}
 	}
 	
-	public void addSkill_damage(String skillName, int skillIncrease)
+	public void addSkill_damage(String skillName, double skillIncrease)
 	{
 		try {
 			statList.add(new StatusAndName("스킬", new SkillStatusInfo(0, skillIncrease, skillName)));

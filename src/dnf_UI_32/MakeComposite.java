@@ -32,6 +32,7 @@ import dnf_class.MonsterOption;
 import dnf_class.SetOption;
 import dnf_class.Skill;
 import dnf_class.SkillLevelInfo;
+import dnf_class.Weapon;
 import dnf_infomation.ItemDictionary;
 
 public class MakeComposite {
@@ -194,6 +195,7 @@ public class MakeComposite {
 			StatusAndName dimStat;
 			StatusAndName phyIgnStat;
 			StatusAndName magIgnStat;
+			StatusAndName reforgeStat;
 			StatusAndName aidStat;
 			StatusAndName[] earringStat = new StatusAndName[3];
 			
@@ -234,6 +236,21 @@ public class MakeComposite {
 			} catch(IndexOutOfBoundsException e){
 				phyIgnStat=null;
 				magIgnStat=null;
+			}
+			
+			try{
+				reforgeStat = item.vStat.statList.get(item.getReforgeIndex());
+				
+				if( ((Weapon)item).getReforge()!=0 ){
+					stat = new Label(itemInfo, SWT.WRAP);
+					stat.setText(StatusAndName.getStatHash().get(reforgeStat.name)+String.valueOf((int)reforgeStat.stat.getStatToDouble()));
+					leftData = new GridData();
+					leftData.widthHint=InterfaceSize.ITEM_INFO_SIZE-10;
+					stat.setLayoutData(leftData);
+					stat.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_DARK_BLUE));
+				}
+			} catch(IndexOutOfBoundsException e){
+				reforgeStat=null;
 			}
 			
 			try{

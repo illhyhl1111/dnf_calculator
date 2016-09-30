@@ -71,6 +71,7 @@ public class ChangeItemStatus extends Dialog{
 	private boolean hasSet;
 	private Dimension_stat currentDimStat;
 	private int currentReinforce;
+	private int currentReforge;
 	private boolean replicateEnabled;
 	
 	public ChangeItemStatus(Shell parent, Item item, boolean hasSet, boolean replicateEnabled)
@@ -99,28 +100,36 @@ public class ChangeItemStatus extends Dialog{
 		Label dimStatLabel;
 		Label phyIgnStatLabel;
 		Label magIgnStatLabel;
+		Label reforgeStatLabel;
 		Label aidStatLabel;
 		Label[] earringStatLabel = new Label[3];
 		
 		Text dimStatText;
 		Text phyIgnStatText;
 		Text magIgnStatText;
+		Text reforgeStatText;
 		Text aidStatText;
 		Text[] earringStatText = new Text[3];
 	
 		final StatusAndName dimStat;
 		final StatusAndName phyIgnStat;
 		final StatusAndName magIgnStat;
+		final StatusAndName reforgeStat;
 		final StatusAndName aidStat;
 		final StatusAndName[] earringStat = new StatusAndName[3];
 		
 		Group selectModeComposite;
 		Group reinforceComposite;
+		Group reforgeComposite;
 		final Spinner reinforce;
+		final Spinner reforge;
 		if(item instanceof Equipment)
 		{	
 			currentDimStat = ((Equipment)item).getDimentionStat();
 			currentReinforce = ((Equipment)item).getReinforce();
+			
+			if(item instanceof Weapon) currentReforge = ((Weapon)item).getReforge();
+			else currentReforge=0;
 		}
 		
 		composite = new Composite(content, SWT.NONE);
@@ -153,10 +162,29 @@ public class ChangeItemStatus extends Dialog{
 		    reinforce.setSelection(currentReinforce);
 		    reinforce.setIncrement(1);
 		    reinforce.setPageIncrement(5);
+		    
+		    if(item instanceof Weapon)
+		    {
+		    	selectModeComposite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 4, 1));
+		    	
+		    	reforgeComposite = new Group (composite, SWT.NONE);
+				reforgeComposite.setText("용화덕");
+				reforgeComposite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1));
+				reforgeComposite.setLayout (new FillLayout());
+				
+				reforge = new Spinner(reforgeComposite, SWT.READ_ONLY);
+			    reforge.setMinimum(0);
+			    reforge.setMaximum(8);
+			    reforge.setSelection(currentReforge);
+			    reforge.setIncrement(1);
+			    reforge.setPageIncrement(1);
+		    }
+		    else reforge=null;
 		}
 		else {
 			reinforce=null;
 			selectModeComposite=null;
+			reforge=null;
 		}
 		
 		Label rarity = new Label(composite, SWT.WRAP);
@@ -295,6 +323,38 @@ public class ChangeItemStatus extends Dialog{
 				magIgnStat=tempStat2;
 				magIgnStatLabel=tempLabel2;
 				magIgnStatText=tempText2;
+			}
+			
+			try{
+				tempStat = item.vStat.statList.get(item.getReforgeIndex());
+				tempLabel = new Label(composite, SWT.WRAP);
+				GridData labelData = new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1);
+				labelData.grabExcessHorizontalSpace=true;
+				labelData.minimumWidth=100;
+				tempLabel.setLayoutData(labelData);
+				
+				tempText = new Text(composite, SWT.NONE);
+				tempText.setEditable(false);
+				try{
+					GetDictionary.getReforgeInfo(currentReforge, item.getRarity(), ((Equipment)item).level);
+				}catch(UnknownInformationException e){
+					tempText.setEditable(true);
+				}
+				tempText.setLayoutData(textData);
+				
+				setRefStat((int)tempStat.stat.getStatToDouble(), tempLabel, tempText);				
+				Entry<Integer, Wrapper> entry = new AbstractMap.SimpleEntry<Integer, Wrapper>(item.getReforgeIndex(), new Wrapper(tempText, false));
+				vStatEntry.add(entry);
+		
+			} catch(IndexOutOfBoundsException e){
+				tempStat=null;
+				tempLabel=null;
+				tempText=null;
+				
+			} finally{
+				reforgeStat=tempStat;
+				reforgeStatLabel=tempLabel;
+				reforgeStatText=tempText;
 			}
 			
 			try{
@@ -587,7 +647,20 @@ public class ChangeItemStatus extends Dialog{
 				willButton.setLayoutData(gridData);
 				if(((Equipment)item).getDimentionStat()==Dimension_stat.WILL) willButton.setSelection(true);
 
-			}			
+			}
+			
+			if(item instanceof Weapon){
+				reforge.addModifyListener(event-> {
+			    	currentReforge=reforge.getSelection();
+			    	
+			    	try {
+						setRefStat(GetDictionary.getReforgeInfo(currentReforge, item.getRarity(), ((Equipment)item).level), reforgeStatLabel, reforgeStatText);
+						reforgeStatText.setEditable(false);
+					} catch (UnknownInformationException e){
+						reforgeStatText.setEditable(true);
+					}
+				});
+			}
 		}
 		catch (StatusTypeMismatch e) {
 			e.printStackTrace();
@@ -783,6 +856,9 @@ public class ChangeItemStatus extends Dialog{
 		if(item instanceof Equipment){
 			((Equipment)item).setReinforceNum(currentReinforce);
 			((Equipment)item).setDimensionType(currentDimStat);
+			
+			if(item instanceof Weapon)
+				((Weapon)item).setReforgeNum(currentReforge);
 		}
 		
 		for(Entry<Integer, Wrapper> e : vStatEntry)
@@ -866,7 +942,7 @@ public class ChangeItemStatus extends Dialog{
 
 	private void setIgnStat(int phyIgnStat, Label phyStat, Text phyText, int magIgnStat, Label magStat, Text magText) throws StatusTypeMismatch
 	{
-		phyStat.setText(StatusAndName.getStatHash().get(StatList.WEP_NODEF_PHY));
+		phyStat.setText("+"+currentReinforce+" 강화: 방어무시 물리 공격력 +");
 		phyStat.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_BLUE));
 		
 		String strength = String.valueOf(phyIgnStat);
@@ -874,7 +950,7 @@ public class ChangeItemStatus extends Dialog{
 		phyText.addVerifyListener(new TextInputOnlyNumbers());
 		phyText.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_BLUE));
 
-		magStat.setText(StatusAndName.getStatHash().get(StatList.WEP_NODEF_MAG));
+		magStat.setText("+"+currentReinforce+" 강화: 방어무시 마법 공격력 +");
 		magStat.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_BLUE));
 		
 		strength = String.valueOf(magIgnStat);
@@ -908,6 +984,17 @@ public class ChangeItemStatus extends Dialog{
 			text[i].addVerifyListener(new TextInputOnlyNumbers());
 			text[i].setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_BLUE));
 		}
+	}
+	
+	private void setRefStat(int refStat, Label refStatLabel, Text refText)
+	{
+		refStatLabel.setText("+"+currentReforge+" 제련: 독립 공격력 +");
+		refStatLabel.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_DARK_BLUE));
+		
+		String strength = String.valueOf(refStat);
+		refText.setText(strength);
+		refText.addVerifyListener(new TextInputOnlyNumbers());
+		refText.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_DARK_BLUE));
 	}
 	
 	private void setItemName(Label name)

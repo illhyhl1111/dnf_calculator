@@ -1,5 +1,6 @@
 package dnf_infomation;
 
+import java.util.Arrays;
 import java.util.HashSet;
 
 import dnf_InterfacesAndExceptions.Equip_part;
@@ -7,157 +8,179 @@ import dnf_InterfacesAndExceptions.Equip_type;
 import dnf_InterfacesAndExceptions.SetName;
 import dnf_class.Equipment;
 import dnf_InterfacesAndExceptions.Item_rarity;
-import dnf_calculator.DoubleStatusInfo;
-import dnf_calculator.ElementInfo;
-import dnf_calculator.StatusInfo;
+import dnf_InterfacesAndExceptions.ParsingException;
+import dnf_calculator.FunctionStat;
+import dnf_calculator.StatusList;
+
 public class EquipInfo_heavy {
 	
-	public static void getInfo(HashSet<Equipment> equipList)
+	public static void getInfo(HashSet<Equipment> equipList, Object[] data) throws ParsingException
 	{
-		Equipment temp;
-		Item_rarity rarity;
-		SetName setName;
-		String image ="image\\sprite_item_new_equipment_05_harmor\\";
-		int level;
+		int i=0;
+		String name=null;
+		String icon=null;
+		Item_rarity rarity=null;
+		Equip_part part=null;
+		Equip_type type=null;
+		SetName setName=null;
+		int level=0;
+		String[] stat=null;
 		
-		//////////에픽
-		rarity = Item_rarity.EPIC;
+		Equipment equipment;
+		Object temp;
 		
-		///// 미다홀
-		level=80;
-		setName=SetName.DARKHOLE;
-		//미닼상의
-		temp = new Equipment("미지의 다크홀 상의", image+"미닼상의.png", rarity, Equip_part.ROBE, Equip_type.HEAVY, setName, level); 
-		temp.vStat.addStatList("힘", new StatusInfo(44), true);
-		temp.vStat.addStatList("물크", new DoubleStatusInfo(4));
-		temp.vStat.addStatList("지능", new StatusInfo(32), true);
-		temp.vStat.addStatList("마크", new DoubleStatusInfo(4));
-		// TODO 45Lv 3, 60Lv 2
-		equipList.add(temp);
-		
-		//미닼하의
-		temp = new Equipment("미지의 다크홀 하의", image+"미닼하의.png", rarity, Equip_part.TROUSER, Equip_type.HEAVY, setName, level); 
-		temp.vStat.addStatList("힘", new StatusInfo(44), true);
-		temp.vStat.addStatList("물크", new DoubleStatusInfo(4));
-		temp.vStat.addStatList("지능", new StatusInfo(32), true);
-		temp.vStat.addStatList("마크", new DoubleStatusInfo(4));
-		// TODO 45Lv 3, 60Lv 2
-		equipList.add(temp);
-		
-		//미닼어깨
-		temp = new Equipment("미지의 다크홀 어깨", image+"미닼어깨.png", rarity, Equip_part.SHOULDER, Equip_type.HEAVY, setName, level);
-		temp.vStat.addStatList("힘", new StatusInfo(35), true);
-		temp.vStat.addStatList("지능", new StatusInfo(25), true);
-		temp.vStat.addStatList("증뎀", new StatusInfo(12));
-		equipList.add(temp);
-		
-		//미닼벨트
-		temp = new Equipment("미지의 다크홀 벨트", image+"미닼벨트.png", rarity, Equip_part.BELT, Equip_type.HEAVY, setName, level);
-		temp.vStat.addStatList("힘", new StatusInfo(26), true);
-		temp.vStat.addStatList("지능", new StatusInfo(20), true);
-		temp.dStat.addStatList("물크", new DoubleStatusInfo(15));
-		temp.dStat.addStatList("마크", new DoubleStatusInfo(15));
-		equipList.add(temp);
+		while(i<data.length)
+		{
+			name = (String) data[i++];
+			icon = (String) data[i++];
 			
-		//미닼신발
-		temp = new Equipment("미지의 다크홀 신발", image+"미닼신발.png", rarity, Equip_part.SHOES, Equip_type.HEAVY, setName, level);
-		temp.vStat.addStatList("힘", new StatusInfo(81), true);
-		temp.vStat.addStatList("지능", new StatusInfo(75), true);
-		equipList.add(temp);
-		
-		///// 거미
-		setName=SetName.SPIDERQUEEN;
-		level=85;
-		//거미상의
-		temp = new Equipment("타란튤라 상의", image+"거미상의.png", rarity, Equip_part.ROBE, Equip_type.HEAVY, setName, level); 
-		temp.vStat.addStatList("힘", new StatusInfo(200), true);
-		temp.vStat.addStatList("지능", new StatusInfo(188), true);
-		temp.dStat.addStatList("고정물방깍", new StatusInfo(12000), false, true);
-		temp.dStat.addStatList("고정마방깍", new StatusInfo(12000), false, true);
-		temp.vStat.addSkillRange(1, 85, 1, false);
-		temp.fStat.explanation.add("거미셋의 최대 방깍량 : 36000");
-		equipList.add(temp);
-		
-		//거미하의
-		temp = new Equipment("킹바분 하의", image+"거미하의.png", rarity, Equip_part.TROUSER, Equip_type.HEAVY, setName, level);
-		temp.vStat.addStatList("힘", new StatusInfo(200), true);
-		temp.vStat.addStatList("지능", new StatusInfo(188), true);
-		temp.dStat.addStatList("고정물방깍", new StatusInfo(12000), false, true);
-		temp.dStat.addStatList("고정마방깍", new StatusInfo(12000), false, true);
-		temp.fStat.explanation.add("거미셋의 최대 방깍량 : 36000");
-		equipList.add(temp);
-		
-		//거미어깨
-		temp = new Equipment("골리앗 버드이터 어깨", image+"거미어깨.png", rarity, Equip_part.SHOULDER, Equip_type.HEAVY, setName, level);
-		temp.vStat.addStatList("힘", new StatusInfo(147), true);
-		temp.vStat.addStatList("지능", new StatusInfo(138), true);
-		temp.dStat.addStatList("고정물방깍", new StatusInfo(12000), false, true);
-		temp.dStat.addStatList("고정마방깍", new StatusInfo(12000), false, true);
-		temp.fStat.explanation.add("거미셋의 최대 방깍량 : 36000");
-		equipList.add(temp);
-		
-		//거미벨트
-		temp = new Equipment("로즈헤어 벨트", image+"거미벨트.png", rarity, Equip_part.BELT, Equip_type.HEAVY, setName, level);
-		temp.vStat.addStatList("힘", new StatusInfo(138), true);
-		temp.vStat.addStatList("지능", new StatusInfo(130), true);
-		temp.dStat.addStatList("고정물방깍", new StatusInfo(12000), false, true);
-		temp.dStat.addStatList("고정마방깍", new StatusInfo(12000), false, true);
-		temp.fStat.explanation.add("거미셋의 최대 방깍량 : 36000");
-		equipList.add(temp);
+			//레어리티
+			temp = data[i++];
+			if(temp instanceof Item_rarity) rarity = (Item_rarity) temp;
+			else if(temp.equals(""));	//이전 값 유지
+			else throw new ParsingException(i-1, temp);
 			
-		//거미신발
-		temp = new Equipment("인디언 오너멘탈 신발", image+"거미신발.png", rarity, Equip_part.SHOES, Equip_type.HEAVY, setName, level);
-		temp.vStat.addStatList("힘", new StatusInfo(138), true);
-		temp.vStat.addStatList("지능", new StatusInfo(130), true);
-		temp.dStat.addStatList("고정물방깍", new StatusInfo(12000), false, true);
-		temp.dStat.addStatList("고정마방깍", new StatusInfo(12000), false, true);
-		temp.fStat.explanation.add("거미셋의 최대 방깍량 : 36000");
-		equipList.add(temp);
-		
-	
-		/////금계
-		setName = SetName.FORBIDDENCONTRACT;
-		//금계상의, 피맹상의
-		temp = new Equipment("피의 맹약 상의", image+"금계상의.png", rarity, Equip_part.ROBE, Equip_type.HEAVY, setName, level); 
-		temp.vStat.addStatList("힘", new StatusInfo(266), true);
-		temp.vStat.addStatList("지능", new StatusInfo(254), true);
-		temp.dStat.addStatList("힘", new StatusInfo(200), true, true);
-		equipList.add(temp);
-		
-		//금계하의, 서약하의
-		temp = new Equipment("마나의 서약 하의", image+"금계하의.png", rarity, Equip_part.TROUSER, Equip_type.HEAVY, setName, level);
-		temp.vStat.addStatList("힘", new StatusInfo(46), true);
-		temp.vStat.addStatList("지능", new StatusInfo(34), true);
-		temp.vStat.addStatList("물크", new DoubleStatusInfo(15));
-		temp.vStat.addStatList("마크", new DoubleStatusInfo(15));
-		temp.dStat.addStatList("물크", new DoubleStatusInfo(20), true, true);
-		temp.dStat.addStatList("마크", new DoubleStatusInfo(20), true, true);
-		equipList.add(temp);
-		
-		//금계어깨, 마계숄
-		temp = new Equipment("마력의 계약 솔더", image+"금계어깨.png", rarity, Equip_part.SHOULDER, Equip_type.HEAVY, setName, level);
-		temp.vStat.addStatList("힘", new StatusInfo(37), true);
-		temp.vStat.addStatList("지능", new StatusInfo(28), true);
-		temp.vStat.addStatList("증뎀", new StatusInfo(15));
-		equipList.add(temp);
-		
-		//금계벨트, 협약벨트
-		temp = new Equipment("체력의 협약 벨트", image+"금계벨트.png", rarity, Equip_part.BELT, Equip_type.HEAVY, setName, level);
-		temp.vStat.addStatList("힘", new StatusInfo(28), true);
-		temp.vStat.addStatList("지능", new StatusInfo(20), true);
-		temp.dStat.addStatList("물공", new StatusInfo(100), false, true);
-		temp.dStat.addStatList("마공", new StatusInfo(100), false, true);
-		temp.dStat.addStatList("독공", new StatusInfo(100), false, true);
-		equipList.add(temp);
+			//부위
+			temp = data[i++];
+			if(temp instanceof Equip_part) part = (Equip_part) temp;
+			else if(temp.equals(""));	//이전 값 유지
+			else if(temp.equals("--")){
+				int order = part.order-1;
+				part = Equip_part.getPartFromOrder(order);
+			}
+			else throw new ParsingException(i-1, temp);
 			
-		//금계신발, 피조부츠
-		temp = new Equipment("피의 조약 부츠", image+"금계신발.png", rarity, Equip_part.SHOES, Equip_type.HEAVY, setName, level);
-		temp.vStat.addStatList("힘", new StatusInfo(28), true);
-		temp.vStat.addStatList("지능", new StatusInfo(20), true);
-		temp.vStat.addStatList("모속강", new ElementInfo(14), true);
-		temp.dStat.addStatList("물공", new StatusInfo(80));
-		temp.dStat.addStatList("마공", new StatusInfo(80));
-		temp.dStat.addStatList("독공", new StatusInfo(100));
-		equipList.add(temp);
+			//재질
+			temp = data[i++];
+			if(temp instanceof Equip_type) type = (Equip_type) temp;
+			else if(temp.equals(""));	//이전 값 유지
+			else throw new ParsingException(i-1, temp);
+			
+			//셋옵
+			temp = data[i++];
+			if(temp instanceof SetName) setName = (SetName) temp;
+			else if(temp.equals(""));	//이전 값 유지
+			else throw new ParsingException(i-1, temp);
+			
+			//레벨
+			temp = data[i++];
+			if(temp instanceof Integer) level = (int) temp;
+			else if(temp.equals(""));	//이전 값 유지
+			else throw new ParsingException(i-1, temp);
+			
+			equipment = new Equipment(name, icon, rarity, part, type, setName, level);
+			
+			//아이템 스탯
+			while(true)
+			{	
+				try{
+					temp = data[i++];
+					if(temp==null) break;
+					
+					else if(temp instanceof FunctionStat)
+						equipment.fStat.statList.add((FunctionStat) temp);
+					
+					else{
+						stat = ((String)temp).split(" ");					
+						switch(stat[0])
+						{
+						case "ㄷ": case "d":
+							parseStat(Arrays.copyOfRange(stat, 1, stat.length), equipment.dStat);
+							break;
+						case "설명":
+							String explanation = ((String)temp).substring(3);
+							equipment.explanation.add(explanation);
+							break;
+						case "ㅁ": case "v":
+							parseStat(Arrays.copyOfRange(stat, 1, stat.length), equipment.vStat);
+							break;
+						default:
+							parseStat(stat, equipment.vStat);
+							break;
+						}
+					}
+				}
+				catch(Exception e)
+				{
+					throw new ParsingException(i-1, temp);
+				}
+			}
+			
+			equipList.add(equipment);
+		}
 	}
-}
+	
+	private static void parseStat(String[] data, StatusList list)
+	{
+		boolean changeable = false;
+		boolean enableable = false;
+		
+		if(data.length>2 && (data[data.length-1].equals("가변") || data[data.length-2].equals("가변")) ) changeable = true;
+		if(data.length>2 && (data[data.length-1].equals("선택") || data[data.length-2].equals("선택")) ) enableable = true;
+		
+		if(data[0].contains("스킬"))
+		{
+			String[] skillRange = data[1].split("-");
+			try{
+				int start = Integer.valueOf(skillRange[0]);
+				int end = start;
+				if(skillRange.length>1) end = Integer.valueOf(skillRange[1]);
+				boolean TP=false;
+				if(data[0].equals("TP스킬")) TP=true;
+				list.addSkillRange(start, end, Integer.valueOf(data[2]), TP);
+			}
+			catch(NumberFormatException e) {
+				list.addSkill(data[1], Integer.valueOf(data[2]));
+			}
+		}
+		else if(!data[1].contains("."))
+			list.addStatList(data[0], Integer.valueOf(data[1]), changeable, enableable);
+		else
+			list.addStatList(data[0], Double.valueOf(data[1]), changeable, enableable);	
+	}
+	
+	public static Object[] equipInfo_heavy()
+	{
+		String path = "image\\sprite_item_new_equipment_05_harmor\\";
+		
+		Object[] data = new Object[] {
+			
+			/////////에픽
+				
+			/////미다홀
+			"미지의 다크홀 상의", path+"미닼상의.png", Item_rarity.EPIC, Equip_part.ROBE, Equip_type.HEAVY, SetName.DARKHOLE, 80,
+			"힘 44 가변", "물크 4", "지능 32 가변", "마크 4", "스킬 45 3", "스킬 60 2", null,
+			"미지의 다크홀 하의", path+"미닼하의.png", "", "--", "", "", "",
+			"힘 44 가변", "물크 4", "지능 32 가변", "마크 4", "스킬 45 3", "스킬 60 2", null,
+			"미지의 다크홀 어깨", path+"미닼어깨.png", "", "--", "", "", "",
+			"힘 35 가변", "지능 25 가변", "증뎀 12", null,
+			"미지의 다크홀 벨트", path+"미닼벨트.png", "", "--", "", "", "",
+			"힘 26 가변", "지능 20 가변", "ㄷ 물크 15", "ㄷ 마크 15", null,
+			"미지의 다크홀 신발", path+"미닼벨트.png", "", "--", "", "", "",
+			"힘 81 가변", "지능 75 가변", null,
+			/////거미
+			"타란튤라 상의", path+"거미상의.png", "", Equip_part.ROBE, "", SetName.SPIDERQUEEN, 85,
+			"힘 200 가변", "지능 188 가변", "ㄷ 고정물방깍 12000 선택", "ㄷ 고정마방깍 12000 선택", "설명 거미셋의 최대 방깍량 : 36000", null,
+			"킹바분 하의", path+"거미하의.png", "", "--", "", "", "",
+			"힘 200 가변", "지능 188 가변", "ㄷ 고정물방깍 12000 선택", "ㄷ 고정마방깍 12000 선택", "설명 거미셋의 최대 방깍량 : 36000", null,
+			"골리앗 버드이터 어깨", path+"거미어깨.png", "", "--", "", "", "",
+			"힘 147 가변", "지능 138 가변", "ㄷ 고정물방깍 12000 선택", "ㄷ 고정마방깍 12000 선택", "설명 거미셋의 최대 방깍량 : 36000", null,
+			"로즈헤어 벨트", path+"거미벨트.png", "", "--", "", "", "",
+			"힘 138 가변", "지능 130 가변", "ㄷ 고정물방깍 12000 선택", "ㄷ 고정마방깍 12000 선택", "설명 거미셋의 최대 방깍량 : 36000", null,
+			"인디언 오너멘탈 신발", path+"거미신발.png", "", "--", "", "", "",
+			"힘 138 가변", "지능 130 가변", "ㄷ 고정물방깍 12000 선택", "ㄷ 고정마방깍 12000 선택", "설명 거미셋의 최대 방깍량 : 36000", null,
+			/////금계
+			"피의 맹약 상의", path+"금계상의.png", "", Equip_part.ROBE, "", SetName.FORBIDDENCONTRACT, "",
+			"힘 266 가변", "지능 254 가변", "d 힘 200 가변", "d 지능 200 가변", null,
+			"마나의 서약 하의", path+"금계하의.png", "", "--", "", "", "",
+			"힘 46 가변", "지능 34 가변", "물크 15", "마크 15", "ㄷ 물크 20 가변", "ㄷ 마크 20 가변", null,
+			"마력의 계약 숄더", path+"금계어깨.png", "", "--", "", "", "",
+			"힘 37 가변", "지능 28 가변", "증뎀 15", null,
+			"체력의 협약 벨트", path+"금계벨트.png", "", "--", "", "", "",
+			"힘 28 가변", "지능 20 가변", "ㄷ 물공 100 가변", "ㄷ 마공 100 가변", "ㄷ 독공 100 가변", null,
+			"피의 조약 부츠", path+"금계신발.png", "", "--", "", "", "",
+			"힘 28 가변", "지능 20 가변", "모속강 14", "ㄷ 물공 80", "ㄷ 마공 80", "ㄷ 독공 100", null,
+		};
+		
+		return data;
+	}

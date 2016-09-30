@@ -19,5 +19,12 @@ public enum Equip_part implements Equipable, Serializable
 		this.order=order;
 	}
 	
+	public static Equip_part getPartFromOrder(int order)
+	{
+		for(Equip_part part : Equip_part.values())
+			if(part.order==order) return part;
+		return null;
+	}
+	
 	public String getName() {return name;}
 }

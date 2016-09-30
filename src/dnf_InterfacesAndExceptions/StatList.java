@@ -13,7 +13,7 @@ public interface StatList									// 스탯 종류에 붙는 고유한 식별번
 	int INTNUM_START = ELEMENTNUM_END+1;
 	
 	int WEP_PHY=INTNUM_START+0; int WEP_MAG=INTNUM_START+1; int  WEP_NODEF_PHY=INTNUM_START+2; int WEP_NODEF_MAG=INTNUM_START+3;	// 무기물공, 무기마공, 방무물공, 방무마공
-	int WEP_IND=INTNUM_START+4; int WEP_IND_REFORGE=INTNUM_START+5; 																//독공, 재련독공
+	int WEP_IND=INTNUM_START+4; int WEP_IND_REFORGE=INTNUM_START+5; 																// 독공, 재련독공
 	int DEF_DEC_FIXED_PHY=INTNUM_START+6; int  DEF_DEC_PERCENT_PHY_ITEM=INTNUM_START+7;												// 고정물방깍, (아이템)퍼센트물방깍,
 	int DEF_DEC_FIXED_MAG=INTNUM_START+8; int DEF_DEC_PERCENT_MAG_ITEM=INTNUM_START+9;												// 고정마방깍, (아이템)퍼센트마방깍
 	int STR=INTNUM_START+10; int INT=INTNUM_START+11; int STA=INTNUM_START+12; int WILL=INTNUM_START+13;							// 힘, 지능, 체력, 정신력
@@ -25,9 +25,13 @@ public interface StatList									// 스탯 종류에 붙는 고유한 식별번
 	int ELEM_FIRE_DEC=INTNUM_START+26; int ELEM_WATER_DEC=INTNUM_START+27;
 	int ELEM_LIGHT_DEC=INTNUM_START+28; int ELEM_DARKNESS_DEC=INTNUM_START+29;														// 화속저, 수속저, 명속저, 암속저
 	int DAM_BUF=INTNUM_START+30;																									// 투함포 이그니스 공대버프
-	int NONE=INTNUM_START+31;																										// 없음
+	int DAM_INC_ALL=INTNUM_START+31;																								// 모공증
+	int DAM_INC_ADD=INTNUM_START+32; int DAM_CRT_ADD=INTNUM_START+33;																// 증추증, 크추증
+	int DEF_DEC_IGN=INTNUM_START+34;																								// 적방무
+	int WEP_NODEF_PHY_INC=INTNUM_START+35; int WEP_NODEF_MAG_INC=INTNUM_START+36; 
+	int NONE=INTNUM_START+37;																										// 없음
 	
-	int INTNUM = 32;								// 총 int형 스탯 개수
+	int INTNUM = 38;								// 총 int형 스탯 개수
 	int INTNUM_END = INTNUM_START+INTNUM-1;
 	///////////////////////////////////////
 	

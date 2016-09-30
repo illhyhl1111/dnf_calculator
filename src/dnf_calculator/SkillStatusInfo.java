@@ -10,9 +10,9 @@ public class SkillStatusInfo extends AbstractStatusInfo			// 스킬정보 저장
 	 */
 	private static final long serialVersionUID = 6929844926351368607L;
 	private int level;
-	private int increase;
+	private double increase;
 	private String name;
-	public SkillStatusInfo(int level, int increase, String name)
+	public SkillStatusInfo(int level, double increase, String name)
 	{	
 		this.name=name;
 		this.level=level;
@@ -27,6 +27,6 @@ public class SkillStatusInfo extends AbstractStatusInfo			// 스킬정보 저장
 	public void setInfo(String name) { this.name=name;}
 	public void setInfo(int start, int end) throws StatusTypeMismatch { throw new StatusTypeMismatch("SkillRange->Skill");}
 	
-	public int getIncrease() {return increase;}
+	public double getIncrease() {return increase;}
 	public void setIncrease(int increase) { this.increase=increase;}
 }
