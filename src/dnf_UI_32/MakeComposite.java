@@ -88,24 +88,13 @@ public class MakeComposite {
 					
 				for(StatusAndName s2 : s.vStat.statList)
 					setText(itemInfo, s2, enabled, color, InterfaceSize.SET_INFO_SIZE-10);
-				if(!s.dStat.statList.isEmpty() || !s.fStat.explanation.isEmpty())
+				if(!s.dStat.statList.isEmpty())
 				{
 					option = new Label(itemInfo, SWT.WRAP);
 					option.setText("\n――――――던전 입장 시 적용――――――\n\n");
 					option.setEnabled(enabled);
 					for(StatusAndName s2 : s.dStat.statList)
 						setText(itemInfo, s2, enabled, color, InterfaceSize.SET_INFO_SIZE-10);
-					for(String str : item.fStat.explanation){
-						option = new Label(itemInfo, SWT.WRAP);
-						option.setText(str);
-						option.setForeground(color);
-						option.setEnabled(enabled);
-					}
-				}
-			
-				if(!s.explanation.isEmpty()){
-					option = new Label(itemInfo, SWT.WRAP);
-					option.setText("");
 				}
 				for(String str : s.explanation){
 					option = new Label(itemInfo, SWT.WRAP);
@@ -337,11 +326,6 @@ public class MakeComposite {
 					i++;
 				}
 			}
-			
-			if(!item.explanation.isEmpty()){
-				stat = new Label(itemInfo, SWT.WRAP);
-				stat.setText("");
-			}
 			for(String str : item.explanation){
 				stat = new Label(itemInfo, SWT.WRAP);
 				stat.setText(str);
@@ -461,10 +445,6 @@ public class MakeComposite {
 		for(String stat : statList)
 			setMonsterText(itemInfo, monster, stat, Display.getCurrent().getSystemColor(SWT.COLOR_BLACK), InterfaceSize.MONSTER_INFO_SIZE-10);
 		
-		if(!monster.explanation.isEmpty()){
-			Label label = new Label(itemInfo, SWT.WRAP);
-			label.setText("");
-		}
 		for(String str : monster.explanation){
 			Label exp = new Label(itemInfo, SWT.WRAP);
 			exp.setText(str);
@@ -492,10 +472,6 @@ public class MakeComposite {
 				e.printStackTrace();
 			}
 		
-		if(!option.explanation.isEmpty()){
-			Label label = new Label(itemInfo, SWT.WRAP);
-			label.setText("");
-		}
 		for(String str : option.explanation){
 			Label exp = new Label(itemInfo, SWT.WRAP);
 			exp.setText(str);
@@ -564,15 +540,6 @@ public class MakeComposite {
 			stat.setForeground(color);
 			for(StatusAndName s : item.dStat.statList){
 				setText(itemInfo, s, color, xSize);
-			}
-				
-			for(String s : item.fStat.explanation){
-				stat = new Label(itemInfo, SWT.WRAP);
-				stat.setText(s);
-				stat.setForeground(color);
-				GridData gridData = new GridData();
-				gridData.widthHint=xSize;
-				stat.setLayoutData(gridData);
 			}
 		}
 	}

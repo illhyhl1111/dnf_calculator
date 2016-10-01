@@ -1,12 +1,14 @@
 package dnf_infomation;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.widgets.Display;
 
 import dnf_class.Card;
@@ -82,6 +84,9 @@ public class GetDictionary
 		iconDictionary.put("디폴트", resizeImage(image, InterfaceSize.INFO_BUTTON_SIZE));
 		image.dispose();
 		
+		image = createTransparentImage(Display.getCurrent(), InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE);
+		iconDictionary.put("아이템_투명", image);
+		
 		//장비 아이템
 		for(Item item : itemDictionary.getVaultItemList(job)){
 			String icon = item.getIcon();
@@ -120,6 +125,16 @@ public class GetDictionary
 			iconDictionary.put(skill.getName(), resizeImage(image, InterfaceSize.INFO_BUTTON_SIZE));
 			image.dispose();
 		}
+	}
+	
+	static Image createTransparentImage(Display display, int width, int height) {
+	    // allocate an image data
+	    ImageData imData = new ImageData(width, height, 24, new PaletteData(0xff0000,0x00ff00, 0x0000ff));
+	    imData.setAlpha(0, 0, 0); // just to force alpha array allocation with the right size
+	    Arrays.fill(imData.alphaData, (byte) 0); // set whole image as transparent
+
+	    // Initialize image from transparent image data
+	    return new Image(display, imData);
 	}
 	
 	private static Image resizeImage(Image image, int size)

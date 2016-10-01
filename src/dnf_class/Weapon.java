@@ -24,7 +24,8 @@ public class Weapon extends Equipment{
 	
 	public Weapon(String name, String icon,Item_rarity rarity, Card card, SetName setName, Weapon_detailType weaponType, int level, int reforge)
 	{	
-		super(name, icon, rarity, Equip_part.WEAPON, card, setName, Equip_type.NONE, level);
+		super(name, rarity, Equip_part.WEAPON, card, setName, Equip_type.NONE, level);
+		this.setIcon(icon);
 		this.weaponType =weaponType;
 		this.reforge=reforge;
 

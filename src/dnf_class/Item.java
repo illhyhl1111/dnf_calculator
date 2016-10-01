@@ -20,8 +20,9 @@ public class Item extends IconObject implements Comparable<Item>
 	
 	public Item(String name, String icon, Item_rarity rarity)
 	{
-		this.name=name;
-		iconAddress=icon;
+		super();
+		this.setName(name);
+		this.setIcon(icon);
 		this.rarity=rarity;
 		vStat = new StatusList();
 		dStat = new StatusList();
@@ -64,7 +65,7 @@ public class Item extends IconObject implements Comparable<Item>
 	public boolean equals(Object o)
 	{
 		if(o instanceof Item)
-			if(name.equals(((Item) o).getName()) ) return true;
+			if(getName().equals(((Item) o).getName()) ) return true;
 		return false;
 	}
 	

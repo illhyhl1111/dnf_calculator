@@ -53,27 +53,35 @@ public class InventoryCardPack extends DnFComposite
 		constraintList[num].partList.add(Equip_part.SHOES);
 		constraintList[num].rarityList.add(Item_rarity.EPIC);
 		
-		//80~85 에픽악세보법
+		//90 에픽방어구
 		num++;
-		constraintList[num] = new ItemConstraint(80, 85, character.getJob());
+		constraintList[num] = new ItemConstraint(90, 90, character.getJob());
+		constraintList[num].partList.add(Equip_part.ROBE);
+		constraintList[num].partList.add(Equip_part.TROUSER);
+		constraintList[num].partList.add(Equip_part.SHOULDER);
+		constraintList[num].partList.add(Equip_part.BELT);
+		constraintList[num].partList.add(Equip_part.SHOES);
+		constraintList[num].rarityList.add(Item_rarity.EPIC);
+		
+		//80~90 악세
+		num++;
+		constraintList[num] = new ItemConstraint(80, 90, character.getJob());
 		constraintList[num].partList.add(Equip_part.RING);
 		constraintList[num].partList.add(Equip_part.BRACELET);
 		constraintList[num].partList.add(Equip_part.NECKLACE);
+		constraintList[num].rarityList.add(Item_rarity.EPIC);
+		constraintList[num].rarityList.add(Item_rarity.LEGENDARY);
+		
+		//80~90 특수장비
+		num++;
+		constraintList[num] = new ItemConstraint(80, 90, character.getJob());
 		constraintList[num].partList.add(Equip_part.AIDEQUIPMENT);
 		constraintList[num].partList.add(Equip_part.MAGICSTONE);
 		constraintList[num].partList.add(Equip_part.EARRING);
 		constraintList[num].rarityList.add(Item_rarity.EPIC);
-		
-		//85 레전악세보법
-		num++;
-		constraintList[num] = new ItemConstraint(85, 85, character.getJob());
-		constraintList[num].partList.add(Equip_part.RING);
-		constraintList[num].partList.add(Equip_part.BRACELET);
-		constraintList[num].partList.add(Equip_part.NECKLACE);
-		constraintList[num].partList.add(Equip_part.AIDEQUIPMENT);
-		constraintList[num].partList.add(Equip_part.MAGICSTONE);
-		constraintList[num].partList.add(Equip_part.EARRING);
 		constraintList[num].rarityList.add(Item_rarity.LEGENDARY);
+		constraintList[num].rarityList.add(Item_rarity.UNIQUE);
+		constraintList[num].rarityList.add(Item_rarity.RARE);
 		
 		//칭호
 		num++;
@@ -87,7 +95,7 @@ public class InventoryCardPack extends DnFComposite
 	@SuppressWarnings("unchecked")
 	public void setDungeonMode(DungeonUI dungeonUI)
 	{
-		String[] tabNameList = {"무기", "방어구 1", "악세서리 1", "악세서리 2", "칭호", "기타", "아바타", "크리쳐", "휘장"};
+		String[] tabNameList = {"무기", "방어구 1", "방어구 2", "악세서리", "특수장비", "칭호", "기타", "아바타", "크리쳐", "휘장"};
 		final int inventoryListNum = tabNameList.length;
 		
 		inventoryList = new Inventory[inventoryListNum];
@@ -140,7 +148,7 @@ public class InventoryCardPack extends DnFComposite
 	
 	public void setEquipmentMode(UserInfo itemInfo)
 	{
-		String[] tabNameList = {"무기", "방어구 1", "악세서리 1", "악세서리 2", "칭호", "기타"};
+		String[] tabNameList = {"무기", "방어구 1", "방어구 2", "악세서리", "특수장비", "칭호", "기타"};
 		final int inventoryListNum = tabNameList.length;
 		
 		inventoryList = new Inventory[inventoryListNum];
@@ -214,29 +222,29 @@ public class InventoryCardPack extends DnFComposite
 		}
 	}
 	
-	public void setVaultListener(Vault vault, Composite background)
+	public void setVaultListener(Vault vault)
 	{
 		for(int i=0; i<inventoryList.length; i++)
 		{
-			inventoryList[i].setListener(0, background, vault);
-			subInventoryList[i].setListener(inventoryList[i], background);
+			inventoryList[i].setListener(0, vault);
+			subInventoryList[i].setListener(inventoryList[i]);
 		}
 	}
 	
-	public void setListener(Composite background)
+	public void setListener()
 	{
 		for(int i=0; i<inventoryList.length; i++)
 		{
-			inventoryList[i].setListener(1, background, null);
-			subInventoryList[i].setListener(inventoryList[i], background);
+			inventoryList[i].setListener(1, null);
+			subInventoryList[i].setListener(inventoryList[i]);
 		}
 	}
 	
-	public void setDungeonListener(Composite background)
+	public void setDungeonListener()
 	{
 		for(int i=0; i<inventoryList.length; i++)
 		{
-			inventoryList[i].setListener(2, background, null);
+			inventoryList[i].setListener(2, null);
 		}
 	}
 	

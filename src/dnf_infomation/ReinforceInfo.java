@@ -57,11 +57,13 @@ public class ReinforceInfo {
 		switch(rarity)
 		{
 		case EPIC:
-			if(level==85) temp=Epic85Dim[num];
+			if(level==90) temp=10;
+			else if(level==85) temp=Epic85Dim[num];
 			else if(level==80) temp=Epic80Dim[num];
 			else if(level==75) temp=Epic75Dim[num];
 			break;
 		case LEGENDARY:
+			if(level==90) temp=10;
 			if(level==85) temp=Legendary85Dim[num];
 			break;
 		case CHRONICLE:
@@ -83,7 +85,8 @@ public class ReinforceInfo {
 		switch(rarity)
 		{
 		case EPIC:
-			if(level==85) temp=Epic85Aid[num];
+			if(level==90) temp=10;
+			else if(level==85) temp=Epic85Aid[num];
 			else if(level==80) temp=Epic80Aid[num];
 			else if(level==75) temp=Epic75Aid[num];
 			break;

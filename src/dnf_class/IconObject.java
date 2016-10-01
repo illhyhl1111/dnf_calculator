@@ -6,8 +6,8 @@ public abstract class IconObject implements Cloneable, java.io.Serializable
 	 * 
 	 */
 	private static final long serialVersionUID = 5078451964971480083L;
-	protected String name;
-	protected String iconAddress;
+	private String name;
+	private String iconAddress;
 	
 	protected IconObject()
 	{
@@ -26,7 +26,10 @@ public abstract class IconObject implements Cloneable, java.io.Serializable
 	public void setName(String name) { this.name = name;}
 	
 	public String getIcon() { return iconAddress;}
-	public void setIcon(String icon) { iconAddress = icon;}
+	public void setIcon(String icon) {
+		if(icon==null) iconAddress = icon; 
+		else iconAddress = icon.replace(':', '-');
+	}
 	
 	@Override
 	public Object clone() throws CloneNotSupportedException

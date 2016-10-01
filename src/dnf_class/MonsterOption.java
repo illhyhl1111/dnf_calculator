@@ -14,8 +14,8 @@ public class MonsterOption extends IconObject{
 	public MonsterOption(String name, String icon, Monster monster)
 	{
 		super();
-		this.name=name;
-		this.iconAddress=icon;
+		this.setName(name);
+		this.setIcon(icon);
 		this.monster=monster;
 		explanation = new LinkedList<String>();
 	}

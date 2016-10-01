@@ -46,8 +46,7 @@ public class Inventory extends DnFComposite
 	
 	int mode;
 	Vault vault;
-	Composite background;
-	
+
 	@SuppressWarnings("unchecked")
 	public Inventory(Composite parent, Characters character, DnFComposite superInfo, LinkedList<Item> itemList1, LinkedList<Item> itemList2, Location location)
 	{
@@ -88,16 +87,15 @@ public class Inventory extends DnFComposite
 		inventoryList2 = (ItemButton<Item>[]) new ItemButton<?>[inventory2Size];
 	}
 	
-	public void setListener(int mode, Composite background, Vault vault)
+	public void setListener(int mode, Vault vault)
 	{
 		this.mode=mode;
 		this.vault=vault;
-		this.background=background;
-		setInventoryBlocks(mode, background, vault, false);
-		setInventoryBlocks(mode, background, vault, true);
+		setInventoryBlocks(mode, vault, false);
+		setInventoryBlocks(mode, vault, true);
 	}
 	
-	private void setInventoryBlocks(int mode, Composite background, Vault vault, boolean getUserItemMode)
+	private void setInventoryBlocks(int mode, Vault vault, boolean getUserItemMode)
 	{
 		int index=0;
 		ItemButton<Item>[] inventoryList;
@@ -136,7 +134,7 @@ public class Inventory extends DnFComposite
 				else if(mode==1) inventoryList[index].getButton().addListener(SWT.MouseDown, listenerGroup.equipListener()); 			// add MouseDown Event - unequip
 				else if(mode==2) inventoryList[index].getButton().addListener(SWT.MouseDown, listenerGroup.equipListener());
 				inventoryList[index].getButton().addListener(SWT.MouseDoubleClick, listenerGroup.modifyListener(this));			// add MouseDoubleClick - modify
-				inventoryList[index].getButton().addListener(SWT.MouseEnter, listenerGroup.makeItemInfoListener(background, location));			// add MouseEnter Event - make composite
+				inventoryList[index].getButton().addListener(SWT.MouseEnter, listenerGroup.makeItemInfoListener(parent.getShell(), location));			// add MouseEnter Event - make composite
 				inventoryList[index].getButton().addListener(SWT.MouseExit, listenerGroup.disposeItemInfoListener()); 		// add MouseExit Event - dispose composite
 				inventoryList[index].getButton().addListener(SWT.MouseMove, listenerGroup.moveItemInfoListener());			// add MouseMove Event - move composite
 			}
@@ -249,7 +247,7 @@ public class Inventory extends DnFComposite
 
 	@Override
 	public void renew() {	
-		setInventoryBlocks(mode, background, vault, true);
+		setInventoryBlocks(mode, vault, true);
 		inventory2.layout();
 		parent.layout();
 	}

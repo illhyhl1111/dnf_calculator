@@ -8,7 +8,7 @@ import dnf_class.Equipment;
 import dnf_InterfacesAndExceptions.Item_rarity;
 import dnf_calculator.StatusInfo;
 
-class EquipInfo_aidEquipment {
+/*class EquipInfo_aidEquipment {
 	
 	public static void getInfo(HashSet<Equipment> equipList)
 	{
@@ -81,4 +81,4 @@ class EquipInfo_earring {
 		temp.vStat.addStatList("독공", new StatusInfo(30), true);
 		equipList.add(temp);
 	}
-}
+}*/

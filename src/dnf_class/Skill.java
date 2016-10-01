@@ -37,9 +37,9 @@ public class Skill extends IconObject implements Comparable<Skill>{
 	public Skill(String name, Skill_type type, String icon, Job job, int firstLevel, int maxLevel, int masterLevel, int levelInterval)
 	{
 		super();
-		this.name=name;
+		this.setName(name);
 		this.type=type;
-		this.iconAddress=icon;
+		this.setIcon(icon);
 		this.firstLevel=firstLevel;
 		this.maxLevel=maxLevel;
 		this.masterLevel=masterLevel;
@@ -61,9 +61,10 @@ public class Skill extends IconObject implements Comparable<Skill>{
 	
 	public Skill(String name, Skill_type type, String icon, Character_type charType, int firstLevel, int maxLevel, int masterLevel, int levelInterval)
 	{
-		this.name=name;
+		super();
+		this.setName(name);
 		this.type=type;
-		this.iconAddress=icon;
+		this.setIcon(icon);
 		this.firstLevel=firstLevel;
 		this.maxLevel=maxLevel;
 		this.masterLevel=masterLevel;
@@ -204,7 +205,7 @@ public class Skill extends IconObject implements Comparable<Skill>{
 	
 	public boolean isEqualTo(String name)
 	{
-		if (this.name.equals(name)) return true;
+		if (getName().equals(name)) return true;
 		return false;
 	}
 	
@@ -222,7 +223,7 @@ public class Skill extends IconObject implements Comparable<Skill>{
 	@Override
 	public int compareTo(Skill arg0) {
 		if(arg0.firstLevel!=firstLevel) return firstLevel-arg0.firstLevel;
-		else return name.compareTo(arg0.name);
+		else return getName().compareTo(arg0.getName());
 	}
 	
 	@Override

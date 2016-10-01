@@ -130,12 +130,14 @@ public class DealChart extends DnFComposite {
 				for(DealInfo dInfo : skillList){
 					if(dInfo.icon.getItem().getName().equals(skill.getName())){
 						prevInfo=dInfo;
+						prevInfo.setMonster(monster);
 						prevInfo.setCompare(Calculator.getDamage(skill.getSkillLevelInfo(true), monster, character));	
 						break;
 					}
 				}
 				if(prevInfo!=null) newList.add(prevInfo);
-				else newList.add(new DealInfo(mainComposite, skill, character, monster));
+				else newList.add(new DealInfo(mainComposite, skill, character, monster,
+						Calculator.getDamage(skill.getSkillLevelInfo(true), monster, character)));
 			}
 			
 			character.setItemSettings(tempSetting, false);
@@ -148,6 +150,7 @@ public class DealChart extends DnFComposite {
 				for(DealInfo dInfo : skillList){
 					if(dInfo.icon.getItem().getName().equals(skill.getName())){
 						prevInfo=dInfo;
+						prevInfo.setMonster(monster);
 						prevInfo.setCompare(-1);	
 						break;
 					}
@@ -158,10 +161,8 @@ public class DealChart extends DnFComposite {
 		}
 		
 		for(DealInfo dInfo : skillList)
-			if(!character.getDamageSkillList().contains(dInfo.icon.getItem())){
+			if(!character.getDamageSkillList().contains(dInfo.icon.getItem()))
 				dInfo.getComposite().dispose(); 
-				System.out.println("asdf");
-			}
 		
 		skillList = newList;
 		
@@ -256,7 +257,7 @@ class DealInfo extends DnFComposite implements Comparable<DealInfo>{
 			dealLabel.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
 		}
 		else if(deal>deal_compare){
-			dealLabel.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_GREEN));
+			dealLabel.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GREEN));
 			double diff = ( (((double)deal)/deal_compare) -1)*100;
 			compareStr = " (+"+Double.parseDouble(String.format("%.1f", diff))+"%)";
 		}

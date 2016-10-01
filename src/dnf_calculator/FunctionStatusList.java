@@ -13,12 +13,10 @@ public class FunctionStatusList implements java.io.Serializable, Cloneable {
 	 */
 	private static final long serialVersionUID = 1108403569293695416L;
 	public LinkedList<FunctionStat> statList;
-	public LinkedList<String> explanation;
 	
 	public FunctionStatusList()
 	{
 		statList = new LinkedList<FunctionStat>();
-		explanation = new LinkedList<String>();
 	}
 	
 	public void addListToStat(Status stat, Characters character, Monster monster, Equipment equipment)

@@ -86,12 +86,13 @@ public class ChangeSetOptionStatus extends Dialog{
 				option.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_GREEN));
 				option.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 4, 1));
 				
+				int index=0;
 				Iterator<StatusAndName> maxS = set2.vStat.statList.iterator();
 				for(StatusAndName statName : set.vStat.statList){
-					Entry<Integer, Wrapper> entry = new AbstractMap.SimpleEntry<Integer, Wrapper>(statName.name, setText(composite, statName, maxS.next()));
+					Entry<Integer, Wrapper> entry = new AbstractMap.SimpleEntry<Integer, Wrapper>(index++, setText(composite, statName, maxS.next()));
 					vStatList.add(entry);
 				}
-				if(!set.dStat.statList.isEmpty() || !set.fStat.explanation.isEmpty())
+				if(!set.dStat.statList.isEmpty())
 				{
 					option = new Label(composite, SWT.WRAP);
 					option.setText("\n――――――던전 입장 시 적용――――――\n\n");
@@ -100,16 +101,11 @@ public class ChangeSetOptionStatus extends Dialog{
 					LinkedList<Entry<Integer, Wrapper>> dStatList = new LinkedList<Entry<Integer, Wrapper>>();			//HashMap에 변경정보 저장
 					dStatEntry.put(requireNum, dStatList);
 					
+					index=0;
 					maxS = set2.dStat.statList.iterator();
 					for(StatusAndName statName : set.dStat.statList){
-						Entry<Integer, Wrapper> entry = new AbstractMap.SimpleEntry<Integer, Wrapper>(statName.name, setText(composite, statName, maxS.next()));
+						Entry<Integer, Wrapper> entry = new AbstractMap.SimpleEntry<Integer, Wrapper>(index++, setText(composite, statName, maxS.next()));
 						dStatList.add(entry);
-					}
-					
-					for(String s : set.fStat.explanation){
-						option = new Label(composite, SWT.WRAP);
-						option.setText(s);
-						option.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, true, false, 4, 1));
 					}
 				}
 			}			

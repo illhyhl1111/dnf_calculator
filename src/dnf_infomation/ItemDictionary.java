@@ -57,7 +57,7 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 		equipList = new HashSet<Equipment>();	
 		
 		try {
-			EquipInfo_heavy.getInfo(equipList, EquipInfo_heavy.equipInfo_heavy());
+			EquipInfo.getInfo(equipList, EquipInfo.equipInfo());
 		} catch (ParsingException e) {
 			e.printStackTrace();
 		}
@@ -70,7 +70,7 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 		//EquipInfo_thief.getInfo(equipList);
 		//EquipInfo_lance.getInfo(equipList);
 		
-		EquipInfo_fabric.getInfo(equipList);
+		/*EquipInfo_fabric.getInfo(equipList);
 		EquipInfo_leather.getInfo(equipList);
 		EquipInfo_mail.getInfo(equipList);
 		EquipInfo_plate.getInfo(equipList);
@@ -80,7 +80,7 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 		EquipInfo_ring.getInfo(equipList);
 		EquipInfo_aidEquipment.getInfo(equipList);
 		EquipInfo_magicStone.getInfo(equipList);
-		EquipInfo_earring.getInfo(equipList);
+		EquipInfo_earring.getInfo(equipList);*/
 		
 		titleList = new HashSet<Title>();	
 		TitleInfo.getInfo(titleList);

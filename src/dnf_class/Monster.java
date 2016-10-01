@@ -30,7 +30,7 @@ public class Monster extends IconObject implements java.io.Serializable{							/
 	public Monster(String name)								
 	{
 		super();
-		this.name=name;
+		this.setName(name);
 		monstInfo = new AbstractStatusInfo[Monster_StatList.STATNUM];
 		int i;
 		for(i=0; i<Monster_StatList.BOOLNUM; i++)

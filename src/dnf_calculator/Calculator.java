@@ -197,10 +197,11 @@ public class Calculator {
 		
 		double inc_skill = (100.0+stat.getStat(StatList.DAM_SKILL))/100.0;											// 스증뎀
 		double inc_buf = (100.0+stat.getStat(StatList.DAM_BUF))/100.0;												// 버프 증뎀(투함포, 이그니스)
+		double inc_all = (100.0+stat.getStat(StatList.DAM_INC_ALL))/100.0;											// 모공증
 		//main variable :: inc_skill, inc_buf
 		//////////////////////////////
-		
-		return (double)(inc_damage*inc_counter*inc_add*inc_skill*inc_buf);
+	
+		return (double)(inc_damage*inc_counter*inc_add*inc_skill*inc_buf*inc_all);
 	}
 	
 	public static double getPhysicalPercentDefence(Characters character, Monster object) throws StatusTypeMismatch							// 몹의 물리퍼센트 방어력 구하기
@@ -217,7 +218,7 @@ public class Calculator {
 		
 		if(fixedDef<0) return 0;
 		double result = ((double)(fixedDef))/((double)(fixedDef+level*200));										// %방어력=고정방어력/(고정방어력+레벨*200)
-		return result/100 >object.getDoubleStat(Monster_StatList.DEFENCE_LIMIT) ? result/100 : object.getDoubleStat(Monster_StatList.DEFENCE_LIMIT);
+		return result >object.getDoubleStat(Monster_StatList.DEFENCE_LIMIT)/100 ? result : object.getDoubleStat(Monster_StatList.DEFENCE_LIMIT)/100;
 	}
 	
 	public static double getMagicalPercentDefence(Characters character, Monster object) throws StatusTypeMismatch			// 몹의 마법퍼센트 방어력 구하기

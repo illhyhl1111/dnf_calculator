@@ -12,7 +12,7 @@ import dnf_calculator.StatusInfo;
 import dnf_class.Equipment;
 
 class EquipInfo_necklace {
-	public static void getInfo(HashSet<Equipment> equipList)
+	/*public static void getInfo(HashSet<Equipment> equipList)
 	{
 		Equipment temp;
 		Item_rarity rarity;
@@ -104,5 +104,5 @@ class EquipInfo_ring {
 		temp.vStat.addStatList("마크", new DoubleStatusInfo(10), true);
 		temp.vStat.addStatList("크증뎀", new StatusInfo(30));
 		equipList.add(temp);
-	}
+	}*/
 }

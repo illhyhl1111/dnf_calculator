@@ -496,12 +496,6 @@ public class ChangeItemStatus extends Dialog{
 						dStatEntry.add(entry);
 					}
 				}
-				
-				for(String s : item.fStat.explanation){
-					label = new Label(composite, SWT.WRAP);
-					label.setText(s);
-					label.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, true, false, 4, 1));
-				}
 			}
 			
 			if(item instanceof Equipment)

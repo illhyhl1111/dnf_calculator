@@ -63,7 +63,8 @@ public class ItemButton<T extends IconObject>
 		Image image;
 		if(item.getIcon()==null || !enabled) image = GetDictionary.iconDictionary.get("디폴트");
 		else image = GetDictionary.iconDictionary.get(item.getItemName());
-		button.setImage(image);
+		button.setBackgroundImage(image);
+		button.setImage(GetDictionary.iconDictionary.get("아이템_투명"));
 	}
 	
 	public boolean hasSetOption()

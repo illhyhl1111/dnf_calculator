@@ -24,10 +24,10 @@ public class Equipment extends Item
 	public final int level;									//레벨
 	public boolean enabled;
 	
-	public Equipment(String name, String icon,Item_rarity rarity, Equip_part part,
+	public Equipment(String name, Item_rarity rarity, Equip_part part,
 			Card card, SetName setName, Equip_type type, int level)
 	{	
-		super(name, icon, rarity);
+		super(name, "image\\Equipment\\"+name+".png", rarity);
 		this.part=part;
 		this.card=card;
 		this.setName=setName;
@@ -59,13 +59,13 @@ public class Equipment extends Item
 		}
 		
 	}
-	public Equipment(String name, String icon, Item_rarity rarity, Equip_part part, Equip_type type, int level)
+	public Equipment(String name, Item_rarity rarity, Equip_part part, Equip_type type, int level)
 	{
-		this(name, icon, rarity, part, new Card("없음", null, Item_rarity.NONE), SetName.NONE, type, level);
+		this(name, rarity, part, new Card("없음", null, Item_rarity.NONE), SetName.NONE, type, level);
 	}
-	public Equipment(String name, String icon, Item_rarity rarity, Equip_part part, Equip_type type, SetName setName, int level)
+	public Equipment(String name, Item_rarity rarity, Equip_part part, Equip_type type, SetName setName, int level)
 	{
-		this(name, icon, rarity, part, new Card("없음", null, Item_rarity.NONE), setName, type, level);
+		this(name, rarity, part, new Card("없음", null, Item_rarity.NONE), setName, type, level);
 	}
 	public Equipment(Equip_part part) {
 		super();
@@ -307,7 +307,7 @@ public class Equipment extends Item
 		if(arg2.getRarity()!=this.getRarity()) return this.getRarity().rarity-arg2.getRarity().rarity;		// 2.
 		if(arg2.type!=type) return type.order-arg2.type.order;												// 3.
 		if(arg2.level!=level) return level-arg2.level;														// 4.
-		if(arg2.setName!=setName) return arg2.setName.compare(setName);										// 5.
+		if(arg2.setName!=setName) return setName.compare(arg2.setName);										// 5.
 		if(arg2.part!=part) return part.order-arg2.part.order;												// 6.
 		if(arg2.reinforce!=reinforce) return reinforce-arg2.getReinforce();									// 7.
 		else return arg2.getName().compareTo(this.getName());

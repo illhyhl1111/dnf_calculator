@@ -77,7 +77,7 @@ public class DungeonUI extends DnFComposite{
 		inventoryFolder = new TabFolder(mainComposite, SWT.NONE);
 		InventoryCardPack inventoryPack = new InventoryCardPack(inventoryFolder, character);
 		inventoryPack.setDungeonMode(this);
-		inventoryPack.setDungeonListener(mainComposite);
+		inventoryPack.setDungeonListener();
 		formData = new FormData();
 		formData.bottom = new FormAttachment(100, 0);
 		formData.left = new FormAttachment(infoFolder, 10);

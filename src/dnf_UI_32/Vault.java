@@ -31,10 +31,8 @@ public class Vault extends Dialog
 	private Composite vaultComposite;
 	private ScrolledComposite scrollComposite;
 	private Composite itemInfo;
-	private Composite setInfo;
 	private Integer X0;
 	private Integer Y0;
-	private Boolean hasSetOption;
 	private InventoryCardPack inventory;
 	static final int mouseInterval_hor = 7;
 	static final int mouseInterval_ver = 5;
@@ -83,7 +81,6 @@ public class Vault extends Dialog
 			         public void handleEvent(Event e) {
 			        	 if(itemInfo!=null && !itemInfo.isDisposed()){
 		        			 itemInfo.dispose();
-		        			 if(hasSetOption) setInfo.dispose();
 		        		 }
 			         }
 			     });
@@ -94,7 +91,6 @@ public class Vault extends Dialog
 			         public void handleEvent(Event e) {
 			        	 if(itemInfo!=null && !itemInfo.isDisposed()){
 			        		 itemInfo.setLocation((e.x+X0), (e.y+Y0));
-			        		 if(hasSetOption) setInfo.setLocation((e.x+X0+InterfaceSize.SET_ITEM_INTERVAL+InterfaceSize.ITEM_INFO_SIZE), (e.y+Y0));
 		        		 }
 			         }
 			     });
@@ -112,17 +108,14 @@ public class Vault extends Dialog
 		scrollComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
 	
-	private void setMousePoint(Event e, Composite background, Point itemInfoSize, Point setInfoSize)
+	private void setMousePoint(Event e, Composite background, Point itemInfoSize)
 	{
 		Point mousePoint = ((Control) e.widget).toDisplay(0, 0);
     	mousePoint.x-=background.toDisplay(0, 0).x;
     	mousePoint.y-=background.toDisplay(0, 0).y;
    		
-   		if(setInfoSize!=null) Y0 = mousePoint.y-Math.max(setInfoSize.y, itemInfoSize.y)-mouseInterval_hor;
-		else Y0=mousePoint.y-itemInfoSize.y-mouseInterval_hor;
-		if(hasSetOption)
-			X0 = mousePoint.x-InterfaceSize.ITEM_INFO_SIZE-InterfaceSize.SET_INFO_SIZE-mouseInterval_ver-InterfaceSize.SET_ITEM_INTERVAL;
-		else X0 = mousePoint.x-InterfaceSize.ITEM_INFO_SIZE-mouseInterval_ver;
+    	Y0=mousePoint.y-itemInfoSize.y-mouseInterval_hor;
+		X0 = mousePoint.x-InterfaceSize.ITEM_INFO_SIZE-mouseInterval_ver;
 		if(X0<0) X0 = mousePoint.x+mouseInterval_ver;
 		if(Y0<0) Y0 = mousePoint.y+mouseInterval_hor;
 	}
@@ -141,9 +134,7 @@ public class Vault extends Dialog
 		for(Item i : itemList){
 			
 			if(!i.getName().equals("이름없음"))
-			{
-				Integer indexBox = index;
-				
+			{	
 				// add MouseDown Event - get item - inventory to vault
 				vault[index].getButton().addListener(SWT.MouseDown, new Listener() {
 					@Override
@@ -166,8 +157,7 @@ public class Vault extends Dialog
 			         @Override
 			         public void handleEvent(Event e) {
 			        	 if(i.getName().contains("없음")) return;
-			        	 
-			        	Point setInfoSize=null;
+			        	
 			        	Point itemInfoSize=null;
 
 			        	itemInfo = new Composite(vaultComposite, SWT.BORDER);
@@ -177,23 +167,9 @@ public class Vault extends Dialog
 		        		MakeComposite.setItemInfoComposite(itemInfo, i, Location.VILLAGE, character);
 		        		itemInfoSize = itemInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		        		itemInfo.moveAbove(null);
-		        		
-		        		hasSetOption = vault[indexBox].hasSetOption();
-		        		if(hasSetOption){
-		        			setInfo = new Composite(vaultComposite, SWT.BORDER);
-		        			setInfo.setLayout(layout);
-		        			int setNum;
-		        			if(character.getSetOptionList().get( i.getSetName() )==null) setNum=0;
-		        			else setNum=character.getSetOptionList().get( i.getSetName() );
-		        			
-		        			MakeComposite.setSetInfoComposite(setInfo, i, setNum, character.userItemList);
-			        		setInfoSize = setInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-			        		setInfo.moveAbove(null);
-		        		}
 		        		 
-		        		setMousePoint(e, vaultComposite, itemInfoSize, setInfoSize);
+		        		setMousePoint(e, vaultComposite, itemInfoSize);
 		        		itemInfo.setBounds((e.x+X0), (e.y+Y0), InterfaceSize.ITEM_INFO_SIZE, itemInfoSize.y);
-		        		if(hasSetOption) setInfo.setBounds((e.x+X0+InterfaceSize.SET_ITEM_INTERVAL+InterfaceSize.ITEM_INFO_SIZE), (e.y+Y0), InterfaceSize.SET_INFO_SIZE, setInfoSize.y);
 			        }
 			    });
 			}

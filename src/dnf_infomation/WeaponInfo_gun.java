@@ -23,7 +23,7 @@ public class WeaponInfo_gun {
 
 		/////캐넌
 		type = Weapon_detailType.GUN_HCANON;
-		image = "image\\sprite_item_new_equipment_01_weapon_gunner_hcannon\\hcannon.img\\";
+		image = "image\\sprite_item_new_equipment_01_weapon_gunner_revolver\\revolver.img\\";
 		
 		///85제
 		level=85;

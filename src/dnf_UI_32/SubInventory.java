@@ -41,7 +41,7 @@ public class SubInventory extends DnFComposite
 		inventoryList = (ItemButton<Item>[]) new ItemButton<?>[inventorySize];
 	}
 	
-	public void setListener(Inventory inventory, Composite background)
+	public void setListener(Inventory inventory)
 	{
 		int index=0;
 		
@@ -54,7 +54,7 @@ public class SubInventory extends DnFComposite
 				SetListener listenerGroup = new SetListener(inventoryList[index], character, userInfo, parent);
 				
 				inventoryList[index].getButton().addListener(SWT.MouseDoubleClick, listenerGroup.modifyListener(null));					// add MouseDoubleClick - modify
-				inventoryList[index].getButton().addListener(SWT.MouseEnter, listenerGroup.makeItemInfoListener(background));		// add MouseEnter Event - make composite
+				inventoryList[index].getButton().addListener(SWT.MouseEnter, listenerGroup.makeItemInfoListener(parent.getShell()));		// add MouseEnter Event - make composite
 				inventoryList[index].getButton().addListener(SWT.MouseExit, listenerGroup.disposeItemInfoListener()); 				// add MouseExit Event - dispose composite
 				inventoryList[index].getButton().addListener(SWT.MouseMove, listenerGroup.moveItemInfoListener());					// add MouseMove Event - move composite
 				listenerGroup.setItemDrag();

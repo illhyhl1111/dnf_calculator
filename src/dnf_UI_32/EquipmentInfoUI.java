@@ -41,11 +41,11 @@ public class EquipmentInfoUI extends DnFComposite{
 		if(mode==0){
 			inventoryPack.setEquipmentMode(itemInfo);
 			vault.setInventoryPack(inventoryPack);
-			inventoryPack.setVaultListener(vault, mainComposite);
+			inventoryPack.setVaultListener(vault);
 		}
 		else{
 			inventoryPack.setAvatarMode(itemInfo);
-			inventoryPack.setListener(mainComposite);
+			inventoryPack.setListener();
 		}
 
 		itemInfo.getComposite().setLayoutData(new FormData());
