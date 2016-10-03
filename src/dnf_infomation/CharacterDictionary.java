@@ -12,27 +12,10 @@ import java.util.LinkedList;
 
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_InterfacesAndExceptions.Job;
+import dnf_InterfacesAndExceptions.ParsingException;
 import dnf_calculator.StatusList;
 import dnf_class.Monster;
 import dnf_class.Skill;
-
-class CharInfoBox implements java.io.Serializable
-{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -6833996468696237014L;
-	StatusList statList;
-	int level;
-	Job job;
-	
-	CharInfoBox(Job job, int level, StatusList statList)
-	{
-		this.statList=statList;
-		this.job=job;
-		this.level=level;
-	}
-}
 
 public class CharacterDictionary implements java.io.Serializable, Cloneable
 {
@@ -47,7 +30,11 @@ public class CharacterDictionary implements java.io.Serializable, Cloneable
 	public CharacterDictionary() 
 	{
 		skillList = new HashSet<Skill>();
-		SkillInfo_gunner.getInfo(skillList);
+		try {
+			SkillInfo_gunner.getInfo(skillList, SkillInfo_gunner.skillInfo());
+		} catch (ParsingException e) {
+			e.printStackTrace();
+		}
 		
 		basicStatList = new HashSet<CharInfoBox>();
 		CharacterInfo.getInfo(basicStatList);
@@ -126,5 +113,23 @@ class SaveCharacterDictionary {
 		{
 			e.printStackTrace();
 		}
+	}
+}
+
+class CharInfoBox implements java.io.Serializable
+{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6833996468696237014L;
+	StatusList statList;
+	int level;
+	Job job;
+	
+	CharInfoBox(Job job, int level, StatusList statList)
+	{
+		this.statList=statList;
+		this.job=job;
+		this.level=level;
 	}
 }

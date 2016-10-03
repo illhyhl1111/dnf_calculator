@@ -395,6 +395,8 @@ public class SetListener {
 	       		setMousePoint(e, background, itemInfoSize, null);
 	       		itemInfo.setBounds((e.x+x0), (e.y+y0), InterfaceSize.ITEM_INFO_SIZE, itemInfoSize.y);
 	       		itemInfo.moveAbove(null);
+	       		
+	       		skillButton.renewImage(true);
 			}
 		};
 	}

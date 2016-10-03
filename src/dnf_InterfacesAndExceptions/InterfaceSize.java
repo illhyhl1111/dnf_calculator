@@ -2,7 +2,7 @@ package dnf_InterfacesAndExceptions;
 
 public interface InterfaceSize {
 	int INFO_BUTTON_SIZE=42;
-	int SKILL_BUTTON_SIZE=42;
+	int SKILL_BUTTON_SIZE=30;
 	
 	int USER_INFO_INTERVAL=5;
 	int USER_INFO_ITEM_SIZE_X=360; int USER_INFO_ITEM_SIZE_Y=180;
@@ -14,6 +14,7 @@ public interface InterfaceSize {
 	
 	int ITEM_INFO_SIZE=250;
 	int SET_INFO_SIZE=250; int SET_ITEM_INTERVAL=5;
+	int SKILL_INFO_SIZE=300;
 	int MONSTER_INFO_SIZE=250;
 	
 	int DEALCHART_DEALSIZE_X=220; int DEALCHART_HPSIZE_X=100;

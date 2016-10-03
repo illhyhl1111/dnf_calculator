@@ -43,7 +43,7 @@ public class TextInputOnlyNumbers implements VerifyListener
         if(newS.isEmpty() || newS.equals("-")){
         	e.doit = true;
         }
-        else if(Float.valueOf(newS)>max){
+        else if(isFloat && Float.valueOf(newS)>max){
         	e.doit = false;
         	((Text)e.widget).setText(String.valueOf(max));
         }

@@ -122,7 +122,13 @@ public class GetDictionary
 			String icon = skill.getIcon();
 			if(icon==null) icon = "image\\default.png";
 			image = new Image(Display.getCurrent(), icon);
-			iconDictionary.put(skill.getName(), resizeImage(image, InterfaceSize.INFO_BUTTON_SIZE));
+			iconDictionary.put(skill.getName(), resizeImage(image, InterfaceSize.SKILL_BUTTON_SIZE));
+			image.dispose();
+			 
+			icon = skill.getDisabledIcon();
+			if(icon==null) icon = "image\\default.png";
+			image = new Image(Display.getCurrent(), icon);
+			iconDictionary.put(skill.getDisabledName(), resizeImage(image, InterfaceSize.SKILL_BUTTON_SIZE));
 			image.dispose();
 		}
 	}

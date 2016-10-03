@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import dnf_calculator.FunctionStatusList;
 import dnf_calculator.StatusList;
 import dnf_InterfacesAndExceptions.Equip_part;
+import dnf_InterfacesAndExceptions.Equip_type;
 import dnf_InterfacesAndExceptions.Item_rarity;
 import dnf_InterfacesAndExceptions.SetName;
 
@@ -79,6 +80,7 @@ public class Item extends IconObject implements Comparable<Item>
 	public boolean getEnabled() {return true;}
 	public void setEnabled(boolean enabled){}
 	public SetName getSetName() {return SetName.NONE;}
+	public Equip_type getEquipType() {return Equip_type.NONE;}
 	
 	public String getTypeName() { return "아이템";}
 	public String getTypeName2() { return null;}

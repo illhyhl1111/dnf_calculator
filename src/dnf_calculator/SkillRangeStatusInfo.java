@@ -28,7 +28,7 @@ public class SkillRangeStatusInfo extends AbstractStatusInfo			// 범위형 스�
 	}
 	
 	public void setInfo(int strength) { str=strength;}
-	public void setInfo(double strength) { str=(int)strength;}
+	public void setInfo(double strength) { str=(int)(strength+0.00001);}
 	public void setInfo(boolean bool) throws StatusTypeMismatch { throw new StatusTypeMismatch("Boolean->Integer");}
 	public double getStatToDouble() {return (double)str;}
 	public String getStatToString() {

@@ -9,16 +9,16 @@ public class Title extends Item
 	private Card card;										//보주
 	public final Equip_part part;							//부위
 	public boolean enabled;
-	public Title(String name, String icon, Item_rarity rarity, Card card)
+	public Title(String name, Item_rarity rarity, Card card)
 	{
-		super(name, icon, rarity);
+		super(name, "image\\Title\\"+name+".png", rarity);
 		this.card=card;
 		part=Equip_part.TITLE;
 		enabled=false;
 	}
-	public Title(String name, String icon, Item_rarity rarity)
+	public Title(String name, Item_rarity rarity)
 	{
-		super(name, icon, rarity);
+		super(name, "image\\Title\\"+name+".png", rarity);
 		this.card=new Card();
 		part=Equip_part.TITLE;
 		enabled=false;

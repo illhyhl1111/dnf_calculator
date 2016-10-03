@@ -132,6 +132,7 @@ public class EquipmentInfoUI extends DnFComposite{
 	}
 
 	@Override
-	public void renew() {		
+	public void renew() {
+		itemInfo.renew();
 	}
 }

@@ -59,7 +59,8 @@ public class SkillTree extends Dialog{
 		
 		Label infoLabel = new Label(content, SWT.NONE);
 		infoLabel.setText(" 레벨은 \'던전 스펙\'을 기준으로 한 스킬레벨/표기수치 입니다.\n"
-				+ " 일반스킬은 아쉽게도 마스터(좌클릭) 혹은 0레벨(우클릭) 만 가능합니다.\n"
+				+ " 해당 수치는 TP / 크로니클 / 스증뎀 / 스증버프가 모두 포함된 수치입니다.\n"
+				+ " 일반스킬은 마스터(좌클릭) 혹은 0레벨(우클릭) 만 가능합니다.\n"
 				+ " TP스킬은 +1레벨(좌클릭), -1레벨(우클릭) 조정이 가능합니다.\n");
 		infoLabel.setLayoutData(new RowData());
 		
@@ -69,8 +70,6 @@ public class SkillTree extends Dialog{
 		skillGroup.setText("일반스킬 목록");
 		
 		int bSize = InterfaceSize.SKILL_BUTTON_SIZE;
-		Button upButton = null;
-		Button leftButton = null;
 		
 		Iterator<Skill> charSkillIter = character.getSkillList().iterator();
 		Skill tempSkill = charSkillIter.next();
@@ -83,6 +82,7 @@ public class SkillTree extends Dialog{
 				if(tempSkill.firstLevel==skillLevel[i])
 				{
 					((LinkedList<ItemButton<Skill>>)skillListByLevel[i]).add(new ItemButton<Skill>(skillGroup, tempSkill, bSize, bSize));
+					if(!charSkillIter.hasNext()) break;
 					while(true){
 						if(charSkillIter.hasNext()){
 							tempSkill = charSkillIter.next();
@@ -90,7 +90,6 @@ public class SkillTree extends Dialog{
 						}
 						else break;
 					}
-					if(!charSkillIter.hasNext()) break;
 				}
 				else break;
 			}
@@ -98,29 +97,50 @@ public class SkillTree extends Dialog{
 		
 		FormData buttonData;
 		
+		int index=0;
+		Button upButton = null;
+		Button leftButton = null;
+		
 		for(LinkedList<ItemButton<Skill>> list : skillListByLevel)
 		{
-			if(list.isEmpty()) continue;
+			leftButton = new Button(skillGroup, SWT.BORDER);
+			leftButton.setEnabled(false);
+			leftButton.setText("\n"+skillLevel[index]);
+			buttonData = new FormData(20, bSize+5);
+			
+			if(index==9 || index==0){
+				upButton=null;
+				buttonData.top = new FormAttachment(0, 3);
+			}
+			else buttonData.top = new FormAttachment(upButton, 3);
+			if(index>=9) buttonData.left = new FormAttachment(0, bSize*8+10);
+			else buttonData.left = new FormAttachment(0, 3);
+			leftButton.setLayoutData(buttonData);
+			
+			if(list.isEmpty()){
+				index++;
+				leftButton.setText("\n"+skillLevel[index]);
+				continue;
+			}
 			
 			for(ItemButton<Skill> button : list){
 				buttonData = new FormData();
 				if(upButton == null) buttonData.top = new FormAttachment(0, 3);
 				else buttonData.top = new FormAttachment(upButton, 3);
-				if(leftButton == null) buttonData.left = new FormAttachment(0, 3);
-				else buttonData.left = new FormAttachment(leftButton, 3);
+				buttonData.left = new FormAttachment(leftButton, 3);
 				
 				button.getButton().setLayoutData(buttonData);
 				leftButton = button.getButton();
 				
 				SetListener listenerGroup = new SetListener(button, character, superInfo, parent);
 				
-				button.getButton().addListener(SWT.MouseEnter, listenerGroup.makeSkillInfoListener(content));		// add MouseEnter Event - make composite
+				button.getButton().addListener(SWT.MouseEnter, listenerGroup.makeSkillInfoListener(this.getShell()));		// add MouseEnter Event - make composite
 				button.getButton().addListener(SWT.MouseExit, listenerGroup.disposeItemInfoListener()); 		// add MouseExit Event - dispose composite
 				button.getButton().addListener(SWT.MouseMove, listenerGroup.moveItemInfoListener());			// add MouseMove Event - move composite
-				button.getButton().addListener(SWT.MouseDown, listenerGroup.skillLevelModifyListener(content, false));
+				button.getButton().addListener(SWT.MouseDown, listenerGroup.skillLevelModifyListener(this.getShell(), false));
 			}
+			index++;
 			upButton = leftButton;
-			leftButton = null;
 		}
 		
 		
@@ -136,10 +156,10 @@ public class SkillTree extends Dialog{
 			temp.getButton().setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
 			
 			SetListener listenerGroup = new SetListener(temp, character, superInfo, parent);
-			temp.getButton().addListener(SWT.MouseEnter, listenerGroup.makeSkillInfoListener(content));		// add MouseEnter Event - make composite
+			temp.getButton().addListener(SWT.MouseEnter, listenerGroup.makeSkillInfoListener(this.getShell()));		// add MouseEnter Event - make composite
 			temp.getButton().addListener(SWT.MouseExit, listenerGroup.disposeItemInfoListener()); 		// add MouseExit Event - dispose composite
 			temp.getButton().addListener(SWT.MouseMove, listenerGroup.moveItemInfoListener());			// add MouseMove Event - move composite
-			temp.getButton().addListener(SWT.MouseDown, listenerGroup.skillLevelModifyListener(content, true));
+			temp.getButton().addListener(SWT.MouseDown, listenerGroup.skillLevelModifyListener(this.getShell(), true));
 			
 			TPSkillList.add(temp);
 		}
@@ -178,7 +198,7 @@ public class SkillTree extends Dialog{
 			list.add(l1.getItem());
 		
 		Collections.sort(list);
-		
+
 		character.setSkillLevel(list);
 		superInfo.renew();
 		return super.close();

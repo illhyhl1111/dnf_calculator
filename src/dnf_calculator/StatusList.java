@@ -1,6 +1,8 @@
 package dnf_calculator;
 import java.util.LinkedList;
 
+import dnf_InterfacesAndExceptions.Element_type;
+import dnf_InterfacesAndExceptions.StatList;
 import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 import dnf_InterfacesAndExceptions.UndefinedStatusKey;
 
@@ -102,6 +104,27 @@ public class StatusList implements java.io.Serializable, Cloneable {
 			statList.add(new StatusAndName(name, stat, changeable, enableable));
 		} catch (UndefinedStatusKey | StatusTypeMismatch e) {
 			e.printStackTrace();
+		}
+	}
+	
+	public void addStatList(Element_type type, int stat, boolean enableElement, boolean changeable, boolean enableable)
+	{
+		switch(type)
+		{
+		case FIRE:
+			statList.add(new StatusAndName(StatList.ELEM_FIRE, new ElementInfo(enableElement, stat)));
+			break;
+		case WATER:
+			statList.add(new StatusAndName(StatList.ELEM_WATER, new ElementInfo(enableElement, stat)));
+			break;
+		case LIGHT:
+			statList.add(new StatusAndName(StatList.ELEM_LIGHT, new ElementInfo(enableElement, stat)));
+			break;
+		case DARKNESS:
+			statList.add(new StatusAndName(StatList.ELEM_DARKNESS, new ElementInfo(enableElement, stat)));
+			break;
+		case NONE:
+			break;
 		}
 	}
 	

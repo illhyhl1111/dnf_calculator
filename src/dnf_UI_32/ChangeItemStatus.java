@@ -60,6 +60,10 @@ class Wrapper {
 
     public Text getText() { return this.text; }
     public Button getButton() { return this.button; }
+    public boolean textHasData() {
+    	if(text==null) return false;
+    	return !text.getText().isEmpty();
+    }
 }
 
 public class ChangeItemStatus extends Dialog{
@@ -673,10 +677,11 @@ public class ChangeItemStatus extends Dialog{
 		Text statNum;
 		Label maxStatNum;
 		Button enable;
+		Button enable2;
 		Label stat2;
 		
-		strength = String.valueOf(s.stat.getStatToDouble());
-		maxStrength = String.valueOf(maxS.stat.getStatToDouble());
+		strength = String.format("%.1f", s.stat.getStatToDouble());
+		maxStrength = String.format("%.1f", maxS.stat.getStatToDouble());
 		if(s.stat instanceof ElementInfo && maxStrength.equals("0.0")){
 			statNum=null;
 			enable=null;
@@ -755,11 +760,11 @@ public class ChangeItemStatus extends Dialog{
 			}
 			stat2.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 3, 1));
 			if(enable == null){
-				Button enable2 = new Button(itemInfo, SWT.CHECK);
+				enable2 = new Button(itemInfo, SWT.CHECK);
 				enable2.setText("활성화");
 				enable2.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, true, false));
 				
-				enable2.setSelection(true);
+				enable2.setSelection(s.enabled);
 				enable2.addSelectionListener(new SelectionAdapter()
 				{
 					@Override
@@ -770,6 +775,7 @@ public class ChangeItemStatus extends Dialog{
 				});
 			}
 			else{
+				enable2=null;
 				enable.addSelectionListener(new SelectionAdapter()
 				{
 					@Override
@@ -780,8 +786,9 @@ public class ChangeItemStatus extends Dialog{
 				});
 			}
 		}
-		
-		return new Wrapper(statNum, enable);
+		else enable2=null;
+		if(enable!=null) return new Wrapper(statNum, enable);
+		return new Wrapper(statNum, enable2);
 	}
 	
 	@Override
@@ -857,30 +864,20 @@ public class ChangeItemStatus extends Dialog{
 		
 		for(Entry<Integer, Wrapper> e : vStatEntry)
 			if(e.getValue()!=null){
-				if(e.getValue().hasButton==false){
-					String value = e.getValue().getText().getText();
-					if(value==null || value.isEmpty()) item.vStat.changeStat(e.getKey(), 0, true);
-					else item.vStat.changeStat(e.getKey(), Double.valueOf(value), true);
-				}
-				else{
-					String value = e.getValue().getText().getText();
-					if(value==null || value.isEmpty()) item.vStat.changeStat(e.getKey(), 0, e.getValue().getButton().getSelection());
-					else item.vStat.changeStat(e.getKey(), Double.valueOf(value), e.getValue().getButton().getSelection());
-				}
+				boolean enable = e.getValue().hasButton;
+				if(enable) enable = e.getValue().getButton().getSelection();
+				if(e.getValue().textHasData())
+					item.vStat.changeStat(e.getKey(), Double.valueOf(e.getValue().getText().getText()), enable);
+				else item.vStat.changeStat(e.getKey(), 0, enable);
 			}
 				
 		for(Entry<Integer, Wrapper> e : dStatEntry)
 			if(e.getValue()!=null){
-				if(e.getValue().hasButton==false){
-					String value = e.getValue().getText().getText();
-					if(value==null || value.isEmpty()) item.dStat.changeStat(e.getKey(), 0, true);
-					else item.dStat.changeStat(e.getKey(), Double.valueOf(value), true);
-				}
-				else{
-					String value = e.getValue().getText().getText();
-					if(value==null || value.isEmpty()) item.dStat.changeStat(e.getKey(), 0, e.getValue().getButton().getSelection());
-					else item.dStat.changeStat(e.getKey(), Double.valueOf(value), e.getValue().getButton().getSelection());
-				}
+				boolean enable = e.getValue().hasButton;
+				if(enable) enable = e.getValue().getButton().getSelection();
+				if(e.getValue().textHasData())
+					item.dStat.changeStat(e.getKey(), Double.valueOf(e.getValue().getText().getText()), enable);
+				else item.dStat.changeStat(e.getKey(), 0, enable);
 			}
 	    super.okPressed();
 	}
@@ -929,7 +926,7 @@ public class ChangeItemStatus extends Dialog{
 			
 			String strength = String.valueOf(str);
 			text.setText(strength);
-			text.addVerifyListener(new TextInputOnlyNumbers());
+			text.addVerifyListener(new TextInputOnlyInteger());
 			text.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_MAGENTA));
 		}
 	}
@@ -941,7 +938,7 @@ public class ChangeItemStatus extends Dialog{
 		
 		String strength = String.valueOf(phyIgnStat);
 		phyText.setText(strength);
-		phyText.addVerifyListener(new TextInputOnlyNumbers());
+		phyText.addVerifyListener(new TextInputOnlyInteger());
 		phyText.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_BLUE));
 
 		magStat.setText("+"+currentReinforce+" 강화: 방어무시 마법 공격력 +");
@@ -949,7 +946,7 @@ public class ChangeItemStatus extends Dialog{
 		
 		strength = String.valueOf(magIgnStat);
 		magText.setText(strength);
-		magText.addVerifyListener(new TextInputOnlyNumbers());
+		magText.addVerifyListener(new TextInputOnlyInteger());
 		magText.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_BLUE));
 	}
 	
@@ -960,7 +957,7 @@ public class ChangeItemStatus extends Dialog{
 		
 		String strength = String.valueOf(aidStat);
 		text.setText(strength);
-		text.addVerifyListener(new TextInputOnlyNumbers());
+		text.addVerifyListener(new TextInputOnlyInteger());
 		text.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_BLUE));
 	}
 	
@@ -975,7 +972,7 @@ public class ChangeItemStatus extends Dialog{
 			
 			String strength = String.valueOf(aidStat[i]);
 			text[i].setText(strength);
-			text[i].addVerifyListener(new TextInputOnlyNumbers());
+			text[i].addVerifyListener(new TextInputOnlyInteger());
 			text[i].setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_BLUE));
 		}
 	}
@@ -987,7 +984,7 @@ public class ChangeItemStatus extends Dialog{
 		
 		String strength = String.valueOf(refStat);
 		refText.setText(strength);
-		refText.addVerifyListener(new TextInputOnlyNumbers());
+		refText.addVerifyListener(new TextInputOnlyInteger());
 		refText.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_DARK_BLUE));
 	}
 	

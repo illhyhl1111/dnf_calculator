@@ -90,6 +90,20 @@ public class AvatarModifier extends Dialog {
 		
 		Button[] rarityButton = setRaidoButton(selectRarityComposite, new String[] {"찬란한", "화려한", "빛나는"});
 		
+		if(character.autoOptimize){
+			if(character.getAutoOptimizeMode()==1){
+				modeButton[0].setSelection(false);
+				modeButton[1].setSelection(true);
+			}
+			if(character.getAutoOptimizeRarity()==Item_rarity.RARE){
+				rarityButton[0].setSelection(false);
+				rarityButton[1].setSelection(true);
+			}
+			else if(character.getAutoOptimizeRarity()==Item_rarity.UNCOMMON){
+				rarityButton[0].setSelection(false);
+				rarityButton[2].setSelection(true);
+			}
+		}
 		
 	    Button okButton = new Button(enhance, SWT.PUSH);
 	    okButton.setText("적용");
@@ -136,18 +150,20 @@ public class AvatarModifier extends Dialog {
 		autoData.top = new FormAttachment(guideLabel, InterfaceSize.MARGIN*2);
 		autoApplyButton.setLayoutData(autoData);
 	    
-	    okButton = new Button(autoApply, SWT.PUSH);
-	    okButton.setText("적용");
+	    Button okButton2 = new Button(autoApply, SWT.PUSH);
+	    okButton2.setText("적용");
 	    okButtonData = new FormData(100, 30);
 	    okButtonData.top = new FormAttachment(autoApplyButton, InterfaceSize.MARGIN*4);
 	    okButtonData.right = new FormAttachment(100, -InterfaceSize.MARGIN);
-	    okButton.setLayoutData(okButtonData);
+	    okButton2.setLayoutData(okButtonData);
 	    
-	    okButton.addListener(SWT.Selection, new Listener(){
+	    okButton2.addListener(SWT.Selection, new Listener(){
 			public void handleEvent(Event event) {
 				character.autoOptimize=autoApplyButton.getSelection();
 				character.setAutoOptimizeMode(getMode(modeButton));
 				character.setAutoOptimizeRarity(getRarity(rarityButton));
+				character.optimizeEmblem(getMode(modeButton), getRarity(rarityButton));
+				userInfo.renew();
 				
 				MessageDialog dialog;
 				if(autoApplyButton.getSelection())

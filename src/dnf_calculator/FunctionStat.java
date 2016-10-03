@@ -6,7 +6,7 @@ import dnf_class.Monster;
 
 @SuppressWarnings("serial")
 public abstract class FunctionStat implements java.io.Serializable, Cloneable {
-	
+
 	public abstract StatusList function(Characters character, Monster monster, Equipment equipment);
 	
 	@Override

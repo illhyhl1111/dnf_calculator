@@ -31,6 +31,15 @@ public abstract class IconObject implements Cloneable, java.io.Serializable
 		else iconAddress = icon.replace(':', '-');
 	}
 	
+	public String getDisabledIcon() {
+		if(iconAddress==null) return null;
+		return iconAddress.substring(0, iconAddress.length()-4)+" - off.png";
+	}
+	
+	public String getDisabledName() {
+		return getItemName()+" - off";
+	}
+	
 	@Override
 	public Object clone() throws CloneNotSupportedException
 	{

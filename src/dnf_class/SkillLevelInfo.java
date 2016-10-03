@@ -1,5 +1,6 @@
 package dnf_class;
 
+import dnf_calculator.FunctionStatusList;
 import dnf_calculator.StatusList;
 
 public class SkillLevelInfo implements java.io.Serializable{
@@ -9,6 +10,7 @@ public class SkillLevelInfo implements java.io.Serializable{
 	private static final long serialVersionUID = -6250081996764840494L;
 	public int skillLevel;
 	public StatusList stat;
+	public FunctionStatusList fStat;
 	public int phy_atk;
 	public int mag_atk;
 	public double phy_fix;
@@ -23,6 +25,7 @@ public class SkillLevelInfo implements java.io.Serializable{
 		this.mag_atk=mag_atk;
 		this.mag_fix=mag_fix;
 		stat = new StatusList();
+		fStat = new FunctionStatusList();
 		fromDictionary=true;
 	}
 	
@@ -34,6 +37,7 @@ public class SkillLevelInfo implements java.io.Serializable{
 		this.mag_atk=0;
 		this.mag_fix=0;
 		stat = new StatusList();
+		fStat = new FunctionStatusList();
 		fromDictionary=true;
 	}
 	

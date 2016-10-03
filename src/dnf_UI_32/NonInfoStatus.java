@@ -125,8 +125,8 @@ public class NonInfoStatus extends StatusUI
 				}
 				else
 				{
-					String temp = String.valueOf(stat.getStat(Status.nonInfoStatOrder[i]));
-					if(temp.contains(".0")) temp=temp.substring(0, temp.length()-2);
+					String temp = String.format("%.2f", stat.getStat(Status.nonInfoStatOrder[i]));
+					if(temp.endsWith(".00")) temp=temp.substring(0, temp.length()-3);
 					infoStatusText[i].setTextString(temp);
 				}
 				infoStatusText[i].setInputEnable(false);

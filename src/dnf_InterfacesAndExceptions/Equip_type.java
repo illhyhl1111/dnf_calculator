@@ -2,7 +2,8 @@ package dnf_InterfacesAndExceptions;
 
 public enum Equip_type
 {
-	FABRIC("천", 5), LEATHER("가죽", 4), MAIL("경갑", 3), HEAVY("중갑", 2), PLATE("판금", 1), NONE("없음", 0);
+	WEAPON("무기", 8), FABRIC("천", 7), LEATHER("가죽", 6), MAIL("경갑", 5), HEAVY("중갑", 4), PLATE("판금", 3),
+	ACCESSORY("악세사리", 2), SPECIALEQUIP("특수장비", 1), NONE("없음", 0);
 	
 	String name;
 	public final int order;

@@ -20,7 +20,7 @@ public class SkillStatusInfo extends AbstractStatusInfo			// 스킬정보 저장
 	}
 	
 	public void setInfo(int strength) { level=strength;}
-	public void setInfo(double strength) { level=(int)strength;}
+	public void setInfo(double strength) { level=(int)(strength+0.00001);}
 	public void setInfo(boolean bool) throws StatusTypeMismatch { throw new StatusTypeMismatch("Boolean->Integer");}
 	public double getStatToDouble() {return (double)level;}
 	public String getStatToString() {return name;}

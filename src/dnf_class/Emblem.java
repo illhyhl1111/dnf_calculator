@@ -7,9 +7,9 @@ import dnf_InterfacesAndExceptions.Item_rarity;
 public class Emblem extends Item
 {
 	public Emblem_type type;
-	public Emblem(String name, String icon, Item_rarity rarity, Emblem_type type)
+	public Emblem(String name, Item_rarity rarity, Emblem_type type)
 	{
-		super(name, icon, rarity);
+		super(name, "image\\Emblem\\"+name+".png", rarity);
 		this.type=type;
 	}
 	public Emblem() {

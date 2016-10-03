@@ -7,15 +7,15 @@ import dnf_InterfacesAndExceptions.SetName;
 @SuppressWarnings("serial")
 public class Avatar extends Item
 {
-	Avatar_part part;
-	Emblem emblem1;
-	Emblem emblem2;
-	Emblem platinumEmblem;
-	SetName setName;
+	public final Avatar_part part;
+	private Emblem emblem1;
+	private Emblem emblem2;
+	private Emblem platinumEmblem;
+	public final SetName setName;
 	
-	public Avatar(String name, String icon, Item_rarity rarity, Avatar_part part, Emblem emblem1, Emblem emblem2, Emblem platinum, SetName setName)
+	public Avatar(String name, Item_rarity rarity, Avatar_part part, Emblem emblem1, Emblem emblem2, Emblem platinum, SetName setName)
 	{
-		super(name, icon, rarity);
+		super(name, "image\\Avatar\\"+name+".png", rarity);
 		this.part=part;
 		this.emblem1=emblem1;
 		this.emblem2=emblem2;
@@ -23,9 +23,9 @@ public class Avatar extends Item
 		this.setName=setName;
 	}
 	
-	public Avatar(String name, String icon, Item_rarity rarity, Avatar_part part, SetName setName)
+	public Avatar(String name, Item_rarity rarity, Avatar_part part, SetName setName)
 	{
-		super(name, icon, rarity);
+		super(name, "image\\Avatar\\"+name+".png", rarity);
 		this.part=part;
 		emblem1 = new Emblem();
 		emblem2 = new Emblem();

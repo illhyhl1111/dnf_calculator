@@ -130,8 +130,8 @@ public class ChangeSetOptionStatus extends Dialog{
 		Button enable;
 		Label stat2;
 		
-		strength = String.valueOf(s.stat.getStatToDouble());
-		maxStrength = String.valueOf(maxS.stat.getStatToDouble());
+		strength = String.format("%.1f", s.stat.getStatToDouble());
+		maxStrength = String.format("%.1f", maxS.stat.getStatToDouble());
 		if(s.stat instanceof ElementInfo && maxStrength.equals("0.0")){
 			statNum=null;
 			enable=null;

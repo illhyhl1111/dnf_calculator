@@ -140,6 +140,7 @@ public class Status implements Cloneable, java.io.Serializable {
 		statHash.put("크증 추가증가", StatList.DAM_CRT_ADD); statHash.put("추크증", StatList.DAM_CRT_ADD);
 		statHash.put("방무", StatList.DEF_DEC_IGN);	 statHash.put("적방무", StatList.DEF_DEC_IGN); statHash.put("적 방어력 무시", StatList.DEF_DEC_IGN);
 		statHash.put("물리방무증가", StatList.WEP_NODEF_PHY_INC); statHash.put("마법방무증가", StatList.WEP_NODEF_MAG_INC);
+		statHash.put("물리방무뻥", StatList.WEP_NODEF_PHY_INC); statHash.put("마법방무뻥", StatList.WEP_NODEF_MAG_INC);
 		
 		statHashsetted=true;
 	}

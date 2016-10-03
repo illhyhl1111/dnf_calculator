@@ -348,9 +348,25 @@ public class Characters implements java.io.Serializable
 		//TODO 도핑, 휘장
 		
 		setSkillLevel();
+		
+		for(Skill skill : skillList){
+			//if(!skill.getSkillLevelInfo(true).fStat.statList.isEmpty()) System.out.println("HI");
+			if(skill.buffEnabled(false)){
+				skill.getSkillLevelInfo(false).stat.addListToStat(villageStatus);
+				skill.getSkillLevelInfo(false).fStat.addListToStat(villageStatus, this, target, null);
+			}
+			if(skill.buffEnabled(true)){
+				skill.getSkillLevelInfo(true).stat.addListToStat(dungeonStatus);
+				if(!skill.getSkillLevelInfo(true).fStat.statList.isEmpty())
+					skill.getSkillLevelInfo(true).fStat.addListToStat(dungeonStatus, this, target, null);
+			}
+		}
 	}
 	
-	private void setSkillLevel()
+	//1. 아이템으로부터 스킬 레벨을 구한다.
+	//2. 버프 스킬로부터 최종 스킬수치를 구한다.
+	//3. 최종 수치를 스탯에 더한다.
+	private void setSkillLevel() 
 	{
 		getSkillLevel(false, villageStatus.getSkillStatList());
 		getSkillLevel(true, dungeonStatus.getSkillStatList());
@@ -364,6 +380,7 @@ public class Characters implements java.io.Serializable
 		}
 		getSkillLevel(false, list);
 		
+		list = new LinkedList<AbstractStatusInfo>();
 		for(Skill skill : skillList){
 			if(skill.hasBuff()){
 				for(StatusAndName s : skill.getSkillLevelInfo(true).stat.statList)
@@ -371,13 +388,6 @@ public class Characters implements java.io.Serializable
 			}
 		}
 		getSkillLevel(true, list);
-		
-		for(Skill skill : skillList){
-			if(skill.type==Skill_type.PASSIVE && skill.getBuffEnabled())
-				skill.getSkillLevelInfo(false).stat.addListToStat(villageStatus);
-			if(skill.hasBuff() && skill.getBuffEnabled())
-				skill.getSkillLevelInfo(true).stat.addListToStat(dungeonStatus);
-		}
 	}
 	
 	private void getSkillLevel(boolean isDungeon, LinkedList<AbstractStatusInfo> list)
@@ -516,61 +526,80 @@ public class Characters implements java.io.Serializable
 			
 			Avatar avatar;
 			//힘엠블렘이 듀얼/물크 엠블렘보다 효율이 낮음
-			//힘엠블렘을 장착가능한 부위부터 물크엠블렘로 변환 ->힘엠블렘 장착이 불가능한 상하의는 가장 나중에
-			Avatar_part[] order = {Avatar_part.CAP, Avatar_part.HAIR, Avatar_part.AURA, Avatar_part.SKIN, Avatar_part.COAT, Avatar_part.PANTS};
+			Avatar_part[] order = {Avatar_part.CAP, Avatar_part.HAIR, Avatar_part.COAT, Avatar_part.PANTS, Avatar_part.AURA, Avatar_part.SKIN};
 			
-			for(int i=0; i<order.length; i++)
-			{
-				if(itemSetting.avatarList.get(order[i]).getName().contains("없음")) continue;
-				else avatar = userItemList.getAvatar(itemSetting.avatarList.get(order[i]).getName());
-				
-				//첫번째 엠블렘
-				if(crt>=97-4*redGreenCrt) {															// 크리 초과시 (상하의로 최소 4*듀얼물크만큼은 크리가 오름)
-					if((order[i]==Avatar_part.COAT || order[i]==Avatar_part.PANTS) && rarity!=Item_rarity.UNCOMMON){
-						avatar.setEmblem1(dual);																		// 상의, 하의 - 힘물크 듀얼
-						crt+=redGreenCrt;
-					}
-					else avatar.setEmblem1(stat);																		// 나머지 - 힘엠블렘
-				}
-				else if(crt>=97-5*redGreenCrt){																			// 듀얼크리만큼 크리 미달시
-					avatar.setEmblem1(dual);
-					crt+=redGreenCrt;
-				}
-				else{																									// 크리 미달시
-					if((order[i]==Avatar_part.CAP || order[i]==Avatar_part.HAIR) && rarity!=Item_rarity.UNCOMMON){
-						avatar.setEmblem1(dual);																		// 머리, 모자 - 힘물크 듀얼
-						crt+=redGreenCrt;
-					}
-					else{
-						avatar.setEmblem1(critical);																	// 나머지 - 크리엠블렘
-						crt+=greenCrt;
+			if(rarity!=Item_rarity.UNCOMMON){
+				//모든 부위에 우선 듀얼엠블렘 장착
+				for(Avatar_part part : order){
+					avatar = itemSetting.avatarList.get(part);
+					if(!avatar.getName().contains("없음")){
+						avatar.setEmblem1(dual);
+						avatar.setEmblem2(dual);
+						crt+=2*redGreenCrt;
 					}
 				}
 				
-				//두번째 엠블렘
-				if(crt>=97-4*redGreenCrt) {																				// 크리 초과시
-					if((order[i]==Avatar_part.COAT || order[i]==Avatar_part.PANTS) && rarity!=Item_rarity.UNCOMMON){
-						avatar.setEmblem2(dual);																		// 상의, 하의 - 힘물크 듀얼
-						crt+=redGreenCrt;
+				if(Double.compare(crt, 97+redGreenCrt)>=0)	//초과
+				{
+					for(Avatar_part part : order){
+						avatar = itemSetting.avatarList.get(part);
+						if(!avatar.getName().contains("없음")){
+							if(avatar.setEmblem1(stat)) crt-=redGreenCrt;
+							if(Double.compare(crt, 97+redGreenCrt)<0) break;
+							
+							if(avatar.setEmblem2(stat)) crt-=redGreenCrt;
+							if(Double.compare(crt, 97+redGreenCrt)<0) break;
+						}
 					}
-					else avatar.setEmblem2(stat);																		// 나머지 - 힘엠블렘
 				}
-				else if(crt>=97-5*redGreenCrt){																			// 듀얼크리만큼 크리 미달시
-					avatar.setEmblem2(dual);
-					crt+=redGreenCrt;
-				}
-				else{																									// 크리 미달시
-					if((order[i]==Avatar_part.CAP || order[i]==Avatar_part.HAIR) && rarity!=Item_rarity.UNCOMMON){
-						avatar.setEmblem2(dual);																		// 머리, 모자 - 힘물크 듀얼
-						crt+=redGreenCrt;
-					}
-					else{
-						avatar.setEmblem2(critical);																	// 나머지 - 크리엠블렘
-						crt+=greenCrt;
+				else if(Double.compare(crt, 97)<0)	//미달
+				{
+					for(Avatar_part part : order){
+						avatar = itemSetting.avatarList.get(part);
+						if(!avatar.getName().contains("없음")){
+							if(avatar.setEmblem1(critical)) crt+=greenCrt-redGreenCrt;
+							if(Double.compare(crt, 97)>=0) break;
+							
+							if(avatar.setEmblem2(critical)) crt+=greenCrt-redGreenCrt;
+							if(Double.compare(crt, 97)>=0) break;
+						}
 					}
 				}
 			}
 			
+			//빛작
+			else{
+				for(Avatar_part part : order){
+					avatar = itemSetting.avatarList.get(part);
+					if(!avatar.getName().contains("없음")){
+						if(!avatar.setEmblem1(stat)){
+							avatar.setEmblem1(critical);
+							crt+=greenCrt;
+						}
+						if(!avatar.setEmblem2(stat)){
+							avatar.setEmblem2(critical);
+							crt+=greenCrt;
+						}
+					}
+				}
+				
+				if(Double.compare(crt, 97)<0)	//미달
+				{
+					for(Avatar_part part : new Avatar_part[] {Avatar_part.AURA, Avatar_part.SKIN}){
+						avatar = itemSetting.avatarList.get(part);
+						if(!avatar.getName().contains("없음")){
+							avatar.setEmblem1(critical);
+							crt+=greenCrt;
+							if(Double.compare(crt, 97)>=0) break;
+							
+							avatar.setEmblem2(critical);
+							crt+=greenCrt;
+							if(Double.compare(crt, 97)>=0) break;
+						}
+					}
+				}
+			}
+	
 		}catch(StatusTypeMismatch | UndefinedStatusKey | ItemFileNotFounded e) {
 			e.printStackTrace();
 		}
@@ -593,12 +622,12 @@ public class Characters implements java.io.Serializable
 	
 	public String compareItem(Item item)
 	{
-		long damage_now = Calculator.getDamage(representSkill.getSkillLevelInfo(true), target, this);
+		long damage_now = Calculator.getDamage(representSkill, target, this);
 		
 		Item previous = equip(item);
 		if(previous==null) return "착용불가";
 		
-		long damage_comp = Calculator.getDamage(representSkill.getSkillLevelInfo(true), target, this);
+		long damage_comp = Calculator.getDamage(representSkill, target, this);
 		double compare = ((double)(damage_comp-damage_now))/damage_now*100;
 		
 		String result;
@@ -636,7 +665,7 @@ public class Characters implements java.io.Serializable
 		Iterator<Skill> iter = list.iterator();
 		for(Skill s : skillList)
 		{
-			s.setSkillLevel(iter.next().getSkillLevel());
+			s.setSkillLevel(iter.next().getCharSkillLevel());
 		}
 	}
 	
@@ -648,8 +677,10 @@ public class Characters implements java.io.Serializable
 	public void setAutoOptimizeMode(int autoOptimizeMode) {
 		this.autoOptimizeMode = autoOptimizeMode;
 	}
+	public int getAutoOptimizeMode() {return autoOptimizeMode;}
 
 	public void setAutoOptimizeRarity(Item_rarity autoOptimizeRarity) {
 		this.autoOptimizeRarity = autoOptimizeRarity;
 	}
+	public Item_rarity getAutoOptimizeRarity() {return autoOptimizeRarity;}
 }

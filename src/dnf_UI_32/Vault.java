@@ -15,9 +15,11 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
+import dnf_InterfacesAndExceptions.Equip_type;
 import dnf_InterfacesAndExceptions.InterfaceSize;
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_InterfacesAndExceptions.Location;
+import dnf_InterfacesAndExceptions.SetName;
 import dnf_class.Characters;
 import dnf_class.Item;
 
@@ -69,10 +71,16 @@ public class Vault extends Dialog
 		vault = (ItemButton<Item>[]) new ItemButton<?>[vaultSize];
 		
 		int index=0;
+		SetName prevSet=SetName.NONE;
+		Equip_type prevType=Equip_type.WEAPON;
 		
 		for(Item i : itemList){
+			if(i.getEquipType()!=prevType && prevSet!=i.getSetName()){
+				for(; index%vaultCol!=0; index++)
+					vault[index] = new ItemButton<Item>(vaultComposite, new Item(), InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE, false);
+			}
+				
 			vault[index] = new ItemButton<Item>(vaultComposite, i, InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE, true);
-			
 			if(!i.getName().equals("이름없음"))
 			{
 				// add MouseExit Event - dispose composite
@@ -96,6 +104,8 @@ public class Vault extends Dialog
 			     });
 				
 				index++;
+				prevType=i.getEquipType();
+				prevSet=i.getSetName();
 			}
 		}
 		
@@ -130,11 +140,13 @@ public class Vault extends Dialog
 		Composite composite = (Composite) super.createDialogArea(parent);
 		scrollComposite.setParent(composite);
 
-		int index=0;
+		int index=-1;
 		for(Item i : itemList){
 			
-			if(!i.getName().equals("이름없음"))
-			{	
+			if(!i.getName().contains("없음"))
+			{
+				while(vault[++index].getItem().getName().contains("없음"));
+				
 				// add MouseDown Event - get item - inventory to vault
 				vault[index].getButton().addListener(SWT.MouseDown, new Listener() {
 					@Override
@@ -160,7 +172,7 @@ public class Vault extends Dialog
 			        	
 			        	Point itemInfoSize=null;
 
-			        	itemInfo = new Composite(vaultComposite, SWT.BORDER);
+			        	itemInfo = new Composite(composite.getShell(), SWT.BORDER);
 		        		GridLayout layout = new GridLayout(1, false);
 		        		layout.verticalSpacing=3;
 		        		itemInfo.setLayout(layout);
@@ -168,12 +180,11 @@ public class Vault extends Dialog
 		        		itemInfoSize = itemInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		        		itemInfo.moveAbove(null);
 		        		 
-		        		setMousePoint(e, vaultComposite, itemInfoSize);
+		        		setMousePoint(e, composite.getShell(), itemInfoSize);
 		        		itemInfo.setBounds((e.x+X0), (e.y+Y0), InterfaceSize.ITEM_INFO_SIZE, itemInfoSize.y);
 			        }
 			    });
 			}
-			index++;
 		}
 		return composite;
 	}
@@ -186,7 +197,7 @@ public class Vault extends Dialog
 
 	@Override
 	protected Point getInitialSize() {
-	    return new Point(vaultComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT).x+50, InterfaceSize.VAULT_SIZE_Y);
+	    return new Point(vaultComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT).x+60, InterfaceSize.VAULT_SIZE_Y);
 	}
 	
 	@Override
@@ -198,7 +209,7 @@ public class Vault extends Dialog
 	
 	@Override
 	protected void setShellStyle(int newShellStyle) {           
-	    super.setShellStyle(SWT.CLOSE | SWT.MODELESS| SWT.BORDER | SWT.TITLE);
+	    super.setShellStyle(SWT.CLOSE | SWT.MODELESS| SWT.BORDER | SWT.TITLE | SWT.SHELL_TRIM);
 	    setBlockOnOpen(false);
 	}
 	

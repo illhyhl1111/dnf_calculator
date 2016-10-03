@@ -108,8 +108,8 @@ public class InfoStatus extends StatusUI
 					infoStatusText[i].setTextString(String.valueOf(Calculator.getInfoElementReinforce(stat, Status.infoStatOrder[i])));
 				}
 				else{	
-					String temp = String.valueOf(stat.getStat(Status.infoStatOrder[i]));
-					if(temp.contains(".0")) temp=temp.substring(0, temp.length()-2);
+					String temp = String.format("%.2f", stat.getStat(Status.infoStatOrder[i]));
+					if(temp.contains(".00")) temp=temp.substring(0, temp.length()-3);
 					infoStatusText[i].setTextString(temp);				
 				}
 				infoStatusText[i].setInputEnable(false);

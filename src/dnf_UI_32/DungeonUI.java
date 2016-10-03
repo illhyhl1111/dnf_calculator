@@ -52,7 +52,7 @@ public class DungeonUI extends DnFComposite{
 		saveComposite = new Shell(Display.getCurrent()); 
 		
 		toVillageButton = new Button(saveComposite, SWT.PUSH);
-		toVillageButton.setText("asdf");
+		toVillageButton.setText("마을로 돌아가기");
 	}
 	
 	public void makeComposite()

@@ -13,6 +13,7 @@ import dnf_InterfacesAndExceptions.SetName;
 import dnf_class.IconObject;
 import dnf_class.Item;
 import dnf_class.Monster;
+import dnf_class.Skill;
 import dnf_infomation.GetDictionary;
 
 public class ItemButton<T extends IconObject>
@@ -62,9 +63,13 @@ public class ItemButton<T extends IconObject>
 	{
 		Image image;
 		if(item.getIcon()==null || !enabled) image = GetDictionary.iconDictionary.get("디폴트");
-		else image = GetDictionary.iconDictionary.get(item.getItemName());
-		button.setBackgroundImage(image);
-		button.setImage(GetDictionary.iconDictionary.get("아이템_투명"));
+		else{
+			if(item instanceof Skill && !((Skill)item).getActiveEnabled())
+				image = GetDictionary.iconDictionary.get(item.getDisabledName());
+			else image = GetDictionary.iconDictionary.get(item.getItemName());
+		}
+		button.setImage(image);
+		//button.setImage(GetDictionary.iconDictionary.get("아이템_투명"));
 	}
 	
 	public boolean hasSetOption()

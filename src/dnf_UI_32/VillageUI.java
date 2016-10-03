@@ -1,30 +1,21 @@
 package dnf_UI_32;
 
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.ShellAdapter;
-import org.eclipse.swt.events.ShellEvent;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
 import dnf_class.Characters;
-import dnf_infomation.GetDictionary;
 
 public class VillageUI extends DnFComposite
 {
@@ -54,19 +45,6 @@ public class VillageUI extends DnFComposite
 		selectCharacterButton = new Button(mainComposite, SWT.PUSH);
 		selectCharacterButton.setText("캐릭터 선택");
 		
-	}
-	
-	public void save(Characters character)
-	{
-		try{
-			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("character_"+character.name+".dfd"));
-			out.writeObject(character);
-			out.close();
-		}
-		catch(IOException e)
-		{
-			e.printStackTrace();
-		}
 	}
 	
 	public void makeComposite(SkillTree skillTree)

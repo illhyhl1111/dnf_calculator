@@ -1,8 +1,11 @@
 package dnf_UI_32;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
@@ -34,7 +37,7 @@ public class CalculatorUITest {
 		else display = new Display(); 
 		
 		GetDictionary.readFile(Job.LAUNCHER_F);
-		Characters character = new Characters(90, Job.LAUNCHER_F, "명속은거들뿐");
+		Characters character = new Characters(90, Job.LAUNCHER_F, "여런처");
 
 		Shell shell = new Shell(display);
 		final StackLayout stackLayout = new StackLayout();
@@ -63,6 +66,7 @@ public class CalculatorUITest {
 		dungeonUI.get_toVillageButton().addListener(SWT.Selection, event -> {
 			dungeonUI.disposeContent();
 			villageUI.makeComposite(skillTree);
+			skillTree.superInfo=villageUI;
 			stackLayout.topControl = villageUI.getComposite();
 			shell.setText("인포창");
 			shell.layout();
@@ -94,7 +98,15 @@ public class CalculatorUITest {
 		shell.addShellListener(new ShellAdapter(){
 			@Override
 			public void shellClosed(ShellEvent e) {
-				villageUI.save(character);
+				try{
+					ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("character_"+character.name+".dfd"));
+					out.writeObject(character);
+					out.close();
+				}
+				catch(IOException e2)
+				{
+					e2.printStackTrace();
+				}
 			}
 		});
 		
@@ -112,15 +124,24 @@ class CalculatorUILoad
 	{
 		Display display = new Display();
 		
-        Characters character;
-        
+        final Characters character;
+        Characters readFile=null;
 		try{
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream("character_"+"명속은거들뿐"+".dfd"));
-			Object temp = in.readObject();
-			character = (Characters)temp;
-
-			in.close();
-			GetDictionary.readFile(character.getJob());
+			try{
+				ObjectInputStream in = new ObjectInputStream(new FileInputStream("character_"+"여런처"+".dfd"));
+				Object temp = in.readObject();
+				readFile = (Characters)temp;
+				GetDictionary.readFile(readFile.getJob());
+				in.close();
+			}catch(FileNotFoundException e)
+			{
+				GetDictionary.readFile(Job.LAUNCHER_F);
+				readFile = new Characters(90, Job.LAUNCHER_F, "여런처");
+				System.out.println("저장");
+			}
+			finally{
+				character=readFile;
+			}
 			
 			Shell shell = new Shell(display);
 			final StackLayout stackLayout = new StackLayout();
@@ -179,7 +200,15 @@ class CalculatorUILoad
 			shell.addShellListener(new ShellAdapter(){
 				@Override
 				public void shellClosed(ShellEvent e) {
-					villageUI.save(character);
+					try{
+						ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("character_"+character.name+".dfd"));
+						out.writeObject(character);
+						out.close();
+					}
+					catch(IOException e2)
+					{
+						e2.printStackTrace();
+					}
 				}
 			});
 			

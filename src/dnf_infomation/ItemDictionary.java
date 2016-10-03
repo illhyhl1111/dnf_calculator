@@ -57,14 +57,15 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 		equipList = new HashSet<Equipment>();	
 		
 		try {
-			EquipInfo.getInfo(equipList, EquipInfo.equipInfo());
+			EquipmentInfo.getInfo(equipList, EquipmentInfo.equipmentInfo());
+			EquipmentInfo.getInfo(equipList, EquipmentInfo.weaponInfo());
 		} catch (ParsingException e) {
 			e.printStackTrace();
 		}
 		
 		//EquipInfo_sword.getInfo(equipList);
 		//EquipInfo_fighter.getInfo(equipList);
-		WeaponInfo_gun.getInfo(equipList);
+		//WeaponInfo_gun.getInfo(equipList);
 		//EquipInfo_mage.getInfo(equipList);
 		//EquipInfo_priest.getInfo(equipList);
 		//EquipInfo_thief.getInfo(equipList);

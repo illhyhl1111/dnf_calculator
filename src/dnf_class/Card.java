@@ -9,10 +9,11 @@ import dnf_InterfacesAndExceptions.Item_rarity;
 @SuppressWarnings("serial")
 public class Card extends Item implements java.io.Serializable
 {
+	private static final long serialVersionUID = 4716963298958477792L;
 	private ArrayList<Equip_part> availableType;
-	public Card(String name, String icon, Item_rarity rarity)
+	public Card(String name, Item_rarity rarity)
 	{
-		super(name, icon, rarity);
+		super(name, "image\\Card\\"+name+".png", rarity);
 		availableType = new ArrayList<Equip_part>();
 	}
 	
@@ -60,4 +61,14 @@ public class Card extends Item implements java.io.Serializable
 	
 	@Override
 	public String getTypeName() { return "보주";}
+	
+	@Override
+	public int compareTo(Item arg) {
+		if(arg instanceof Equipment || arg instanceof Title) return -1;
+		else if(!(arg instanceof Card)) return 1;			// 1.
+		Card arg2 = (Card)arg;
+		
+		if(arg2.getRarity()!=this.getRarity()) return this.getRarity().rarity-arg2.getRarity().rarity;		// 2.
+		return arg2.getName().compareTo(this.getName());
+	}
 }

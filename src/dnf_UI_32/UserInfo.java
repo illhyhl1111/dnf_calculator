@@ -351,6 +351,9 @@ public class UserInfo extends DnFComposite
 		FormData nonInfoStatusData = new FormData(InterfaceSize.USER_INFO_NONSTAT_SIZE_X, InterfaceSize.USER_INFO_NONSTAT_SIZE_Y);
 		nonInfoStatusData.left = new FormAttachment(userItemInfo.getComposite(), interval);
 		nonInfoStatus.getComposite().setLayoutData(nonInfoStatusData);
+		
+		infoStatus.renew();
+		nonInfoStatus.renew();
 	}
 	
 	private void init_dungeon()
@@ -369,6 +372,9 @@ public class UserInfo extends DnFComposite
 		
 		infoStatus.isDungeon=true;
 		nonInfoStatus.isDungeon=true;
+		
+		infoStatus.renew();
+		nonInfoStatus.renew();
 	}
 	
 	public void renew()

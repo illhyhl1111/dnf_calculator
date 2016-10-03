@@ -21,7 +21,6 @@ import dnf_class.Characters;
 import dnf_class.Monster;
 import dnf_class.Setting;
 import dnf_class.Skill;
-import dnf_class.SkillLevelInfo;
 
 public class DealChart extends DnFComposite {
 	Characters character;
@@ -29,6 +28,7 @@ public class DealChart extends DnFComposite {
 	private Monster monster;
 	private Setting compareSetting;
 	private Composite explain;
+	public final static int LISTSIZE=14;
 	
 	public DealChart(Composite parent, Characters character)
 	{
@@ -79,7 +79,7 @@ public class DealChart extends DnFComposite {
 			
 			for(Skill skill : character.getDamageSkillList())
 				skillList.add(new DealInfo(mainComposite, skill, character, monster,
-						Calculator.getDamage(skill.getSkillLevelInfo(true), monster, character)));
+						Calculator.getDamage(skill, monster, character)));
 			
 			character.setItemSettings(tempSetting, false);
 		}
@@ -92,8 +92,13 @@ public class DealChart extends DnFComposite {
 		for(DealInfo dInfo : skillList)
 			dInfo.renew();
 		
+		Collections.sort(skillList);
+		while(skillList.size()>LISTSIZE){
+			skillList.getFirst().getComposite().dispose();
+			skillList.removeFirst();
+		}
+		
 		if(skillList.size()>1){
-			Collections.sort(skillList);
 			Iterator<DealInfo> iter = skillList.iterator();
 			DealInfo prev=iter.next();
 			while(iter.hasNext())
@@ -131,13 +136,13 @@ public class DealChart extends DnFComposite {
 					if(dInfo.icon.getItem().getName().equals(skill.getName())){
 						prevInfo=dInfo;
 						prevInfo.setMonster(monster);
-						prevInfo.setCompare(Calculator.getDamage(skill.getSkillLevelInfo(true), monster, character));	
+						prevInfo.setCompare(Calculator.getDamage(skill, monster, character));	
 						break;
 					}
 				}
 				if(prevInfo!=null) newList.add(prevInfo);
 				else newList.add(new DealInfo(mainComposite, skill, character, monster,
-						Calculator.getDamage(skill.getSkillLevelInfo(true), monster, character)));
+						Calculator.getDamage(skill, monster, character)));
 			}
 			
 			character.setItemSettings(tempSetting, false);
@@ -160,14 +165,24 @@ public class DealChart extends DnFComposite {
 			}
 		}
 		
-		for(DealInfo dInfo : skillList)
-			if(!character.getDamageSkillList().contains(dInfo.icon.getItem()))
-				dInfo.getComposite().dispose(); 
+		for(int i=0; i<skillList.size(); i++)
+		{
+			if(!character.getDamageSkillList().contains(skillList.get(i).icon.getItem())){
+				skillList.get(i).getComposite().dispose();
+				skillList.remove(i--);
+			}
+		}
 		
 		skillList = newList;
 		
 		for(DealInfo dInfo : skillList)
 			dInfo.renew();
+		
+		Collections.sort(skillList);
+		while(skillList.size()>LISTSIZE){
+			skillList.getFirst().getComposite().dispose();
+			skillList.removeFirst();
+		}
 		
 		if(!skillList.isEmpty()){
 			skillList.getFirst().getComposite().moveAbove(null);
@@ -175,7 +190,6 @@ public class DealChart extends DnFComposite {
 		}
 		
 		if(skillList.size()>1){
-			Collections.sort(skillList);
 			Iterator<DealInfo> iter = skillList.iterator();
 			DealInfo prev=iter.next();
 			while(iter.hasNext())
@@ -222,12 +236,12 @@ class DealInfo extends DnFComposite implements Comparable<DealInfo>{
 		icon.getButton().addListener(SWT.MouseMove, listenerGroup.moveItemInfoListener());
 		
 		dealLabel = new CLabel(mainComposite, SWT.NONE);
-		dealLabel.setMargins(0, 15, 0, 0);
+		dealLabel.setMargins(0, 7, 0, 0);
 		dealLabel.setLayoutData(new RowData(InterfaceSize.DEALCHART_DEALSIZE_X, InterfaceSize.SKILL_BUTTON_SIZE));
 		dealLabel.setAlignment(SWT.CENTER);
 		
 		hpLabel = new CLabel(mainComposite, SWT.NONE);
-		hpLabel.setMargins(0, 15, 0, 0);
+		hpLabel.setMargins(0, 7, 0, 0);
 		hpLabel.setLayoutData(new RowData(InterfaceSize.DEALCHART_HPSIZE_X, InterfaceSize.SKILL_BUTTON_SIZE));
 		hpLabel.setAlignment(SWT.CENTER);
 		
@@ -248,8 +262,7 @@ class DealInfo extends DnFComposite implements Comparable<DealInfo>{
 	public void renew(){
 		icon.renewImage(true);
 		
-		SkillLevelInfo skillInfo = icon.getItem().getSkillLevelInfo(true);
-		deal = Calculator.getDamage(skillInfo, monster, character);
+		deal = Calculator.getDamage(icon.getItem(), monster, character);
 		
 		String compareStr;
 		if(deal_compare==-1){

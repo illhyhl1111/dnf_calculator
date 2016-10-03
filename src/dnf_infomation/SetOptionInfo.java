@@ -79,8 +79,8 @@ public class SetOptionInfo {
 		temp.dStat.addStatList("추뎀", 4, false, true);
 		temp.dStat.addStatList("추뎀", 4, false, true);
 		temp.dStat.addStatList("추뎀", 35, false, true);
-		temp.explanation.add("딜러님 방넘어갈때 스겜좀 해주시면 안됨?");
-		temp.explanation.add("아니 그게");
+		temp.explanation.add("딜러님 스겜좀 ㅡㅡ");
+		temp.explanation.add("아니 그게..");
 		equipList.add(temp);
 		//택틱
 		temp = new SetOption("웨슬리의 전술 세트", SetName.TACTICAL, 5);

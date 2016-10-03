@@ -96,6 +96,11 @@ public class MakeComposite {
 					for(StatusAndName s2 : s.dStat.statList)
 						setText(itemInfo, s2, enabled, color, InterfaceSize.SET_INFO_SIZE-10);
 				}
+				
+				if(!s.explanation.isEmpty()){
+					Label stat = new Label(itemInfo, SWT.WRAP);
+					stat.setText("");
+				}
 				for(String str : s.explanation){
 					option = new Label(itemInfo, SWT.WRAP);
 					option.setText(str);
@@ -150,8 +155,8 @@ public class MakeComposite {
 			rarity.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_DARK_GREEN));
 			break;
 		case RARE:
-			stat.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_CYAN));
-			rarity.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_CYAN));
+			stat.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLUE));
+			rarity.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLUE));
 			break;
 		default:
 		}
@@ -300,13 +305,26 @@ public class MakeComposite {
 			
 			setStatusText(item.getItemStatIndex(), item, itemInfo, itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLACK), InterfaceSize.ITEM_INFO_SIZE-10);
 			
-			if(item.getCard()!=null)
+			if(!item.explanation.isEmpty()){
+				stat = new Label(itemInfo, SWT.WRAP);
+				stat.setText("");
+			}
+			for(String str : item.explanation){
+				stat = new Label(itemInfo, SWT.WRAP);
+				stat.setText(str);
+				leftData = new GridData();
+				leftData.widthHint=InterfaceSize.ITEM_INFO_SIZE-10;
+				stat.setLayoutData(leftData);
+				stat.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+			}
+			
+			if(item.getCard()!=null && !item.getCard().getName().contains("없음"))
 			{
 				Card card=item.getCard();
 				stat = new Label(itemInfo, SWT.WRAP);
 				stat.setText("");
 
-				setStatusText(card, itemInfo, itemInfo.getDisplay().getSystemColor(SWT.COLOR_GREEN), InterfaceSize.ITEM_INFO_SIZE-10);
+				setStatusText(card, itemInfo, itemInfo.getDisplay().getSystemColor(SWT.COLOR_DARK_GREEN), InterfaceSize.ITEM_INFO_SIZE-10);
 			}
 			else if(item.getEmblem()!=null)
 			{
@@ -322,17 +340,9 @@ public class MakeComposite {
 					leftData.widthHint=InterfaceSize.ITEM_INFO_SIZE-10;
 					stat.setLayoutData(leftData);
 
-					setStatusText(emblem, itemInfo, itemInfo.getDisplay().getSystemColor(SWT.COLOR_GREEN), InterfaceSize.ITEM_INFO_SIZE-10);
+					setStatusText(emblem, itemInfo, itemInfo.getDisplay().getSystemColor(SWT.COLOR_DARK_GREEN), InterfaceSize.ITEM_INFO_SIZE-10);
 					i++;
 				}
-			}
-			for(String str : item.explanation){
-				stat = new Label(itemInfo, SWT.WRAP);
-				stat.setText(str);
-				leftData = new GridData();
-				leftData.widthHint=InterfaceSize.ITEM_INFO_SIZE-10;
-				stat.setLayoutData(leftData);
-				stat.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 			}
 		}
 		catch (StatusTypeMismatch e) {
@@ -349,12 +359,13 @@ public class MakeComposite {
 		}
 		
 		GridData leftData = new GridData(SWT.FILL, SWT.TOP, true, false);
+		leftData.widthHint=InterfaceSize.SKILL_INFO_SIZE-10;
 		
 		Label label = new Label(composite, SWT.WRAP);
 		label.setLayoutData(leftData);
 		String name;
-		if(skill.getSkillLevel()!=0) name = skill.getName()+" Lv "+(skill.getSkillLevel()+skill.dungeonLevel)
-				+"("+skill.getSkillLevel()+" + "+ skill.dungeonLevel+")";
+		if(skill.getCharSkillLevel()!=0) name = skill.getName()+" Lv "+ skill.getSkillLevel(true)
+				+"("+skill.getCharSkillLevel()+" + "+ (skill.getSkillLevel(true)-skill.getCharSkillLevel())+")";
 		else name = skill.getName()+ "Lv 0";
 		label.setText(name);
 		if(skill.type==Skill_type.PASSIVE)
@@ -364,6 +375,7 @@ public class MakeComposite {
 		
 		label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		leftData = new GridData(SWT.FILL, SWT.TOP, true, false);
+		leftData.widthHint=InterfaceSize.SKILL_INFO_SIZE-10;
 		label.setLayoutData(leftData);
 		
 		SkillLevelInfo skillInfo = skill.getSkillLevelInfo(true);
@@ -371,6 +383,7 @@ public class MakeComposite {
 		if(skillInfo.phy_atk!=0 || skillInfo.phy_fix!=0){
 			label = new Label(composite, SWT.WRAP);
 			leftData = new GridData(SWT.FILL, SWT.TOP, true, false);
+			leftData.widthHint=InterfaceSize.SKILL_INFO_SIZE-10;
 			label.setLayoutData(leftData);
 			String atk = "";
 			if(skillInfo.phy_atk!=0) atk = String.valueOf(skillInfo.phy_atk)+"%";
@@ -385,6 +398,7 @@ public class MakeComposite {
 		if(skillInfo.mag_atk!=0 || skillInfo.mag_fix!=0){
 			label = new Label(composite, SWT.WRAP);
 			leftData = new GridData(SWT.FILL, SWT.TOP, true, false);
+			leftData.widthHint=InterfaceSize.SKILL_INFO_SIZE-10;
 			label.setLayoutData(leftData);
 			String atk = "";
 			if(skillInfo.mag_atk!=0) atk = String.valueOf(skillInfo.mag_atk)+"%";
@@ -405,6 +419,7 @@ public class MakeComposite {
 			
 			label = new Label(composite, SWT.WRAP);
 			leftData = new GridData(SWT.FILL, SWT.TOP, true, false);
+			leftData.widthHint=InterfaceSize.SKILL_INFO_SIZE-10;
 			label.setLayoutData(leftData);
 			label.setText("[버프옵션]");
 			label.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
@@ -421,11 +436,30 @@ public class MakeComposite {
 		{
 			label = new Label(composite, SWT.WRAP);
 			leftData = new GridData(SWT.FILL, SWT.TOP, true, false);
+			leftData.widthHint=InterfaceSize.SKILL_INFO_SIZE-10;
 			label.setLayoutData(leftData);
-			label.setText("\nLv "+skill.getSkillLevel()+" 에 대한 정보가 기록되어있지 않습니다. 대충 가장 가까운 레벨로 추정합니다.");
+			label.setText("\nLv "+skill.getSkillLevel(true)+" 에 대한 정보가 기록되어있지 않습니다. 대충 가장 가까운 레벨로 추정합니다.");
 			label.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		}
-		composite.setSize(composite.computeSize(SWT.NONE, SWT.NONE));
+		
+		if(!skill.explanation.isEmpty()){
+			label = new Label(composite, SWT.WRAP);
+			label.setText("");
+		}
+		for(String str : skill.explanation){
+			Label explain = new Label(composite, SWT.WRAP);
+			explain.setText(str);
+			leftData = new GridData(SWT.LEFT, SWT.TOP, true, false);
+			leftData.widthHint=InterfaceSize.SKILL_INFO_SIZE-10;
+			explain.setLayoutData(leftData);
+			explain.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+			
+			label = new Label(composite, SWT.WRAP);
+			label.setText("");
+		}
+		
+		composite.setSize(composite.computeSize(InterfaceSize.SKILL_INFO_SIZE, SWT.NONE));
+		
 	}
 	
 	public static void setMonsterInfoComposite(Composite itemInfo, Monster monster)
@@ -472,6 +506,10 @@ public class MakeComposite {
 				e.printStackTrace();
 			}
 		
+		if(!option.explanation.isEmpty()){
+			Label stat = new Label(itemInfo, SWT.WRAP);
+			stat.setText("");
+		}
 		for(String str : option.explanation){
 			Label exp = new Label(itemInfo, SWT.WRAP);
 			exp.setText(str);
@@ -554,7 +592,7 @@ public class MakeComposite {
 		String strength;
 		Label stat;
 		
-		strength = String.valueOf(s.stat.getStatToDouble());
+		strength = String.format("%.1f", s.stat.getStatToDouble());
 		if(s.stat instanceof ElementInfo && strength.equals("0.0"));
 		else if(s.stat instanceof SkillStatusInfo && strength.equals("0.0"));
 		else{
