@@ -300,6 +300,7 @@ public class DungeonUI extends DnFComposite{
 		dealChart.setMonster(trainingRoom.getMonster());
 		dealChart.renew();
 		trainingRoom.renew();
+		buffInventory.renew();
 	}
 	
 	public void disposeContent()
@@ -325,7 +326,7 @@ public class DungeonUI extends DnFComposite{
         public void create() {
                 super.create();
                 setTitle("아이템 세팅 저장");
-                setMessage("현제 아이템 세팅을 복제하여 저장합니다", IMessageProvider.INFORMATION);
+                setMessage("현재 아이템 세팅을 복제하여 저장합니다", IMessageProvider.INFORMATION);
         }
 
         @Override

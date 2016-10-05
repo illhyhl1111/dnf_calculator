@@ -3,6 +3,10 @@ package dnf_InterfacesAndExceptions;
 public enum Job implements java.io.Serializable
 {
 	LAUNCHER_F(Character_type.GUNNER_F),
+	CRUSADER(Character_type.PRIEST),
+	NENMASTER_F(Character_type.FIGHTER_F), GRAPPLER_F(Character_type.FIGHTER_F),
+	WEAPONMASTER(Character_type.SWORDMAN_M),
+	DARKTEMPELER(Character_type.SWORDMAN_F),
 	
 	
 	UNIMPLEMENTED(Character_type.NONE),
@@ -12,7 +16,9 @@ public enum Job implements java.io.Serializable
 	UNIMPLEMENTED_MAGE(Character_type.MAGE_F),
 	UNIMPLEMENTED_PRIEST(Character_type.PRIEST),
 	UNIMPLEMENTED_THIEF(Character_type.THIEF),
-	UNIMPLEMENTED_DEMONICLANCER(Character_type.DEMONICLANCER);
+	UNIMPLEMENTED_DEMONICLANCER(Character_type.DEMONICLANCER),
+	
+	NONE(Character_type.NONE);
 	
 	Job(Character_type type)
 	{

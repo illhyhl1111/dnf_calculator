@@ -1,5 +1,6 @@
 package dnf_UI_32;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 
 import org.eclipse.swt.SWT;
@@ -13,13 +14,12 @@ import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_class.Buff;
 import dnf_class.Characters;
 import dnf_class.IconObject;
-import dnf_class.Item;
 import dnf_class.Skill;
 
 public class BuffInventory extends DnFComposite{
-	LinkedList<Buff> itemList;
-	LinkedList<Skill> passiveList;
-	LinkedList<Skill> buffList;
+	HashSet<Buff> itemSet;
+	HashSet<Skill> passiveSet;
+	HashSet<Buff> buffSet;
 	ItemButton<IconObject>[] inventoryList;
 	final static int inventoryCol=17;
 	final static int inventoryRow=3;
@@ -58,53 +58,66 @@ public class BuffInventory extends DnFComposite{
 		setInventoryBlocks(background);
 	}
 	
+	private <T extends IconObject> HashSet<T> getBuffListToSet(LinkedList<T> list)
+	{
+		HashSet<T> set = new HashSet<T>();
+		for(T item : list)
+			set.add(item);
+		
+		return set;
+	}
+	
 	private void setInventoryBlocks(Composite background)
 	{	
-		itemList = character.userItemList.getAllBuffList();
-		passiveList = character.getBuffSkillList();
-		buffList = trainingRoom.getBuffList();
-		LinkedList<LinkedList<? extends IconObject>> allList = new LinkedList<LinkedList<? extends IconObject>>();
-		allList.add(itemList);
-		allList.add(passiveList);
-		allList.add(buffList);
+		itemSet = getBuffListToSet(character.userItemList.getAllBuffList());
+		passiveSet = getBuffListToSet(character.getBuffSkillList());
+		buffSet = getBuffListToSet(trainingRoom.getBuffList());
+		LinkedList<HashSet<? extends IconObject>> allList = new LinkedList<HashSet<? extends IconObject>>();
+		allList.add(itemSet);
+		allList.add(passiveSet);
+		allList.add(buffSet);
 		
 		for(Control control : mainComposite.getChildren())
 			control.dispose();
 		
 		int row=0;
 		int index=0;
-		for(LinkedList<? extends IconObject> list : allList)
+		for(HashSet<? extends IconObject> set : allList)
 		{
-			for(IconObject i : list)
+			for(IconObject i : set)
 			{
 				inventoryList[index] =
 						new ItemButton<IconObject>(mainComposite, i, InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE);
 				
+				if(i instanceof Skill) inventoryList[index].setOnOffImage(!((Skill)i).buffEnabled(true));
+				
 				SetListener listenerGroup = new SetListener(inventoryList[index], character, superInfo, parent);
-				if(i instanceof Item)
+				if(i instanceof Buff)
 					inventoryList[index].getButton().addListener(SWT.MouseEnter, listenerGroup.makeItemInfoListener(background));	// add MouseEnter Event - make composite
 				else if(i instanceof Skill)
 					inventoryList[index].getButton().addListener(SWT.MouseEnter, listenerGroup.makeSkillInfoListener(background));	// add MouseEnter Event - make composite
 				inventoryList[index].getButton().addListener(SWT.MouseExit, listenerGroup.disposeItemInfoListener()); 			// add MouseExit Event - dispose composite
 				inventoryList[index].getButton().addListener(SWT.MouseMove, listenerGroup.moveItemInfoListener());				// add MouseMove Event - move composite
+				inventoryList[index].getButton().addListener(SWT.MouseDown, listenerGroup.buffInventoryClickListener());		// add MouseMove Event - move composite
 				
 				index++;
 			}
 		
 			for(; index/inventoryCol==row; index++){
 				IconObject i;
-				if(row==0) i = new Item();
-				else i = new Skill();
+				if(row==1) i = new Skill();
+				else i = new Buff();
 				inventoryList[index] = new ItemButton<IconObject>(mainComposite, i, InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE, false);
 				
 				SetListener listenerGroup = new SetListener(inventoryList[index], character, superInfo, parent);
 				
-				if(i instanceof Item)
+				if(i instanceof Buff)
 					inventoryList[index].getButton().addListener(SWT.MouseEnter, listenerGroup.makeItemInfoListener(background));	// add MouseEnter Event - make composite
 				else if(i instanceof Skill)
 					inventoryList[index].getButton().addListener(SWT.MouseEnter, listenerGroup.makeSkillInfoListener(background));	// add MouseEnter Event - make composite
 				inventoryList[index].getButton().addListener(SWT.MouseExit, listenerGroup.disposeItemInfoListener()); 			// add MouseExit Event - dispose composite
 				inventoryList[index].getButton().addListener(SWT.MouseMove, listenerGroup.moveItemInfoListener());				// add MouseMove Event - move composite
+				inventoryList[index].getButton().addListener(SWT.MouseDown, listenerGroup.buffInventoryClickListener());		// add MouseMove Event - move composite
 			}
 			
 			row++;
@@ -122,25 +135,26 @@ public class BuffInventory extends DnFComposite{
 
 	@Override
 	public void renew() {
-		passiveList = character.getBuffSkillList();
-		buffList = trainingRoom.getBuffList();
-		LinkedList<LinkedList<? extends IconObject>> allList = new LinkedList<LinkedList<? extends IconObject>>();
-		allList.add(passiveList);
-		allList.add(buffList);
+		passiveSet = getBuffListToSet(character.getBuffSkillList());
+		buffSet = getBuffListToSet(trainingRoom.getBuffList());
+		LinkedList<HashSet<? extends IconObject>> allList = new LinkedList<HashSet<? extends IconObject>>();
+		allList.add(passiveSet);
+		allList.add(buffSet);
 	
 		int row=1;
 		int index=inventoryCol;
-		for(LinkedList<? extends IconObject> list : allList)
+		for(HashSet<? extends IconObject> set : allList)
 		{
-			for(IconObject i : list){
+			for(IconObject i : set){
 				inventoryList[index].setItem(i);
 				inventoryList[index].renewImage(true);
 				index++;
 			}
 		
 			for(; index/inventoryCol==row; index++){
-				inventoryList[index].setItem(new Skill());
-				inventoryList[index].renewImage(true);;
+				if(row==1) inventoryList[index].setItem(new Skill());
+				else inventoryList[index].setItem(new Buff());
+				inventoryList[index].renewImage(true);
 			}
 			row++;
 		}

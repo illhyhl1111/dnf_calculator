@@ -1,6 +1,6 @@
 package dnf_infomation;
 
-import java.util.HashSet;
+import java.util.LinkedList;
 
 import dnf_InterfacesAndExceptions.Item_rarity;
 import dnf_calculator.DoubleStatusInfo;
@@ -8,7 +8,7 @@ import dnf_calculator.StatusInfo;
 import dnf_class.Creature;
 
 public class CreatureInfo {
-	public static void getInfo(HashSet<Creature> creatureList)
+	public static void getInfo(LinkedList<Creature> creatureList)
 	{
 		Creature temp;
 		String icon;

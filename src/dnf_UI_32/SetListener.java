@@ -1,6 +1,8 @@
 package dnf_UI_32;
 
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
@@ -10,16 +12,20 @@ import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 import dnf_InterfacesAndExceptions.InterfaceSize;
-import dnf_InterfacesAndExceptions.ItemFileNotFounded;
 import dnf_InterfacesAndExceptions.Location;
 import dnf_InterfacesAndExceptions.SetName;
+import dnf_class.Buff;
 import dnf_class.Card;
 import dnf_class.Characters;
 import dnf_class.IconObject;
@@ -27,6 +33,7 @@ import dnf_class.Item;
 import dnf_class.Monster;
 import dnf_class.MonsterOption;
 import dnf_class.Skill;
+import dnf_class.SwitchingSkill;
 
 @SuppressWarnings("unchecked")
 public class SetListener {
@@ -165,13 +172,9 @@ public class SetListener {
 						SetName setName = itemButton.getItem().getSetName();
 						ChangeSetOptionStatus changeSet = new ChangeSetOptionStatus(parent.getShell(), setName, character.userItemList);
 						if (Window.OK == changeSet.open()) {
-							try {
-								character.userItemList.setSetOptions(setName, changeSet.setOption);
-								itemButton.setItem(changeItem.item);
-								superInfo.renew();
-							} catch (ItemFileNotFounded e1) {
-								e1.printStackTrace();
-							}				
+							character.userItemList.setSetOptions(setName, changeSet.setOption);
+							itemButton.setItem(changeItem.item);
+							superInfo.renew();			
 						}
 					}
 					else if(result == 3 && inventory!=null)
@@ -309,7 +312,7 @@ public class SetListener {
 	       		GridLayout layout = new GridLayout(1, false);
 	       		layout.verticalSpacing=3;
 	       		itemInfo.setLayout(layout);
-	       		MakeComposite.setSkillInfoComposite(itemInfo, skillButton.getItem(), character.dungeonStatus);
+	       		MakeComposite.setSkillInfoComposite(itemInfo, skillButton.getItem(), character.dungeonStatus, character.isBurning());
 	       		Point itemInfoSize = itemInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 	       		setMousePoint(e, background, itemInfoSize, null);
 	       		itemInfo.setBounds((e.x+x0), (e.y+y0), InterfaceSize.ITEM_INFO_SIZE, itemInfoSize.y);
@@ -375,7 +378,7 @@ public class SetListener {
 			public void handleEvent(Event e) {
 				if(e.button==1){
 					if(TPMode) skillButton.getItem().increaseLevel_char();
-					else skillButton.getItem().masterSkill(character.getLevel());
+					else skillButton.getItem().masterSkill(character.getLevel(), character.hasContract());
 				}
 				else if(e.button==3)
 					if(TPMode) skillButton.getItem().decreaseLevel_char();
@@ -390,7 +393,7 @@ public class SetListener {
 	       		GridLayout layout = new GridLayout(1, false);
 	       		layout.verticalSpacing=3;
 	       		itemInfo.setLayout(layout);
-	       		MakeComposite.setSkillInfoComposite(itemInfo, skillButton.getItem(), character.dungeonStatus);
+	       		MakeComposite.setSkillInfoComposite(itemInfo, skillButton.getItem(), character.dungeonStatus, character.isBurning());
 	       		Point itemInfoSize = itemInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 	       		setMousePoint(e, background, itemInfoSize, null);
 	       		itemInfo.setBounds((e.x+x0), (e.y+y0), InterfaceSize.ITEM_INFO_SIZE, itemInfoSize.y);
@@ -446,6 +449,68 @@ public class SetListener {
 		};
 	}
 	
+	public Listener buffInventoryClickListener()
+	{
+		ItemButton<Buff> itemButton;
+		ItemButton<Skill> skillButton;
+		if(itemButton_wildCard.getItem() instanceof Buff){
+			itemButton = (ItemButton<Buff>) itemButton_wildCard;
+			
+			return new Listener() {
+		         @Override
+		         public void handleEvent(Event e) {
+		        	 if(e.button==3){
+		        		 if(itemButton.getItem().enabled){
+		        			 itemButton.getItem().enabled=false;
+		        			 character.buffList.remove(itemButton.getItem());
+		        		 }
+		        		 else{
+		        			 itemButton.getItem().enabled=true;
+		        			 character.buffList.add(itemButton.getItem());
+		        		 }
+		        		 superInfo.renew();
+		        	 }
+		         }
+			};
+		}
+		else if(itemButton_wildCard.getItem() instanceof Skill){
+			skillButton = (ItemButton<Skill>) itemButton_wildCard;
+			
+			return new Listener() {
+		         @Override
+		         public void handleEvent(Event e) {
+		        	 if(e.button==3){
+		        		 skillButton.getItem().setBuffEnabled(!skillButton.getItem().getBuffEnabled());
+		        		 if(skillButton.getItem().getBuffEnabled()) skillButton.setOnOffImage(false);
+		        		 else skillButton.setOnOffImage(true);
+		        		 superInfo.renew();
+		        	 }
+		         }
+			};
+		}
+		else return null;
+	}
+	
+	public Listener skillModifyListener(String[] statList){
+		ItemButton<SwitchingSkill> skillButton;
+		if(itemButton_wildCard.getItem() instanceof Skill) skillButton = (ItemButton<SwitchingSkill>) itemButton_wildCard;
+		else return null;
+		
+		return new Listener() {
+			@Override
+			public void handleEvent(Event e) {
+				ChangeSkillDialog modifyDialog = new ChangeSkillDialog(parent.getShell(), statList);
+				modifyDialog.create();
+				
+				if (modifyDialog.open() == Window.OK) {
+					double[] num = modifyDialog.getValue();
+					skillButton.getItem().setSkillPercent(num);
+					superInfo.renew();
+				}
+			}
+		};
+	}
+	
 	public void setItemDrag()
 	{
 		ItemButton<Item> itemButton;
@@ -469,4 +534,90 @@ public class SetListener {
 			}
 		});
 	}
+}
+
+
+class ChangeSkillDialog extends TitleAreaDialog {
+
+    private Text[] text;
+    private double[] value;
+    private String[] statName;
+    private Label warning;
+
+    public ChangeSkillDialog(Shell parentShell, String[] statName) {
+    	super(parentShell);
+    	text = new Text[statName.length];
+    	value = new double[statName.length];
+    	this.statName=statName;
+    }
+
+    @Override
+    public void create() {
+            super.create();
+            setTitle("스위칭 스킬 수치 설정");
+            setMessage("스위칭 스킬의 수치를 입력받아 설정합니다", IMessageProvider.INFORMATION);
+    }
+
+    @Override
+    protected Control createDialogArea(Composite parent) {
+            Composite area = (Composite) super.createDialogArea(parent);
+            Composite container = new Composite(area, SWT.NONE);
+            container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+            GridLayout layout = new GridLayout(2, false);
+            container.setLayout(layout);
+
+            createInput(container);
+            warning = new Label(container, SWT.NONE);
+            warning.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 2, 1));
+
+            return area;
+    }
+
+    private void createInput(Composite container) {
+    	for(int i=0; i<statName.length; i++)
+        {
+    		Label lbtFirstName = new Label(container, SWT.NONE);
+            lbtFirstName.setText(statName[i]);
+
+            GridData textData = new GridData();
+            textData.grabExcessHorizontalSpace = true;
+            textData.horizontalAlignment = GridData.FILL;
+
+        	text[i] = new Text(container, SWT.NONE);
+        	text[i].setLayoutData(textData);
+        	text[i].addVerifyListener(new TextInputOnlyNumbers());
+        }
+    }
+    
+    @Override
+    protected boolean isResizable() {
+            return true;
+    }
+
+    // save content of the Text fields because they get disposed
+    // as soon as the Dialog closes
+    private boolean saveInput() {
+    	try{
+        	for(int i=0; i<statName.length; i++)
+        		value[i] = Double.valueOf(text[i].getText());
+    	}catch(NumberFormatException e){
+    		e.printStackTrace();
+    		return false;
+    	}
+    	return true;
+    }
+
+    @Override
+    protected void okPressed() {
+    	if(saveInput())
+    		super.okPressed();
+    	else{
+    		warning.setText("저장할 세팅의 이름은 최대 10글자입니다");
+    	}
+    }
+
+    public double[] getValue() {
+            return value;
+    }
+
 }

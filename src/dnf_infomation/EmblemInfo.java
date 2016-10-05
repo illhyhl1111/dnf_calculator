@@ -1,6 +1,6 @@
 package dnf_infomation;
 
-import java.util.HashSet;
+import java.util.LinkedList;
 
 import dnf_InterfacesAndExceptions.Emblem_type;
 import dnf_InterfacesAndExceptions.Item_rarity;
@@ -9,7 +9,7 @@ import dnf_calculator.StatusInfo;
 import dnf_class.Emblem;
 
 public class EmblemInfo {
-	public static void getInfo(HashSet<Emblem> emblemList)
+	public static void getInfo(LinkedList<Emblem> emblemList)
 	{
 		Emblem temp;
 		Item_rarity rarity;

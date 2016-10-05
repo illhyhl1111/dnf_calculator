@@ -11,7 +11,7 @@ import org.eclipse.swt.widgets.Label;
 
 import dnf_InterfacesAndExceptions.Dimension_stat;
 import dnf_InterfacesAndExceptions.InterfaceSize;
-import dnf_InterfacesAndExceptions.ItemFileNotFounded;
+import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_InterfacesAndExceptions.Location;
 import dnf_InterfacesAndExceptions.Skill_type;
 import dnf_InterfacesAndExceptions.StatList;
@@ -19,6 +19,7 @@ import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 import dnf_InterfacesAndExceptions.UndefinedStatusKey;
 import dnf_calculator.Calculator;
 import dnf_calculator.ElementInfo;
+import dnf_calculator.SkillRangeStatusInfo;
 import dnf_calculator.SkillStatusInfo;
 import dnf_calculator.Status;
 import dnf_calculator.StatusAndName;
@@ -114,7 +115,7 @@ public class MakeComposite {
 		catch (StatusTypeMismatch e) {
 			e.printStackTrace();
 		}
-		catch (ItemFileNotFounded e) {
+		catch (ItemNotFoundedException e) {
 			System.out.println("미구현");
 		}
 	}
@@ -350,7 +351,7 @@ public class MakeComposite {
 		}
 	}
 	
-	public static void setSkillInfoComposite(Composite composite, Skill skill, Status stat)
+	public static void setSkillInfoComposite(Composite composite, Skill skill, Status stat, boolean isBurning)
 	{
 		if(skill.getName().contains("없음"))
 		{
@@ -364,8 +365,8 @@ public class MakeComposite {
 		Label label = new Label(composite, SWT.WRAP);
 		label.setLayoutData(leftData);
 		String name;
-		if(skill.getCharSkillLevel()!=0) name = skill.getName()+" Lv "+ skill.getSkillLevel(true)
-				+"("+skill.getCharSkillLevel()+" + "+ (skill.getSkillLevel(true)-skill.getCharSkillLevel())+")";
+		if(skill.getCharSkillLevel()!=0) name = skill.getName()+" Lv "+ skill.getSkillLevel(true, isBurning)
+				+"("+skill.getCharSkillLevel()+" + "+ (skill.getSkillLevel(true, isBurning)-skill.getCharSkillLevel())+")";
 		else name = skill.getName()+ "Lv 0";
 		label.setText(name);
 		if(skill.type==Skill_type.PASSIVE)
@@ -378,7 +379,7 @@ public class MakeComposite {
 		leftData.widthHint=InterfaceSize.SKILL_INFO_SIZE-10;
 		label.setLayoutData(leftData);
 		
-		SkillLevelInfo skillInfo = skill.getSkillLevelInfo(true);
+		SkillLevelInfo skillInfo = skill.getSkillLevelInfo(true, isBurning);
 		
 		if(skillInfo.phy_atk!=0 || skillInfo.phy_fix!=0){
 			label = new Label(composite, SWT.WRAP);
@@ -438,8 +439,11 @@ public class MakeComposite {
 			leftData = new GridData(SWT.FILL, SWT.TOP, true, false);
 			leftData.widthHint=InterfaceSize.SKILL_INFO_SIZE-10;
 			label.setLayoutData(leftData);
-			label.setText("\nLv "+skill.getSkillLevel(true)+" 에 대한 정보가 기록되어있지 않습니다. 대충 가장 가까운 레벨로 추정합니다.");
+			label.setText("\nLv "+skill.getSkillLevel(true, isBurning)+" 에 대한 정보가 기록되어있지 않습니다. 가장 가까운 레벨로 추정합니다.");
 			label.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+			
+			label = new Label(composite, SWT.WRAP);
+			label.setText("");
 		}
 		
 		if(!skill.explanation.isEmpty()){
@@ -458,7 +462,7 @@ public class MakeComposite {
 			label.setText("");
 		}
 		
-		composite.setSize(composite.computeSize(InterfaceSize.SKILL_INFO_SIZE, SWT.NONE));
+		//composite.setSize(composite.computeSize(InterfaceSize.SKILL_INFO_SIZE, SWT.NONE));
 		
 	}
 	
@@ -618,6 +622,11 @@ public class MakeComposite {
 			if(!s.enabled)
 				stat.setText(stat.getText()+"(옵션 꺼짐)");
 			
+			if(s.stat instanceof SkillRangeStatusInfo && ((SkillRangeStatusInfo)s.stat).getTP())
+			{
+				stat.setText("TP 스킬 : "+stat.getText());
+			}
+			
 			stat.setForeground(textColor);
 		}
 		
@@ -655,7 +664,7 @@ public class MakeComposite {
 			GridData gridData = new GridData();
 			gridData.widthHint=xSize;
 			stat.setLayoutData(gridData);
-			stat.setText(s.stat.getStatToString()+" 데미지 증가 + "+((SkillStatusInfo)s.stat).getIncrease());		
+			stat.setText(s.stat.getStatToString()+" 데미지 증가 + "+ String.format("%.1f", ((SkillStatusInfo)s.stat).getIncrease()));		
 			stat.setEnabled(enable && s.enabled);
 			if(!s.enabled)
 				stat.setText(stat.getText()+"(옵션 꺼짐)");

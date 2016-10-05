@@ -18,7 +18,6 @@ import org.eclipse.swt.widgets.Control;
 import dnf_InterfacesAndExceptions.Emblem_type;
 import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.InterfaceSize;
-import dnf_InterfacesAndExceptions.ItemFileNotFounded;
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_InterfacesAndExceptions.Location;
 import dnf_class.Card;
@@ -194,7 +193,7 @@ public class Inventory extends DnFComposite
 									dialog.open();
 								}
 							}
-						} catch (ItemFileNotFounded e) {
+						} catch (ItemNotFoundedException e) {
 							e.printStackTrace();
 						}
 					}
@@ -226,7 +225,7 @@ public class Inventory extends DnFComposite
 									    MessageDialog.ERROR, new String[] { "납득" }, 0);
 								dialog.open();
 							}
-						} catch (ItemFileNotFounded e) {
+						} catch (ItemNotFoundedException e) {
 							e.printStackTrace();
 						}
 					}

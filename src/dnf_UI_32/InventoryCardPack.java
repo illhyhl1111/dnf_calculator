@@ -110,14 +110,14 @@ public class InventoryCardPack extends DnFComposite
 		LinkedList<?>[] itemList = new LinkedList<?>[equipList.length+3];
 		for(int i=0; i<equipList.length; i++)
 			itemList[i]=equipList[i];
-		itemList[equipList.length] = character.userItemList.getHashSetToLinkedList(character.userItemList.avatarList);
-		itemList[equipList.length+1] = character.userItemList.getHashSetToLinkedList(character.userItemList.creatureList);
-		itemList[equipList.length+2] = character.userItemList.getHashSetToLinkedList(character.userItemList.drapeList); 
+		itemList[equipList.length] = character.userItemList.getSortedList(character.userItemList.avatarList);
+		itemList[equipList.length+1] = character.userItemList.getSortedList(character.userItemList.creatureList);
+		itemList[equipList.length+2] = character.userItemList.getSortedList(character.userItemList.drapeList); 
 		
 		LinkedList<?>[] userItemList = new LinkedList<?>[equipList.length+3];
 		for(int i=0; i<userEquipList.length; i++)
 			userItemList[i]=userEquipList[i];
-		userItemList[userEquipList.length] = character.userItemList.getHashSetToLinkedList(character.userItemList.avatarList_user);
+		userItemList[userEquipList.length] = character.userItemList.getSortedList(character.userItemList.avatarList_user);
 		userItemList[userEquipList.length+1] = new LinkedList<Creature>();
 		userItemList[userEquipList.length+2] = new LinkedList<Drape>(); 
 		
@@ -191,15 +191,15 @@ public class InventoryCardPack extends DnFComposite
 		inventoryTabList = new TabItem[inventoryListNum]; 
 		pack = new Composite[inventoryListNum];
 		LinkedList<?>[] itemList = {
-				character.userItemList.getHashSetToLinkedList(character.userItemList.avatarList),
-				character.userItemList.getHashSetToLinkedList(character.userItemList.creatureList),
-				character.userItemList.getHashSetToLinkedList(character.userItemList.drapeList)}; 
+				character.userItemList.getSortedList(character.userItemList.avatarList),
+				character.userItemList.getSortedList(character.userItemList.creatureList),
+				character.userItemList.getSortedList(character.userItemList.drapeList)}; 
 		LinkedList<?>[] cardList = {
-				character.userItemList.getHashSetToLinkedList(character.userItemList.emblemList),
+				character.userItemList.getSortedList(character.userItemList.emblemList),
 				new LinkedList<Item>(), 
-				character.userItemList.getHashSetToLinkedList(character.userItemList.jamList) };
+				character.userItemList.getSortedList(character.userItemList.jamList) };
 		LinkedList<?>[] userItemList = {
-				character.userItemList.getHashSetToLinkedList(character.userItemList.avatarList_user),
+				character.userItemList.getSortedList(character.userItemList.avatarList_user),
 				new LinkedList<Creature>(),
 				new LinkedList<Drape>() 
 		};

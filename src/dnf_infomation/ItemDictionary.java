@@ -7,11 +7,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedList;
 
 import dnf_InterfacesAndExceptions.Equip_part;
-import dnf_InterfacesAndExceptions.ItemFileNotFounded;
+import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_InterfacesAndExceptions.Job;
 import dnf_InterfacesAndExceptions.ParsingException;
 import dnf_InterfacesAndExceptions.SetName;
@@ -25,6 +24,7 @@ import dnf_class.Equipment;
 import dnf_class.Item;
 import dnf_class.ItemConstraint;
 import dnf_class.Jam;
+import dnf_class.PartyCharacter;
 import dnf_class.SetOption;
 import dnf_class.Setting;
 import dnf_class.Title;
@@ -36,25 +36,26 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 	 * 
 	 */
 	private static final long serialVersionUID = -4213722159864758338L;
-	public final HashSet<Equipment> equipList;
-	public final HashSet<Title> titleList;
-	public final HashSet<SetOption> setOptionList;
-	public final HashSet<Card> cardList;
-	public final HashSet<Avatar> avatarList;
-	public final HashSet<Creature> creatureList;
-	public final HashSet<Drape> drapeList;
-	public final HashSet<Emblem> emblemList;
-	public final HashSet<Jam> jamList;
-	public final HashSet<Buff> buffList;
+	public final LinkedList<Equipment> equipList;
+	public final LinkedList<Title> titleList;
+	public final LinkedList<SetOption> setOptionList;
+	public final LinkedList<Card> cardList;
+	public final LinkedList<Avatar> avatarList;
+	public final LinkedList<Creature> creatureList;
+	public final LinkedList<Drape> drapeList;
+	public final LinkedList<Emblem> emblemList;
+	public final LinkedList<Jam> jamList;
+	public final LinkedList<Buff> buffList;
+	public final LinkedList<PartyCharacter> partyList;
 	
-	public final HashSet<Equipment> equipList_user;
-	public final HashSet<Title> titleList_user;
-	public final HashSet<Avatar> avatarList_user;
-	public final HashSet<Setting> settingList;
+	public final LinkedList<Equipment> equipList_user;
+	public final LinkedList<Title> titleList_user;
+	public final LinkedList<Avatar> avatarList_user;
+	public final LinkedList<Setting> settingList;
 	
 	public ItemDictionary() 
 	{
-		equipList = new HashSet<Equipment>();	
+		equipList = new LinkedList<Equipment>();	
 		
 		try {
 			EquipmentInfo.getInfo(equipList, EquipmentInfo.equipmentInfo());
@@ -63,54 +64,37 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 			e.printStackTrace();
 		}
 		
-		//EquipInfo_sword.getInfo(equipList);
-		//EquipInfo_fighter.getInfo(equipList);
-		//WeaponInfo_gun.getInfo(equipList);
-		//EquipInfo_mage.getInfo(equipList);
-		//EquipInfo_priest.getInfo(equipList);
-		//EquipInfo_thief.getInfo(equipList);
-		//EquipInfo_lance.getInfo(equipList);
-		
-		/*EquipInfo_fabric.getInfo(equipList);
-		EquipInfo_leather.getInfo(equipList);
-		EquipInfo_mail.getInfo(equipList);
-		EquipInfo_plate.getInfo(equipList);
-		
-		EquipInfo_necklace.getInfo(equipList);
-		EquipInfo_bracelet.getInfo(equipList);
-		EquipInfo_ring.getInfo(equipList);
-		EquipInfo_aidEquipment.getInfo(equipList);
-		EquipInfo_magicStone.getInfo(equipList);
-		EquipInfo_earring.getInfo(equipList);*/
-		
-		titleList = new HashSet<Title>();	
+		titleList = new LinkedList<Title>();	
 		TitleInfo.getInfo(titleList);
 		
-		setOptionList = new HashSet<SetOption>();
+		setOptionList = new LinkedList<SetOption>();
 		SetOptionInfo.getInfo(setOptionList);
 		
-		cardList = new HashSet<Card>();
+		cardList = new LinkedList<Card>();
 		CardInfo.getInfo(cardList);
 		
-		avatarList = new HashSet<Avatar>();
+		avatarList = new LinkedList<Avatar>();
 		AvatarInfo.getInfo(avatarList);
 		
-		creatureList = new HashSet<Creature>();
+		creatureList = new LinkedList<Creature>();
 		CreatureInfo.getInfo(creatureList);
 		
-		drapeList = new HashSet<Drape>();
+		drapeList = new LinkedList<Drape>();
 		
-		emblemList = new HashSet<Emblem>();
+		emblemList = new LinkedList<Emblem>();
 		EmblemInfo.getInfo(emblemList);
 		
-		jamList = new HashSet<Jam>();
+		jamList = new LinkedList<Jam>();
 		
-		buffList = new HashSet<Buff>();
+		buffList = new LinkedList<Buff>();
 		
-		equipList_user = new HashSet<Equipment>();
-		titleList_user = new HashSet<Title>();
-		avatarList_user = new HashSet<Avatar>();
-		settingList = new HashSet<Setting>();
+		partyList = new LinkedList<PartyCharacter>();
+		PartyCharacterInfo.getInfo(partyList);
+		
+		equipList_user = new LinkedList<Equipment>();
+		titleList_user = new LinkedList<Title>();
+		avatarList_user = new LinkedList<Avatar>();
+		settingList = new LinkedList<Setting>();
 	}
 	
 	public LinkedList<Item> getVaultItemList(Job job)
@@ -170,7 +154,7 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 			list[i] = new LinkedList<Item>();
 		
 		int i;
-		HashSet<Equipment> equipList;
+		LinkedList<Equipment> equipList;
 		if(getUserItemMode) equipList = equipList_user;
 		else equipList=this.equipList;
 		for(Equipment e : equipList){
@@ -216,71 +200,84 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 			list.add(e);
 		//for(Item e : etcList)
 			//list.add(e);
+		Collections.sort(list);
 		return list;
 	}
 	
 	public LinkedList<Buff> getAllBuffList()
 	{
-		LinkedList<Buff> list = new LinkedList<Buff>();
-		for(Buff b : buffList)
-			list.add(b);
+		Collections.sort(buffList);
+		return buffList;
+	}
+	
+	public LinkedList<PartyCharacter> getPartyList(Job job)
+	{
+		LinkedList<PartyCharacter> list = new LinkedList<PartyCharacter>();
+		for(PartyCharacter b : partyList)
+			if(b.job!=job) list.add(b);					//TODO 홀리제외
 		
-		Collections.sort(list);
 		return list;
 	}
 		
-	public Equipment getEquipment(String name) throws ItemFileNotFounded
+	public Equipment getEquipment(String name) throws ItemNotFoundedException
 	{
 		for(Equipment e : equipList)
 			if(e.getName().equals(name)) return e;
 		for(Equipment e : equipList_user)
 			if(e.getName().equals(name)) return e;
-		throw new ItemFileNotFounded(name);
+		throw new ItemNotFoundedException(name);
 	}
 	
-	public Title getTitle(String name) throws ItemFileNotFounded
+	public Title getTitle(String name) throws ItemNotFoundedException
 	{
 		for(Title t : titleList)
 			if(t.getName().equals(name)) return t;
 		for(Title t : titleList_user)
 			if(t.getName().equals(name)) return t;
-		throw new ItemFileNotFounded(name);
+		throw new ItemNotFoundedException(name);
 	}
 	
-	public Card getCard(String name) throws ItemFileNotFounded
+	public Card getCard(String name) throws ItemNotFoundedException
 	{
 		for(Card e : cardList)
 			if(e.getName().equals(name)) return e;
-		throw new ItemFileNotFounded(name);
+		throw new ItemNotFoundedException(name);
 	}
 	
-	public LinkedList<SetOption> getSetOptions(SetName setName) throws ItemFileNotFounded
+	public PartyCharacter getPartyCharacter(String name) throws ItemNotFoundedException
+	{
+		for(PartyCharacter p : partyList)
+			if(p.getName().equals(name)) return p;
+		throw new ItemNotFoundedException(name);
+	}
+	
+	public LinkedList<SetOption> getSetOptions(SetName setName) throws ItemNotFoundedException
 	{
 		LinkedList<SetOption> temp = new LinkedList<SetOption>();
 		for(SetOption s : setOptionList)
 			if(s.getSetName()==setName) temp.add(s);
 		
-		if(temp.isEmpty()) throw new ItemFileNotFounded(setName.toString());
+		if(temp.isEmpty()) throw new ItemNotFoundedException(setName.toString());
 		Collections.sort(temp);
 		return temp;
 	}
 	
-	public Emblem getEmblem(String name) throws ItemFileNotFounded
+	public Emblem getEmblem(String name) throws ItemNotFoundedException
 	{
 		for(Emblem e : emblemList)
 			if(e.getName().equals(name)) return e;
-		throw new ItemFileNotFounded(name);
+		throw new ItemNotFoundedException(name);
 	}
 	
-	public Avatar getAvatar(String name) throws ItemFileNotFounded {
+	public Avatar getAvatar(String name) throws ItemNotFoundedException {
 		for(Avatar a : avatarList)
 			if(a.getName().equals(name)) return a;
 		for(Avatar a : avatarList_user)
 			if(a.getName().equals(name)) return a;
-		throw new ItemFileNotFounded(name);
+		throw new ItemNotFoundedException(name);
 	}
 	
-	public void setSetOptions(SetName setName, LinkedList<SetOption> list) throws ItemFileNotFounded
+	public void setSetOptions(SetName setName, LinkedList<SetOption> list)
 	{
 		for(SetOption s : setOptionList)
 		{
@@ -303,7 +300,7 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 		return true;
 	}
 	
-	public <T extends Item> LinkedList<Item> getHashSetToLinkedList(HashSet<T> set)
+	public <T extends Item> LinkedList<Item> getSortedList(LinkedList<T> set)
 	{
 		LinkedList<Item> aList = new LinkedList<Item>();
 		for(T t : set)
@@ -317,7 +314,7 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 	{
 		if(leftInventoryButtonNum<=0) return null;
 		
-		HashSet<? extends Item> itemList;
+		LinkedList<? extends Item> itemList;
 		if(item instanceof Equipment) itemList=equipList_user;
 		else if(item instanceof Title) itemList=titleList_user;
 		else if(item instanceof Avatar) itemList=avatarList_user;

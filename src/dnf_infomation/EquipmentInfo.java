@@ -1,7 +1,7 @@
 package dnf_infomation;
 
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.LinkedList;
 
 import dnf_InterfacesAndExceptions.Character_type;
 import dnf_InterfacesAndExceptions.Element_type;
@@ -27,7 +27,7 @@ import dnf_calculator.StatusList;
 
 public class EquipmentInfo {
 	
-	public static void getInfo(HashSet<Equipment> equipList, Object[] data) throws ParsingException
+	public static void getInfo(LinkedList<Equipment> equipList, Object[] data) throws ParsingException
 	{
 		int i=0;
 		String name=null;
@@ -507,7 +507,7 @@ public class EquipmentInfo {
 				"리엑터 코어 메일", "", Equip_part.ROBE, "", SetName.NONE, 90, "",
 				"힘 48 가변", "지능 35 가변", "증뎀 12", "크증뎀 10", null,
 				"익스포젼 헤비 각반", "", "--", "", "", "", "",
-				"힘 48 가변", "지능 35 가변", "모공증 15 선택", "스증 15 선택", fStat[0], "설명 옵션 2개 모두 선택시 스증옵션만 적용", null,
+				"힘 48 가변", "지능 35 가변", "ㄷ 모공증 15 선택", "ㄷ 스증 15 선택", fStat[0], "설명 옵션 2개 모두 선택시 스증옵션만 적용", null,
 				"컨테미네이션 폴드런", "", "--", "", "", "", "",
 				"힘 122 가변", "지능 111 가변", "모공증 12 선택", null,
 				"퓨어로드 코일", "", "--", "", "", "", "",
@@ -815,7 +815,7 @@ public class EquipmentInfo {
 				{
 					if(skill.getName().equals("충전 레이저 라이플")){
 						try {
-							percent = skill.getSkillLevelInfo(true).stat.statList.getFirst().stat.getStatToDouble();
+							percent = skill.getSkillLevelInfo(true, character.isBurning()).stat.statList.getFirst().stat.getStatToDouble();
 							break;
 						} catch (StatusTypeMismatch e) {
 							e.printStackTrace();

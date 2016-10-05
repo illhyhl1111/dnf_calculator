@@ -3,7 +3,6 @@ package dnf_infomation;
 import java.io.*;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 
 import org.eclipse.swt.graphics.Image;
@@ -11,14 +10,16 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.widgets.Display;
 
+import dnf_class.Buff;
 import dnf_class.Card;
 import dnf_class.Equipment;
 import dnf_class.Item;
+import dnf_class.PartyCharacter;
 import dnf_class.SetOption;
 import dnf_class.Skill;
 import dnf_InterfacesAndExceptions.InterfaceSize;
-import dnf_InterfacesAndExceptions.ItemFileNotFounded;
 import dnf_InterfacesAndExceptions.ItemFileNotReaded;
+import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_InterfacesAndExceptions.Item_rarity;
 import dnf_InterfacesAndExceptions.Job;
 import dnf_InterfacesAndExceptions.SetName;
@@ -97,7 +98,7 @@ public class GetDictionary
 		}
 		
 		//기타등등
-		LinkedList<HashSet<? extends Item>> list = new LinkedList<HashSet<? extends Item>>(); 
+		LinkedList<LinkedList<? extends Item>> list = new LinkedList<LinkedList<? extends Item>>(); 
 		list.add(itemDictionary.avatarList);
 		list.add(itemDictionary.cardList);
 		list.add(itemDictionary.creatureList);
@@ -105,8 +106,9 @@ public class GetDictionary
 		list.add(itemDictionary.emblemList);
 		list.add(itemDictionary.jamList);
 		list.add(itemDictionary.titleList);
+		list.add(itemDictionary.buffList);
 		
-		for(HashSet<? extends Item> list2 : list)
+		for(LinkedList<? extends Item> list2 : list)
 		{
 			for(Item item : list2){
 				String icon = item.getIcon();
@@ -115,6 +117,23 @@ public class GetDictionary
 				iconDictionary.put(item.getName(), resizeImage(image, InterfaceSize.INFO_BUTTON_SIZE));
 				image.dispose();
 			}	
+		}
+		
+		for(PartyCharacter party : itemDictionary.partyList)
+		{
+			for(HashMap<String, Buff> entry : party.getBuffHash().values())
+			{
+				Buff buff = entry.values().iterator().next();
+				String icon = buff.getIcon();
+				image = new Image(Display.getCurrent(), icon);
+				iconDictionary.put(buff.getName(), resizeImage(image, InterfaceSize.INFO_BUTTON_SIZE));
+				image.dispose();
+				
+				icon = buff.getDisabledIcon();
+				image = new Image(Display.getCurrent(), icon);
+				iconDictionary.put(buff.getDisabledName(), resizeImage(image, InterfaceSize.INFO_BUTTON_SIZE));
+				image.dispose();
+			}
 		}
 		
 		//스킬
@@ -150,24 +169,24 @@ public class GetDictionary
 		return new Image(Display.getCurrent(), data);
 	}
 	
-	public static Equipment getEquipment(String name) throws ItemFileNotReaded, ItemFileNotFounded
+	public static Equipment getEquipment(String name) throws ItemFileNotReaded, ItemNotFoundedException
 	{
 		if(!readed) throw new ItemFileNotReaded();
 		return itemDictionary.getEquipment(name);
 	}
 	
-	public static Card getCard(String name) throws ItemFileNotReaded, ItemFileNotFounded
+	public static Card getCard(String name) throws ItemFileNotReaded, ItemNotFoundedException
 	{
 		if(!readed) throw new ItemFileNotReaded();
 		return itemDictionary.getCard(name);
 	}
 	
-	public static Item getTitle(String name) throws ItemFileNotFounded, ItemFileNotReaded {
+	public static Item getTitle(String name) throws ItemNotFoundedException, ItemFileNotReaded {
 		if(!readed) throw new ItemFileNotReaded();
 		return itemDictionary.getTitle(name);
 	}
 	
-	public static LinkedList<SetOption> getSetOptions(SetName setName) throws ItemFileNotReaded, ItemFileNotFounded
+	public static LinkedList<SetOption> getSetOptions(SetName setName) throws ItemFileNotReaded, ItemNotFoundedException
 	{
 		if(!readed) throw new ItemFileNotReaded();
 		return itemDictionary.getSetOptions(setName);

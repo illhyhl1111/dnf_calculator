@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
 import dnf_InterfacesAndExceptions.Dimension_stat;
-import dnf_InterfacesAndExceptions.ItemFileNotFounded;
+import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_InterfacesAndExceptions.ItemFileNotReaded;
 import dnf_InterfacesAndExceptions.StatList;
 import dnf_InterfacesAndExceptions.StatusTypeMismatch;
@@ -89,7 +89,7 @@ public class ChangeItemStatus extends Dialog{
 			else if(item instanceof Title) originalItem=GetDictionary.getTitle(item.getItemName());
 			else if(item instanceof Card) originalItem=GetDictionary.getCard(item.getItemName());
 			else originalItem=null;
-		} catch (ItemFileNotReaded | ItemFileNotFounded e) {
+		} catch (ItemFileNotReaded | ItemNotFoundedException e) {
 			e.printStackTrace();
 		}
 		vStatEntry = new LinkedList<Entry<Integer, Wrapper>>();

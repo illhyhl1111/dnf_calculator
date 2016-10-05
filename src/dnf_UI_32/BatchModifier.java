@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Spinner;
 import dnf_InterfacesAndExceptions.Dimension_stat;
 import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.InterfaceSize;
-import dnf_InterfacesAndExceptions.ItemFileNotFounded;
+import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_InterfacesAndExceptions.UnknownInformationException;
 import dnf_class.Card;
 import dnf_class.Characters;
@@ -48,7 +48,6 @@ public class BatchModifier extends Dialog {
 	final Characters character;
 	final InventoryCardPack inventory;
 	final UserInfo userInfo;
-	Point itemInfoSize;
 	Point contentSize;
 	Equipment[] equipList;
 	
@@ -438,7 +437,7 @@ public class BatchModifier extends Dialog {
 								    MessageDialog.ERROR, new String[] { "납득" }, 0);
 							dialog.open();
 						}
-					} catch (ItemFileNotFounded e) {
+					} catch (ItemNotFoundedException e) {
 						e.printStackTrace();
 					}
 				}

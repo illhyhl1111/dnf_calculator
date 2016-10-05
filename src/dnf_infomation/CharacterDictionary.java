@@ -31,7 +31,7 @@ public class CharacterDictionary implements java.io.Serializable, Cloneable
 	{
 		skillList = new HashSet<Skill>();
 		try {
-			SkillInfo_gunner.getInfo(skillList, SkillInfo_gunner.skillInfo());
+			SkillInfo.getInfo(skillList, SkillInfo.skillInfo_gunner());
 		} catch (ParsingException e) {
 			e.printStackTrace();
 		}
@@ -48,7 +48,7 @@ public class CharacterDictionary implements java.io.Serializable, Cloneable
 		LinkedList<Skill> list = new LinkedList<Skill>();
 		for(Skill s : skillList){
 			if(s.isSkillOfChar(job)){
-				s.masterSkill(level);
+				s.masterSkill(level, true);
 				list.add(s);
 			}
 		}

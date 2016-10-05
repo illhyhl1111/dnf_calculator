@@ -29,8 +29,6 @@ public class AvatarModifier extends Dialog {
 	Shell shell;
 	final Characters character;
 	final UserInfo userInfo;
-	Composite itemInfo;
-	Point itemInfoSize;
 	Point contentSize;
 	
 	public AvatarModifier(Shell shell, Characters character, UserInfo userInfo)

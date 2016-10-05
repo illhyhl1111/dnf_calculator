@@ -23,6 +23,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 import dnf_InterfacesAndExceptions.InterfaceSize;
+import dnf_InterfacesAndExceptions.Skill_type;
+import dnf_calculator.StatusAndName;
 import dnf_class.Characters;
 import dnf_class.Skill;
 
@@ -34,6 +36,8 @@ public class SkillTree extends Dialog{
 	int[] skillLevel;
 	Point contentSize;
 	DnFComposite superInfo;
+	Button burningButton;
+	Button contractButton;
 	
 	public SkillTree(Shell parent, Characters character, DnFComposite superInfo)
 	{
@@ -138,6 +142,14 @@ public class SkillTree extends Dialog{
 				button.getButton().addListener(SWT.MouseExit, listenerGroup.disposeItemInfoListener()); 		// add MouseExit Event - dispose composite
 				button.getButton().addListener(SWT.MouseMove, listenerGroup.moveItemInfoListener());			// add MouseMove Event - move composite
 				button.getButton().addListener(SWT.MouseDown, listenerGroup.skillLevelModifyListener(this.getShell(), false));
+				if(button.getItem().type==Skill_type.SWITCHING) {
+					LinkedList<StatusAndName> statlist = button.getItem().getSkillLevelInfo(true, false).stat.statList;
+					String[] statList = new String[statlist.size()];
+					int j=0;
+					for(StatusAndName s : statlist)
+						statList[j++] = StatusAndName.getStatHash().get(s.name);
+					button.getButton().addListener(SWT.MouseDoubleClick, listenerGroup.skillModifyListener(statList));
+				}
 			}
 			index++;
 			upButton = leftButton;
@@ -163,6 +175,30 @@ public class SkillTree extends Dialog{
 			
 			TPSkillList.add(temp);
 		}
+		
+		Group contractSetGroup = new Group(content, SWT.NONE);
+		contractSetGroup.setData(new RowData());
+		GridLayout contractLayout = new GridLayout(2, false);
+		contractLayout.marginLeft=20;
+		contractSetGroup.setLayout(contractLayout);
+		contractSetGroup.setText("달계 / 버닝 설정");
+		
+		Label setTP = new Label(contractSetGroup, SWT.NONE);
+		setTP.setText("달계 설정");
+		setTP.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
+		
+		contractButton = new Button(contractSetGroup, SWT.CHECK);
+		contractButton.setText("설정");
+		contractButton.setSelection(character.hasContract());
+		
+		Label setBurning = new Label(contractSetGroup, SWT.NONE);
+		setBurning.setText("버닝 설정");
+		setBurning.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
+		
+		burningButton = new Button(contractSetGroup, SWT.CHECK);
+		burningButton.setText("설정");
+		burningButton.setSelection(character.isBurning());
+		
 		
 		contentSize = content.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		
@@ -190,9 +226,20 @@ public class SkillTree extends Dialog{
 	{
 		LinkedList<Skill> list = new LinkedList<Skill>();
 		
-		for(LinkedList<ItemButton<Skill>> l1 : skillListByLevel)
-			for(ItemButton<Skill> l2 : l1)
+		character.setBurning(burningButton.getSelection());
+		boolean contractChanged = (character.hasContract() != contractButton.getSelection());
+		if(contractChanged)
+			character.setContract(contractButton.getSelection());
+		
+		for(LinkedList<ItemButton<Skill>> l1 : skillListByLevel){
+			for(ItemButton<Skill> l2 : l1){
+				if(contractChanged){
+					Skill skill = l2.getItem();
+					if(skill.getActiveEnabled()) skill.masterSkill(character.getLevel(), contractButton.getSelection());
+				}
 				list.add(l2.getItem());
+			}
+		}
 		
 		for(ItemButton<Skill> l1 : TPSkillList)
 			list.add(l1.getItem());

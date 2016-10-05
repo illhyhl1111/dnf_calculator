@@ -34,7 +34,7 @@ public class CalculatorUITest {
 		    Sleak sleak = new Sleak();
 		    sleak.open();
 		}
-		else display = new Display(); 
+		else display = new Display();
 		
 		GetDictionary.readFile(Job.LAUNCHER_F);
 		Characters character = new Characters(90, Job.LAUNCHER_F, "여런처");
@@ -42,7 +42,14 @@ public class CalculatorUITest {
 		Shell shell = new Shell(display);
 		final StackLayout stackLayout = new StackLayout();
 		shell.setLayout(stackLayout);
-		shell.setMaximized(true);
+		if(display.getBounds().height==900 && display.getBounds().width==1600){
+			shell.setMinimumSize(1600, 900);
+			shell.setMaximized(true);
+		}
+		else{
+			shell.setMinimumSize(1600, 900);
+			shell.setBounds(0, 0, 1600, 900);
+		}
 		
 		VillageUI villageUI = new VillageUI(shell, character);
 		DungeonUI dungeonUI = new DungeonUI(shell, character);
@@ -146,7 +153,14 @@ class CalculatorUILoad
 			Shell shell = new Shell(display);
 			final StackLayout stackLayout = new StackLayout();
 			shell.setLayout(stackLayout);
-			shell.setMaximized(true);
+			if(display.getBounds().height==900 && display.getBounds().width==1600){
+				shell.setMinimumSize(1600, 900);
+				shell.setMaximized(true);
+			}
+			else{
+				shell.setMinimumSize(1600, 900);
+				shell.setBounds(0, 0, 1600, 900);
+			}
 	        
 			VillageUI villageUI = new VillageUI(shell, character);
 			DungeonUI dungeonUI = new DungeonUI(shell, character);

@@ -1,6 +1,5 @@
 package dnf_infomation;
-
-import java.util.HashSet;
+import java.util.LinkedList;
 
 import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.Item_rarity;
@@ -10,7 +9,7 @@ import dnf_calculator.StatusInfo;
 import dnf_class.Card;
 
 public class CardInfo {
-	public static void getInfo(HashSet<Card> cardList)
+	public static void getInfo(LinkedList<Card> cardList)
 	{
 		Card temp;
 		Item_rarity rarity;

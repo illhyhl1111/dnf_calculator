@@ -17,10 +17,11 @@ import org.eclipse.swt.widgets.Group;
 import dnf_InterfacesAndExceptions.InterfaceSize;
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_calculator.StatusList;
+import dnf_class.Buff;
 import dnf_class.Characters;
 import dnf_class.Monster;
 import dnf_class.MonsterOption;
-import dnf_class.Skill;
+import dnf_class.PartyCharacter;
 import dnf_infomation.GetDictionary;
 
 public class TrainingRoom extends DnFComposite
@@ -29,18 +30,17 @@ public class TrainingRoom extends DnFComposite
 	private ItemButton<MonsterOption> subMonsterButton;
 	DnFComposite superInfo;
 	Characters character;
-	private LinkedList<Skill> buffList1;
-	private LinkedList<Skill> buffList2;
-	private LinkedList<Skill> buffList3;
+	private LinkedList<Buff>[] buffList;
 	
+	@SuppressWarnings("unchecked")
 	public TrainingRoom(Composite parent, DnFComposite superInfo, Characters character)
 	{
 		this.superInfo=superInfo;
 		this.character=character;
 		
-		buffList1 = new LinkedList<Skill>();
-		buffList2 = new LinkedList<Skill>();
-		buffList3 = new LinkedList<Skill>();
+		buffList = (LinkedList<Buff>[]) new LinkedList<?>[3];
+		for(int i=0; i<buffList.length; i++)
+			buffList[i] = new LinkedList<Buff>();
 		
 		mainComposite = new Composite(parent, SWT.BORDER);
 		mainComposite.setLayout(new FormLayout());
@@ -70,7 +70,7 @@ public class TrainingRoom extends DnFComposite
 		subMonsterButton.getButton().addListener(SWT.MouseExit, listenerGroup.disposeItemInfoListener());
 		subMonsterButton.getButton().addListener(SWT.MouseMove, listenerGroup.moveItemInfoListener());
 		
-		SettingComposite settingComposite = new SettingComposite(this, character);
+		SettingComposite settingComposite = new SettingComposite(this, character, buffList);
 		formData = new FormData(InterfaceSize.TRAININGROOM_SETTING_SIZE_X, InterfaceSize.TRAININGROOM_SETTING_SIZE_Y);
 		formData.right = new FormAttachment(100, -5);
 		formData.top = new FormAttachment(0, 5);
@@ -88,12 +88,12 @@ public class TrainingRoom extends DnFComposite
 		subMonsterButton.getButton().setVisible(!monster.getMonsterOption().getName().contains("없음"));
 	}
 	
-	public LinkedList<Skill> getBuffList()
+	public LinkedList<Buff> getBuffList()
 	{
-		LinkedList<Skill> list = new LinkedList<Skill>();
-		list.addAll(buffList1);
-		list.addAll(buffList2);
-		list.addAll(buffList3);
+		LinkedList<Buff> list = new LinkedList<Buff>();
+		list.addAll(buffList[0]);
+		list.addAll(buffList[1]);
+		list.addAll(buffList[2]);
 		
 		return list;
 	}
@@ -109,9 +109,10 @@ class SettingComposite extends DnFComposite
 {
 	private final static String monsterDefaultSelection = "몬스터 설정";
 	private final static String monsterOptionDefaultSelection = "부가조건 설정";
-	private Characters character;
+	private final static String partyDefaultSelection = "파티원 설정";
+	private final static String partyOptionDefaultSelection = "부가조건 설정";
 	
-	public SettingComposite(TrainingRoom trainingRoom, Characters character)
+	public SettingComposite(TrainingRoom trainingRoom, Characters character, LinkedList<Buff>[] buffList)
 	{
 		mainComposite = new Composite(trainingRoom.getComposite(), SWT.BORDER);
 		mainComposite.setLayout(new FormLayout());
@@ -195,6 +196,124 @@ class SettingComposite extends DnFComposite
 				}
 			}
 		});
+		
+		
+		
+		Group partySettings = new Group(mainComposite, SWT.NONE);
+		partySettings.setText("파티원 설정");
+		partySettings.setLayout(new FormLayout());
+		groupData = new FormData();
+		groupData.top = new FormAttachment(monsterSettings, 10);
+		partySettings.setLayoutData(groupData);
+		
+		
+		final Combo[] partyCombo = new Combo[3];
+		final Combo[] partyOptionCombo1 = new Combo[3];
+		final Combo[] partyOptionCombo2 = new Combo[3];
+		final Button[] setPartyButton = new Button[3];
+		String[][] partyCharacterList = new String[3][];
+		
+		for(int i=0; i<3; i++){
+			partyCombo[i] = new Combo(partySettings, SWT.READ_ONLY);
+			partyCharacterList[i] = new String[1+character.userItemList.getPartyList(character.getJob()).size()];
+			partyCharacterList[i][0] =partyDefaultSelection;
+			index=1;
+			for(PartyCharacter party : character.userItemList.getPartyList(character.getJob()))
+				partyCharacterList[i][index++]=party.getName();
+			partyCombo[i].setItems(partyCharacterList[i]);
+			formData = new FormData(100, SWT.DEFAULT);
+			if(i==0) formData.top = new FormAttachment(0, 10);
+			else formData.top = new FormAttachment(partyCombo[i-1], 15);
+			
+			partyCombo[i].select(0);
+			partyCombo[i].setLayoutData(formData);
+			
+			partyOptionCombo1[i] = new Combo(partySettings, SWT.READ_ONLY);
+			partyOptionCombo1[i].setEnabled(false);
+			partyOptionCombo1[i].setItems(new String[] {partyOptionDefaultSelection});
+			formData = new FormData(110, SWT.DEFAULT);
+			formData.top = new FormAttachment(partyCombo[i], 0, SWT.TOP);
+			formData.left = new FormAttachment(partyCombo[i], 10);
+			partyOptionCombo1[i].select(0);
+			partyOptionCombo1[i].setLayoutData(formData);
+			
+			partyOptionCombo2[i] = new Combo(partySettings, SWT.READ_ONLY);
+			partyOptionCombo2[i].setEnabled(false);
+			partyOptionCombo2[i].setItems(new String[] {partyOptionDefaultSelection});
+			formData = new FormData(110, SWT.DEFAULT);
+			formData.top = new FormAttachment(partyCombo[i], 0, SWT.TOP);
+			formData.left = new FormAttachment(partyOptionCombo1[i], 10);
+			partyOptionCombo2[i].select(0);
+			partyOptionCombo2[i].setLayoutData(formData);
+			
+			setPartyButton[i] = new Button(partySettings, SWT.PUSH);
+			setPartyButton[i].setText("소환");
+			formData = new FormData(50, 30);
+			formData.top = new FormAttachment(partyCombo[i], -5, SWT.TOP);
+			formData.left = new FormAttachment(partyOptionCombo2[i], 10);
+			setPartyButton[i].setLayoutData(formData);
+			
+			
+			final int partyIndex = i;
+			partyCombo[partyIndex].addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					if(partyCombo[partyIndex].getText().equals(partyDefaultSelection)){
+						partyOptionCombo1[partyIndex].setEnabled(false);
+						partyOptionCombo1[partyIndex].setItems(new String[] {partyOptionDefaultSelection});
+						partyOptionCombo1[partyIndex].select(0);
+						partyOptionCombo2[partyIndex].setEnabled(false);
+						partyOptionCombo2[partyIndex].setItems(new String[] {partyOptionDefaultSelection});
+						partyOptionCombo2[partyIndex].select(0);
+						return;
+					}
+		    		
+					try {
+						PartyCharacter party = character.userItemList.getPartyCharacter(partyCombo[partyIndex].getText());
+						String buff1 = party.getFeaturedBuff(0);
+						String[] optionList = party.getBuffFeatureList(buff1);
+						if(buff1==null) partyOptionCombo1[partyIndex].setEnabled(false);
+						else partyOptionCombo1[partyIndex].setEnabled(true);
+						partyOptionCombo1[partyIndex].setItems(optionList);
+						partyOptionCombo1[partyIndex].select(0);
+						
+						party = character.userItemList.getPartyCharacter(partyCombo[partyIndex].getText());
+						String buff2 = party.getFeaturedBuff(1);
+						optionList = party.getBuffFeatureList(buff2);
+						if(buff2==null) partyOptionCombo2[partyIndex].setEnabled(false);
+						else partyOptionCombo2[partyIndex].setEnabled(true);
+						partyOptionCombo2[partyIndex].setItems(optionList);
+						partyOptionCombo2[partyIndex].select(0);
+	
+					} catch (ItemNotFoundedException e1) {
+						e1.printStackTrace();
+					}
+				}
+		    });
+			
+			setPartyButton[partyIndex].addSelectionListener(new SelectionAdapter(){
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if(partyCombo[partyIndex].getText().equals(partyDefaultSelection)){
+						buffList[partyIndex] = new LinkedList<Buff>();
+						trainingRoom.superInfo.renew();
+						return;
+					}
+					
+					try {
+						PartyCharacter partyCharacter = character.userItemList.getPartyCharacter(partyCombo[partyIndex].getText());
+						
+						buffList[partyIndex] = 
+								partyCharacter.getBuffList(partyOptionCombo1[partyIndex].getText(), partyOptionCombo2[partyIndex].getText());
+						
+						//trainingRoom.setParty(partyCharacter, partyIndex);
+						trainingRoom.superInfo.renew();
+					} catch (ItemNotFoundedException e1) {
+						e1.printStackTrace();
+					}
+				}
+			});
+		}
+		
 	}
 	
 	@Override
