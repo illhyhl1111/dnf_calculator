@@ -5,12 +5,25 @@ import java.util.LinkedList;
 import dnf_InterfacesAndExceptions.Job;
 import dnf_calculator.StatusList;
 import dnf_class.PartyCharacter;
+import dnf_class.Saint;
 
 public class PartyCharacterInfo {
 	public static void getInfo(LinkedList<PartyCharacter> partyList)
 	{
 		PartyCharacter temp;
 		StatusList statList;
+		
+		/////홀리
+		temp = new Saint();
+		statList = new StatusList();
+		statList.addStatList("힘", 198);
+		statList.addStatList("지능", 198);
+		temp.setBuff("신념의 오라", "신념/15렙", statList);
+		
+		((Saint)temp).setStat(new int[] {3000, 3000, 9, 29, 26, 26, 43, 18, 2, 15, 60},
+				new boolean[] {true, false, false, true}, "예시세팅");
+		
+		partyList.add(temp);
 		
 		/////검신
 		temp = new PartyCharacter("검신", Job.WEAPONMASTER);

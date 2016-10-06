@@ -136,6 +136,15 @@ public class GetDictionary
 			}
 		}
 		
+		for(Buff buff : itemDictionary.buffList)
+		{
+			String icon = buff.getDisabledIcon();
+			if(icon==null) icon = "image\\default.png";
+			image = new Image(Display.getCurrent(), icon);
+			iconDictionary.put(buff.getDisabledName(), resizeImage(image, InterfaceSize.INFO_BUTTON_SIZE));
+			image.dispose();
+		}
+		
 		//스킬
 		for(Skill skill : charDictionary.getSkillList(job, 90)){
 			String icon = skill.getIcon();

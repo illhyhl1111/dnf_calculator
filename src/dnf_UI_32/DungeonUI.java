@@ -295,12 +295,12 @@ public class DungeonUI extends DnFComposite{
 	@Override
 	public void renew()
 	{
+		buffInventory.renew();		//가장 먼저
 		itemInfo.renew();
 		avatarInfo.renew();
 		dealChart.setMonster(trainingRoom.getMonster());
 		dealChart.renew();
 		trainingRoom.renew();
-		buffInventory.renew();
 	}
 	
 	public void disposeContent()

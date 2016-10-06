@@ -269,17 +269,15 @@ class SettingComposite extends DnFComposite
 		    		
 					try {
 						PartyCharacter party = character.userItemList.getPartyCharacter(partyCombo[partyIndex].getText());
-						String buff1 = party.getFeaturedBuff(0);
-						String[] optionList = party.getBuffFeatureList(buff1);
-						if(buff1==null) partyOptionCombo1[partyIndex].setEnabled(false);
+						String[] optionList = party.getBuffFeatureList(0);
+						if(optionList[0].equals("--")) partyOptionCombo1[partyIndex].setEnabled(false);
 						else partyOptionCombo1[partyIndex].setEnabled(true);
 						partyOptionCombo1[partyIndex].setItems(optionList);
 						partyOptionCombo1[partyIndex].select(0);
 						
 						party = character.userItemList.getPartyCharacter(partyCombo[partyIndex].getText());
-						String buff2 = party.getFeaturedBuff(1);
-						optionList = party.getBuffFeatureList(buff2);
-						if(buff2==null) partyOptionCombo2[partyIndex].setEnabled(false);
+						optionList = party.getBuffFeatureList(1);
+						if(optionList[0].equals("--")) partyOptionCombo2[partyIndex].setEnabled(false);
 						else partyOptionCombo2[partyIndex].setEnabled(true);
 						partyOptionCombo2[partyIndex].setItems(optionList);
 						partyOptionCombo2[partyIndex].select(0);

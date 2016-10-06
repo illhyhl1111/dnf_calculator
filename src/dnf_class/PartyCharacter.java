@@ -40,18 +40,6 @@ public class PartyCharacter extends IconObject{
 		setBuff(name, name, statList);
 	}
 	
-	public String[] getBuffFeatureList(String name)
-	{
-		if(name==null) return new String[] {"--"};
-		HashMap<String, Buff> buffMap = buffList.get(name);
-		LinkedList<String> list = new LinkedList<String>();
-		for(String str : buffMap.keySet())
-			list.add(str);
-		
-		Collections.sort(list);
-		return list.toArray(new String[0]);
-	}
-	
 	public Buff getBuff(String buffName, String feature)
 	{
 		HashMap<String, Buff> buffMap = buffList.get(buffName);
@@ -87,18 +75,30 @@ public class PartyCharacter extends IconObject{
 		return list;
 	}
 	
-	public String getFeaturedBuff(int index)
+	public String[] getBuffFeatureList(int index)
 	{
 		for(Entry<String, HashMap<String,Buff>> entry : buffList.entrySet()){
 			if(entry.getValue().size()>1){
-				if(index==0) return entry.getKey();
+				if(index==0) return getBuffFeatureList(entry.getKey());
 				else{
 					index--;
 					continue;
 				}
 			}
 		}
-		return null;
+		return new String[] {"--"};
+	}
+	
+	private String[] getBuffFeatureList(String name)
+	{
+		if(name==null) return new String[] {"--"};
+		HashMap<String, Buff> buffMap = buffList.get(name);
+		LinkedList<String> list = new LinkedList<String>();
+		for(String str : buffMap.keySet())
+			list.add(str);
+		
+		Collections.sort(list);
+		return list.toArray(new String[0]);
 	}
 	
 	public HashMap<String, HashMap<String, Buff>> getBuffHash()

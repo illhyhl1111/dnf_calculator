@@ -159,6 +159,10 @@ public class MakeComposite {
 			stat.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLUE));
 			rarity.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLUE));
 			break;
+		case UNCOMMON:
+			stat.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_CYAN));
+			rarity.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_CYAN));
+			break;
 		default:
 		}
 		

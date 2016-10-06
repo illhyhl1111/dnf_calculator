@@ -198,7 +198,7 @@ public class Characters implements java.io.Serializable
 			e.printStackTrace();
 		}
 		
-		if(autoOptimize && crt_before!=crt_after) optimizeEmblem(autoOptimizeMode, autoOptimizeRarity);
+		if(autoOptimize && (crt_before!=crt_after || (item instanceof Avatar) )) optimizeEmblem(autoOptimizeMode, autoOptimizeRarity);
 		
 		return previous;
 	}
@@ -269,7 +269,7 @@ public class Characters implements java.io.Serializable
 			e.printStackTrace();
 		}
 		
-		if(autoOptimize && crt_before!=crt_after) optimizeEmblem(autoOptimizeMode, autoOptimizeRarity);
+		if(autoOptimize && (crt_before!=crt_after || (item instanceof Avatar) )) optimizeEmblem(autoOptimizeMode, autoOptimizeRarity);
 		
 		return success;
 	}
@@ -329,7 +329,10 @@ public class Characters implements java.io.Serializable
 		itemStatUpdate(itemSetting.creature);
 		
 		for(Buff buff : buffList)
-			buff.dStat.addListToStat(dungeonStatus);
+			if(buff.enabled){
+				buff.dStat.addListToStat(dungeonStatus);
+				buff.fStat.addListToStat(dungeonStatus, this, target, null);
+			}
 		
 		target.getAdditionalStatList().addListToStat(dungeonStatus);
 		
@@ -667,6 +670,7 @@ public class Characters implements java.io.Serializable
 	
 	public void setSkillLevel(LinkedList<Skill> list)
 	{
+		if(list.size()!=skillList.size()) return; 
 		Iterator<Skill> iter = list.iterator();
 		for(Skill s : skillList)
 		{

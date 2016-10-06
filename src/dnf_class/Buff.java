@@ -33,7 +33,7 @@ public class Buff extends Item
 	
 	@Override
 	public int compareTo(Item arg) {
-		return arg.getName().compareTo(getName());
+		return getName().compareTo(arg.getName());
 	}
 	
 	@Override

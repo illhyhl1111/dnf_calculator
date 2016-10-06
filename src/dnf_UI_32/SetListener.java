@@ -460,14 +460,7 @@ public class SetListener {
 		         @Override
 		         public void handleEvent(Event e) {
 		        	 if(e.button==3){
-		        		 if(itemButton.getItem().enabled){
-		        			 itemButton.getItem().enabled=false;
-		        			 character.buffList.remove(itemButton.getItem());
-		        		 }
-		        		 else{
-		        			 itemButton.getItem().enabled=true;
-		        			 character.buffList.add(itemButton.getItem());
-		        		 }
+		        		 itemButton.getItem().enabled=!itemButton.getItem().enabled;
 		        		 superInfo.renew();
 		        	 }
 		         }

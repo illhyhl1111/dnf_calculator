@@ -108,7 +108,7 @@ public class ReinforceInfo {
 			}
 			break;
 		default:
-			atk=num*level;
+			atk=num;
 			fix=(int)(atk*1.1);
 		}
 		if(atk==-1 || fix==-1) throw new UnknownInformationException();

@@ -139,13 +139,20 @@ public class AvatarModifier extends Dialog {
 		guideData = new FormData();
 		guideData.left = new FormAttachment(5, 0);
 		guideData.top = new FormAttachment(5, 0);
-		guideLabel.setLayoutData(guideData);	
+		guideLabel.setLayoutData(guideData);
+		
+		Label infoLabel = new Label(autoApply, SWT.WRAP);
+		infoLabel.setText("현재 적용된 세팅 : "+getCurrentSetting());
+		guideData = new FormData();
+		guideData.left = new FormAttachment(5, 0);
+		guideData.top = new FormAttachment(guideLabel, 10);
+		infoLabel.setLayoutData(guideData);
 		
 		Button autoApplyButton = new Button(autoApply, SWT.CHECK);
 		autoApplyButton.setText("자동 적용하기");
 		autoApplyButton.setSelection(character.autoOptimize);
 		FormData autoData = new FormData();
-		autoData.top = new FormAttachment(guideLabel, InterfaceSize.MARGIN*2);
+		autoData.top = new FormAttachment(infoLabel, InterfaceSize.MARGIN*2);
 		autoApplyButton.setLayoutData(autoData);
 	    
 	    Button okButton2 = new Button(autoApply, SWT.PUSH);
@@ -161,6 +168,7 @@ public class AvatarModifier extends Dialog {
 				character.setAutoOptimizeMode(getMode(modeButton));
 				character.setAutoOptimizeRarity(getRarity(rarityButton));
 				character.optimizeEmblem(getMode(modeButton), getRarity(rarityButton));
+				infoLabel.setText("현재 적용된 세팅 : "+getCurrentSetting());
 				userInfo.renew();
 				
 				MessageDialog dialog;
@@ -180,6 +188,39 @@ public class AvatarModifier extends Dialog {
 	    contentSize = content.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 	    
 		return content;
+	}
+	
+	private String getCurrentSetting()
+	{
+		if(!character.autoOptimize) return "설정되어있지 않습니다";
+		String mode, rarity;
+		switch(character.getAutoOptimizeMode()){
+		case 0:
+			mode="물리- ";
+			break;
+		case 1:
+			mode="마법- ";
+			break;
+		default:
+			mode="에러- ";
+			break;
+		}
+		switch(character.getAutoOptimizeRarity()){
+		case UNIQUE:
+			rarity="찬란한";
+			break;
+		case RARE:
+			rarity="화려한";
+			break;
+		case UNCOMMON:
+			rarity="빛나는";
+			break;
+		default:
+			rarity="에러!";
+			break;
+		}
+		
+		return mode+rarity;
 	}
 	
 	public int getMode(Button[] modeButton)

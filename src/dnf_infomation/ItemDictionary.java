@@ -87,6 +87,7 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 		jamList = new LinkedList<Jam>();
 		
 		buffList = new LinkedList<Buff>();
+		BuffItemInfo.getInfo(buffList);
 		
 		partyList = new LinkedList<PartyCharacter>();
 		PartyCharacterInfo.getInfo(partyList);

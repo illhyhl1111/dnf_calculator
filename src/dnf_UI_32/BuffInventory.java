@@ -1,5 +1,6 @@
 package dnf_UI_32;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 
@@ -17,7 +18,7 @@ import dnf_class.IconObject;
 import dnf_class.Skill;
 
 public class BuffInventory extends DnFComposite{
-	HashSet<Buff> itemSet;
+	LinkedList<Buff> itemSet;
 	HashSet<Skill> passiveSet;
 	HashSet<Buff> buffSet;
 	ItemButton<IconObject>[] inventoryList;
@@ -69,10 +70,10 @@ public class BuffInventory extends DnFComposite{
 	
 	private void setInventoryBlocks(Composite background)
 	{	
-		itemSet = getBuffListToSet(character.userItemList.getAllBuffList());
+		itemSet = character.userItemList.getAllBuffList();
 		passiveSet = getBuffListToSet(character.getBuffSkillList());
-		buffSet = getBuffListToSet(trainingRoom.getBuffList());
-		LinkedList<HashSet<? extends IconObject>> allList = new LinkedList<HashSet<? extends IconObject>>();
+		buffSet = getBuffListToSet(character.buffList);
+		LinkedList<Collection<? extends IconObject>> allList = new LinkedList<Collection<? extends IconObject>>();
 		allList.add(itemSet);
 		allList.add(passiveSet);
 		allList.add(buffSet);
@@ -82,7 +83,7 @@ public class BuffInventory extends DnFComposite{
 		
 		int row=0;
 		int index=0;
-		for(HashSet<? extends IconObject> set : allList)
+		for(Collection<? extends IconObject> set : allList)
 		{
 			for(IconObject i : set)
 			{
@@ -137,13 +138,18 @@ public class BuffInventory extends DnFComposite{
 	public void renew() {
 		passiveSet = getBuffListToSet(character.getBuffSkillList());
 		buffSet = getBuffListToSet(trainingRoom.getBuffList());
-		LinkedList<HashSet<? extends IconObject>> allList = new LinkedList<HashSet<? extends IconObject>>();
+		LinkedList<Collection<? extends IconObject>> allList = new LinkedList<Collection<? extends IconObject>>();
+		allList.add(itemSet);
 		allList.add(passiveSet);
 		allList.add(buffSet);
+		
+		character.buffList = new LinkedList<Buff>();
+		character.buffList.addAll(itemSet);
+		character.buffList.addAll(buffSet);
 	
-		int row=1;
-		int index=inventoryCol;
-		for(HashSet<? extends IconObject> set : allList)
+		int row=0;
+		int index=0;
+		for(Collection<? extends IconObject> set : allList)
 		{
 			for(IconObject i : set){
 				inventoryList[index].setItem(i);
