@@ -16,29 +16,27 @@ public class SelectionBuff extends Buff{
 	public SelectionBuff(String name, Item_rarity rarity, boolean selectOneOptionMode)
 	{
 		super(name, rarity);
-		enabled=true;
 		selectionList = new HashMap<String, Entry<StatusList, Boolean>>();
 		this.selectOneOption=selectOneOptionMode;
+		
+		explanation.add("더블클릭하여 설정을 변경하세오");
 	}
 	
 	public void makeSelectionOption(String name, StatusList statList){
 		selectionList.put(name, new AbstractMap.SimpleEntry<StatusList, Boolean>(statList, false));
 	}
 	
-	public void setSelection(String name, boolean selected)
+	public void setSelection(String[] name, boolean[] selected)
 	{
-		selectionList.get(name).setValue(selected);
-		if(selectOneOption){
-			if(selected) dStat = selectionList.get(name).getKey();
-			else dStat = new StatusList();
-		}
-		else{
-			if(selected) dStat.statList.addAll(selectionList.get(name).getKey().statList);
-			else{
-				dStat = new StatusList();
-				for(Entry<StatusList, Boolean> entry : selectionList.values()){
-					if(entry.getValue()) dStat.statList.addAll(entry.getKey().statList);
-				}
+		int i;
+		dStat = new StatusList();
+		for(i=0; i<name.length; i++){
+			selectionList.get(name[i]).setValue(selected[i]);
+			if(selected[i]){
+				if(selectOneOption)
+					dStat = selectionList.get(name[i]).getKey();
+				else dStat.statList.addAll(selectionList.get(name[i]).getKey().statList);
+					
 			}
 		}
 	}

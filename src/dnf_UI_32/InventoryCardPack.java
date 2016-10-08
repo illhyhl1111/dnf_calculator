@@ -240,11 +240,12 @@ public class InventoryCardPack extends DnFComposite
 		}
 	}
 	
-	public void setDungeonListener()
+	public void setDungeonListener(Vault vault)
 	{
+		vault.setInventoryPack(this);
 		for(int i=0; i<inventoryList.length; i++)
 		{
-			inventoryList[i].setListener(2, null);
+			inventoryList[i].setListener(2, vault);
 		}
 	}
 	

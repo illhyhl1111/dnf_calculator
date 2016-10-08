@@ -101,7 +101,7 @@ public class SetListener {
 	public Listener equipListener(Vault vault)
 	{
 		ItemButton<Item> itemButton;
-		if(itemButton_wildCard.getItem() instanceof Item && superInfo instanceof UserInfo) itemButton = (ItemButton<Item>) itemButton_wildCard;
+		if(itemButton_wildCard.getItem() instanceof Item) itemButton = (ItemButton<Item>) itemButton_wildCard;
 		else return null;
 		
 		return new Listener() {
@@ -115,8 +115,7 @@ public class SetListener {
 	        		 else{
 	        			 itemButton.getItem().setEnabled(false);
 	        			 itemButton.renewImage(false);
-	        			 if(((UserItemInfo)((UserInfo)superInfo).userItemInfo).equiped(itemButton.getItem())){
-	        				 character.unequip(itemButton.getItem());
+	        			 if(character.unequip(itemButton.getItem())){
 	        				 superInfo.renew();
 	        				 if(!itemInfo.isDisposed()) itemInfo.dispose();
 	        			 }

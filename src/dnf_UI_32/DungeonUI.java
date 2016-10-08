@@ -55,7 +55,7 @@ public class DungeonUI extends DnFComposite{
 		toVillageButton.setText("마을로 돌아가기");
 	}
 	
-	public void makeComposite()
+	public void makeComposite(Vault vault)
 	{
 		mainComposite = new Composite(shell, SWT.NONE);
 		mainComposite.setLayout(new FormLayout());
@@ -77,7 +77,7 @@ public class DungeonUI extends DnFComposite{
 		inventoryFolder = new TabFolder(mainComposite, SWT.NONE);
 		InventoryCardPack inventoryPack = new InventoryCardPack(inventoryFolder, character);
 		inventoryPack.setDungeonMode(this);
-		inventoryPack.setDungeonListener();
+		inventoryPack.setDungeonListener(vault);
 		formData = new FormData();
 		formData.bottom = new FormAttachment(100, 0);
 		formData.left = new FormAttachment(infoFolder, 10);

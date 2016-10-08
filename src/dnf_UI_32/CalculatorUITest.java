@@ -23,7 +23,7 @@ import dnf_infomation.GetDictionary;
 
 public class CalculatorUITest {
 	public static void main(String[] args) {
-		final boolean openSleak = false;
+		final boolean openSleak = true;
 		Display display;
 		
 		if(openSleak)
@@ -54,8 +54,9 @@ public class CalculatorUITest {
 		VillageUI villageUI = new VillageUI(shell, character);
 		DungeonUI dungeonUI = new DungeonUI(shell, character);
 		SkillTree skillTree = new SkillTree(shell, character, villageUI);
+		Vault vault = new Vault(shell, character);
 		
-		villageUI.makeComposite(skillTree);
+		villageUI.makeComposite(skillTree, vault);
 	
 		
 		stackLayout.topControl = villageUI.getComposite();
@@ -63,7 +64,7 @@ public class CalculatorUITest {
 		
 		villageUI.get_toDungeonButton().addListener(SWT.Selection, event -> {
 			villageUI.disposeContent();
-			dungeonUI.makeComposite();
+			dungeonUI.makeComposite(vault);
 			stackLayout.topControl = dungeonUI.getComposite();
 			skillTree.superInfo=dungeonUI;
 			shell.setText("수련의 방");
@@ -72,7 +73,7 @@ public class CalculatorUITest {
 		
 		dungeonUI.get_toVillageButton().addListener(SWT.Selection, event -> {
 			dungeonUI.disposeContent();
-			villageUI.makeComposite(skillTree);
+			villageUI.makeComposite(skillTree, vault);
 			skillTree.superInfo=villageUI;
 			stackLayout.topControl = villageUI.getComposite();
 			shell.setText("인포창");
@@ -84,11 +85,11 @@ public class CalculatorUITest {
 			public void handleEvent(Event event) {
 				char c = event.character;
 				// System.out.println(c);
-				if ((c == 'i' || c == 'I') && stackLayout.topControl == villageUI.getComposite()) {
-					if (villageUI.getVault().getShell() == null)
-						villageUI.getVault().open();
+				if ((c == 'i' || c == 'I')) {
+					if (vault.getShell() == null)
+						vault.open();
 					else
-						villageUI.getVault().close();
+						vault.close();
 				}
 
 				else if (c == 'k' || c == 'K') {
@@ -165,15 +166,16 @@ class CalculatorUILoad
 			VillageUI villageUI = new VillageUI(shell, character);
 			DungeonUI dungeonUI = new DungeonUI(shell, character);
 			SkillTree skillTree = new SkillTree(shell, character, villageUI);
+			Vault vault = new Vault(shell, character);
 			
-			villageUI.makeComposite(skillTree);
+			villageUI.makeComposite(skillTree, vault);
 
 			stackLayout.topControl = villageUI.getComposite();
 			shell.setText("인포창");
 			
 			villageUI.get_toDungeonButton().addListener(SWT.Selection, event -> {
 				villageUI.disposeContent();
-				dungeonUI.makeComposite();
+				dungeonUI.makeComposite(vault);
 				stackLayout.topControl = dungeonUI.getComposite();
 				skillTree.superInfo=dungeonUI;
 				shell.setText("수련의 방");
@@ -182,7 +184,7 @@ class CalculatorUILoad
 			
 			dungeonUI.get_toVillageButton().addListener(SWT.Selection, event -> {
 				dungeonUI.disposeContent();
-				villageUI.makeComposite(skillTree);
+				villageUI.makeComposite(skillTree, vault);
 				stackLayout.topControl = villageUI.getComposite();
 				shell.setText("인포창");
 				shell.layout();
@@ -193,11 +195,11 @@ class CalculatorUILoad
 				public void handleEvent(Event event) {
 					char c = event.character;
 					// System.out.println(c);
-					if ((c == 'i' || c == 'I') && stackLayout.topControl == villageUI.getComposite()) {
-						if (villageUI.getVault().getShell() == null)
-							villageUI.getVault().open();
+					if ((c == 'i' || c == 'I')) {
+						if (vault.getShell() == null)
+							vault.open();
 						else
-							villageUI.getVault().close();
+							vault.close();
 					}
 
 					else if (c == 'k' || c == 'K') {

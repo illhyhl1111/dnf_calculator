@@ -277,9 +277,9 @@ public class SetOptionInfo {
 		temp = new SetOption("풀 플레이트 아머 세트", SetName.FULLPLATE, 5);
 		temp.vStat.addStatList("힘", 220);
 		temp.vStat.addStatList("지능", 220);
-		temp.dStat.addStatList("물공뻥", 300, true, true);
-		temp.dStat.addStatList("마공뻥", 300, true, true);
-		temp.dStat.addStatList("독공뻥", 300, true, true);		
+		temp.dStat.addStatList("물공", 300, true, true);
+		temp.dStat.addStatList("마공", 300, true, true);
+		temp.dStat.addStatList("독공", 300, true, true);		
 		temp.dStat.addStatList("추뎀", 40);
 		setOptionList.add(temp);
 		//센츄리온

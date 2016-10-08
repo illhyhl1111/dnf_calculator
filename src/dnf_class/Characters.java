@@ -57,6 +57,7 @@ public class Characters implements java.io.Serializable
 	String charImageAddress;
 	
 	public Monster target;
+	public String[] trainingRoomSeletion;
 
 	public Characters(int level, Job job, String name)
 	{
@@ -76,13 +77,13 @@ public class Characters implements java.io.Serializable
 		villageStatus = new Status();
 		dungeonStatus = new Status();
 		
-		userItemList = (ItemDictionary) GetDictionary.itemDictionary.clone();
+		userItemList = GetDictionary.getCharacterDictionary(job);
 		autoOptimize = false;
 		autoOptimizeRarity = Item_rarity.NONE;
 		autoOptimizeMode = 0;
 		
 		try {
-			target = characterInfoList.getMonsterInfo("오브젝트");
+			target = characterInfoList.getMonsterInfo("강화기");
 		} catch (ItemNotFoundedException e) {
 			target = null;
 			e.printStackTrace();
@@ -91,6 +92,9 @@ public class Characters implements java.io.Serializable
 		representSkill = getDamageSkillList().getLast();
 		setContract(true);
 		setBurning(false);
+		
+		trainingRoomSeletion = new String[] { "몬스터 설정", "부가조건 설정", "파티원 설정", "부가조건 설정", "부가조건 설정", 
+				"파티원 설정", "부가조건 설정", "부가조건 설정", "파티원 설정", "부가조건 설정", "부가조건 설정"};
 
 		setStatus();
 	}
@@ -607,6 +611,8 @@ public class Characters implements java.io.Serializable
 					}
 				}
 			}
+			
+			setStatus();
 	
 		}catch(StatusTypeMismatch | UndefinedStatusKey | ItemNotFoundedException e) {
 			e.printStackTrace();
@@ -634,15 +640,17 @@ public class Characters implements java.io.Serializable
 		
 		Item previous = equip(item);
 		if(previous==null) return "착용불가";
+		else if(previous.getName().equals(item.getName())) return "";
 		
 		long damage_comp = Calculator.getDamage(representSkill, target, this);
-		double compare = ((double)(damage_comp-damage_now))/damage_now*100;
-		
 		String result;
-		if(compare>0.001) result = " (▲ "+ Double.parseDouble(String.format("%.2f", compare))+"%)";
-		else if(compare<-0.001) result = " (▼ "+ Double.parseDouble(String.format("%.2f", compare*-1))+"%)";
-		else result = "";
-		
+		if(Double.compare(damage_now, 0.0)==0) result = "-";
+		else{
+			double compare= ((double)(damage_comp-damage_now))/damage_now*100;
+			if(Double.compare(compare, 0.0)>0) result = " (▲ "+ Double.parseDouble(String.format("%.2f", compare))+"%)";
+			else if(Double.compare(compare, 0.0)<0) result = " (▼ "+ Double.parseDouble(String.format("%.2f", compare*-1))+"%)";
+			else result = "";
+		}
 		equip(previous);
 		return result;
 	}

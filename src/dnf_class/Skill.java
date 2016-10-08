@@ -137,7 +137,7 @@ public class Skill extends IconObject implements Comparable<Skill>{
 	
 	public boolean buffEnabled(boolean isDungeon)
 	{
-		if(type==Skill_type.PASSIVE && active_enabled) return true;
+		if((type==Skill_type.PASSIVE || type==Skill_type.TP) && active_enabled) return true;
 		else if(isEnableable() && buff_enabled && isDungeon) return true;
 		return false;
 	}
@@ -150,8 +150,7 @@ public class Skill extends IconObject implements Comparable<Skill>{
 				return info;
 			}
 		}
-		
-		System.out.println(getName()+" Lv "+ level+" 스킬정보 없음");
+		//System.out.println(getName()+" Lv "+ level+" 스킬정보 없음");
 		
 		SkillLevelInfo temp = new SkillLevelInfo(level);
 		Iterator<SkillLevelInfo> iter = skillInfo.descendingIterator();
@@ -267,20 +266,6 @@ public class Skill extends IconObject implements Comparable<Skill>{
 		else return getName().compareTo(arg0.getName());
 	}
 	
-	/*@SuppressWarnings("unchecked")
-	@Override
-	public Object clone()
-	{
-		Skill temp=null;
-		try {
-			temp = (Skill) super.clone();
-			temp.explanation = (LinkedList<String>) explanation.clone();
-		} catch (CloneNotSupportedException e) {
-			e.printStackTrace();
-		}
-		return temp;
-	}*/
-
 	public SkillLevelInfo getSkillLevelInfo(boolean isDungeon, boolean isBurning)
 	{
 		int level = getSkillLevel(isDungeon, isBurning);

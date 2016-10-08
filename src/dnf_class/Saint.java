@@ -28,6 +28,17 @@ public class Saint extends PartyCharacter{
 	public int level_divine=0;
 	public int level_belief=0;
 	public int divineStack=0;
+	public static final String settingFeatureName = "맞춤형 홀리쟝";
+	public static final int statNum = 15;
+	public static final int intStatNum = 11;
+	public static final int boolStatNum = 4;
+	
+	public static final String[] boolStatStr = {
+		"사일 3 보유", "끓피 보유", "구원의 이기 보유", "2각 사용"
+	};
+	public static final String[] intStatStr = {
+		"체력", "정력", "바우 보유숫자", "스킹 레벨", "지축 레벨", "여축 레벨", "영축 레벨", "아포 레벨", "2각 레벨", "2각 스택수", "신념의 오라 레벨"
+	};
 
 	public Saint()
 	{
@@ -36,7 +47,7 @@ public class Saint extends PartyCharacter{
 	
 	public void setStat(int[] intStat, boolean[] boolStat, String setting)
 	{
-		if(intStat.length!=11 || boolStat.length!=4) return;
+		if(intStat.length!=intStatNum || boolStat.length!=boolStatNum) return;
 		stat_sta=intStat[0];
 		stat_will=intStat[1];
 		bowNum=intStat[2];
@@ -58,6 +69,15 @@ public class Saint extends PartyCharacter{
 		setBuff("지혜의 축복", setting, BuffCalculator.wisebless(this));
 		setBuff("여명의 축복", setting, BuffCalculator.dawnbless(this));
 		setBuff("아포칼립스", setting, BuffCalculator.aprokalypse(this));
+	}
+	
+	public void setUserHolyBuff()
+	{
+		setBuff("영광의 축복", settingFeatureName, BuffCalculator.glorybless(this));
+		setBuff("스트라이킹", settingFeatureName, BuffCalculator.striking(this));
+		setBuff("지혜의 축복", settingFeatureName, BuffCalculator.wisebless(this));
+		setBuff("여명의 축복", settingFeatureName, BuffCalculator.dawnbless(this));
+		setBuff("아포칼립스", settingFeatureName, BuffCalculator.aprokalypse(this));
 	}
 	
 	@Override

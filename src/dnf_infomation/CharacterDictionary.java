@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_InterfacesAndExceptions.Job;
 import dnf_InterfacesAndExceptions.ParsingException;
+import dnf_InterfacesAndExceptions.Skill_type;
 import dnf_calculator.StatusList;
 import dnf_class.Monster;
 import dnf_class.Skill;
@@ -54,6 +55,15 @@ public class CharacterDictionary implements java.io.Serializable, Cloneable
 		}
 		
 		Collections.sort(list);
+		return list;
+	}
+	
+	public LinkedList<String> getAvatarSkillList(Job job){
+		LinkedList<String> list= new LinkedList<String>();
+		
+		for(Skill skill : getSkillList(job, 90)){
+			if(skill.type!=Skill_type.TP) list.add(skill.getItemName());
+		}
 		return list;
 	}
 	

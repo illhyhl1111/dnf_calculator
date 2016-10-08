@@ -15,6 +15,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
@@ -24,7 +25,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
+import dnf_InterfacesAndExceptions.Avatar_part;
 import dnf_InterfacesAndExceptions.Dimension_stat;
+import dnf_InterfacesAndExceptions.Emblem_type;
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_InterfacesAndExceptions.ItemFileNotReaded;
 import dnf_InterfacesAndExceptions.StatList;
@@ -33,7 +36,9 @@ import dnf_InterfacesAndExceptions.UnknownInformationException;
 import dnf_calculator.ElementInfo;
 import dnf_calculator.StatusAndName;
 import dnf_calculator.StatusInfo;
+import dnf_class.Avatar;
 import dnf_class.Card;
+import dnf_class.Emblem;
 import dnf_class.Equipment;
 import dnf_class.Item;
 import dnf_class.Title;
@@ -77,6 +82,7 @@ public class ChangeItemStatus extends Dialog{
 	private int currentReinforce;
 	private int currentReforge;
 	private boolean replicateEnabled;
+	private Combo skillListCombo;
 	
 	public ChangeItemStatus(Shell parent, Item item, boolean hasSet, boolean replicateEnabled)
 	{
@@ -502,7 +508,31 @@ public class ChangeItemStatus extends Dialog{
 				}
 			}
 			
-			if(item instanceof Equipment)
+			if(item instanceof Avatar && ((Avatar)item).part==Avatar_part.COAT){
+				label = new Label(composite, SWT.NONE);
+				label.setText("아바타 상의 옵션 변경");
+				label.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
+				
+				Avatar avatar = (Avatar)item;
+				skillListCombo = new Combo(composite, SWT.READ_ONLY);
+				skillListCombo.setItems(avatar.coatSkillList.toArray(new String[0]));
+				skillListCombo.setText(avatar.getCoatSkill());
+				skillListCombo.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, true, false, 3, 1));
+			}
+			
+			else if(item instanceof Emblem && ((Emblem)item).type==Emblem_type.PLATINUM && item.getName().contains("스킬")){
+				label = new Label(composite, SWT.NONE);
+				label.setText("플래티넘 엠블렘 옵션 변경");
+				label.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
+				
+				Emblem emblem = (Emblem)item;
+				skillListCombo = new Combo(composite, SWT.READ_ONLY);
+				skillListCombo.setItems(emblem.platinumSkillList.toArray(new String[0]));
+				skillListCombo.setText(emblem.getPlatinumSkill());
+				skillListCombo.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, true, false, 3, 1));
+			}
+			
+			else if(item instanceof Equipment)
 			{
 				reinforce.addModifyListener(event-> {
 			    	currentReinforce=reinforce.getSelection();
@@ -658,6 +688,18 @@ public class ChangeItemStatus extends Dialog{
 						reforgeStatText.setEditable(true);
 					}
 				});
+			}
+			
+			if(item.explanation.size()!=0){
+				label = new Label(composite, SWT.WRAP);
+				label.setText("");
+				label.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, true, false, 4, 1));
+				
+				for(String str : item.explanation){
+					label = new Label(composite, SWT.WRAP);
+					label.setText(str);
+					label.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, true, false, 4, 1));
+				}
 			}
 		}
 		catch (StatusTypeMismatch e) {
@@ -860,6 +902,16 @@ public class ChangeItemStatus extends Dialog{
 			
 			if(item instanceof Weapon)
 				((Weapon)item).setReforgeNum(currentReforge);
+		}
+		else if(item instanceof Avatar && ((Avatar)item).part==Avatar_part.COAT){
+			((Avatar)item).setCoatSkill(skillListCombo.getText());
+			super.okPressed();
+			return;
+		}
+		else if(item instanceof Emblem && ((Emblem)item).type==Emblem_type.PLATINUM && item.getName().contains("스킬")){
+			((Emblem)item).setPlatinumSkill(skillListCombo.getText());
+			super.okPressed();
+			return;
 		}
 		
 		for(Entry<Integer, Wrapper> e : vStatEntry)

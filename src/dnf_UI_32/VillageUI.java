@@ -1,9 +1,5 @@
 package dnf_UI_32;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.layout.FormAttachment;
@@ -28,8 +24,6 @@ public class VillageUI extends DnFComposite
 	private Button toDungeonButton;
 	private Button selectCharacterButton;
 	private Characters character;
-	private Vault vault;
-	public SkillTree skillTree;
 	
 	VillageUI(Shell shell, Characters character)
 	{
@@ -37,17 +31,14 @@ public class VillageUI extends DnFComposite
 		mainComposite = new Composite(shell, SWT.NONE);
 		mainComposite.setLayout(new FormLayout());
 		
-		vault = new Vault(shell, character);
-		
 		toDungeonButton = new Button(mainComposite, SWT.PUSH);
 		toDungeonButton.setText("수련의 방 입장");
 		
 		selectCharacterButton = new Button(mainComposite, SWT.PUSH);
 		selectCharacterButton.setText("캐릭터 선택");
-		
 	}
 	
-	public void makeComposite(SkillTree skillTree)
+	public void makeComposite(SkillTree skillTree, Vault vault)
 	{
 		villageFolder = new TabFolder(mainComposite, SWT.NONE);
 		villageFolder.setLayoutData(new FormData());
@@ -94,8 +85,7 @@ public class VillageUI extends DnFComposite
 	{
 		villageFolder.dispose();
 	}
-
-	public Vault getVault() {return equipUI.vault;}
+	
 	public Button get_toDungeonButton() {return toDungeonButton;}
 	public Button get_selectCharacterButton() {return selectCharacterButton;}
 }

@@ -131,7 +131,7 @@ public class Inventory extends DnFComposite
 				
 				if(mode==0) inventoryList[index].getButton().addListener(SWT.MouseDown, listenerGroup.equipListener(vault)); 			// add MouseDown Event - unequip
 				else if(mode==1) inventoryList[index].getButton().addListener(SWT.MouseDown, listenerGroup.equipListener()); 			// add MouseDown Event - unequip
-				else if(mode==2) inventoryList[index].getButton().addListener(SWT.MouseDown, listenerGroup.equipListener());
+				else if(mode==2) inventoryList[index].getButton().addListener(SWT.MouseDown, listenerGroup.equipListener(vault));
 				inventoryList[index].getButton().addListener(SWT.MouseDoubleClick, listenerGroup.modifyListener(this));			// add MouseDoubleClick - modify
 				inventoryList[index].getButton().addListener(SWT.MouseEnter, listenerGroup.makeItemInfoListener(parent.getShell(), location));			// add MouseEnter Event - make composite
 				inventoryList[index].getButton().addListener(SWT.MouseExit, listenerGroup.disposeItemInfoListener()); 		// add MouseExit Event - dispose composite

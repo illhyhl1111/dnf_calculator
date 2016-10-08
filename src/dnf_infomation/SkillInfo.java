@@ -8,7 +8,13 @@ import dnf_InterfacesAndExceptions.Element_type;
 import dnf_InterfacesAndExceptions.Job;
 import dnf_InterfacesAndExceptions.ParsingException;
 import dnf_InterfacesAndExceptions.Skill_type;
+import dnf_InterfacesAndExceptions.StatList;
+import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 import dnf_calculator.FunctionStat;
+import dnf_calculator.StatusList;
+import dnf_class.Characters;
+import dnf_class.Equipment;
+import dnf_class.Monster;
 import dnf_class.Skill;
 import dnf_class.SkillLevelInfo;
 import dnf_class.SwitchingSkill;
@@ -188,20 +194,23 @@ public class SkillInfo {
 							temp = data[i++];
 						}
 						
-						String[] statList = ((String)temp).split(" & ");
-						for(String str : statList){
-							stat = ((String)str).split(" ");
-							if(stat[stat.length-1].startsWith("+")){
-								String compareStat = stat[stat.length-1];
-								stat[stat.length-1]=Double.toString(Double.valueOf(compareStat) + prevStat.get(statOrder));
+						if(temp!=null){
+							String[] statList = ((String)temp).split(" & ");
+							for(String str : statList){
+								stat = ((String)str).split(" ");
+								if(stat[stat.length-1].startsWith("+")){
+									String compareStat = stat[stat.length-1];
+									stat[stat.length-1]=Double.toString(Double.valueOf(compareStat) + prevStat.get(statOrder));
+								}
+								double result = Parser.parseStat(stat, levelInfo.stat, levelInfo.fStat);
+								if(statOrder==prevStat.size()){
+									prevStat.add(result);
+									statOrder++;
+								}
+								else prevStat.set(statOrder++, result);
 							}
-							double result = Parser.parseStat(stat, levelInfo.stat, levelInfo.fStat);
-							if(statOrder==prevStat.size()){
-								prevStat.add(result);
-								statOrder++;
-							}
-							else prevStat.set(statOrder++, result);
 						}
+						else i--;
 					}
 					skill.skillInfo.add(levelInfo);
 					statOrder=0;
@@ -219,7 +228,26 @@ public class SkillInfo {
 	
 	public static Object[] skillInfo_gunner()
 	{
-		//FunctionStat fStat[] = new FunctionStat[0];
+		FunctionStat fStat[] = new FunctionStat[1];
+		
+		//듀얼트리거
+		fStat[0] = new FunctionStat(){
+			private static final long serialVersionUID = -331944321054654526L;
+
+			@Override
+			public StatusList function(Characters character, Monster monster, Equipment equipment) {
+				StatusList statList = new StatusList();
+				try {
+					int fire = (int) (character.dungeonStatus.getStat(StatList.ELEM_FIRE)+0.00001);
+					int light = (int) (character.dungeonStatus.getStat(StatList.ELEM_LIGHT)+0.00001);
+					if(fire>light) statList.addStatList(Element_type.LIGHT, fire-light, false, false, false);
+					else statList.addStatList(Element_type.FIRE, light-fire, false, false, false);
+				} catch (StatusTypeMismatch e) {
+					e.printStackTrace();
+				}
+				return statList;
+			}
+		};
 		
 		Object[] data = new Object[] {
 				//개틀
@@ -321,6 +349,9 @@ public class SkillInfo {
 				//미비
 				"미라클 비전", Skill_type.SWITCHING, "", 30, 20, 10, 3,
 				"10", "증뎀버프 41", null,
+				//듀얼트리거
+				"듀얼 트리거", Skill_type.PASSIVE, "", 35, 1, 1, 3, "설명 명, 화속성 중 높은 속성 강화 값으로 낮은 값이 상승한다.",
+				"1", fStat[0], null,
 				
 				////////TP
 				"M-137 개틀링건 강화", "M-137 개틀링건", "", 50, 7, 5, 8, null,

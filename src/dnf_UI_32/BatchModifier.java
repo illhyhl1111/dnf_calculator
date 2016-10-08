@@ -42,6 +42,7 @@ import dnf_class.Characters;
 import dnf_class.Equipment;
 import dnf_class.Item;
 import dnf_class.Title;
+import dnf_infomation.GetDictionary;
 
 public class BatchModifier extends Dialog {
 	Shell shell;
@@ -411,7 +412,10 @@ public class BatchModifier extends Dialog {
 	}
 	
 	public void setDrop(final ItemButton<Item> itemButton) {
-
+		Card card = itemButton.getItem().getCard();
+		itemButton.getButton().setImage(GetDictionary.iconDictionary.getOrDefault(card.getItemName(),
+				GetDictionary.iconDictionary.get("디폴트")));
+		
 		Transfer[] types = new Transfer[] { TextTransfer.getInstance() };
 		int operations = DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK;
 
@@ -425,9 +429,13 @@ public class BatchModifier extends Dialog {
 						boolean succeed;
 						if(itemButton.getItem() instanceof Equipment) succeed = ((Equipment)itemButton.getItem()).setCard(card);
 						else succeed = ((Title)itemButton.getItem()).setCard(card);
+						
 						if(succeed){
+							itemButton.getButton().setImage(GetDictionary.iconDictionary.getOrDefault(card.getItemName(),
+									GetDictionary.iconDictionary.get("디폴트")));
+							
 							MessageDialog dialog = new MessageDialog(shell, "성☆공", null,
-								    "마법부여 지정에 성공하였습니다!\n\n보주 : "+(String)event.data+"\n부위 : "+((Equipment)itemButton.getItem()).part,
+								    "마법부여 지정에 성공하였습니다!\n\n보주 : "+(String)event.data+"\n부위 : "+((Equipment)itemButton.getItem()).part.getName(),
 								    MessageDialog.INFORMATION, new String[] { "ㅇㅋ" }, 0);
 							dialog.open();
 						}

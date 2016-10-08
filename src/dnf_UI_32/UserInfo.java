@@ -2,15 +2,17 @@ package dnf_UI_32;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowData;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 
 import dnf_InterfacesAndExceptions.Avatar_part;
@@ -19,6 +21,7 @@ import dnf_InterfacesAndExceptions.InterfaceSize;
 import dnf_InterfacesAndExceptions.Location;
 import dnf_class.Characters;
 import dnf_class.Item;
+import dnf_infomation.GetDictionary;
 
 class UserItemInfo extends DnFComposite
 {
@@ -33,19 +36,21 @@ class UserItemInfo extends DnFComposite
 	{
 		this.character=character;
 		mainComposite = new Composite(parent, SWT.BORDER);
-		FillLayout wholeLayout = new FillLayout();
+		RowLayout wholeLayout = new RowLayout();
 		wholeLayout.marginWidth=0;
-		//wholeLayout.wrap=false;
-		//wholeLayout.pack=true;
+		wholeLayout.justify=true;
+		wholeLayout.wrap=false;
+		wholeLayout.pack=true;
 		mainComposite.setLayout(wholeLayout);
 		
 		//TODO mainComposite.setBackgroundImage(배경그림);
 		
 		leftItemInfoComposite = new Composite(mainComposite, SWT.NONE);
-		Composite characterImageComposite = new Composite(mainComposite, SWT.NONE);
+		Label characterImageComposite = new Label(mainComposite, SWT.CENTER);
 		rightItemInfoComposite = new Composite(mainComposite, SWT.NONE);
 		
-		//characterImageComposite.setBackgroundImage(new Image(parent.getDisplay(), character.getCharImageAddress()));		//가운데 이미지 ->캐릭터 이미지
+		characterImageComposite.setLayoutData(new RowData(150, 180));
+		characterImageComposite.setImage(GetDictionary.iconDictionary.get(character.getJob().charType.name()));		//가운데 이미지 ->캐릭터 이미지
 		
 		GridLayout itemInfoLayout = new GridLayout(2, true);
 		itemInfoLayout.horizontalSpacing=3;

@@ -1,12 +1,21 @@
 package dnf_class;
 
+import java.util.LinkedList;
+
 import dnf_InterfacesAndExceptions.Emblem_type;
 import dnf_InterfacesAndExceptions.Item_rarity;
+import dnf_InterfacesAndExceptions.Job;
+import dnf_InterfacesAndExceptions.Skill_type;
+import dnf_calculator.StatusList;
+import dnf_infomation.GetDictionary;
 
-@SuppressWarnings("serial")
 public class Emblem extends Item
 {
+	private static final long serialVersionUID = 1635808919615364265L;
 	public Emblem_type type;
+	public LinkedList<String> platinumSkillList;
+	private String platinumSkill;
+	
 	public Emblem(String name, Item_rarity rarity, Emblem_type type)
 	{
 		super(name, "image\\Emblem\\"+name+".png", rarity);
@@ -19,6 +28,36 @@ public class Emblem extends Item
 	
 	@Override
 	public String getTypeName() { return "엠블렘";}
+	
+	public boolean setPlatinumOptionList(Job job){
+		if(type!=Emblem_type.PLATINUM || !getName().contains("스킬")) return false;
+		platinumSkillList = new LinkedList<String>();
+		
+		for(Skill skill : GetDictionary.charDictionary.getSkillList(job, 90)){
+			if(skill.type!=Skill_type.TP && skill.maxLevel!=1 && (skill.firstLevel<48 || skill.firstLevel==60 || skill.firstLevel==70)
+					&& !skill.getName().equals("광검 사용 가능") && !skill.getName().equals("권투 글러브 사용 가능") && !skill.getName().equals("원소폭격")
+					&& !skill.getName().equals("유탄 마스터리") && !skill.getName().equals("강인한 신념")) 
+				platinumSkillList.add(skill.getItemName());
+		}
+		platinumSkill = platinumSkillList.getLast();
+		vStat = new StatusList();
+		vStat.addStatList("힘", 8);
+		vStat.addStatList("지능", 8);
+		vStat.addSkill(platinumSkill, 1);
+		return true;
+	}
+	
+	public String getPlatinumSkill() {
+		return platinumSkill;
+	}
+
+	public void setPlatinumSkill(String platinumSkill) {
+		this.platinumSkill = platinumSkill;
+		vStat = new StatusList();
+		vStat.addStatList("힘", 8);
+		vStat.addStatList("지능", 8);
+		vStat.addSkill(platinumSkill, 1);
+	}
 	
 	public boolean equipable(Avatar avatar)
 	{

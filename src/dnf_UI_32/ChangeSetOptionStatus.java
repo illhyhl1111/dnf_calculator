@@ -108,7 +108,19 @@ public class ChangeSetOptionStatus extends Dialog{
 						dStatList.add(entry);
 					}
 				}
-			}			
+				
+				if(set.explanation.size()!=0){
+					Label label = new Label(composite, SWT.WRAP);
+					label.setText("");
+					label.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, true, false, 4, 1));
+					
+					for(String str : set.explanation){
+						label = new Label(composite, SWT.WRAP);
+						label.setText(str);
+						label.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, true, false, 4, 1));
+					}
+				}
+			}
 		}
 		catch (StatusTypeMismatch e) {
 			e.printStackTrace();

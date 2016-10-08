@@ -20,8 +20,18 @@ public class PartyCharacterInfo {
 		statList.addStatList("지능", 198);
 		temp.setBuff("신념의 오라", "신념/15렙", statList);
 		
-		((Saint)temp).setStat(new int[] {3000, 3000, 9, 29, 26, 26, 43, 18, 2, 15, 60},
-				new boolean[] {true, false, false, true}, "예시세팅");
+		((Saint)temp).setStat(new int[] {3300, 3300, 9, 29, 26, 26, 45, 18, 2, 15, 60},
+				new boolean[] {true, false, true, true}, "3300/45/18/이기");
+		((Saint)temp).setStat(new int[] {2800, 2800, 9, 29, 26, 26, 43, 16, 2, 15, 60},
+				new boolean[] {true, false, false, true}, "2800/43/16");
+		((Saint)temp).setStat(new int[] {2500, 2500, 9, 29, 26, 26, 41, 14, 2, 15, 60},
+				new boolean[] {true, false, false, true}, "2500/41/14");
+		((Saint)temp).setStat(new int[] {2200, 200, 9, 29, 26, 26, 39, 13, 2, 15, 0},
+				new boolean[] {true, false, false, true}, "2200/39/13/스택X");
+		
+		((Saint)temp).setStat(new int[] {2000, 2000, 0, HolyInfo.firstLevel_striking, HolyInfo.firstLevel_wisebless, HolyInfo.firstLevel_dawnbless,
+				HolyInfo.firstLevel_glorybless, HolyInfo.firstLevel_aporkalypse, 1, HolyInfo.firstLevel_beliefAura, 0},
+				new boolean[Saint.boolStatNum], Saint.settingFeatureName);
 		
 		partyList.add(temp);
 		

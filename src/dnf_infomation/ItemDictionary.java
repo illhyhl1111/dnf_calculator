@@ -1,10 +1,7 @@
 package dnf_infomation;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -30,7 +27,7 @@ import dnf_class.Setting;
 import dnf_class.Title;
 import dnf_class.Weapon;
 
-public class ItemDictionary implements java.io.Serializable, Cloneable
+public class ItemDictionary implements java.io.Serializable
 {
 	/**
 	 * 
@@ -356,31 +353,6 @@ public class ItemDictionary implements java.io.Serializable, Cloneable
 		else if(item instanceof Title) result = titleList_user.remove(item);
 		else if(item instanceof Avatar) result = avatarList_user.remove(item);
 		return result;
-	}
-	
-	@Override
-	public Object clone()
-	{
-		ItemDictionary itemDictionary;
-		try{
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream("ItemDictionary.dfd"));
-			Object temp = in.readObject();
-
-			itemDictionary = (ItemDictionary)temp;
-			in.close();
-			return itemDictionary;
-		}
-		catch(FileNotFoundException e)
-		{	
-			itemDictionary = new ItemDictionary();
-			SaveItemDictionary.main(null);
-			return itemDictionary;
-		}
-		catch(IOException | ClassNotFoundException e)
-		{
-			e.printStackTrace();
-			return null;
-		}
 	}
 }
 

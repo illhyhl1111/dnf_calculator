@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -40,12 +41,14 @@ public class Vault extends Dialog
 	static final int mouseInterval_ver = 5;
 	private Characters character;
 	
+	private Shell parent;
 	Shell save;
 	
 	@SuppressWarnings("unchecked")
 	public Vault(Shell parent, Characters character)
 	{
 		super(parent);
+		this.parent=parent;
 		this.character=character;
 		this.itemList=character.userItemList.getVaultItemList(character.getJob());
 	
@@ -186,6 +189,7 @@ public class Vault extends Dialog
 			    });
 			}
 		}
+		
 		return composite;
 	}
 	
@@ -199,6 +203,18 @@ public class Vault extends Dialog
 	protected Point getInitialSize() {
 	    return new Point(vaultComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT).x+60, InterfaceSize.VAULT_SIZE_Y);
 	}
+	
+	@Override
+	protected void initializeBounds() 
+	{ 
+		super.initializeBounds(); 
+		Shell shell = this.getShell(); 
+		Rectangle bounds = parent.getBounds(); 
+		Rectangle rect = shell.getBounds (); 
+		int x = bounds.x + (bounds.width - rect.width) / 2; 
+		int y = bounds.y + 40; 
+		shell.setLocation (x, y); 
+	} 
 	
 	@Override
 	protected void createButtonsForButtonBar(final Composite parent)

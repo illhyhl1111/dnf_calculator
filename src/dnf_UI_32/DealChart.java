@@ -28,6 +28,7 @@ public class DealChart extends DnFComposite {
 	private Monster monster;
 	private Setting compareSetting;
 	private Composite explain;
+	private Label dealLabel;
 	public final static int LISTSIZE=14;
 	
 	public DealChart(Composite parent, Characters character)
@@ -58,7 +59,7 @@ public class DealChart extends DnFComposite {
 		icon.setAlignment(SWT.CENTER);
 		icon.setLayoutData(new RowData(InterfaceSize.SKILL_BUTTON_SIZE, 15));
 		
-		Label dealLabel = new Label(explain, SWT.BORDER);
+		dealLabel = new Label(explain, SWT.BORDER);
 		String compareName = "( 비교 대상 없음 )";
 		if(compareSetting!=null) compareName="( vs "+compareSetting.setting_name+" )";
 		dealLabel.setText("데미지 "+compareName);
@@ -126,6 +127,8 @@ public class DealChart extends DnFComposite {
 		
 		if(compareSetting!=null)
 		{
+			dealLabel.setText("데미지 "+"( vs "+compareSetting.setting_name+" )");
+			
 			Setting tempSetting = (Setting) character.getItemSetting().clone();
 			character.setItemSettings(compareSetting, true);
 			
@@ -283,7 +286,20 @@ class DealInfo extends DnFComposite implements Comparable<DealInfo>{
 			double diff = ( (((double)deal)/deal_compare) -1)*100;
 			compareStr = " ("+Double.parseDouble(String.format("%.1f", diff))+"%)";
 		}
-		dealLabel.setText(Long.toString(deal)+compareStr);
+		
+		String dealStr = Long.toString(deal);
+		String newStr;
+		if(dealStr.length()>8){
+			newStr = dealStr.substring(0, dealStr.length()-8)+"억 ";
+			newStr += dealStr.substring(dealStr.length()-8, dealStr.length()-4)+"만 ";
+			newStr += dealStr.substring(dealStr.length()-4);
+		}
+		else if(dealStr.length()>4){
+			newStr = dealStr.substring(0, dealStr.length()-4)+"만 ";
+			newStr += dealStr.substring(dealStr.length()-4);
+		}
+		else newStr = dealStr;
+		dealLabel.setText(newStr+compareStr);
 		
 		try {
 			int hp = monster.getStat("체력");
