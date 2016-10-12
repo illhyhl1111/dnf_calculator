@@ -1,12 +1,12 @@
 package dnf_infomation;
 
-import java.util.HashSet;
+import java.util.LinkedList;
 
 import dnf_InterfacesAndExceptions.Job;
 import dnf_calculator.StatusList;
 
 public class CharacterInfo {
-	public static void getInfo(HashSet<CharInfoBox> infoList)
+	public static void getInfo(LinkedList<CharInfoBox> basicStatList)
 	{
 		CharInfoBox temp;
 		Job job;
@@ -17,10 +17,24 @@ public class CharacterInfo {
 		
 		//90레벨
 		temp = new CharInfoBox(job, 90, new StatusList());
-		temp.statList.addStatList("힘", 1000);
-		temp.statList.addStatList("지능", 800);
+		temp.statList.addStatList("힘", 757);
+		temp.statList.addStatList("지능", 606);
 		temp.statList.addStatList("독공", 960);
 		temp.statList.addStatList("모속강", 13);
-		infoList.add(temp);
+		temp.statList.addStatList("물크", 8);
+		temp.statList.addStatList("마크", 8);
+		basicStatList.add(temp);
+		
+		/////여렝거
+		job = Job.RANGER_F;
+		//90레벨
+		temp = new CharInfoBox(job, 90, new StatusList());
+		temp.statList.addStatList("힘", 757);
+		temp.statList.addStatList("지능", 066);
+		temp.statList.addStatList("독공", 960);
+		temp.statList.addStatList("모속강", 13);
+		temp.statList.addStatList("물크", 8);
+		temp.statList.addStatList("마크", 8);
+		basicStatList.add(temp);
 	}
 }

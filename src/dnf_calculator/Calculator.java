@@ -15,7 +15,7 @@ public class Calculator {
 	public static long getDamage(Skill skill, Monster objcet, Characters character, int mode)
 	{
 		long deal=0;
-		SkillLevelInfo skillInfo = skill.getSkillLevelInfo(true);
+		SkillLevelInfo skillInfo = skill.getSkillLevelInfo(true, character.isBurning());
 		if(skillInfo.hasPhy_per()) deal += Calculator.percentDamage_physical(skillInfo.phy_atk, skill.element, objcet, character, mode);
 		if(skillInfo.hasPhy_fix()) deal += Calculator.fixedDamage_physical(skillInfo.phy_fix, skill.element, objcet, character, mode);
 		if(skillInfo.hasMag_per()) deal += Calculator.percentDamage_magical(skillInfo.mag_atk, skill.element, objcet, character, mode);

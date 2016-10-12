@@ -1,5 +1,7 @@
 package dnf_UI_32;
 
+import java.util.HashMap;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FormData;
@@ -10,6 +12,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
 import dnf_InterfacesAndExceptions.SetName;
+import dnf_class.Buff;
 import dnf_class.IconObject;
 import dnf_class.Item;
 import dnf_class.Monster;
@@ -22,6 +25,7 @@ public class ItemButton<T extends IconObject>
 	private T item;
 	private int imageSize_x;
 	private int imageSize_y;
+	private boolean offImageMode=false;
 	
 	public ItemButton(Composite parent, T item, int x, int y)
 	{
@@ -61,15 +65,42 @@ public class ItemButton<T extends IconObject>
 	
 	public void renewImage(boolean enabled)
 	{
+		if(offImageMode) return;
 		Image image;
-		if(item.getIcon()==null || !enabled) image = GetDictionary.iconDictionary.get("디폴트");
+		HashMap<String, Image> dictionary;
+		if(item instanceof Skill) dictionary = GetDictionary.skillIconDictionary;
+		else dictionary = GetDictionary.iconDictionary;
+		
+		if(item.getIcon()==null || !enabled){
+			image = GetDictionary.iconDictionary.get("디폴트");
+		}
 		else{
 			if(item instanceof Skill && !((Skill)item).getActiveEnabled())
-				image = GetDictionary.iconDictionary.get(item.getDisabledName());
-			else image = GetDictionary.iconDictionary.get(item.getItemName());
+				image = dictionary.get(item.getDisabledName());
+			else if(item instanceof Buff && !((Buff)item).enabled)
+				image = dictionary.get(item.getDisabledName());
+			else image = dictionary.get(item.getItemName());
 		}
 		button.setImage(image);
 		//button.setImage(GetDictionary.iconDictionary.get("아이템_투명"));
+	}
+	
+	public void setOnOffImage(boolean setOffMode)
+	{
+		Image image;
+		HashMap<String, Image> dictionary;
+		if(item instanceof Skill) dictionary = GetDictionary.skillIconDictionary;
+		else dictionary = GetDictionary.iconDictionary;
+		
+		if(item.getIcon()==null){
+			image = GetDictionary.iconDictionary.get("디폴트");
+		}
+		else{
+			if(setOffMode) image = dictionary.get(item.getDisabledName());
+			else image = dictionary.get(item.getItemName());
+		}
+		button.setImage(image);
+		offImageMode=true;
 	}
 	
 	public boolean hasSetOption()

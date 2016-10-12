@@ -75,7 +75,7 @@ public class EquipmentInfoUI extends DnFComposite{
 			vaultButton.setText("금고 열기");
 			FormData vaultButtonData = new FormData();
 			vaultButtonData.left = new FormAttachment(itemInfo.getComposite(), 10);
-			vaultButtonData.top = new FormAttachment(skillButton);
+			vaultButtonData.top = new FormAttachment(skillButton, 10);
 			vaultButton.setLayoutData(vaultButtonData);
 			
 			vaultButton.addListener(SWT.Selection, new Listener(){

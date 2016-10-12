@@ -27,4 +27,5 @@ public class BooleanInfo extends AbstractStatusInfo			// boolean형 스탯정보
 	public String getStatToString() throws StatusTypeMismatch { throw new StatusTypeMismatch("Skill->Boolean");}
 	public void setInfo(String name) throws StatusTypeMismatch { throw new StatusTypeMismatch("Skill->Boolean");}
 	public void setInfo(int start, int end) throws StatusTypeMismatch { throw new StatusTypeMismatch("SkillRange->Boolean");}
+	public void increaseStat(double strength) throws StatusTypeMismatch { throw new StatusTypeMismatch("Double->Boolean");}
 }

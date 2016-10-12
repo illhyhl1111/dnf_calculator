@@ -1,6 +1,6 @@
 package dnf_infomation;
 
-import java.util.HashSet;
+import java.util.LinkedList;
 
 import dnf_InterfacesAndExceptions.Avatar_part;
 import dnf_InterfacesAndExceptions.Item_rarity;
@@ -9,7 +9,7 @@ import dnf_calculator.StatusInfo;
 import dnf_class.Avatar;
 
 public class AvatarInfo{
-	public static void getInfo(HashSet<Avatar> avatarList)
+	public static void getInfo(LinkedList<Avatar> avatarList)
 	{
 		Avatar temp;
 		Item_rarity rarity;

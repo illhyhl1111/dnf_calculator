@@ -55,7 +55,7 @@ public class DungeonUI extends DnFComposite{
 		toVillageButton.setText("마을로 돌아가기");
 	}
 	
-	public void makeComposite()
+	public void makeComposite(Vault vault)
 	{
 		mainComposite = new Composite(shell, SWT.NONE);
 		mainComposite.setLayout(new FormLayout());
@@ -77,7 +77,7 @@ public class DungeonUI extends DnFComposite{
 		inventoryFolder = new TabFolder(mainComposite, SWT.NONE);
 		InventoryCardPack inventoryPack = new InventoryCardPack(inventoryFolder, character);
 		inventoryPack.setDungeonMode(this);
-		inventoryPack.setDungeonListener();
+		inventoryPack.setDungeonListener(vault);
 		formData = new FormData();
 		formData.bottom = new FormAttachment(100, 0);
 		formData.left = new FormAttachment(infoFolder, 10);
@@ -117,7 +117,7 @@ public class DungeonUI extends DnFComposite{
 		
 		dealChart = new DealChart(mainComposite, character);
 		formData = new FormData();
-		formData.left = new FormAttachment(inventoryFolder, 10);
+		formData.right = new FormAttachment(100, -5);
 		formData.height=InterfaceSize.DEALCHART_Y;
 		dealChart.setDealChart();
 		dealChart.getComposite().setLayoutData(formData);
@@ -295,6 +295,7 @@ public class DungeonUI extends DnFComposite{
 	@Override
 	public void renew()
 	{
+		buffInventory.renew();		//가장 먼저
 		itemInfo.renew();
 		avatarInfo.renew();
 		dealChart.setMonster(trainingRoom.getMonster());
@@ -325,7 +326,7 @@ public class DungeonUI extends DnFComposite{
         public void create() {
                 super.create();
                 setTitle("아이템 세팅 저장");
-                setMessage("현제 아이템 세팅을 복제하여 저장합니다", IMessageProvider.INFORMATION);
+                setMessage("현재 아이템 세팅을 복제하여 저장합니다", IMessageProvider.INFORMATION);
         }
 
         @Override

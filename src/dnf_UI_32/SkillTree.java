@@ -16,6 +16,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
@@ -23,6 +24,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 import dnf_InterfacesAndExceptions.InterfaceSize;
+import dnf_InterfacesAndExceptions.Skill_type;
+import dnf_calculator.StatusAndName;
 import dnf_class.Characters;
 import dnf_class.Skill;
 
@@ -34,6 +37,9 @@ public class SkillTree extends Dialog{
 	int[] skillLevel;
 	Point contentSize;
 	DnFComposite superInfo;
+	Button burningButton;
+	Button contractButton;
+	Combo representSkillCombo;
 	
 	public SkillTree(Shell parent, Characters character, DnFComposite superInfo)
 	{
@@ -59,7 +65,7 @@ public class SkillTree extends Dialog{
 		
 		Label infoLabel = new Label(content, SWT.NONE);
 		infoLabel.setText(" 레벨은 \'던전 스펙\'을 기준으로 한 스킬레벨/표기수치 입니다.\n"
-				+ " 해당 수치는 TP / 크로니클 / 스증뎀 / 스증버프가 모두 포함된 수치입니다.\n"
+				+ " 해당 수치는 TP / 크로니클 / 스증뎀 / 일부 스증뎀(특정 스킬 수치를 올리는 스증뎀)이 포함된 수치입니다.\n"
 				+ " 일반스킬은 마스터(좌클릭) 혹은 0레벨(우클릭) 만 가능합니다.\n"
 				+ " TP스킬은 +1레벨(좌클릭), -1레벨(우클릭) 조정이 가능합니다.\n");
 		infoLabel.setLayoutData(new RowData());
@@ -119,7 +125,8 @@ public class SkillTree extends Dialog{
 			
 			if(list.isEmpty()){
 				index++;
-				leftButton.setText("\n"+skillLevel[index]);
+				if(index<skillLevel.length) leftButton.setText("\n"+skillLevel[index]);
+				else leftButton.dispose();
 				continue;
 			}
 			
@@ -138,6 +145,14 @@ public class SkillTree extends Dialog{
 				button.getButton().addListener(SWT.MouseExit, listenerGroup.disposeItemInfoListener()); 		// add MouseExit Event - dispose composite
 				button.getButton().addListener(SWT.MouseMove, listenerGroup.moveItemInfoListener());			// add MouseMove Event - move composite
 				button.getButton().addListener(SWT.MouseDown, listenerGroup.skillLevelModifyListener(this.getShell(), false));
+				if(button.getItem().type==Skill_type.SWITCHING) {
+					LinkedList<StatusAndName> statlist = button.getItem().getSkillLevelInfo(true, false).stat.statList;
+					String[] statList = new String[statlist.size()];
+					int j=0;
+					for(StatusAndName s : statlist)
+						statList[j++] = StatusAndName.getStatHash().get(s.name);
+					button.getButton().addListener(SWT.MouseDoubleClick, listenerGroup.skillModifyListener(statList));
+				}
 			}
 			index++;
 			upButton = leftButton;
@@ -164,8 +179,43 @@ public class SkillTree extends Dialog{
 			TPSkillList.add(temp);
 		}
 		
-		contentSize = content.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		Group contractSetGroup = new Group(content, SWT.NONE);
+		contractSetGroup.setData(new RowData());
+		GridLayout contractLayout = new GridLayout(2, false);
+		contractLayout.marginLeft=20;
+		contractSetGroup.setLayout(contractLayout);
+		contractSetGroup.setText("달계 / 버닝 / 대표스킬 설정");
 		
+		Label setTP = new Label(contractSetGroup, SWT.NONE);
+		setTP.setText("달계 설정");
+		setTP.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
+		
+		contractButton = new Button(contractSetGroup, SWT.CHECK);
+		contractButton.setText("설정");
+		contractButton.setSelection(character.hasContract());
+		
+		Label setBurning = new Label(contractSetGroup, SWT.NONE);
+		setBurning.setText("버닝 설정");
+		setBurning.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
+		
+		burningButton = new Button(contractSetGroup, SWT.CHECK);
+		burningButton.setText("설정");
+		burningButton.setSelection(character.isBurning());
+		
+		Label setRepresentative = new Label(contractSetGroup, SWT.NONE);
+		setRepresentative.setText("대표스킬 설정");
+		setRepresentative.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
+		
+		representSkillCombo = new Combo(contractSetGroup, SWT.READ_ONLY);
+		String[] items = new String[character.getDamageSkillList().size()];
+		int i=0;
+		for(Skill skill : character.getDamageSkillList())
+			items[i++] = skill.getItemName();
+		representSkillCombo.setItems(items);
+		representSkillCombo.setText(character.getRepresentSkill().getName());
+		
+		contentSize = content.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+
 		return content;
 	}
 	
@@ -190,9 +240,22 @@ public class SkillTree extends Dialog{
 	{
 		LinkedList<Skill> list = new LinkedList<Skill>();
 		
-		for(LinkedList<ItemButton<Skill>> l1 : skillListByLevel)
-			for(ItemButton<Skill> l2 : l1)
+		character.setBurning(burningButton.getSelection());
+		boolean contractChanged = (character.hasContract() != contractButton.getSelection());
+		if(contractChanged)
+			character.setContract(contractButton.getSelection());
+		
+		character.setRepresentSkill(representSkillCombo.getText());
+		
+		for(LinkedList<ItemButton<Skill>> l1 : skillListByLevel){
+			for(ItemButton<Skill> l2 : l1){
+				if(contractChanged){
+					Skill skill = l2.getItem();
+					if(skill.getActiveEnabled()) skill.masterSkill(character.getLevel(), contractButton.getSelection());
+				}
 				list.add(l2.getItem());
+			}
+		}
 		
 		for(ItemButton<Skill> l1 : TPSkillList)
 			list.add(l1.getItem());

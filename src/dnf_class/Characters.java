@@ -8,12 +8,10 @@ import java.util.Map.Entry;
 import dnf_InterfacesAndExceptions.Avatar_part;
 import dnf_InterfacesAndExceptions.Character_type;
 import dnf_InterfacesAndExceptions.Equip_part;
-import dnf_InterfacesAndExceptions.ItemFileNotFounded;
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_InterfacesAndExceptions.Item_rarity;
 import dnf_InterfacesAndExceptions.Job;
 import dnf_InterfacesAndExceptions.SetName;
-import dnf_InterfacesAndExceptions.Skill_type;
 import dnf_InterfacesAndExceptions.StatList;
 import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 import dnf_InterfacesAndExceptions.UndefinedStatusKey;
@@ -23,6 +21,7 @@ import dnf_calculator.SkillRangeStatusInfo;
 import dnf_calculator.SkillStatusInfo;
 import dnf_calculator.Status;
 import dnf_calculator.StatusAndName;
+import dnf_infomation.BriefCharacterInfo;
 import dnf_infomation.CharacterDictionary;
 import dnf_infomation.GetDictionary;
 import dnf_infomation.ItemDictionary;
@@ -39,7 +38,7 @@ public class Characters implements java.io.Serializable
 	private LinkedList<Skill> skillList;
 	private Setting itemSetting;
 	private HashMap<SetName, Integer> setOptionList;
-	public LinkedList<Buff> buff;
+	public LinkedList<Buff> buffList;
 	private int level;
 	private final Job job;
 	public final String name;
@@ -49,6 +48,8 @@ public class Characters implements java.io.Serializable
 	public ItemDictionary userItemList;
 	
 	private Skill representSkill;
+	private boolean hasContract;
+	private boolean isBurning;
 	
 	public boolean autoOptimize;
 	private int autoOptimizeMode;
@@ -57,38 +58,44 @@ public class Characters implements java.io.Serializable
 	String charImageAddress;
 	
 	public Monster target;
+	public String[] trainingRoomSeletion;
 
-	public Characters(int level, Job job, String name)
+	public Characters(BriefCharacterInfo info)
 	{
-		this.name=name;
-		characterInfoList = (CharacterDictionary) GetDictionary.charDictionary.clone();
-		skillList = characterInfoList.getSkillList(job, level);
+		this.name=info.name;
+		characterInfoList = GetDictionary.getNewCharDictionary(info.job);
+		skillList = characterInfoList.getSkillList(info.job, info.level);
 		
 		itemSetting = new Setting();
 		setOptionList = new HashMap<SetName, Integer>();						//key : 셋옵 이름, value : 셋옵 보유 개수
 	
-		buff = new LinkedList<Buff>();
-		this.setLevel(level);
+		buffList = new LinkedList<Buff>();
+		this.setLevel(info.level);
 		
-		this.job = job;
+		this.job = info.job;
 		characterType = job.charType;
 		
 		villageStatus = new Status();
 		dungeonStatus = new Status();
 		
-		userItemList = (ItemDictionary) GetDictionary.itemDictionary.clone();
+		userItemList = GetDictionary.getNewItemDictionary(job);
 		autoOptimize = false;
 		autoOptimizeRarity = Item_rarity.NONE;
 		autoOptimizeMode = 0;
 		
 		try {
-			target = characterInfoList.getMonsterInfo("오브젝트");
+			target = characterInfoList.getMonsterInfo("강화기");
 		} catch (ItemNotFoundedException e) {
 			target = null;
 			e.printStackTrace();
 		}
 		
 		representSkill = getDamageSkillList().getLast();
+		setContract(true);
+		setBurning(false);
+		
+		trainingRoomSeletion = new String[] { "몬스터 설정", "부가조건 설정", "파티원 설정", "부가조건 설정", "부가조건 설정", 
+				"파티원 설정", "부가조건 설정", "부가조건 설정", "파티원 설정", "부가조건 설정", "부가조건 설정"};
 
 		setStatus();
 	}
@@ -176,7 +183,7 @@ public class Characters implements java.io.Serializable
 		}
 		else if(item instanceof Buff){
 			Buff buff = (Buff)item; 
-			this.buff.add(buff);
+			this.buffList.add(buff);
 			previous = new Item();
 		}
 		else if(item instanceof Creature){
@@ -196,7 +203,7 @@ public class Characters implements java.io.Serializable
 			e.printStackTrace();
 		}
 		
-		if(autoOptimize && crt_before!=crt_after) optimizeEmblem(autoOptimizeMode, autoOptimizeRarity);
+		if(autoOptimize && (crt_before!=crt_after || (item instanceof Avatar) )) optimizeEmblem(autoOptimizeMode, autoOptimizeRarity);
 		
 		return previous;
 	}
@@ -244,7 +251,7 @@ public class Characters implements java.io.Serializable
 		}
 		else if(item instanceof Buff){
 			Buff consume = (Buff)item; 
-			success = buff.remove(consume);
+			success = buffList.remove(consume);
 		}
 		else if(item instanceof Creature){
 			if(item.getName().equals(itemSetting.creature.getName())){
@@ -267,7 +274,7 @@ public class Characters implements java.io.Serializable
 			e.printStackTrace();
 		}
 		
-		if(autoOptimize && crt_before!=crt_after) optimizeEmblem(autoOptimizeMode, autoOptimizeRarity);
+		if(autoOptimize && (crt_before!=crt_after || (item instanceof Avatar) )) optimizeEmblem(autoOptimizeMode, autoOptimizeRarity);
 		
 		return success;
 	}
@@ -317,7 +324,7 @@ public class Characters implements java.io.Serializable
 					if(s.isEnabled(e.getValue())) itemStatUpdate(s);									//셋옵에 요구되는 장착수를 넘었을 때 셋옵 스탯 더하기
 				}
 			} 
-			catch (ItemFileNotFounded e1) {
+			catch (ItemNotFoundedException e1) {
 				e1.printStackTrace();
 			}
 			
@@ -325,6 +332,12 @@ public class Characters implements java.io.Serializable
 		
 		itemStatUpdate(itemSetting.title);
 		itemStatUpdate(itemSetting.creature);
+		
+		for(Buff buff : buffList)
+			if(buff.enabled){
+				buff.dStat.addListToStat(dungeonStatus);
+				buff.fStat.addListToStat(dungeonStatus, this, target, buff);
+			}
 		
 		target.getAdditionalStatList().addListToStat(dungeonStatus);
 		
@@ -337,28 +350,28 @@ public class Characters implements java.io.Serializable
 				LinkedList<SetOption> candidates = userItemList.getSetOptions(e.getKey());		//e에 해당되는 셋옵 목록 - candidates
 				for(SetOption s : candidates)
 				{
-					if(s.isEnabled(e.getValue())) s.fStat.addListToStat(dungeonStatus, this, target, null);
+					if(s.isEnabled(e.getValue())) s.fStat.addListToStat(dungeonStatus, this, target, s);
 				}
 			} 
-			catch (ItemFileNotFounded e1) {
+			catch (ItemNotFoundedException e1) {
 				e1.printStackTrace();
 			}
 			
 		}
-		//TODO 도핑, 휘장
+		//TODO 휘장
 		
 		setSkillLevel();
 		
 		for(Skill skill : skillList){
 			//if(!skill.getSkillLevelInfo(true).fStat.statList.isEmpty()) System.out.println("HI");
 			if(skill.buffEnabled(false)){
-				skill.getSkillLevelInfo(false).stat.addListToStat(villageStatus);
-				skill.getSkillLevelInfo(false).fStat.addListToStat(villageStatus, this, target, null);
+				skill.getSkillLevelInfo(false, isBurning).stat.addListToStat(villageStatus);
+				skill.getSkillLevelInfo(false, isBurning).fStat.addListToStat(villageStatus, this, target, skill);
 			}
 			if(skill.buffEnabled(true)){
-				skill.getSkillLevelInfo(true).stat.addListToStat(dungeonStatus);
-				if(!skill.getSkillLevelInfo(true).fStat.statList.isEmpty())
-					skill.getSkillLevelInfo(true).fStat.addListToStat(dungeonStatus, this, target, null);
+				skill.getSkillLevelInfo(true, isBurning).stat.addListToStat(dungeonStatus);
+				if(!skill.getSkillLevelInfo(true, isBurning).fStat.statList.isEmpty())
+					skill.getSkillLevelInfo(true, isBurning).fStat.addListToStat(dungeonStatus, this, target, skill);
 			}
 		}
 	}
@@ -373,17 +386,28 @@ public class Characters implements java.io.Serializable
 		
 		LinkedList<AbstractStatusInfo> list = new LinkedList<AbstractStatusInfo>();
 		for(Skill skill : skillList){
-			if(skill.hasBuff()){
-				for(StatusAndName s : skill.getSkillLevelInfo(false).stat.statList)
+			if(skill.buffEnabled(false)){
+				for(StatusAndName s : skill.getSkillLevelInfo(false, isBurning).stat.statList){
 					list.add(s.stat);
+					/*if(Double.compare(skill.villageIncrease, 1.0)==0) 
+					else{
+						try {
+							AbstractStatusInfo temp = (AbstractStatusInfo) s.stat.clone();
+							temp.increaseStat(skill.villageIncrease);
+							list.add(temp);
+						} catch (StatusTypeMismatch | CloneNotSupportedException e) {
+							e.printStackTrace();
+						}
+					}*/
+				}
 			}
 		}
 		getSkillLevel(false, list);
 		
 		list = new LinkedList<AbstractStatusInfo>();
 		for(Skill skill : skillList){
-			if(skill.hasBuff()){
-				for(StatusAndName s : skill.getSkillLevelInfo(true).stat.statList)
+			if(skill.buffEnabled(true)){
+				for(StatusAndName s : skill.getSkillLevelInfo(true, isBurning).stat.statList)
 					list.add(s.stat);
 			}
 		}
@@ -460,7 +484,7 @@ public class Characters implements java.io.Serializable
 		LinkedList<Skill> list = new LinkedList<Skill>();
 		for(Skill skill : skillList)
 		{
-			if(skill.type==Skill_type.BUF_ACTIVE && skill.getActiveEnabled()){
+			if(skill.isEnableable() && skill.getActiveEnabled()){
 				list.add(skill);
 			}
 		}
@@ -599,8 +623,10 @@ public class Characters implements java.io.Serializable
 					}
 				}
 			}
+			
+			setStatus();
 	
-		}catch(StatusTypeMismatch | UndefinedStatusKey | ItemFileNotFounded e) {
+		}catch(StatusTypeMismatch | UndefinedStatusKey | ItemNotFoundedException e) {
 			e.printStackTrace();
 		}
 	
@@ -626,15 +652,17 @@ public class Characters implements java.io.Serializable
 		
 		Item previous = equip(item);
 		if(previous==null) return "착용불가";
+		else if(previous.getName().equals(item.getName())) return "";
 		
 		long damage_comp = Calculator.getDamage(representSkill, target, this);
-		double compare = ((double)(damage_comp-damage_now))/damage_now*100;
-		
 		String result;
-		if(compare>0.001) result = " (▲ "+ Double.parseDouble(String.format("%.2f", compare))+"%)";
-		else if(compare<-0.001) result = " (▼ "+ Double.parseDouble(String.format("%.2f", compare*-1))+"%)";
-		else result = "";
-		
+		if(Double.compare(damage_now, 0.0)==0) result = "-";
+		else{
+			double compare= ((double)(damage_comp-damage_now))/damage_now*100;
+			if(Double.compare(compare, 0.0)>0) result = " (▲ "+ Double.parseDouble(String.format("%.2f", compare))+"%)";
+			else if(Double.compare(compare, 0.0)<0) result = " (▼ "+ Double.parseDouble(String.format("%.2f", compare*-1))+"%)";
+			else result = "";
+		}
 		equip(previous);
 		return result;
 	}
@@ -650,7 +678,7 @@ public class Characters implements java.io.Serializable
 	public HashMap<SetName, Integer> getSetOptionList() {return setOptionList;}
 	public Creature getCreature() {return itemSetting.creature;}
 	public Title getTitle() {return itemSetting.title;}
-	public LinkedList<Buff> getDoping() {return buff;}
+	public LinkedList<Buff> getDoping() {return buffList;}
 	public Weapon getWeapon() {return itemSetting.weapon;}
 	public void setWeapon(Weapon weapon) {this.itemSetting.weapon = weapon;}
 	public void setCreature(Creature creature) {this.itemSetting.creature = creature;}
@@ -659,9 +687,18 @@ public class Characters implements java.io.Serializable
 	public void setDrape(Drape drape) {this.itemSetting.drape = drape;}
 	public String getSettingName() {return itemSetting.setting_name;}
 	public Setting getItemSetting() { return itemSetting; }
+	public Skill getRepresentSkill() {return representSkill;}
+	public void setRepresentSkill(String skillName) {
+		for(Skill skill : skillList)
+			if(skill.getItemName().equals(skillName)){
+				representSkill=skill;
+				return;
+			}
+	}
 	
 	public void setSkillLevel(LinkedList<Skill> list)
 	{
+		if(list.size()!=skillList.size()) return; 
 		Iterator<Skill> iter = list.iterator();
 		for(Skill s : skillList)
 		{
@@ -683,4 +720,20 @@ public class Characters implements java.io.Serializable
 		this.autoOptimizeRarity = autoOptimizeRarity;
 	}
 	public Item_rarity getAutoOptimizeRarity() {return autoOptimizeRarity;}
+
+	public boolean isBurning() {
+		return isBurning;
+	}
+
+	public void setBurning(boolean isBurning) {
+		this.isBurning = isBurning;
+	}
+
+	public boolean hasContract() {
+		return hasContract;
+	}
+
+	public void setContract(boolean hasContract) {
+		this.hasContract = hasContract;
+	}
 }

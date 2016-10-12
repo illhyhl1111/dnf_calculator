@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_InterfacesAndExceptions.Job;
 import dnf_InterfacesAndExceptions.ParsingException;
+import dnf_InterfacesAndExceptions.Skill_type;
 import dnf_calculator.StatusList;
 import dnf_class.Monster;
 import dnf_class.Skill;
@@ -23,23 +24,23 @@ public class CharacterDictionary implements java.io.Serializable, Cloneable
 	 * 
 	 */
 	private static final long serialVersionUID = -2541411296068975333L;
-	public final HashSet<Skill> skillList;
-	private HashSet<CharInfoBox> basicStatList;
-	public final HashSet<Monster> monsterList;
+	public final LinkedList<Skill> skillList;
+	private LinkedList<CharInfoBox> basicStatList;
+	public final LinkedList<Monster> monsterList;
 	
 	public CharacterDictionary() 
 	{
-		skillList = new HashSet<Skill>();
+		skillList = new LinkedList<Skill>();
 		try {
-			SkillInfo_gunner.getInfo(skillList, SkillInfo_gunner.skillInfo());
+			SkillInfo.getInfo(skillList, SkillInfo.skillInfo_gunner());
 		} catch (ParsingException e) {
 			e.printStackTrace();
 		}
 		
-		basicStatList = new HashSet<CharInfoBox>();
+		basicStatList = new LinkedList<CharInfoBox>();
 		CharacterInfo.getInfo(basicStatList);
 		
-		monsterList = new HashSet<Monster>();
+		monsterList = new LinkedList<Monster>();
 		MonsterInfo.getInfo(monsterList);
 	}
 	
@@ -48,12 +49,21 @@ public class CharacterDictionary implements java.io.Serializable, Cloneable
 		LinkedList<Skill> list = new LinkedList<Skill>();
 		for(Skill s : skillList){
 			if(s.isSkillOfChar(job)){
-				s.masterSkill(level);
+				s.masterSkill(level, true);
 				list.add(s);
 			}
 		}
 		
 		Collections.sort(list);
+		return list;
+	}
+	
+	public LinkedList<String> getAvatarSkillList(Job job){
+		LinkedList<String> list= new LinkedList<String>();
+		
+		for(Skill skill : getSkillList(job, 90)){
+			if(skill.type!=Skill_type.TP) list.add(skill.getItemName());
+		}
 		return list;
 	}
 	
@@ -78,7 +88,7 @@ public class CharacterDictionary implements java.io.Serializable, Cloneable
 	{
 		CharacterDictionary charDictionary;
 		try{
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream("CharacterDictionary.dfd"));
+			ObjectInputStream in = new ObjectInputStream(new FileInputStream("data\\CharacterDictionary.dfd"));
 			Object temp = in.readObject();
 
 			charDictionary = (CharacterDictionary)temp;
@@ -105,7 +115,7 @@ class SaveCharacterDictionary {
 		try{
 			CharacterDictionary charDic = new CharacterDictionary();
 			
-			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("CharacterDictionary.dfd"));
+			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("data\\CharacterDictionary.dfd"));
 			out.writeObject(charDic);
 			out.close();
 		}

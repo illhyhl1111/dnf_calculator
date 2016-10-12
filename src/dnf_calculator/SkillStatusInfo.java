@@ -29,4 +29,5 @@ public class SkillStatusInfo extends AbstractStatusInfo			// 스킬정보 저장
 	
 	public double getIncrease() {return increase;}
 	public void setIncrease(int increase) { this.increase=increase;}
+	public void increaseStat(double strength) {increase = increase*strength;}
 }

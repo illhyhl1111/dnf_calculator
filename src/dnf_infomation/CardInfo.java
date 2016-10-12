@@ -1,6 +1,5 @@
 package dnf_infomation;
-
-import java.util.HashSet;
+import java.util.LinkedList;
 
 import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.Item_rarity;
@@ -10,7 +9,7 @@ import dnf_calculator.StatusInfo;
 import dnf_class.Card;
 
 public class CardInfo {
-	public static void getInfo(HashSet<Card> cardList)
+	public static void getInfo(LinkedList<Card> cardList)
 	{
 		Card temp;
 		Item_rarity rarity;
@@ -71,6 +70,10 @@ public class CardInfo {
 		temp.addPart(Equip_part.SHOULDER);
 		temp.vStat.addStatList("물크", new DoubleStatusInfo(9), true);
 		cardList.add(temp);
+		temp = new Card("임시 물크 보주", rarity);
+		temp.addPart(Equip_part.SHOULDER);
+		temp.vStat.addStatList("물크", new DoubleStatusInfo(100), true);
+		cardList.add(temp);
 		
 		//////////// 악세사리
 		/////유니크
@@ -82,6 +85,16 @@ public class CardInfo {
 		temp.addPart(Equip_part.NECKLACE);
 		temp.addPart(Equip_part.RING);
 		temp.vStat.addStatList("화속", new ElementInfo(20));
+		cardList.add(temp);
+		
+		temp = new Card("임시 속강 보주", rarity);
+		temp.addPart(Equip_part.BRACELET);
+		temp.addPart(Equip_part.NECKLACE);
+		temp.addPart(Equip_part.RING);
+		temp.vStat.addStatList("화속", new ElementInfo(20), true);
+		temp.vStat.addStatList("수속", new ElementInfo(20), true);
+		temp.vStat.addStatList("명속", new ElementInfo(20), true);
+		temp.vStat.addStatList("암속", new ElementInfo(20), true);
 		cardList.add(temp);
 		
 		

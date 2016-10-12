@@ -11,11 +11,11 @@ public class MonsterOption extends IconObject{
 	public LinkedList<String> explanation;						//설명
 	public final Monster monster;
 	
-	public MonsterOption(String name, String icon, Monster monster)
+	public MonsterOption(String name, Monster monster)
 	{
 		super();
 		this.setName(name);
-		this.setIcon(icon);
+		this.setIcon("image//Monster//"+name+".png");
 		this.monster=monster;
 		explanation = new LinkedList<String>();
 	}

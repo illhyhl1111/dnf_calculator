@@ -31,6 +31,7 @@ public class Monster extends IconObject implements java.io.Serializable{							/
 	{
 		super();
 		this.setName(name);
+		this.setIcon("image//Monster//"+name+".png");
 		monstInfo = new AbstractStatusInfo[Monster_StatList.STATNUM];
 		int i;
 		for(i=0; i<Monster_StatList.BOOLNUM; i++)

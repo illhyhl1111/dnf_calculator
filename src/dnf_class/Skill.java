@@ -55,8 +55,7 @@ public class Skill extends IconObject implements Comparable<Skill>{
 		skillInfo = new LinkedList<SkillLevelInfo>();
 		skillInfo.add(new SkillLevelInfo(0));
 		active_enabled = true;
-		if(type==Skill_type.PASSIVE || type==Skill_type.TP) buff_enabled = true;
-		else buff_enabled = false;
+		buff_enabled = false;
 		
 		this.villageLevel=0;
 		this.villageIncrease=1;
@@ -70,6 +69,7 @@ public class Skill extends IconObject implements Comparable<Skill>{
 	{
 		super();
 		this.setName(name);
+		this.setIcon("image\\Skill\\COMMON\\"+name+".png");
 		this.type=type;
 		this.firstLevel=firstLevel;
 		this.maxLevel=maxLevel;
@@ -82,8 +82,7 @@ public class Skill extends IconObject implements Comparable<Skill>{
 		skillInfo = new LinkedList<SkillLevelInfo>();
 		skillInfo.add(new SkillLevelInfo(0));
 		active_enabled = true;
-		if(type==Skill_type.PASSIVE || type==Skill_type.TP) buff_enabled = true;
-		else buff_enabled = false;
+		buff_enabled = false;
 		
 		this.villageLevel=0;
 		this.villageIncrease=1;
@@ -122,19 +121,24 @@ public class Skill extends IconObject implements Comparable<Skill>{
 	}
 	public boolean hasDamage()
 	{
-		if(type==Skill_type.PASSIVE || type==Skill_type.TP) return false;
-		else return true;
+		if(type==Skill_type.ACTIVE || type==Skill_type.DAMAGE_BUF) return true;
+		else return false;
 	}
 	public boolean isTPSkill()
 	{
 		if(type==Skill_type.TP) return true;
 		else return false;
 	}
+	public boolean isEnableable()
+	{
+		if(type==Skill_type.BUF_ACTIVE || type==Skill_type.DAMAGE_BUF || type==Skill_type.SWITCHING) return true;
+		else return false;
+	}
 	
 	public boolean buffEnabled(boolean isDungeon)
 	{
-		if(type==Skill_type.PASSIVE && active_enabled) return true;
-		else if(type==Skill_type.BUF_ACTIVE && buff_enabled && isDungeon) return true;
+		if((type==Skill_type.PASSIVE || type==Skill_type.TP) && active_enabled) return true;
+		else if(isEnableable() && buff_enabled && isDungeon) return true;
 		return false;
 	}
 
@@ -146,7 +150,6 @@ public class Skill extends IconObject implements Comparable<Skill>{
 				return info;
 			}
 		}
-		
 		System.out.println(getName()+" Lv "+ level+" 스킬정보 없음");
 		
 		SkillLevelInfo temp = new SkillLevelInfo(level);
@@ -157,10 +160,10 @@ public class Skill extends IconObject implements Comparable<Skill>{
 		int levelDifference = level-hSkill.skillLevel;
 		int diff = hSkill.skillLevel-h2Skill.skillLevel;
 		
-		temp.phy_atk=(hSkill.phy_atk-h2Skill.phy_atk)*levelDifference/diff;
-		temp.phy_fix=(hSkill.phy_fix-h2Skill.phy_fix)*levelDifference/diff;
-		temp.mag_atk=(hSkill.mag_atk-h2Skill.mag_atk)*levelDifference/diff;
-		temp.mag_fix=(hSkill.mag_fix-h2Skill.mag_fix)*levelDifference/diff;
+		temp.phy_atk=hSkill.phy_atk+(hSkill.phy_atk-h2Skill.phy_atk)*levelDifference/diff;
+		temp.phy_fix=hSkill.phy_fix+(hSkill.phy_fix-h2Skill.phy_fix)*levelDifference/diff;
+		temp.mag_atk=hSkill.mag_atk+(hSkill.mag_atk-h2Skill.mag_atk)*levelDifference/diff;
+		temp.mag_fix=hSkill.mag_fix+(hSkill.mag_fix-h2Skill.mag_fix)*levelDifference/diff;
 		
 		try {
 			temp.stat = (StatusList) hSkill.stat.clone();
@@ -188,8 +191,9 @@ public class Skill extends IconObject implements Comparable<Skill>{
 		return temp;
 	}
 	
-	public int masterSkill(int charLevel)
+	public int masterSkill(int charLevel, boolean hasContract)
 	{
+		if(hasContract) charLevel+=5;
 		skillLevel = (int)((charLevel-firstLevel)/levelInterval)+1;
 		if(skillLevel>masterLevel) skillLevel = masterLevel;
 		active_enabled=true;
@@ -210,13 +214,14 @@ public class Skill extends IconObject implements Comparable<Skill>{
 		else active_enabled=true;
 	}
 	
-	public int getSkillLevel(boolean isDungeon){
+	public int getSkillLevel(boolean isDungeon, boolean isBurning){
 		if(skillLevel==0) return 0;
 		int level = skillLevel;
 		if(isDungeon)
 			level+=dungeonLevel;
 		else
-			level+=villageLevel;			
+			level+=villageLevel;
+		if(isBurning && type!=Skill_type.TP) level+=2;
 		return level<maxLevel ? level : maxLevel; 
 	}
 	
@@ -261,23 +266,9 @@ public class Skill extends IconObject implements Comparable<Skill>{
 		else return getName().compareTo(arg0.getName());
 	}
 	
-	/*@SuppressWarnings("unchecked")
-	@Override
-	public Object clone()
+	public SkillLevelInfo getSkillLevelInfo(boolean isDungeon, boolean isBurning)
 	{
-		Skill temp=null;
-		try {
-			temp = (Skill) super.clone();
-			temp.explanation = (LinkedList<String>) explanation.clone();
-		} catch (CloneNotSupportedException e) {
-			e.printStackTrace();
-		}
-		return temp;
-	}*/
-
-	public SkillLevelInfo getSkillLevelInfo(boolean isDungeon)
-	{
-		int level = getSkillLevel(isDungeon);
+		int level = getSkillLevel(isDungeon, isBurning);
 		double increase;
 		if(isDungeon)
 			increase=dungeonIncrease;
@@ -286,9 +277,19 @@ public class Skill extends IconObject implements Comparable<Skill>{
 		SkillLevelInfo temp = getSkillInfo(level);
 		
 		SkillLevelInfo returnValue = new SkillLevelInfo(level, (int)(temp.phy_atk*increase), temp.phy_fix*increase, (int)(temp.mag_atk*increase), temp.mag_fix*increase);
+		returnValue.fromDictionary=temp.fromDictionary;
 		try {
 			returnValue.stat=(StatusList) temp.stat.clone();
 			returnValue.fStat=(FunctionStatusList) temp.fStat.clone();
+			if(Double.compare(increase, 1.0)!=0 && !hasDamage())
+			{
+				try {
+					for(StatusAndName s : returnValue.stat.statList)
+						s.stat.increaseStat(villageIncrease);
+				} catch (StatusTypeMismatch e) {
+					e.printStackTrace();
+				}
+			}
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
 		}

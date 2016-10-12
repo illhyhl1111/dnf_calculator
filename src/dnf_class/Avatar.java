@@ -1,8 +1,14 @@
 package dnf_class;
 
+import java.util.LinkedList;
+
 import dnf_InterfacesAndExceptions.Avatar_part;
 import dnf_InterfacesAndExceptions.Item_rarity;
+import dnf_InterfacesAndExceptions.Job;
 import dnf_InterfacesAndExceptions.SetName;
+import dnf_InterfacesAndExceptions.Skill_type;
+import dnf_calculator.StatusList;
+import dnf_infomation.GetDictionary;
 
 @SuppressWarnings("serial")
 public class Avatar extends Item
@@ -12,6 +18,8 @@ public class Avatar extends Item
 	private Emblem emblem2;
 	private Emblem platinumEmblem;
 	public final SetName setName;
+	public LinkedList<String> coatSkillList;
+	private String coatSkill;
 	
 	public Avatar(String name, Item_rarity rarity, Avatar_part part, Emblem emblem1, Emblem emblem2, Emblem platinum, SetName setName)
 	{
@@ -39,6 +47,20 @@ public class Avatar extends Item
 		emblem2 = new Emblem();
 		platinumEmblem = new Emblem();
 		setName = SetName.NONE;
+	}
+	
+	public boolean setCoatOptionList(Job job){
+		if(part!=Avatar_part.COAT) return false;
+		coatSkillList = new LinkedList<String>();
+		
+		for(Skill skill : GetDictionary.charDictionary.getSkillList(job, 90)){
+			if(skill.type!=Skill_type.TP && skill.maxLevel!=1)
+				coatSkillList.add(skill.getItemName());
+		}
+		coatSkill = coatSkillList.getLast();
+		vStat = new StatusList();
+		vStat.addSkill(coatSkill, 1);
+		return true;
 	}
 	
 	@Override
@@ -70,7 +92,7 @@ public class Avatar extends Item
 	@Override
 	public boolean setPlatinum(Emblem emblem){
 		if(!emblem.equipable(this)) return false;
-		platinumEmblem = emblem;
+		platinumEmblem = (Emblem) emblem.clone();
 		return true;
 	}
 	
@@ -101,4 +123,14 @@ public class Avatar extends Item
 		if(arg2.part!=part) return part.order-arg2.part.order;												// 3.
 		else return arg2.getName().compareTo(this.getName());												// 4.
     }
+
+	public String getCoatSkill() {
+		return coatSkill;
+	}
+
+	public void setCoatSkill(String coatSkill) {
+		this.coatSkill = coatSkill;
+		vStat = new StatusList();
+		vStat.addSkill(coatSkill, 1);
+	}
 }

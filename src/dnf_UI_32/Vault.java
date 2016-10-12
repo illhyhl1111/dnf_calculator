@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -19,7 +20,6 @@ import dnf_InterfacesAndExceptions.Equip_type;
 import dnf_InterfacesAndExceptions.InterfaceSize;
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_InterfacesAndExceptions.Location;
-import dnf_InterfacesAndExceptions.SetName;
 import dnf_class.Characters;
 import dnf_class.Item;
 
@@ -28,7 +28,7 @@ public class Vault extends Dialog
 	LinkedList<Item> itemList;
 	ItemButton<Item>[] vault;
 	final static int vaultCol = 20;
-	final static int vaultRow = 20;
+	final static int vaultRow = 30;
 	final static int vaultSize = vaultCol*vaultRow;
 	private Composite vaultComposite;
 	private ScrolledComposite scrollComposite;
@@ -40,12 +40,14 @@ public class Vault extends Dialog
 	static final int mouseInterval_ver = 5;
 	private Characters character;
 	
+	private Shell parent;
 	Shell save;
 	
 	@SuppressWarnings("unchecked")
 	public Vault(Shell parent, Characters character)
 	{
 		super(parent);
+		this.parent=parent;
 		this.character=character;
 		this.itemList=character.userItemList.getVaultItemList(character.getJob());
 	
@@ -71,13 +73,16 @@ public class Vault extends Dialog
 		vault = (ItemButton<Item>[]) new ItemButton<?>[vaultSize];
 		
 		int index=0;
-		SetName prevSet=SetName.NONE;
 		Equip_type prevType=Equip_type.WEAPON;
 		
 		for(Item i : itemList){
-			if(i.getEquipType()!=prevType && prevSet!=i.getSetName()){
-				for(; index%vaultCol!=0; index++)
+			if(i.getEquipType()!=prevType){
+				int margin = (vaultSize-index)%5;
+				for(; index%vaultCol!=0 && index%5!=0; index++)
 					vault[index] = new ItemButton<Item>(vaultComposite, new Item(), InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE, false);
+				if(margin<3)
+					for(int j=0; index%vaultCol!=0 && j<5; j++)
+						vault[index++] = new ItemButton<Item>(vaultComposite, new Item(), InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE, false);
 			}
 				
 			vault[index] = new ItemButton<Item>(vaultComposite, i, InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE, true);
@@ -105,7 +110,6 @@ public class Vault extends Dialog
 				
 				index++;
 				prevType=i.getEquipType();
-				prevSet=i.getSetName();
 			}
 		}
 		
@@ -186,6 +190,7 @@ public class Vault extends Dialog
 			    });
 			}
 		}
+		
 		return composite;
 	}
 	
@@ -199,6 +204,18 @@ public class Vault extends Dialog
 	protected Point getInitialSize() {
 	    return new Point(vaultComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT).x+60, InterfaceSize.VAULT_SIZE_Y);
 	}
+	
+	@Override
+	protected void initializeBounds() 
+	{ 
+		super.initializeBounds(); 
+		Shell shell = this.getShell(); 
+		Rectangle bounds = parent.getBounds(); 
+		Rectangle rect = shell.getBounds (); 
+		int x = bounds.x + (bounds.width - rect.width) / 2; 
+		int y = bounds.y + 40; 
+		shell.setLocation (x, y); 
+	} 
 	
 	@Override
 	protected void createButtonsForButtonBar(final Composite parent)

@@ -20,8 +20,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import dnf_InterfacesAndExceptions.ItemFileNotFounded;
 import dnf_InterfacesAndExceptions.ItemFileNotReaded;
+import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_InterfacesAndExceptions.SetName;
 import dnf_InterfacesAndExceptions.StatList;
 import dnf_InterfacesAndExceptions.StatusTypeMismatch;
@@ -46,7 +46,7 @@ public class ChangeSetOptionStatus extends Dialog{
 		try {
 			this.setOption=itemDictionary.getSetOptions(setName);
 			originalSet=GetDictionary.getSetOptions(setName);
-		} catch (ItemFileNotFounded e1) {
+		} catch (ItemNotFoundedException e1) {
 			e1.printStackTrace();
 		} catch (ItemFileNotReaded e) {
 			e.printStackTrace();
@@ -108,7 +108,19 @@ public class ChangeSetOptionStatus extends Dialog{
 						dStatList.add(entry);
 					}
 				}
-			}			
+				
+				if(set.explanation.size()!=0){
+					Label label = new Label(composite, SWT.WRAP);
+					label.setText("");
+					label.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, true, false, 4, 1));
+					
+					for(String str : set.explanation){
+						label = new Label(composite, SWT.WRAP);
+						label.setText(str);
+						label.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, true, false, 4, 1));
+					}
+				}
+			}
 		}
 		catch (StatusTypeMismatch e) {
 			e.printStackTrace();

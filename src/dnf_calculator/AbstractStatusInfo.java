@@ -16,6 +16,7 @@ public abstract class AbstractStatusInfo implements Cloneable, java.io.Serializa
 	abstract public void setInfo(boolean bool) throws StatusTypeMismatch;
 	abstract public void setInfo(String name) throws StatusTypeMismatch;
 	abstract public void setInfo(int start, int end) throws StatusTypeMismatch;
+	abstract public void increaseStat(double strength) throws StatusTypeMismatch;
 	@Override
 	public Object clone() throws CloneNotSupportedException 
 	{

@@ -18,7 +18,6 @@ import org.eclipse.swt.widgets.Control;
 import dnf_InterfacesAndExceptions.Emblem_type;
 import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.InterfaceSize;
-import dnf_InterfacesAndExceptions.ItemFileNotFounded;
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_InterfacesAndExceptions.Location;
 import dnf_class.Card;
@@ -132,7 +131,7 @@ public class Inventory extends DnFComposite
 				
 				if(mode==0) inventoryList[index].getButton().addListener(SWT.MouseDown, listenerGroup.equipListener(vault)); 			// add MouseDown Event - unequip
 				else if(mode==1) inventoryList[index].getButton().addListener(SWT.MouseDown, listenerGroup.equipListener()); 			// add MouseDown Event - unequip
-				else if(mode==2) inventoryList[index].getButton().addListener(SWT.MouseDown, listenerGroup.equipListener());
+				else if(mode==2) inventoryList[index].getButton().addListener(SWT.MouseDown, listenerGroup.equipListener(vault));
 				inventoryList[index].getButton().addListener(SWT.MouseDoubleClick, listenerGroup.modifyListener(this));			// add MouseDoubleClick - modify
 				inventoryList[index].getButton().addListener(SWT.MouseEnter, listenerGroup.makeItemInfoListener(parent.getShell(), location));			// add MouseEnter Event - make composite
 				inventoryList[index].getButton().addListener(SWT.MouseExit, listenerGroup.disposeItemInfoListener()); 		// add MouseExit Event - dispose composite
@@ -194,7 +193,7 @@ public class Inventory extends DnFComposite
 									dialog.open();
 								}
 							}
-						} catch (ItemFileNotFounded e) {
+						} catch (ItemNotFoundedException e) {
 							e.printStackTrace();
 						}
 					}
@@ -226,7 +225,7 @@ public class Inventory extends DnFComposite
 									    MessageDialog.ERROR, new String[] { "납득" }, 0);
 								dialog.open();
 							}
-						} catch (ItemFileNotFounded e) {
+						} catch (ItemNotFoundedException e) {
 							e.printStackTrace();
 						}
 					}

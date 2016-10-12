@@ -21,6 +21,13 @@ public enum SetName implements Serializable
 	
 	SKYTRAVELER("하늘의 여행자 세트"), ECSTATICSENCE("오감의 황홀경 세트"),
 	
+	REAL_PROFIGHTER_FABRIC("진 : 프로 싸움꾼의 천 방어구 세트"), REAL_PROFIGHTER_LEATHER("진 : 프로 싸움꾼의 가죽 방어구 세트"), REAL_PROFIGHTER_MAIL("진 : 프로 싸움꾼의 경갑 방어구 세트"), 
+	REAL_PROFIGHTER_HARMOR("진 : 프로 싸움꾼의 중갑 방어구 세트"),  REAL_PROFIGHTER_PLATE("진 : 프로 싸움꾼의 판금 방어구 세트"), GODOFFIGHT("무신의 정수가 담긴 세트"),
+	REAL_PROFIGHTER_ACCESSORY("진 : 프로 싸움꾼의 악세서리 세트"), REAL_PROFIGHTER_SPECIALEQUIP("진 : 프로 싸움꾼의 특수장비 세트"),
+	GUILDACCESSORY_FIRE("타오르는 불꽃의 분노 세트"), GUILDACCESSORY_WATER("얼어붙은 냉기의 슬픔 세트"),
+	
+	TACITCONSTRUCTOR("무언의 건설자 세트"),
+	
 	RAREAVATAR("레어 아바타 세트"), AVATAR("상급 아바타 세트");
 	
 	String name;

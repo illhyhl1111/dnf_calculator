@@ -34,21 +34,23 @@ import org.eclipse.swt.widgets.Spinner;
 
 import dnf_InterfacesAndExceptions.Dimension_stat;
 import dnf_InterfacesAndExceptions.Equip_part;
+import dnf_InterfacesAndExceptions.Equip_type;
 import dnf_InterfacesAndExceptions.InterfaceSize;
-import dnf_InterfacesAndExceptions.ItemFileNotFounded;
+import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_InterfacesAndExceptions.UnknownInformationException;
 import dnf_class.Card;
 import dnf_class.Characters;
 import dnf_class.Equipment;
 import dnf_class.Item;
 import dnf_class.Title;
+import dnf_class.Weapon;
+import dnf_infomation.GetDictionary;
 
 public class BatchModifier extends Dialog {
 	Shell shell;
 	final Characters character;
 	final InventoryCardPack inventory;
 	final UserInfo userInfo;
-	Point itemInfoSize;
 	Point contentSize;
 	Equipment[] equipList;
 	
@@ -169,6 +171,21 @@ public class BatchModifier extends Dialog {
 	    reinforce.setSelection(0);
 	    reinforce.setIncrement(1);
 	    reinforce.setPageIncrement(5);
+	    
+	    Group reforgeComposite = new Group (enhance, SWT.NONE);
+	    reforgeComposite.setText("재련");
+		FormData reforgeData = new FormData();
+		reforgeData.top = new FormAttachment(guideLabel, InterfaceSize.MARGIN);
+		reforgeData.left = new FormAttachment(reinforceComposite, InterfaceSize.MARGIN);
+		reforgeComposite.setLayoutData(reforgeData);
+		reforgeComposite.setLayout (new FillLayout());
+		
+		Spinner reforge = new Spinner(reforgeComposite, SWT.READ_ONLY);
+		reforge.setMinimum(0);
+		reforge.setMaximum(8);
+		reforge.setSelection(0);
+		reforge.setIncrement(1);
+	    reforge.setPageIncrement(1);
 		
 	    Button okButton = new Button(enhance, SWT.PUSH);
 	    okButton.setText("적용");
@@ -272,6 +289,15 @@ public class BatchModifier extends Dialog {
 					}
 					catch(UnknownInformationException exception){
 						equipment.setReinforceNum(reinforce.getSelection());
+					}
+					
+					if(equipment.getEquipType()==Equip_type.WEAPON){
+						try{
+							((Weapon)equipment).setReforge(reforge.getSelection());
+						}
+						catch(UnknownInformationException exception){
+							((Weapon)equipment).setReforgeNum(reforge.getSelection());
+						}
 					}
 				}
 				userInfo.renew();
@@ -412,7 +438,10 @@ public class BatchModifier extends Dialog {
 	}
 	
 	public void setDrop(final ItemButton<Item> itemButton) {
-
+		Card card = itemButton.getItem().getCard();
+		itemButton.getButton().setImage(GetDictionary.iconDictionary.getOrDefault(card.getItemName(),
+				GetDictionary.iconDictionary.get("디폴트")));
+		
 		Transfer[] types = new Transfer[] { TextTransfer.getInstance() };
 		int operations = DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK;
 
@@ -426,9 +455,13 @@ public class BatchModifier extends Dialog {
 						boolean succeed;
 						if(itemButton.getItem() instanceof Equipment) succeed = ((Equipment)itemButton.getItem()).setCard(card);
 						else succeed = ((Title)itemButton.getItem()).setCard(card);
+						
 						if(succeed){
+							itemButton.getButton().setImage(GetDictionary.iconDictionary.getOrDefault(card.getItemName(),
+									GetDictionary.iconDictionary.get("디폴트")));
+							
 							MessageDialog dialog = new MessageDialog(shell, "성☆공", null,
-								    "마법부여 지정에 성공하였습니다!\n\n보주 : "+(String)event.data+"\n부위 : "+((Equipment)itemButton.getItem()).part,
+								    "마법부여 지정에 성공하였습니다!\n\n보주 : "+(String)event.data+"\n부위 : "+((Equipment)itemButton.getItem()).part.getName(),
 								    MessageDialog.INFORMATION, new String[] { "ㅇㅋ" }, 0);
 							dialog.open();
 						}
@@ -438,7 +471,7 @@ public class BatchModifier extends Dialog {
 								    MessageDialog.ERROR, new String[] { "납득" }, 0);
 							dialog.open();
 						}
-					} catch (ItemFileNotFounded e) {
+					} catch (ItemNotFoundedException e) {
 						e.printStackTrace();
 					}
 				}
