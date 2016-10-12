@@ -1,6 +1,6 @@
 package dnf_infomation;
 
-import java.util.HashSet;
+import java.util.LinkedList;
 
 import dnf_InterfacesAndExceptions.DefenceIgnorePenalty;
 import dnf_InterfacesAndExceptions.MonsterType;
@@ -11,7 +11,7 @@ import dnf_class.Monster;
 import dnf_class.MonsterOption;
 
 public class MonsterInfo {
-	public static void getInfo(HashSet<Monster> monsterList)
+	public static void getInfo(LinkedList<Monster> monsterList)
 	{
 		Monster monster;
 		MonsterOption subMonster;

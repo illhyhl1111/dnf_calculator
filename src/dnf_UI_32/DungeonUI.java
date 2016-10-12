@@ -117,7 +117,7 @@ public class DungeonUI extends DnFComposite{
 		
 		dealChart = new DealChart(mainComposite, character);
 		formData = new FormData();
-		formData.left = new FormAttachment(inventoryFolder, 10);
+		formData.right = new FormAttachment(100, -5);
 		formData.height=InterfaceSize.DEALCHART_Y;
 		dealChart.setDealChart();
 		dealChart.getComposite().setLayoutData(formData);

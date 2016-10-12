@@ -272,7 +272,7 @@ public class Equipment extends Item
 	@Override
 	public boolean setCard(Card card) {
 		if(card.available(this)){
-			this.card=card;
+			this.card=(Card)card.clone();
 			return true;
 		}
 		return false;
@@ -309,8 +309,8 @@ public class Equipment extends Item
 		else if(!(arg instanceof Equipment)) return 1;			// 1.
 		Equipment arg2 = (Equipment)arg;
 		
-		if(arg2.getRarity()!=this.getRarity()) return this.getRarity().rarity-arg2.getRarity().rarity;		// 2.
 		if(arg2.type!=type) return type.order-arg2.type.order;												// 3.
+		if(arg2.getRarity()!=this.getRarity()) return this.getRarity().rarity-arg2.getRarity().rarity;		// 2.
 		if(arg2.isRareItem!=isRareItem){
 			if(isRareItem) return -1;
 			else return 1;

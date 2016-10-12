@@ -40,14 +40,15 @@ public class GetDictionary
 	public static ItemDictionary itemDictionary;
 	public static CharacterDictionary charDictionary;
 	public static HashMap<String, Image> iconDictionary;
+	public static HashMap<String, Image> skillIconDictionary;
 	static boolean readed=false;
 
-	public static void readFile(Job job)
+	public static void readFile()
 	{
 		if(readed) return;
 		
 		try{
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream("ItemDictionary.dfd"));
+			ObjectInputStream in = new ObjectInputStream(new FileInputStream("data\\ItemDictionary.dfd"));
 			Object temp = in.readObject();
 
 			itemDictionary = (ItemDictionary)temp;
@@ -68,7 +69,7 @@ public class GetDictionary
 		
 		
 		try{
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream("CharacterDictionary.dfd"));
+			ObjectInputStream in = new ObjectInputStream(new FileInputStream("data\\CharacterDictionary.dfd"));
 			Object temp = in.readObject();
 
 			charDictionary = (CharacterDictionary)temp;
@@ -88,6 +89,7 @@ public class GetDictionary
 		}
 		
 		iconDictionary = new HashMap<String, Image>();
+		skillIconDictionary = new HashMap<String, Image>();
 		
 		Image image;
 		String path = "image\\";
@@ -110,23 +112,9 @@ public class GetDictionary
 		}
 		
 		//장비 아이템
-		for(Item item : itemDictionary.getVaultItemList(job)){
-			String icon = item.getIcon();
-			if(icon==null) icon = "image\\default.png";
-			image = new Image(Display.getCurrent(), icon);
-			Image resized = resizeImage(image, InterfaceSize.INFO_BUTTON_SIZE);
-			
-			OverlayIcon mergedIcon = new OverlayIcon(ImageDescriptor.createFromImage(resized),
-					ImageDescriptor.createFromImage(iconDictionary.get(item.getRarity().name())),
-					new Point(InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE));
-
-			iconDictionary.put(item.getName(), mergedIcon.createImage());
-			image.dispose();
-			resized.dispose();
-		}
-		
-		//기타등등
-		LinkedList<LinkedList<? extends Item>> list = new LinkedList<LinkedList<? extends Item>>(); 
+		LinkedList<LinkedList<? extends Item>> list = new LinkedList<LinkedList<? extends Item>>();
+		list.add(itemDictionary.equipList);
+		list.add(itemDictionary.titleList);
 		list.add(itemDictionary.avatarList);
 		list.add(itemDictionary.cardList);
 		list.add(itemDictionary.creatureList);
@@ -180,21 +168,6 @@ public class GetDictionary
 			image.dispose();
 		}
 		
-		//스킬
-		for(Skill skill : charDictionary.getSkillList(job, 90)){
-			String icon = skill.getIcon();
-			if(icon==null) icon = "image\\default.png";
-			image = new Image(Display.getCurrent(), icon);
-			iconDictionary.put(skill.getName(), resizeImage(image, InterfaceSize.SKILL_BUTTON_SIZE));
-			image.dispose();
-			 
-			icon = skill.getDisabledIcon();
-			if(icon==null) icon = "image\\default.png";
-			image = new Image(Display.getCurrent(), icon);
-			iconDictionary.put(skill.getDisabledName(), resizeImage(image, InterfaceSize.SKILL_BUTTON_SIZE));
-			image.dispose();
-		}
-		
 		//몹
 		for(Monster monster : charDictionary.monsterList){
 			String icon = monster.getIcon();
@@ -224,6 +197,30 @@ public class GetDictionary
 				iconDictionary.put(type.name(), image);
 				iconDictionary.put(type.name()+" - filp", filp(image, false));
 			}
+		}
+	}
+	
+	public static void getSkillIcon(Job job)
+	{
+		Image image;
+		for(Image i : skillIconDictionary.values())
+			i.dispose();
+		
+		skillIconDictionary = new HashMap<String, Image>();
+		for(Skill skill : charDictionary.skillList){
+			if(!skill.isSkillOfChar(job)) continue;
+			
+			String icon = skill.getIcon();
+			if(icon==null) icon = "image\\default.png";
+			image = new Image(Display.getCurrent(), icon);
+			skillIconDictionary.put(skill.getName(), resizeImage(image, InterfaceSize.SKILL_BUTTON_SIZE));
+			image.dispose();
+			 
+			icon = skill.getDisabledIcon();
+			if(icon==null) icon = "image\\default.png";
+			image = new Image(Display.getCurrent(), icon);
+			skillIconDictionary.put(skill.getDisabledName(), resizeImage(image, InterfaceSize.SKILL_BUTTON_SIZE));
+			image.dispose();
 		}
 	}
 	
@@ -337,11 +334,11 @@ public class GetDictionary
 		return ReinforceInfo.getReforgeInfo(num, rarity, level);
 	}
 	
-	public static ItemDictionary getCharacterDictionary(Job job)
+	public static ItemDictionary getNewItemDictionary(Job job)
 	{
 		ItemDictionary itemDictionary=null;
 		try{
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream("ItemDictionary.dfd"));
+			ObjectInputStream in = new ObjectInputStream(new FileInputStream("data\\ItemDictionary.dfd"));
 			Object temp = in.readObject();
 
 			itemDictionary = (ItemDictionary)temp;
@@ -372,5 +369,34 @@ public class GetDictionary
 		}
 		
 		return itemDictionary;
+	}
+	
+	public static CharacterDictionary getNewCharDictionary(Job job)
+	{
+		CharacterDictionary charDictionary=null;
+		try{
+			ObjectInputStream in = new ObjectInputStream(new FileInputStream("data\\CharacterDictionary.dfd"));
+			Object temp = in.readObject();
+
+			charDictionary = (CharacterDictionary)temp;
+			in.close();
+		}
+		catch(FileNotFoundException e)
+		{	
+			charDictionary = new CharacterDictionary();
+			SaveCharacterDictionary.main(null);
+		}
+		catch(IOException | ClassNotFoundException e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+		
+		for(int i=0; i<charDictionary.skillList.size(); i++){
+			if(!charDictionary.skillList.get(i).isSkillOfChar(job))
+				charDictionary.skillList.remove(i--);
+		}
+		
+		return charDictionary;
 	}
 }

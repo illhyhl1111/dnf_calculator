@@ -34,6 +34,7 @@ import org.eclipse.swt.widgets.Spinner;
 
 import dnf_InterfacesAndExceptions.Dimension_stat;
 import dnf_InterfacesAndExceptions.Equip_part;
+import dnf_InterfacesAndExceptions.Equip_type;
 import dnf_InterfacesAndExceptions.InterfaceSize;
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_InterfacesAndExceptions.UnknownInformationException;
@@ -42,6 +43,7 @@ import dnf_class.Characters;
 import dnf_class.Equipment;
 import dnf_class.Item;
 import dnf_class.Title;
+import dnf_class.Weapon;
 import dnf_infomation.GetDictionary;
 
 public class BatchModifier extends Dialog {
@@ -169,6 +171,21 @@ public class BatchModifier extends Dialog {
 	    reinforce.setSelection(0);
 	    reinforce.setIncrement(1);
 	    reinforce.setPageIncrement(5);
+	    
+	    Group reforgeComposite = new Group (enhance, SWT.NONE);
+	    reforgeComposite.setText("재련");
+		FormData reforgeData = new FormData();
+		reforgeData.top = new FormAttachment(guideLabel, InterfaceSize.MARGIN);
+		reforgeData.left = new FormAttachment(reinforceComposite, InterfaceSize.MARGIN);
+		reforgeComposite.setLayoutData(reforgeData);
+		reforgeComposite.setLayout (new FillLayout());
+		
+		Spinner reforge = new Spinner(reforgeComposite, SWT.READ_ONLY);
+		reforge.setMinimum(0);
+		reforge.setMaximum(8);
+		reforge.setSelection(0);
+		reforge.setIncrement(1);
+	    reforge.setPageIncrement(1);
 		
 	    Button okButton = new Button(enhance, SWT.PUSH);
 	    okButton.setText("적용");
@@ -272,6 +289,15 @@ public class BatchModifier extends Dialog {
 					}
 					catch(UnknownInformationException exception){
 						equipment.setReinforceNum(reinforce.getSelection());
+					}
+					
+					if(equipment.getEquipType()==Equip_type.WEAPON){
+						try{
+							((Weapon)equipment).setReforge(reforge.getSelection());
+						}
+						catch(UnknownInformationException exception){
+							((Weapon)equipment).setReforgeNum(reforge.getSelection());
+						}
 					}
 				}
 				userInfo.renew();

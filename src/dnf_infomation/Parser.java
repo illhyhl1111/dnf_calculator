@@ -9,7 +9,6 @@ import dnf_calculator.FunctionStat;
 import dnf_calculator.FunctionStatusList;
 import dnf_calculator.StatusList;
 import dnf_class.Characters;
-import dnf_class.Equipment;
 import dnf_class.Monster;
 
 public class Parser {
@@ -75,7 +74,7 @@ public class Parser {
 				private static final long serialVersionUID = 7114802204195525723L;
 
 				@Override
-				public StatusList function(Characters character, Monster monster, Equipment equipment) {
+				public StatusList function(Characters character, Monster monster, Object item) {
 					StatusList statList = new StatusList();
 					if(character.getItemSetting().weapon.weaponType.getName().equals(data[2])){
 						statList.addStatList("물리마스터리", Double.valueOf(data[1]));
@@ -107,12 +106,12 @@ public class Parser {
 				}
 				
 				if(data[data.length-selectOptionCount-2].equals("%")){
-					list.addSkill_damage(skillName, Double.valueOf(data[data.length-selectOptionCount-1]));
-					return Double.valueOf(data[data.length-selectOptionCount-1]);
+					list.addSkill_damage(skillName, parseForm(data[data.length-selectOptionCount-1], 0));
+					return parseForm(data[data.length-selectOptionCount-1], 0);
 				}
 				else{
-					list.addSkill(skillName, Integer.valueOf(data[data.length-selectOptionCount-1]));
-					return Double.valueOf(data[data.length-selectOptionCount-1]);
+					list.addSkill(skillName, (int) (parseForm(data[data.length-selectOptionCount-1], 0)+0.00001));
+					return parseForm(data[data.length-selectOptionCount-1], 0);
 				}
 			}
 		}

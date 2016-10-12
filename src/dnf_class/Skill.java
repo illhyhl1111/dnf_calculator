@@ -150,7 +150,7 @@ public class Skill extends IconObject implements Comparable<Skill>{
 				return info;
 			}
 		}
-		//System.out.println(getName()+" Lv "+ level+" 스킬정보 없음");
+		System.out.println(getName()+" Lv "+ level+" 스킬정보 없음");
 		
 		SkillLevelInfo temp = new SkillLevelInfo(level);
 		Iterator<SkillLevelInfo> iter = skillInfo.descendingIterator();
@@ -281,6 +281,15 @@ public class Skill extends IconObject implements Comparable<Skill>{
 		try {
 			returnValue.stat=(StatusList) temp.stat.clone();
 			returnValue.fStat=(FunctionStatusList) temp.fStat.clone();
+			if(Double.compare(increase, 1.0)!=0 && !hasDamage())
+			{
+				try {
+					for(StatusAndName s : returnValue.stat.statList)
+						s.stat.increaseStat(villageIncrease);
+				} catch (StatusTypeMismatch e) {
+					e.printStackTrace();
+				}
+			}
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
 		}

@@ -22,4 +22,5 @@ public class StatusInfo extends AbstractStatusInfo			// int형 스탯정보 저�
 	public String getStatToString() throws StatusTypeMismatch { throw new StatusTypeMismatch("Skill->Integer");}
 	public void setInfo(String name) throws StatusTypeMismatch { throw new StatusTypeMismatch("Skill->Integer");}
 	public void setInfo(int start, int end) throws StatusTypeMismatch { throw new StatusTypeMismatch("SkillRange->Integer");}
+	public void increaseStat(double strength) {str=(int) (str*(strength+100.0)/100.0);}
 }

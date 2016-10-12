@@ -1,5 +1,7 @@
 package dnf_UI_32;
 
+import java.util.HashMap;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FormData;
@@ -65,15 +67,19 @@ public class ItemButton<T extends IconObject>
 	{
 		if(offImageMode) return;
 		Image image;
+		HashMap<String, Image> dictionary;
+		if(item instanceof Skill) dictionary = GetDictionary.skillIconDictionary;
+		else dictionary = GetDictionary.iconDictionary;
+		
 		if(item.getIcon()==null || !enabled){
 			image = GetDictionary.iconDictionary.get("디폴트");
 		}
 		else{
 			if(item instanceof Skill && !((Skill)item).getActiveEnabled())
-				image = GetDictionary.iconDictionary.get(item.getDisabledName());
+				image = dictionary.get(item.getDisabledName());
 			else if(item instanceof Buff && !((Buff)item).enabled)
-				image = GetDictionary.iconDictionary.get(item.getDisabledName());
-			else image = GetDictionary.iconDictionary.get(item.getItemName());
+				image = dictionary.get(item.getDisabledName());
+			else image = dictionary.get(item.getItemName());
 		}
 		button.setImage(image);
 		//button.setImage(GetDictionary.iconDictionary.get("아이템_투명"));
@@ -82,12 +88,16 @@ public class ItemButton<T extends IconObject>
 	public void setOnOffImage(boolean setOffMode)
 	{
 		Image image;
+		HashMap<String, Image> dictionary;
+		if(item instanceof Skill) dictionary = GetDictionary.skillIconDictionary;
+		else dictionary = GetDictionary.iconDictionary;
+		
 		if(item.getIcon()==null){
 			image = GetDictionary.iconDictionary.get("디폴트");
 		}
 		else{
-			if(setOffMode) image = GetDictionary.iconDictionary.get(item.getDisabledName());
-			else image = GetDictionary.iconDictionary.get(item.getItemName());
+			if(setOffMode) image = dictionary.get(item.getDisabledName());
+			else image = dictionary.get(item.getItemName());
 		}
 		button.setImage(image);
 		offImageMode=true;

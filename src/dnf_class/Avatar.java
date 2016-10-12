@@ -92,7 +92,7 @@ public class Avatar extends Item
 	@Override
 	public boolean setPlatinum(Emblem emblem){
 		if(!emblem.equipable(this)) return false;
-		platinumEmblem = emblem;
+		platinumEmblem = (Emblem) emblem.clone();
 		return true;
 	}
 	

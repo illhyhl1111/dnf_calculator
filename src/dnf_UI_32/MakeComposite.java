@@ -219,14 +219,14 @@ public class MakeComposite {
 				
 				if(((Equipment)item).getReinforce()!=0){
 					stat = new Label(itemInfo, SWT.WRAP);
-					stat.setText(StatusAndName.getStatHash().get(phyIgnStat.name)+String.valueOf((int)phyIgnStat.stat.getStatToDouble()));
+					stat.setText("+"+((Equipment)item).getReinforce()+" 강화: 방어무시 물리 공격력 + "+((int)phyIgnStat.stat.getStatToDouble()) );
 					leftData = new GridData();
 					leftData.widthHint=InterfaceSize.ITEM_INFO_SIZE-10;
 					stat.setLayoutData(leftData);
 					stat.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLUE));
 					
 					stat = new Label(itemInfo, SWT.WRAP);
-					stat.setText(StatusAndName.getStatHash().get(magIgnStat.name)+String.valueOf((int)magIgnStat.stat.getStatToDouble()));
+					stat.setText("+"+((Equipment)item).getReinforce()+" 강화: 방어무시 마법 공격력 + "+((int)magIgnStat.stat.getStatToDouble()));
 					leftData = new GridData();
 					leftData.widthHint=InterfaceSize.ITEM_INFO_SIZE-10;
 					stat.setLayoutData(leftData);
@@ -242,7 +242,7 @@ public class MakeComposite {
 				
 				if( ((Weapon)item).getReforge()!=0 ){
 					stat = new Label(itemInfo, SWT.WRAP);
-					stat.setText(StatusAndName.getStatHash().get(reforgeStat.name)+String.valueOf((int)reforgeStat.stat.getStatToDouble()));
+					stat.setText("+"+((Weapon)item).getReforge()+" 제련: 독립 공격력 +"+String.valueOf((int)reforgeStat.stat.getStatToDouble()));
 					leftData = new GridData();
 					leftData.widthHint=InterfaceSize.ITEM_INFO_SIZE-10;
 					stat.setLayoutData(leftData);

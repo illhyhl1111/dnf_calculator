@@ -24,23 +24,23 @@ public class CharacterDictionary implements java.io.Serializable, Cloneable
 	 * 
 	 */
 	private static final long serialVersionUID = -2541411296068975333L;
-	public final HashSet<Skill> skillList;
-	private HashSet<CharInfoBox> basicStatList;
-	public final HashSet<Monster> monsterList;
+	public final LinkedList<Skill> skillList;
+	private LinkedList<CharInfoBox> basicStatList;
+	public final LinkedList<Monster> monsterList;
 	
 	public CharacterDictionary() 
 	{
-		skillList = new HashSet<Skill>();
+		skillList = new LinkedList<Skill>();
 		try {
 			SkillInfo.getInfo(skillList, SkillInfo.skillInfo_gunner());
 		} catch (ParsingException e) {
 			e.printStackTrace();
 		}
 		
-		basicStatList = new HashSet<CharInfoBox>();
+		basicStatList = new LinkedList<CharInfoBox>();
 		CharacterInfo.getInfo(basicStatList);
 		
-		monsterList = new HashSet<Monster>();
+		monsterList = new LinkedList<Monster>();
 		MonsterInfo.getInfo(monsterList);
 	}
 	
@@ -88,7 +88,7 @@ public class CharacterDictionary implements java.io.Serializable, Cloneable
 	{
 		CharacterDictionary charDictionary;
 		try{
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream("CharacterDictionary.dfd"));
+			ObjectInputStream in = new ObjectInputStream(new FileInputStream("data\\CharacterDictionary.dfd"));
 			Object temp = in.readObject();
 
 			charDictionary = (CharacterDictionary)temp;
@@ -115,7 +115,7 @@ class SaveCharacterDictionary {
 		try{
 			CharacterDictionary charDic = new CharacterDictionary();
 			
-			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("CharacterDictionary.dfd"));
+			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("data\\CharacterDictionary.dfd"));
 			out.writeObject(charDic);
 			out.close();
 		}

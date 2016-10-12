@@ -20,7 +20,6 @@ import dnf_InterfacesAndExceptions.Equip_type;
 import dnf_InterfacesAndExceptions.InterfaceSize;
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_InterfacesAndExceptions.Location;
-import dnf_InterfacesAndExceptions.SetName;
 import dnf_class.Characters;
 import dnf_class.Item;
 
@@ -29,7 +28,7 @@ public class Vault extends Dialog
 	LinkedList<Item> itemList;
 	ItemButton<Item>[] vault;
 	final static int vaultCol = 20;
-	final static int vaultRow = 20;
+	final static int vaultRow = 30;
 	final static int vaultSize = vaultCol*vaultRow;
 	private Composite vaultComposite;
 	private ScrolledComposite scrollComposite;
@@ -74,13 +73,16 @@ public class Vault extends Dialog
 		vault = (ItemButton<Item>[]) new ItemButton<?>[vaultSize];
 		
 		int index=0;
-		SetName prevSet=SetName.NONE;
 		Equip_type prevType=Equip_type.WEAPON;
 		
 		for(Item i : itemList){
-			if(i.getEquipType()!=prevType && prevSet!=i.getSetName()){
-				for(; index%vaultCol!=0; index++)
+			if(i.getEquipType()!=prevType){
+				int margin = (vaultSize-index)%5;
+				for(; index%vaultCol!=0 && index%5!=0; index++)
 					vault[index] = new ItemButton<Item>(vaultComposite, new Item(), InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE, false);
+				if(margin<3)
+					for(int j=0; index%vaultCol!=0 && j<5; j++)
+						vault[index++] = new ItemButton<Item>(vaultComposite, new Item(), InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE, false);
 			}
 				
 			vault[index] = new ItemButton<Item>(vaultComposite, i, InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE, true);
@@ -108,7 +110,6 @@ public class Vault extends Dialog
 				
 				index++;
 				prevType=i.getEquipType();
-				prevSet=i.getSetName();
 			}
 		}
 		

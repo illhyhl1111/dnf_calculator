@@ -130,6 +130,7 @@ public class ReinforceInfo {
 		case LEGENDARY:
 			if(level==90) temp=Legendary90Dim[num];
 			if(level==85) temp=Legendary85Dim[num];
+			else temp=Legendary85Dim[num];
 			break;
 		case CHRONICLE:
 			if(level==85 || level==86) temp=Chronicle85Dim[num];

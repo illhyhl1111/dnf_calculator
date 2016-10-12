@@ -43,4 +43,5 @@ public class SkillRangeStatusInfo extends AbstractStatusInfo			// 범위형 스�
 	}
 	
 	public boolean getTP() {return TP;}
+	public void increaseStat(double strength) throws StatusTypeMismatch { throw new StatusTypeMismatch("Double->SkillRange");}
 }

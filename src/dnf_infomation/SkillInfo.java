@@ -1,7 +1,7 @@
 package dnf_infomation;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedList;
 
 import dnf_InterfacesAndExceptions.Character_type;
 import dnf_InterfacesAndExceptions.Element_type;
@@ -10,10 +10,10 @@ import dnf_InterfacesAndExceptions.ParsingException;
 import dnf_InterfacesAndExceptions.Skill_type;
 import dnf_InterfacesAndExceptions.StatList;
 import dnf_InterfacesAndExceptions.StatusTypeMismatch;
+import dnf_InterfacesAndExceptions.UndefinedStatusKey;
 import dnf_calculator.FunctionStat;
 import dnf_calculator.StatusList;
 import dnf_class.Characters;
-import dnf_class.Equipment;
 import dnf_class.Monster;
 import dnf_class.Skill;
 import dnf_class.SkillLevelInfo;
@@ -22,7 +22,7 @@ import dnf_class.TPSkill;
 
 public class SkillInfo {
 	
-	public static void getInfo(HashSet<Skill> skillList, Object[] data) throws ParsingException
+	public static void getInfo(LinkedList<Skill> skillList, Object[] data) throws ParsingException
 	{
 		int i=0;
 		String name=null;
@@ -37,7 +37,7 @@ public class SkillInfo {
 		int masterLevel=0;
 		int interval=0;
 		Element_type element=null;
-		Skill skill;
+		Skill skill=null;
 		
 		SkillLevelInfo levelInfo = null;
 		int skillLevel=0;
@@ -112,13 +112,14 @@ public class SkillInfo {
 				else throw new ParsingException(i-1, temp);
 			}
 			
-			if(isTPSkill) skill = new TPSkill(name, target, job, firstLevel, maxLevel, masterLevel, interval);
-			else if(jobDefined){
-				if(type==Skill_type.SWITCHING) skill = new SwitchingSkill(name, job, firstLevel, maxLevel, masterLevel, interval);
+			if(jobDefined){
+				if(isTPSkill) skill = new TPSkill(name, target, job, firstLevel, maxLevel, masterLevel, interval);
+				else if(type==Skill_type.SWITCHING) skill = new SwitchingSkill(name, job, firstLevel, maxLevel, masterLevel, interval);
 				else skill = new Skill(name, type, job, firstLevel, maxLevel, masterLevel, interval, element);
 			}
 			else{
-				if(type==Skill_type.SWITCHING) skill = new SwitchingSkill(name, charType, firstLevel, maxLevel, masterLevel, interval);
+				if(isTPSkill) skill = new TPSkill(name, target, charType, firstLevel, maxLevel, masterLevel, interval);
+				else if(type==Skill_type.SWITCHING) skill = new SwitchingSkill(name, charType, firstLevel, maxLevel, masterLevel, interval);
 				else skill = new Skill(name, type, charType, firstLevel, maxLevel, masterLevel, interval, element);
 			}
 			
@@ -144,24 +145,37 @@ public class SkillInfo {
 					else if(((String)temp).contains("반복"))
 					{
 						i--;
+						int compNum=2;
+						if(levelInfo.fStat.statList.size()!=0) compNum=3;
+						
 						int repNum = Integer.valueOf(((String)temp).split(" ")[1]);
 						int levelDiff = skill.maxLevel-skillLevel;
-						int startIndex = i-2*levelDiff;
+						int startIndex = i-compNum*levelDiff;
 						
 						String[] strData = new String[repNum];
+						FunctionStat[] fstatData = new FunctionStat[repNum];
 						for(int j=0; j<repNum; j++){
-							if(!((String) data[i-2*repNum+2*j]).equals("+")) throw new ParsingException(i-1, temp); 
-							strData[j] = (String) data[i-2*repNum+2*j+1];
+							if(!((String) data[i-compNum*repNum+compNum*j]).equals("+")) throw new ParsingException(i-1, temp); 
+							if(compNum==2)
+								strData[j] = (String) data[i-compNum*repNum+compNum*j+1];
+							else{
+								fstatData[j] = (FunctionStat) data[i-compNum*repNum+compNum*j+1];
+								strData[j] = (String) data[i-compNum*repNum+compNum*j+2];
+							}
 						}
 						
 						for(int j=0; j<levelDiff; j++)
 						{
-							data[startIndex+j*2] = "+";
-							data[startIndex+j*2+1] = strData[j%repNum];
+							data[startIndex+j*compNum] = "+";
+							if(compNum==2) data[startIndex+j*compNum+1] = strData[j%repNum];
+							else{
+								data[startIndex+j*compNum+1] = fstatData[j%repNum];
+								data[startIndex+j*compNum+2] = strData[j%repNum];
+							}
 						}
 						
 						data[i]=null;
-						i-=2*levelDiff;
+						i-=compNum*levelDiff;
 						temp = data[i++];
 					}
 
@@ -228,14 +242,14 @@ public class SkillInfo {
 	
 	public static Object[] skillInfo_gunner()
 	{
-		FunctionStat fStat[] = new FunctionStat[1];
+		FunctionStat fStat[] = new FunctionStat[2];
 		
 		//듀얼트리거
 		fStat[0] = new FunctionStat(){
 			private static final long serialVersionUID = -331944321054654526L;
 
 			@Override
-			public StatusList function(Characters character, Monster monster, Equipment equipment) {
+			public StatusList function(Characters character, Monster monster, Object item) {
 				StatusList statList = new StatusList();
 				try {
 					int fire = (int) (character.dungeonStatus.getStat(StatList.ELEM_FIRE)+0.00001);
@@ -249,18 +263,29 @@ public class SkillInfo {
 			}
 		};
 		
+		fStat[1] = new FunctionStat(){
+			private static final long serialVersionUID = -331944321054654526L;
+
+			@Override
+			public StatusList function(Characters character, Monster monster, Object item) {
+				StatusList statList = new StatusList();
+				Skill skill = (Skill)item;
+				try {
+					statList.addStatList("재련독공", character.dungeonStatus.getStat("재련독공")
+							*skill.getSkillLevelInfo(true, character.isBurning()).stat.statList.get(0).stat.getStatToDouble()/100);
+				} catch (UndefinedStatusKey | StatusTypeMismatch e) {
+					e.printStackTrace();
+				}
+				return statList;
+			}
+		};
+		
+		
 		Object[] data = new Object[] {
-				//개틀
-				"M-137 개틀링건", Skill_type.ACTIVE, Job.LAUNCHER_F, 5, 60, 50, 2, Element_type.NONE,
-				"42 223*20 1.859*20 0 0", "+ 228*20 1.900*20", "+ 232*20 1.940*20", "+ 237*20 1.970*20", "+ 241*20 2.010*20", "+ 246*20 2.06*20", "+ 251*20 2.09*20", null,
-				//바베큐
-				"바베~큐", "", "", 10, 60, 50, 2, "",
-				"41 7200 72 0 0", "+ 7350 73.5", "+ 7480 74.8", "+ 7630 76.29", "+ 779 77.9", null,
-				//화방
-				"M-3 화염방사기", "", "", 15, 60, 50, 2, Element_type.FIRE,
-				"38 446*13 3.720*13 0 0", "+ 456*13 3.8*13", "+ 466*13 3.89*13", "+ 476*13 3.96*13", "+ 488*13 4.06*13", "+ 498*13 4.149*13", null,
+				
+				///////////////런처
 				//캐넌볼
-				"캐넌볼", "", "", 20, 60, 50, 2, Element_type.NONE,
+				"캐넌볼", Skill_type.ACTIVE, Job.LAUNCHER_F, 5, 60, 50, 2, Element_type.NONE,
 				"36 3964*2 0 0 0", "+ 4052*2", "+ 4138*2", "+ 4225*2", "+ 4313*2", "+ 4398*2", null,
 				//슈타
 				"슈타이어 대전차포", "", "", 20, 60, 50, 2, Element_type.FIRE,
@@ -307,7 +332,7 @@ public class SkillInfo {
 				"+ 23762+10184 237.620+101.840", "+ 25172+10788 251.720+107.880",
 				"+ 26580+11393 265.800+113.930", "+ 27990+11995 279.900+119.950", "+ 29400+12600 294.000+126.000", "+ 30811+13204 308.110+132.040", null,
 				//오퍼
-				"오퍼레이션 레이즈", "", "", 85, 40, 30, 5, Element_type.FIRE,
+				"오퍼레이션 레이즈", "", "", 85, 40, 30, 5, Element_type.FIRE, "설명 진누골 기준 정타 타격",
 				"4 1.794*37973 1.794*379.73 0 0", "3 1.794*32783 1.794*327.83", "5 1.794*43166 1.794*431.66", "6 1.794*48258 1.794*482.58",
 				"7 1.794*53552 1.794*535.52", null,
 				
@@ -334,10 +359,10 @@ public class SkillInfo {
 				"14", "증뎀버프 33", "15", "증뎀버프 34", "+", "증뎀버프 +2", "+", "증뎀버프 +1", "반복 2",
 				//알파서폿
 				"알파 서포트", "", "", 75, 40, 30, 3,
-				"5", "물공뻥 24 & 독공뻥 24 & 물리방무뻥 24", "+", "물공뻥 +2 & 독공뻥 +2 & 물리방무뻥 +2", "반복 1",
+				"6", fStat[1], "물공뻥 24 & 독공뻥 24 & 물리방무뻥 24", "+", fStat[1], "물공뻥 +2 & 독공뻥 +2 & 물리방무뻥 +2", "반복 1",
 				//애자파츠
 				"AJ 강화파츠", "", "", "", "", "", "",
-				"5", "스킬 M-3 화염방사기 % 61.18 & 스킬 화염 강타 % 28.74 & 스킬 팜페로 부스터 % 60.29 & 스킬 M-137 개틀링건 % 69.35 & 스킬 바베~큐 % 36 & 스킬 슈타이어 대전차포 % 36 & 스킬 FM-31 그레네이드 런처 % 36 & "
+				"6", "스킬 M-3 화염방사기 % 61.18 & 스킬 화염 강타 % 28.74 & 스킬 팜페로 부스터 % 60.29 & 스킬 M-137 개틀링건 % 69.35 & 스킬 바베~큐 % 36 & 스킬 슈타이어 대전차포 % 36 & 스킬 FM-31 그레네이드 런처 % 36 & "
 				+ "스킬 FM-92 mk2 랜서 % 36 & 스킬 FM-92 mk2 랜서 SW % 36 & 스킬 양자 폭탄 % 36 & 스킬 에인션트 트리거 % 36 & 스킬 PT-15 프로토타입 % 36 & 스킬 오퍼레이션 레이즈 % 36 & "
 				+ "스킬 레이저 라이플 % 36 & 스킬 X-1 익스트루더 % 36",
 				"+", "스킬 M-3 화염방사기 % +2.16 & 스킬 화염 강타 % +1.66 & 스킬 팜페로 부스터 % +2.16 & 스킬 M-137 개틀링건 % +2.15 & 스킬 바베~큐 % +2 & 스킬 슈타이어 대전차포 % +2 & 스킬 FM-31 그레네이드 런처 % +2 & "
@@ -366,6 +391,75 @@ public class SkillInfo {
 				"X-1 익스트루더 강화", "X-1 익스트루더", "", 65, 7, 5, 10, null,
 				"FM-31 그레네이드 런처 강화", "FM-31 그레네이드 런처", "", 50, 1, 1, 20, null,
 				
+				//////////////////레인저
+				/////액티브
+				"은탄", Skill_type.ACTIVE, Character_type.GUNNER_F, 5, 60, 50, 2, Element_type.LIGHT, "설명 한 탄창의 딜량입니다",
+				"43 697*25 0 0 0", "+ 711*25", "+ 725*25", "+ 739*25", "+ 754*25 ", "+ 768*25", "+ 782*25 ", "+ 782*25 ", "+ 796*25", null,
+				"헤드샷", Skill_type.ACTIVE, Job.RANGER_F, 15, 60, 50, 2, Element_type.NONE, 
+				"38 3323 0 0 0", "+ 3394 ", "+ 3464", "+ 3535", "+ 3606 ", "+ 3677", "+ 3748 ", null,
+				"권총의 춤", Skill_type.ACTIVE, Job.RANGER_F, 35, 60, 50, 2, Element_type.NONE,
+				"28 654*20+1163*8 0 0 0", "+ 672*20+1194*8 ", "+ 689*20+1226*8", "+ 707*20+1257*8", "+ 725*20+1289*8 ", "+ 743*20+1321*8", "+ 760*20+1352*8", "+ 778*20+1384*8", "+ 796*20+1415*8", null,
+				"이동사격", Skill_type.ACTIVE, Job.RANGER_F, 35, 60, 50, 2, Element_type.NONE,
+				"28 1238*30 0 0 0", "+ 1271*30 ", "+ 1305*30", "+ 1338*30", "+ 1372*30 ", "+ 1406*30", "+ 1439*30 ", "+ 1473*30 ", "+ 1506*30", null,
+				"멀티 헤드샷", Skill_type.ACTIVE, Job.RANGER_F, 40, 60, 50, 2, Element_type.NONE,
+				"26 4752*5 0 0 0", "+ 4888*5 ", "+ 5025*5", "+ 5161*5", "+ 5297*5 ", "+ 5434*5", "+ 5570*5 ", "+ 5706*5 ", "+ 5843*5",null,
+				"더블 건호크", Skill_type.ACTIVE, Job.RANGER_F, 45, 60, 50, 2, Element_type.NONE,
+				"23 1050*14+1066*18+1155*30 0 0 0", "+ 1083*14+1100*18+1191*30", "+ 1116*14+1133*18+1228*30","+ 1149*14+1167*18+1264*30","+ 1182*14+1200*18+1300*30","+ 1215*14+1234*18+1337*30",
+				"+ 1248*14+1267*18+1373*30","+ 1281*14+1301*18+1409*30","+ 1314*14+1334*18+1445*30", null,
+				"블러디 카니발", Skill_type.ACTIVE, Job.RANGER_F, 50, 40, 30, 5, Element_type.NONE, 
+				"10 4479*24+13286 0 0 0", "+ 4815*24+14284", "+ 5152*24+15282", "+ 5488*24+16280", "+ 5825*24+17278 ", "+ 6161*24+18276", "+ 6497*24+19274", null,
+				"블러디 스파이크", Skill_type.ACTIVE, Job.RANGER_F, 60, 60, 50, 2, Element_type.NONE, 
+				"16 2761*5+13806 0 0 0", "+ 2872*5+14362 ", "+ 2983*5+14917 ","+ 3094*5+15473 ","+ 3205*5+16028 ","+ 3316*5+16584 ","+ 3427*5+17139 ","+ 3539*5+17695",null,
+				"제압 사격", Skill_type.ACTIVE, Job.RANGER_F, 70, 40, 30, 2, Element_type.NONE,
+				"11 1906*19+4237 0 0 0", "+ 2002*19+4450","+ 2098*19+4663","+ 2194*19+4877","+ 2290*19+5090","+ 2386*19+5304","+ 2482*19+5517",
+				"+ 2578*19+5730","+ 2674*19+5944","+ 2770*19+6157", null,
+				"블러드 앤 체인", Skill_type.ACTIVE, Job.RANGER_F, 85, 40, 30, 5, Element_type.NONE, 
+				"2 92547 0 0 0", "+ 109968 ", "+ 127388","+ 144809", null,
+				"소닉 스파이크", Skill_type.ACTIVE, Job.RANGER_F, 30, 60, 50, 2, Element_type.NONE, 
+				"25 3185*3 0 0 0", "+ 3265*3 ", "+ 3345*3", "+ 3425*3", "+ 3505*3 ", "+ 3585*3", "+ 3665*3 ", "+ 3745*3 ", "+ 3825*3",null,
+				
+				/////패시브
+				"베일드 컷", Skill_type.DAMAGE_BUF, Job.RANGER_F, 48, 60, 50, 3, Element_type.NONE, 
+				"15 2240 0 0 0", "증뎀버프 33","+ 2330", "증뎀버프 35","+ 2419", "증뎀버프 37","+ 2509", "증뎀버프 39","+ 2598", "증뎀버프 41","+ 2688", "증뎀버프 43", null,
+				"킬 포인트", Skill_type.DAMAGE_BUF, Job.RANGER_F, 75, 40, 30, 3, Element_type.NONE, "설명 만크리를 가정한 공격력입니다",
+				"6 6105*3*1.14+18317 0 0 0", "크증버프 14 & 스킬 킬 포인트 % -14","+ 6647*3*1.16+19942", "크증버프 16 & 스킬 킬 포인트 % -16","+ 7198*3*1.18+21567", "크증버프 18 & 스킬 킬 포인트 % -18",
+				"+ 7730*3*1.2+23192", "크증버프 20 & 스킬 킬 포인트 % -20","+ 8272*3*1.22+24817", "크증버프 22 & 스킬 킬 포인트 % -22","+ 8813*3*1.24+26441", "크증버프 24 & 스킬 킬 포인트 % -24", null,
+				"쏘우 블레이드", Skill_type.BUF_ACTIVE, "", 75, 20, 10, 3,
+				"6", "증뎀버프 24", "+", "증뎀버프 +2", "반복 1",
+				"체인 글린트", Skill_type.BUF_ACTIVE, "", 80, 20, 10, 3,
+				"4", "증뎀버프 30", "+", "증뎀버프 +3", "반복 1",
+				"데스 바이 리볼버", Skill_type.SWITCHING, "", 30, 20, 10, 3, 
+				"10", "크증버프 43", null,
+				"트리플 클러치", Skill_type.BUF_ACTIVE, "", 20, 11, 1, 3,
+				"1", "스킬 탑스핀 % 10 & 스킬 라이징샷 % 10 & 스킬 니들 소배트 % 10 & 스킬 헤드샷 % 15", "+", "스킬 탑스핀 % +2 & 스킬 라이징샷 % +2 & 스킬 니들 소배트 % +2 & 스킬 헤드샷 % +3", "반복 1",
+				"웨스턴 파이어", Skill_type.BUF_ACTIVE, "", 30, 1, 1, 3, "설명 편의상 헤드샷의 증뎀버프로 구현함",
+				"1", "스킬 헤드샷 % 20", null,
+				"체인 파우더", Skill_type.BUF_ACTIVE, "", 40, 20, 10, 2,
+				"10", "스킬 권총의 춤 % 0.4156*48 & 스킬 더블 건호크 % 50*0.52 & 스킬 이동사격 % 29 & 스킬 제압 사격 % 20 & 스킬 멀티 헤드샷 % 20 & 스킬 헤드샷 % 20",
+				"11", "스킬 권총의 춤 % 0.4156*50 & 스킬 더블 건호크 % 53*0.52 & 스킬 이동사격 % 30 & 스킬 제압 사격 % 21 & 스킬 멀티 헤드샷 % 21 & 스킬 헤드샷 % 21",
+				"12", "스킬 권총의 춤 % 0.4156*52 & 스킬 더블 건호크 % 54*0.52 & 스킬 이동사격 % 32 & 스킬 제압 사격 % 22 & 스킬 멀티 헤드샷 % 22 & 스킬 헤드샷 % 22",
+				"13", "스킬 권총의 춤 % 0.4156*56 & 스킬 더블 건호크 % 57*0.52 & 스킬 이동사격 % 34 & 스킬 제압 사격 % 23 & 스킬 멀티 헤드샷 % 23 & 스킬 헤드샷 % 23",
+				"14", "스킬 권총의 춤 % 0.4156*58 & 스킬 더블 건호크 % 60*0.52 & 스킬 이동사격 % 35 & 스킬 제압 사격 % 24 & 스킬 멀티 헤드샷 % 24 & 스킬 헤드샷 % 24",
+				"15", "스킬 권총의 춤 % 0.4156*62 & 스킬 더블 건호크 % 63*0.52 & 스킬 이동사격 % 37 & 스킬 제압 사격 % 25 & 스킬 멀티 헤드샷 % 25 & 스킬 헤드샷 % 25",
+				"16", "스킬 권총의 춤 % 0.4156*64 & 스킬 더블 건호크 % 66*0.52 & 스킬 이동사격 % 39 & 스킬 제압 사격 % 26 & 스킬 멀티 헤드샷 % 26 & 스킬 헤드샷 % 26", null,
+				
+				//TP
+				"은탄 강화", "은탄", Character_type.GUNNER_F, 50, 7, 5, -1,
+				"1", "스킬 은탄 % 8.16", "+", "스킬 은탄 % 16.64", "+", "스킬 은탄 % 25.44", "+", "스킬 은탄 % 34.56", "+", "스킬 은탄 % 44",
+				 "+", "스킬 은탄 % 53.76", "+", "스킬 은탄 % 63.84", null,
+				"마릴린 로즈 강화", "마릴린 로즈", Character_type.GUNNER_F, 50, 7, 5, 8, null,
+				"라이징샷 강화", "라이징샷", Character_type.GUNNER_F, 50, 7, 5, 8, null,
+				"탑스핀 강화", "탑스핀", Character_type.GUNNER_F, 50, 7, 5, 8, null,
+				//"스프리건 강화", "스프리건", Character_type.GUNNER_F, 50, 3, 1, 8, null,
+				"니들 소배트 강화", "니들 소배트", Character_type.GUNNER_F, 50, 7, 5, 8, null,
+				"헤드샷 강화", "헤드샷", Job.RANGER_F, 60, 7, 5, 10, null,
+				"리벤저 강화", "리벤저", Job.RANGER_F, 60, 7, 5, 10, null,
+				"소닉 스파이크 강화", "소닉 스파이크", Job.RANGER_F, 50, 7, 5, 10, null,
+				"이동사격 강화", "이동사격", Job.RANGER_F, 50, 7, 5, 10, null,
+				"권총의 춤 강화", "권총의 춤", Job.RANGER_F, 65, 7, 5, 10, null,
+				"멀티 헤드샷 강화", "멀티 헤드샷", Job.RANGER_F, 65, 7, 5, 10, null,
+				"더블 건호크 강화", "더블 건호크", Job.RANGER_F, 65, 7, 5, 10, null,
+				
 				
 				///공용스킬
 				"고대의 기억", Skill_type.BUF_ACTIVE, Character_type.ALL, 15, 20, 10, 3,
@@ -374,6 +468,15 @@ public class SkillInfo {
 				"1", "물크 1", "+", "물크 +1", "반복 1",
 				"마법 크리티컬 히트", Skill_type.PASSIVE, "", 20, 20, 10, 3,
 				"1", "마크 1", "+", "마크 +1", "반복 1",
+				//개틀
+				"M-137 개틀링건", Skill_type.ACTIVE, Character_type.GUNNER_F, 5, 60, 50, 2, Element_type.NONE,
+				"42 223*20 1.859*20 0 0", "+ 228*20 1.900*20", "+ 232*20 1.940*20", "+ 237*20 1.970*20", "+ 241*20 2.010*20", "+ 246*20 2.06*20", "+ 251*20 2.09*20", null,
+				//바베큐
+				"바베~큐", "", "", 10, 60, 50, 2, "",
+				"41 7200 72 0 0", "+ 7350 73.5", "+ 7480 74.8", "+ 7630 76.29", "+ 779 77.9", null,
+				//화방
+				"M-3 화염방사기", "", "", 15, 60, 50, 2, Element_type.FIRE,
+				"38 446*13 3.720*13 0 0", "+ 456*13 3.8*13", "+ 466*13 3.89*13", "+ 476*13 3.96*13", "+ 488*13 4.06*13", "+ 498*13 4.149*13", null,
 		};
 		
 		return data;

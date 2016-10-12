@@ -3,7 +3,6 @@ package dnf_calculator;
 import java.util.LinkedList;
 
 import dnf_class.Characters;
-import dnf_class.Equipment;
 import dnf_class.Monster;
 
 
@@ -19,10 +18,10 @@ public class FunctionStatusList implements java.io.Serializable, Cloneable {
 		statList = new LinkedList<FunctionStat>();
 	}
 	
-	public void addListToStat(Status stat, Characters character, Monster monster, Equipment equipment)
+	public void addListToStat(Status stat, Characters character, Monster monster, Object item)
 	{
 		for(FunctionStat s : statList)
-			s.function(character, monster, equipment).addListToStat(stat);
+			s.function(character, monster, item).addListToStat(stat);
 	}
 	
 	@Override

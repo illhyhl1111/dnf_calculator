@@ -186,6 +186,13 @@ class UserAvatarInfo extends DnFComposite
 		drapeButton.getButton().setLayoutData(drapeInfoData);
 		drapeButton.getButton().moveAbove(avatarInfoComposite);
 		
+		Label characterImageComposite = new Label(mainComposite, SWT.CENTER);
+		FormData imageData = new FormData();
+		imageData.left = new FormAttachment(avatarInfoComposite, 50);
+		imageData.bottom = new FormAttachment(avatarInfoComposite, -10, SWT.BOTTOM);
+		characterImageComposite.setLayoutData(imageData);
+		characterImageComposite.setImage(GetDictionary.iconDictionary.get(character.getJob().charType.name()));		//가운데 이미지 ->캐릭터 이미지
+		
 		
 		for(int i=0; i<AVATARNUM; i++)
 		{

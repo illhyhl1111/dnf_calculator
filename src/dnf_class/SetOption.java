@@ -18,7 +18,7 @@ public class SetOption implements Cloneable, java.io.Serializable, Comparable<Se
 	public FunctionStatusList fStat;							//조건부 스탯
 	public LinkedList<String> explanation;
 	
-	public SetOption(String name, SetName setName, int requireNum)
+	public SetOption(SetName setName, int requireNum)
 	{
 		this.setName=setName;
 		this.requireNum=requireNum;

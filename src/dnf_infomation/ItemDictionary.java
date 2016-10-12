@@ -157,19 +157,16 @@ public class ItemDictionary implements java.io.Serializable
 		else equipList=this.equipList;
 		for(Equipment e : equipList){
 			for(i=0; i<constraintList.length; i++){
-				if(constraintList[i].partList.contains(e.getPart()) && constraintList[i].rarityList.contains(e.getRarity()) 
-						&& (constraintList[i].lowerLevel <= e.level && e.level <= constraintList[i].upperLevel) )
-					{
-						if(e instanceof Weapon && ((Weapon) e).enabled(constraintList[i].job)){
-							((LinkedList<Item>)list[i]).add(e);
-							break;
-						}
-						else{
-							((LinkedList<Item>)list[i]).add(e);
-							break;
-						}
-					
+				if(constraintList[i].equipInConstraint(e)){
+					if(e instanceof Weapon && ((Weapon) e).enabled(constraintList[i].job)){
+						((LinkedList<Item>)list[i]).add(e);
+						break;
 					}
+					else{
+						((LinkedList<Item>)list[i]).add(e);
+						break;
+					}
+				}
 			}
 			if(i==constraintList.length)((LinkedList<Item>)list[constraintList.length]).add(e);
 		}
@@ -362,7 +359,7 @@ class SaveItemDictionary {
 		try{
 			ItemDictionary itemDic = new ItemDictionary();
 			
-			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("ItemDictionary.dfd"));
+			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("data\\ItemDictionary.dfd"));
 			out.writeObject(itemDic);
 			out.close();
 		}

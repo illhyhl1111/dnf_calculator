@@ -9,9 +9,11 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
 import dnf_InterfacesAndExceptions.Equip_part;
+import dnf_InterfacesAndExceptions.Equip_type;
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_InterfacesAndExceptions.Item_rarity;
 import dnf_InterfacesAndExceptions.Location;
+import dnf_InterfacesAndExceptions.SetName;
 import dnf_class.Characters;
 import dnf_class.Creature;
 import dnf_class.Drape;
@@ -42,6 +44,7 @@ public class InventoryCardPack extends DnFComposite
 		constraintList[num] = new ItemConstraint(75, 90, character.getJob());
 		constraintList[num].partList.add(Equip_part.WEAPON);
 		constraintList[num].rarityList.add(Item_rarity.EPIC);
+		constraintList[num].rarityList.add(Item_rarity.LEGENDARY);
 		
 		//80~85 에픽방어구
 		num++;
@@ -63,13 +66,81 @@ public class InventoryCardPack extends DnFComposite
 		constraintList[num].partList.add(Equip_part.SHOES);
 		constraintList[num].rarityList.add(Item_rarity.EPIC);
 		
-		//80~90 악세
+		//85~90 레전방어구(단일)
+		num++;
+		constraintList[num] = new ItemConstraint(85, 90, character.getJob());
+		constraintList[num].typeList.add(Equip_type.FABRIC);
+		constraintList[num].typeList.add(Equip_type.LEATHER);
+		constraintList[num].typeList.add(Equip_type.MAIL);
+		constraintList[num].rarityList.add(Item_rarity.LEGENDARY);
+		constraintList[num].typeList.add(Equip_type.HEAVY);
+		constraintList[num].typeList.add(Equip_type.PLATE);
+		constraintList[num].rarityList.add(Item_rarity.LEGENDARY);
+		constraintList[num].setList.add(SetName.NONE);
+		
+		//85~90 레전방어구(세트)
+		num++;
+		constraintList[num] = new ItemConstraint(85, 90, character.getJob());
+		constraintList[num].typeList.add(Equip_type.FABRIC);
+		constraintList[num].typeList.add(Equip_type.LEATHER);
+		constraintList[num].typeList.add(Equip_type.MAIL);
+		constraintList[num].rarityList.add(Item_rarity.LEGENDARY);
+		constraintList[num].typeList.add(Equip_type.HEAVY);
+		constraintList[num].typeList.add(Equip_type.PLATE);
+		constraintList[num].rarityList.add(Item_rarity.LEGENDARY);
+		constraintList[num].setList.add(SetName.BURIEDSCREAM);
+		constraintList[num].setList.add(SetName.CURSEOFSEAGOD);
+		constraintList[num].setList.add(SetName.DEVASTEDGRIEF);
+		constraintList[num].setList.add(SetName.GODOFFIGHT);
+		constraintList[num].setList.add(SetName.GRACIA);
+		constraintList[num].setList.add(SetName.GREATGLORY);
+		constraintList[num].setList.add(SetName.GUILDACCESSORY_FIRE);
+		constraintList[num].setList.add(SetName.GUILDACCESSORY_WATER);
+		constraintList[num].setList.add(SetName.HUGEFORM);
+		constraintList[num].setList.add(SetName.REAL_PROFIGHTER_ACCESSORY);
+		constraintList[num].setList.add(SetName.ROMANTICE);
+		constraintList[num].setList.add(SetName.ROOTOFDISEASE);
+		
+		//80~90 에픽 악세(단일)
 		num++;
 		constraintList[num] = new ItemConstraint(80, 90, character.getJob());
 		constraintList[num].partList.add(Equip_part.RING);
 		constraintList[num].partList.add(Equip_part.BRACELET);
 		constraintList[num].partList.add(Equip_part.NECKLACE);
 		constraintList[num].rarityList.add(Item_rarity.EPIC);
+		
+		//80~90 레전 악세(단일)
+		num++;
+		constraintList[num] = new ItemConstraint(80, 90, character.getJob());
+		constraintList[num].partList.add(Equip_part.RING);
+		constraintList[num].partList.add(Equip_part.BRACELET);
+		constraintList[num].partList.add(Equip_part.NECKLACE);
+		constraintList[num].setList.add(SetName.NONE);
+		constraintList[num].rarityList.add(Item_rarity.LEGENDARY);
+		
+		//80~90 레전 악세(세트)
+		num++;
+		constraintList[num] = new ItemConstraint(80, 90, character.getJob());
+		constraintList[num].partList.add(Equip_part.RING);
+		constraintList[num].partList.add(Equip_part.BRACELET);
+		constraintList[num].partList.add(Equip_part.NECKLACE);
+		constraintList[num].setList.add(SetName.BURIEDSCREAM);
+		constraintList[num].setList.add(SetName.CURSEOFSEAGOD);
+		constraintList[num].setList.add(SetName.DEVASTEDGRIEF);
+		constraintList[num].setList.add(SetName.GODOFFIGHT);
+		constraintList[num].setList.add(SetName.REAL_PROFIGHTER_FABRIC);
+		constraintList[num].setList.add(SetName.REAL_PROFIGHTER_HARMOR);
+		constraintList[num].setList.add(SetName.REAL_PROFIGHTER_LEATHER);
+		constraintList[num].setList.add(SetName.REAL_PROFIGHTER_MAIL);
+		constraintList[num].setList.add(SetName.REAL_PROFIGHTER_PLATE);
+		constraintList[num].setList.add(SetName.GRACIA);
+		constraintList[num].setList.add(SetName.GREATGLORY);
+		constraintList[num].setList.add(SetName.GUILDACCESSORY_FIRE);
+		constraintList[num].setList.add(SetName.GUILDACCESSORY_WATER);
+		constraintList[num].setList.add(SetName.HUGEFORM);
+		constraintList[num].setList.add(SetName.REAL_PROFIGHTER_ACCESSORY);
+		constraintList[num].setList.add(SetName.ROMANTICE);
+		constraintList[num].setList.add(SetName.ROOTOFDISEASE);
 		constraintList[num].rarityList.add(Item_rarity.LEGENDARY);
 		
 		//80~90 특수장비
@@ -79,6 +150,12 @@ public class InventoryCardPack extends DnFComposite
 		constraintList[num].partList.add(Equip_part.MAGICSTONE);
 		constraintList[num].partList.add(Equip_part.EARRING);
 		constraintList[num].rarityList.add(Item_rarity.EPIC);
+		
+		num++;
+		constraintList[num] = new ItemConstraint(80, 90, character.getJob());
+		constraintList[num].partList.add(Equip_part.AIDEQUIPMENT);
+		constraintList[num].partList.add(Equip_part.MAGICSTONE);
+		constraintList[num].partList.add(Equip_part.EARRING);
 		constraintList[num].rarityList.add(Item_rarity.LEGENDARY);
 		constraintList[num].rarityList.add(Item_rarity.UNIQUE);
 		constraintList[num].rarityList.add(Item_rarity.RARE);
@@ -95,7 +172,7 @@ public class InventoryCardPack extends DnFComposite
 	@SuppressWarnings("unchecked")
 	public void setDungeonMode(DungeonUI dungeonUI)
 	{
-		String[] tabNameList = {"무기", "방어구 1", "방어구 2", "악세서리", "특수장비", "칭호", "기타", "아바타", "크리쳐", "휘장"};
+		String[] tabNameList = {"무기", "방어구 1", "방어구 2", "방어구 3", "퀘전방어구", "악세서리1", "악세서리 2", "퀘전악세", "특수장비1", "특수장비2", "칭호", "기타", "아바타", "크리쳐/휘장"};
 		final int inventoryListNum = tabNameList.length;
 		
 		inventoryList = new Inventory[inventoryListNum];
@@ -103,23 +180,23 @@ public class InventoryCardPack extends DnFComposite
 		inventoryTabList = new TabItem[inventoryListNum]; 
 		pack = new Composite[inventoryListNum];
 		
-		ItemConstraint[] constraintList = setConstraintList(tabNameList.length-1-3);
+		ItemConstraint[] constraintList = setConstraintList(tabNameList.length-1-2);
 		LinkedList<Item>[] equipList = character.userItemList.separateList(constraintList, false);
 		LinkedList<Item>[] userEquipList = character.userItemList.separateList(constraintList, true);
 		
-		LinkedList<?>[] itemList = new LinkedList<?>[equipList.length+3];
+		LinkedList<?>[] itemList = new LinkedList<?>[equipList.length+2];
 		for(int i=0; i<equipList.length; i++)
 			itemList[i]=equipList[i];
 		itemList[equipList.length] = character.userItemList.getSortedList(character.userItemList.avatarList);
 		itemList[equipList.length+1] = character.userItemList.getSortedList(character.userItemList.creatureList);
-		itemList[equipList.length+2] = character.userItemList.getSortedList(character.userItemList.drapeList); 
+		//itemList[equipList.length+2] = character.userItemList.getSortedList(character.userItemList.drapeList); 
 		
-		LinkedList<?>[] userItemList = new LinkedList<?>[equipList.length+3];
+		LinkedList<?>[] userItemList = new LinkedList<?>[equipList.length+2];
 		for(int i=0; i<userEquipList.length; i++)
 			userItemList[i]=userEquipList[i];
 		userItemList[userEquipList.length] = character.userItemList.getSortedList(character.userItemList.avatarList_user);
 		userItemList[userEquipList.length+1] = new LinkedList<Creature>();
-		userItemList[userEquipList.length+2] = new LinkedList<Drape>(); 
+		//userItemList[userEquipList.length+2] = new LinkedList<Drape>(); 
 		
 		RowLayout packLayout = new RowLayout(SWT.VERTICAL);
 		packLayout.spacing=10;
@@ -139,16 +216,16 @@ public class InventoryCardPack extends DnFComposite
 	
 	public String[] getAvatarModeList()
 	{
-		return new String[] {"아바타", "크리쳐", "휘장"};
+		return new String[] {"아바타", "크리쳐/휘장"};
 	}
 	public int getAvatarTabIndex()
 	{
-		return inventoryTabList.length-3;
+		return inventoryTabList.length-2;
 	}
 	
 	public void setEquipmentMode(UserInfo itemInfo)
 	{
-		String[] tabNameList = {"무기", "방어구 1", "방어구 2", "악세서리", "특수장비", "칭호", "기타"};
+		String[] tabNameList = {"무기", "방어구 1", "방어구 2", "방어구 3", "퀘전방어구", "악세서리1", "악세서리2", "퀘전악세", "특수장비1", "특수장비2", "칭호", "기타"};
 		final int inventoryListNum = tabNameList.length;
 		
 		inventoryList = new Inventory[inventoryListNum];
@@ -183,7 +260,7 @@ public class InventoryCardPack extends DnFComposite
 	@SuppressWarnings("unchecked")
 	public void setAvatarMode(UserInfo itemInfo)
 	{
-		String[] tabNameList = {"아바타", "크리쳐", "휘장"};
+		String[] tabNameList = {"아바타", "크리쳐"};
 		final int inventoryListNum = tabNameList.length;
 		
 		inventoryList = new Inventory[inventoryListNum];
@@ -192,16 +269,15 @@ public class InventoryCardPack extends DnFComposite
 		pack = new Composite[inventoryListNum];
 		LinkedList<?>[] itemList = {
 				character.userItemList.getSortedList(character.userItemList.avatarList),
-				character.userItemList.getSortedList(character.userItemList.creatureList),
-				character.userItemList.getSortedList(character.userItemList.drapeList)}; 
+				character.userItemList.getSortedList(character.userItemList.creatureList)};//,
+				//character.userItemList.getSortedList(character.userItemList.drapeList)}; 
 		LinkedList<?>[] cardList = {
 				character.userItemList.getSortedList(character.userItemList.emblemList),
-				new LinkedList<Item>(), 
 				character.userItemList.getSortedList(character.userItemList.jamList) };
 		LinkedList<?>[] userItemList = {
 				character.userItemList.getSortedList(character.userItemList.avatarList_user),
-				new LinkedList<Creature>(),
-				new LinkedList<Drape>() 
+				new LinkedList<Creature>()//,
+				//new LinkedList<Drape>() 
 		};
 		
 		RowLayout packLayout = new RowLayout(SWT.VERTICAL);
