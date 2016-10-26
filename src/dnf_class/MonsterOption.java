@@ -15,7 +15,7 @@ public class MonsterOption extends IconObject{
 	{
 		super();
 		this.setName(name);
-		this.setIcon("image//Monster//"+name+".png");
+		this.setIcon("image\\Monster\\"+name+".png");
 		this.monster=monster;
 		explanation = new LinkedList<String>();
 	}

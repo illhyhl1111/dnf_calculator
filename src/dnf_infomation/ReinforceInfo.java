@@ -141,7 +141,10 @@ public class ReinforceInfo {
 			if(num==0) temp=3;			//TODO
 		}
 		
-		if(temp==-1) throw new UnknownInformationException();
+		if(temp==-1){
+			if(num==0) return 0;
+			else throw new UnknownInformationException();
+		}
 		return temp;
 	}
 	
@@ -169,7 +172,10 @@ public class ReinforceInfo {
 			break;
 		}
 		
-		if(temp==-1) throw new UnknownInformationException();
+		if(temp==-1){
+			if(num==0) return 0;
+			else throw new UnknownInformationException();
+		}
 		return temp;
 	}
 	
@@ -193,7 +199,10 @@ public class ReinforceInfo {
 			if(num==0) temp=(level-10)*num;			//TODO
 		}
 		
-		if(temp==-1) throw new UnknownInformationException();
+		if(temp==-1){
+			if(num==0) return 0;
+			else throw new UnknownInformationException();
+		}
 		return temp;
 	}
 

@@ -114,6 +114,8 @@ public class BuffInventory extends DnFComposite{
 								}
 							}
 						});
+					else if(i.getName().contains("수련의 방 버프"))
+						inventoryList[index].getButton().addListener(SWT.MouseDoubleClick, listenerGroup.modifyListener(null));
 				}
 				else if(i instanceof Skill)
 					inventoryList[index].getButton().addListener(SWT.MouseEnter, listenerGroup.makeSkillInfoListener(background));	// add MouseEnter Event - make composite

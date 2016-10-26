@@ -3,23 +3,23 @@ package dnf_class;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import dnf_InterfacesAndExceptions.CalculatorVersion;
 import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.Item_rarity;
 
-@SuppressWarnings("serial")
 public class Card extends Item implements java.io.Serializable
 {
 	private static final long serialVersionUID = 4716963298958477792L;
 	private ArrayList<Equip_part> availableType;
-	public Card(String name, Item_rarity rarity)
+	public Card(String name, Item_rarity rarity, String version)
 	{
-		super(name, "image\\Card\\"+name+".png", rarity);
+		super(name, "image\\Card\\"+name+".png", rarity, version);
 		availableType = new ArrayList<Equip_part>();
 	}
 	
 	public Card()
 	{
-		super("카드없음", null, Item_rarity.NONE);
+		super("카드없음", null, Item_rarity.NONE, CalculatorVersion.DEFAULT);
 		availableType = new ArrayList<Equip_part>();
 	}
 	

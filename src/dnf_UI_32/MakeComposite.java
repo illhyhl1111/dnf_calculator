@@ -10,6 +10,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 
 import dnf_InterfacesAndExceptions.Dimension_stat;
+import dnf_InterfacesAndExceptions.DnFColor;
 import dnf_InterfacesAndExceptions.InterfaceSize;
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_InterfacesAndExceptions.Location;
@@ -40,13 +41,15 @@ public class MakeComposite {
 
 	public static void setSetInfoComposite(Composite itemInfo, Item item, int setNum, ItemDictionary itemDictionary)
 	{
+		itemInfo.setBackground(DnFColor.infoBackground_transparent);
+		itemInfo.setBackgroundMode(SWT.INHERIT_FORCE);
 		GridData leftData = new GridData(SWT.LEFT, SWT.TOP, true, false);
 		leftData.widthHint=InterfaceSize.SET_INFO_SIZE-10;
 		
 		Label name = new Label(itemInfo, SWT.WRAP);
 		name.setText(item.getSetName().getName());
 		name.setLayoutData(leftData);
-		name.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_GREEN));
+		name.setForeground(DnFColor.INCHANT);
 		
 		Label option;
 		
@@ -68,8 +71,8 @@ public class MakeComposite {
 					leftData = new GridData(SWT.LEFT, SWT.TOP, true, false);
 					leftData.widthHint=InterfaceSize.SET_INFO_SIZE-10;
 					option.setLayoutData(leftData);
-					option.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_GREEN));
-					color = itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLACK);
+					option.setForeground(DnFColor.INCHANT);
+					color = DnFColor.infoStat;
 					enabled=true;
 				}
 				else
@@ -83,7 +86,8 @@ public class MakeComposite {
 					leftData.widthHint=InterfaceSize.SET_INFO_SIZE-10;
 					option.setLayoutData(leftData);
 					option.setEnabled(false);
-					color = itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLACK);
+					option.setForeground(DnFColor.DARK);
+					color = DnFColor.DARK;
 					enabled=false;
 				}
 					
@@ -108,7 +112,7 @@ public class MakeComposite {
 					leftData = new GridData(SWT.LEFT, SWT.TOP, true, false);
 					leftData.widthHint=InterfaceSize.SET_INFO_SIZE-10;
 					option.setLayoutData(leftData);
-					option.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+					option.setForeground(DnFColor.infoExplanation);
 				}
 			}			
 		}
@@ -127,7 +131,9 @@ public class MakeComposite {
 			itemInfo.dispose();
 			return;
 		}
-		
+		itemInfo.setBackground(DnFColor.infoBackground_transparent);
+		//itemInfo.setBackground(new Color(Display.getDefault(), 30, 30, 30, 0));
+		itemInfo.setBackgroundMode(SWT.INHERIT_FORCE);
 		Label stat = new Label(itemInfo, SWT.WRAP);
 		String temp = item.getName();
 		if(item instanceof Equipment && ((Equipment)item).getReinforce()!=0) temp = "+"+((Equipment)item).getReinforce()+" "+temp;
@@ -144,49 +150,55 @@ public class MakeComposite {
 		switch(item.getRarity())
 		{
 		case EPIC:
-			stat.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_DARK_YELLOW));
-			rarity.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_DARK_YELLOW));
+			stat.setForeground(DnFColor.EPIC);
+			rarity.setForeground(DnFColor.EPIC);
 			break;
 		case UNIQUE:
-			stat.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_MAGENTA));
-			rarity.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_MAGENTA));
+			stat.setForeground(DnFColor.UNIQUE);
+			rarity.setForeground(DnFColor.UNIQUE);
 			break;
 		case LEGENDARY:
-			stat.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_DARK_GREEN));
-			rarity.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_DARK_GREEN));
+			stat.setForeground(DnFColor.LEGENDARY);
+			rarity.setForeground(DnFColor.LEGENDARY);
 			break;
 		case RARE:
-			stat.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLUE));
-			rarity.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLUE));
+			stat.setForeground(DnFColor.RARE);
+			rarity.setForeground(DnFColor.RARE);
 			break;
 		case UNCOMMON:
-			stat.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_CYAN));
-			rarity.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_CYAN));
+			stat.setForeground(DnFColor.UNCOMMON);
+			rarity.setForeground(DnFColor.UNCOMMON);
 			break;
 		default:
+			stat.setForeground(DnFColor.COMMON);
+			rarity.setForeground(DnFColor.COMMON);
+			break;
 		}
 		
 		if(location==Location.DUNGEON)
 		{
 			String compare = character.compareItem(item);
 			stat.setText(temp+compare);
-			if(compare.contains("▲")) stat.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GREEN));
+			if(compare.contains("▲")) stat.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_GREEN));
 			else if(compare.contains("▼")) stat.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
 		}
 		
 		Label type = new Label(itemInfo, SWT.WRAP);
 		type.setText(item.getTypeName());
 		type.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, true, false));
+		type.setForeground(DnFColor.infoStat);
 		if(item.getTypeName2()!=null)
 		{
 			type = new Label(itemInfo, SWT.WRAP);
 			type.setText(item.getTypeName2());
 			type.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, true, false));
+			type.setForeground(DnFColor.infoStat);
 		}
 		if(item instanceof Equipment){
 			type = new Label(itemInfo, SWT.WRAP);
 			type.setText(String.valueOf("레벨제한 "+ ((Equipment)item).level) );
 			type.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, true, false));
+			type.setForeground(DnFColor.infoStat);
 		}
 		
 		try
@@ -223,14 +235,14 @@ public class MakeComposite {
 					leftData = new GridData();
 					leftData.widthHint=InterfaceSize.ITEM_INFO_SIZE-10;
 					stat.setLayoutData(leftData);
-					stat.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLUE));
+					stat.setForeground(DnFColor.UNCOMMON);
 					
 					stat = new Label(itemInfo, SWT.WRAP);
 					stat.setText("+"+((Equipment)item).getReinforce()+" 강화: 방어무시 마법 공격력 + "+((int)magIgnStat.stat.getStatToDouble()));
 					leftData = new GridData();
 					leftData.widthHint=InterfaceSize.ITEM_INFO_SIZE-10;
 					stat.setLayoutData(leftData);
-					stat.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLUE));
+					stat.setForeground(DnFColor.UNCOMMON);
 				}
 			} catch(IndexOutOfBoundsException e){
 				phyIgnStat=null;
@@ -242,11 +254,11 @@ public class MakeComposite {
 				
 				if( ((Weapon)item).getReforge()!=0 ){
 					stat = new Label(itemInfo, SWT.WRAP);
-					stat.setText("+"+((Weapon)item).getReforge()+" 제련: 독립 공격력 +"+String.valueOf((int)reforgeStat.stat.getStatToDouble()));
+					stat.setText("+"+((Weapon)item).getReforge()+" 재련: 독립 공격력 +"+String.valueOf((int)reforgeStat.stat.getStatToDouble()));
 					leftData = new GridData();
 					leftData.widthHint=InterfaceSize.ITEM_INFO_SIZE-10;
 					stat.setLayoutData(leftData);
-					stat.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_DARK_BLUE));
+					stat.setForeground(DnFColor.RARE);
 				}
 			} catch(IndexOutOfBoundsException e){
 				reforgeStat=null;
@@ -261,7 +273,7 @@ public class MakeComposite {
 					leftData = new GridData();
 					leftData.widthHint=InterfaceSize.ITEM_INFO_SIZE-10;
 					stat.setLayoutData(leftData);
-					stat.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLUE));
+					stat.setForeground(DnFColor.UNCOMMON);
 				}
 			} catch(IndexOutOfBoundsException e){
 				aidStat=null;
@@ -279,7 +291,7 @@ public class MakeComposite {
 						leftData = new GridData();
 						leftData.widthHint=InterfaceSize.ITEM_INFO_SIZE-10;
 						stat.setLayoutData(leftData);
-						stat.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLUE));
+						stat.setForeground(DnFColor.UNCOMMON);
 					}
 				}
 			} catch(IndexOutOfBoundsException e){
@@ -298,6 +310,7 @@ public class MakeComposite {
 				leftData.widthHint=InterfaceSize.ITEM_INFO_SIZE-10;
 				stat.setLayoutData(leftData);
 				stat.setText(((Card) item).getPartToString());
+				stat.setForeground(DnFColor.infoStat);
 			}
 			else if(item instanceof Emblem)
 			{
@@ -306,9 +319,10 @@ public class MakeComposite {
 				leftData.widthHint=InterfaceSize.ITEM_INFO_SIZE-10;
 				stat.setLayoutData(leftData);
 				stat.setText( ((Emblem) item).type.getName());
+				stat.setForeground(DnFColor.infoStat);
 			}
 			
-			setStatusText(item.getItemStatIndex(), item, itemInfo, itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLACK), InterfaceSize.ITEM_INFO_SIZE-10);
+			setStatusText(item.getItemStatIndex(), item, itemInfo, DnFColor.infoStat, InterfaceSize.ITEM_INFO_SIZE-10);
 			
 			if(!item.explanation.isEmpty()){
 				stat = new Label(itemInfo, SWT.WRAP);
@@ -320,7 +334,7 @@ public class MakeComposite {
 				leftData = new GridData();
 				leftData.widthHint=InterfaceSize.ITEM_INFO_SIZE-10;
 				stat.setLayoutData(leftData);
-				stat.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+				stat.setForeground(DnFColor.infoExplanation);
 			}
 			
 			if(item.getCard()!=null && !item.getCard().getName().contains("없음"))
@@ -329,7 +343,7 @@ public class MakeComposite {
 				stat = new Label(itemInfo, SWT.WRAP);
 				stat.setText("");
 
-				setStatusText(card, itemInfo, itemInfo.getDisplay().getSystemColor(SWT.COLOR_DARK_GREEN), InterfaceSize.ITEM_INFO_SIZE-10);
+				setStatusText(card, itemInfo, DnFColor.INCHANT, InterfaceSize.ITEM_INFO_SIZE-10);
 			}
 			else if(item.getEmblem()!=null)
 			{
@@ -345,7 +359,7 @@ public class MakeComposite {
 					leftData.widthHint=InterfaceSize.ITEM_INFO_SIZE-10;
 					stat.setLayoutData(leftData);
 
-					setStatusText(emblem, itemInfo, itemInfo.getDisplay().getSystemColor(SWT.COLOR_DARK_GREEN), InterfaceSize.ITEM_INFO_SIZE-10);
+					setStatusText(emblem, itemInfo, DnFColor.INCHANT, InterfaceSize.ITEM_INFO_SIZE-10);
 					i++;
 				}
 			}
@@ -357,6 +371,8 @@ public class MakeComposite {
 	
 	public static void setSkillInfoComposite(Composite composite, Skill skill, Status stat, boolean isBurning)
 	{
+		composite.setBackground(DnFColor.infoBackground);
+		composite.setBackgroundMode(SWT.INHERIT_FORCE);
 		if(skill.getName().contains("없음"))
 		{
 			composite.dispose();
@@ -373,10 +389,12 @@ public class MakeComposite {
 				+"("+skill.getCharSkillLevel()+" + "+ (skill.getSkillLevel(true, isBurning)-skill.getCharSkillLevel())+")";
 		else name = skill.getName()+ "Lv 0";
 		label.setText(name);
-		if(skill.type==Skill_type.PASSIVE)
-			label.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GREEN));
+		if(skill.type==Skill_type.PASSIVE || skill.type==Skill_type.TP)
+			label.setForeground(DnFColor.INCHANT);
+		else if(skill.type==Skill_type.BUF_ACTIVE || skill.type==Skill_type.SWITCHING)
+			label.setForeground(DnFColor.UNCOMMON);
 		else
-			label.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_YELLOW));
+			label.setForeground(DnFColor.DARK_YELLOW);
 		
 		label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		leftData = new GridData(SWT.FILL, SWT.TOP, true, false);
@@ -398,6 +416,7 @@ public class MakeComposite {
 			if(skillInfo.phy_atk!=0 && skillInfo.phy_fix!=0) add = " + ";
 			label.setText("물리공격력(총합) : "+atk+add+fix);
 			label.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+			label.setForeground(DnFColor.infoStat);
 		}
 		
 		if(skillInfo.mag_atk!=0 || skillInfo.mag_fix!=0){
@@ -413,6 +432,7 @@ public class MakeComposite {
 			if(skillInfo.mag_atk!=0 && skillInfo.mag_fix!=0) add = " + ";
 			label.setText("마법공격력(총합) : "+atk+add+fix);
 			label.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+			label.setForeground(DnFColor.infoStat);
 		}
 		
 		if(skill.hasBuff())
@@ -428,10 +448,11 @@ public class MakeComposite {
 			label.setLayoutData(leftData);
 			label.setText("[버프옵션]");
 			label.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+			label.setForeground(DnFColor.infoStat);
 			
 			for(StatusAndName s : skillInfo.stat.statList)
 				try {
-					setText(composite, s, Display.getCurrent().getSystemColor(SWT.COLOR_BLACK), SWT.DEFAULT);
+					setText(composite, s, DnFColor.infoStat, SWT.DEFAULT);
 				} catch (StatusTypeMismatch e) {
 					e.printStackTrace();
 				}
@@ -445,6 +466,7 @@ public class MakeComposite {
 			label.setLayoutData(leftData);
 			label.setText("\nLv "+skill.getSkillLevel(true, isBurning)+" 에 대한 정보가 기록되어있지 않습니다. 가장 가까운 레벨로 추정합니다.");
 			label.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+			label.setForeground(DnFColor.infoExplanation);
 			
 			label = new Label(composite, SWT.WRAP);
 			label.setText("");
@@ -460,7 +482,7 @@ public class MakeComposite {
 			leftData = new GridData(SWT.LEFT, SWT.TOP, true, false);
 			leftData.widthHint=InterfaceSize.SKILL_INFO_SIZE-10;
 			explain.setLayoutData(leftData);
-			explain.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+			explain.setForeground(DnFColor.infoExplanation);
 			
 			label = new Label(composite, SWT.WRAP);
 			label.setText("");
@@ -472,20 +494,22 @@ public class MakeComposite {
 	
 	public static void setMonsterInfoComposite(Composite itemInfo, Monster monster)
 	{
+		itemInfo.setBackground(DnFColor.infoBackground_transparent);
+		itemInfo.setBackgroundMode(SWT.INHERIT_FORCE);
 		GridData leftData = new GridData(SWT.LEFT, SWT.TOP, true, false);
 		leftData.widthHint=InterfaceSize.MONSTER_INFO_SIZE-10;
 		
 		Label name = new Label(itemInfo, SWT.WRAP);
 		name.setText(monster.getName());
 		name.setLayoutData(leftData);
-		name.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_DARK_YELLOW));
+		name.setForeground(DnFColor.DARK_YELLOW);
 		
 		String[] statList = new String[]{
 				"레벨", "타입", "체력", "", "물리방어력", "마법방어력", "화속저", "수속저", "명속저", "암속저", "", "카운터", "백어택", "난이도", "방깍제한"
 			};
 		
 		for(String stat : statList)
-			setMonsterText(itemInfo, monster, stat, Display.getCurrent().getSystemColor(SWT.COLOR_BLACK), InterfaceSize.MONSTER_INFO_SIZE-10);
+			setMonsterText(itemInfo, monster, stat, DnFColor.infoStat, InterfaceSize.MONSTER_INFO_SIZE-10);
 		
 		for(String str : monster.explanation){
 			Label exp = new Label(itemInfo, SWT.WRAP);
@@ -493,23 +517,25 @@ public class MakeComposite {
 			leftData = new GridData();
 			leftData.widthHint=InterfaceSize.SET_INFO_SIZE-10;
 			exp.setLayoutData(leftData);
-			exp.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+			exp.setForeground(DnFColor.infoExplanation);
 		}
 	}
 	
 	public static void setMonsterOptionInfoComposite(Composite itemInfo, MonsterOption option)
 	{
+		itemInfo.setBackground(DnFColor.infoBackground_transparent);
+		itemInfo.setBackgroundMode(SWT.INHERIT_FORCE);
 		GridData leftData = new GridData(SWT.LEFT, SWT.TOP, true, false);
 		leftData.widthHint=InterfaceSize.MONSTER_INFO_SIZE-10;
 		
 		Label name = new Label(itemInfo, SWT.WRAP);
 		name.setText(option.getName());
 		name.setLayoutData(leftData);
-		name.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_DARK_YELLOW));
+		name.setForeground(DnFColor.INCHANT);
 		
 		for(StatusAndName s : option.monster.getAdditionalStatList().statList)
 			try {
-				setText(itemInfo, s, Display.getCurrent().getSystemColor(SWT.COLOR_BLACK), InterfaceSize.MONSTER_INFO_SIZE);
+				setText(itemInfo, s, DnFColor.infoStat, InterfaceSize.MONSTER_INFO_SIZE);
 			} catch (StatusTypeMismatch e) {
 				e.printStackTrace();
 			}
@@ -524,7 +550,7 @@ public class MakeComposite {
 			leftData = new GridData();
 			leftData.widthHint=InterfaceSize.SET_INFO_SIZE-10;
 			exp.setLayoutData(leftData);
-			exp.setForeground(itemInfo.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+			exp.setForeground(DnFColor.infoStat);
 		}
 	}
 	
@@ -583,7 +609,7 @@ public class MakeComposite {
 		{
 			Label stat = new Label(itemInfo, SWT.WRAP);
 			stat.setText("\n――――――던전 입장 시 적용――――――\n\n");
-			stat.setForeground(color);
+			stat.setForeground(DnFColor.infoExplanation);
 			for(StatusAndName s : item.dStat.statList){
 				setText(itemInfo, s, color, xSize);
 			}
@@ -628,7 +654,7 @@ public class MakeComposite {
 			
 			if(s.stat instanceof SkillRangeStatusInfo && ((SkillRangeStatusInfo)s.stat).getTP())
 			{
-				stat.setText("TP 스킬 : "+stat.getText());
+				stat.setText("TP - "+stat.getText());
 			}
 			
 			stat.setForeground(textColor);
@@ -672,6 +698,7 @@ public class MakeComposite {
 			stat.setEnabled(enable && s.enabled);
 			if(!s.enabled)
 				stat.setText(stat.getText()+"(옵션 꺼짐)");
+			stat.setForeground(textColor);
 		}
 	}
 }

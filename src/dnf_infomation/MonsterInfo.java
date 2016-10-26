@@ -34,7 +34,7 @@ public class MonsterInfo {
 			monster.setStat("난이도", DefenceIgnorePenalty.TRAININGROOM);
 			monster.setStat("화속저", 20); monster.setStat("수속저", -10);
 			monster.setStat("명속저", -10); monster.setStat("암속저", 20);
-			monster.setStat("물리방어력", 161292); monster.setStat("마법방어력", 161292);
+			monster.setStat("물리방어력", 160855); monster.setStat("마법방어력", 160855);
 			monster.setStat("레벨", 105); monster.setStat("타입", MonsterType.NORMAL);
 			monster.setStat("체력", 1700000000);
 			monsterList.add(monster);
@@ -47,8 +47,8 @@ public class MonsterInfo {
 			monster.setStat("수속저", 9999);
 			monster.setStat("명속저", 9999);
 			monster.setStat("암속저", 9999);
-			monster.setStat("물리방어력", 0);
-			monster.setStat("마법방어력", 0);
+			monster.setStat("물리방어력", 1);
+			monster.setStat("마법방어력", 1);
 			monster.setStat("레벨", 115);
 			monster.setStat("타입", MonsterType.NAMED);
 			monster.setStat("체력", 478000000);

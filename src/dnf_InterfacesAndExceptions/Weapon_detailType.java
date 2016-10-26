@@ -30,7 +30,7 @@ public enum Weapon_detailType {
 	Weapon_detailType(Weapon_type type, String name)
 	{
 		bigType=type;
-		required_job=Job.UNIMPLEMENTED;
+		required_job=Job.NONE;
 		this.name=name;
 	}
 	Weapon_detailType(Weapon_type type, Job required_job, String name)
@@ -42,9 +42,16 @@ public enum Weapon_detailType {
 	
 	public String getName() {return name;}
 	
+	public static Weapon_detailType stringToType(String type)
+	{
+		for(Weapon_detailType types : Weapon_detailType.values())
+			if(types.getName().equals(type)) return types;
+		return NONE;
+	}
+	
 	public boolean enabled(Job job)
 	{
-		if(required_job!=Job.UNIMPLEMENTED){
+		if(required_job!=Job.NONE){
 			if(this.required_job==job) return true;
 			else return false;
 		}

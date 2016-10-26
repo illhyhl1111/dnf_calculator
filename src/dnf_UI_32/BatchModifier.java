@@ -453,8 +453,7 @@ public class BatchModifier extends Dialog {
 					try {
 						Card card = character.userItemList.getCard((String)event.data);
 						boolean succeed;
-						if(itemButton.getItem() instanceof Equipment) succeed = ((Equipment)itemButton.getItem()).setCard(card);
-						else succeed = ((Title)itemButton.getItem()).setCard(card);
+						succeed = itemButton.getItem().setCard(card);
 						
 						if(succeed){
 							itemButton.getButton().setImage(GetDictionary.iconDictionary.getOrDefault(card.getItemName(),

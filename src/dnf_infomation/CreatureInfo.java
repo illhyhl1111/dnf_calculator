@@ -2,6 +2,7 @@ package dnf_infomation;
 
 import java.util.LinkedList;
 
+import dnf_InterfacesAndExceptions.CalculatorVersion;
 import dnf_InterfacesAndExceptions.Item_rarity;
 import dnf_calculator.DoubleStatusInfo;
 import dnf_calculator.StatusInfo;
@@ -15,7 +16,7 @@ public class CreatureInfo {
 		Item_rarity rarity= Item_rarity.RARE;
 		
 		//역천
-		temp = new Creature("역천의 베히모스(15~20Lv)", rarity);
+		temp = new Creature("역천의 베히모스(15~20Lv)", rarity, CalculatorVersion.VER_1_0_a);
 		temp.vStat.addStatList("힘", new StatusInfo(55));
 		temp.vStat.addStatList("지능", new StatusInfo(55));
 		temp.vStat.addStatList("무기물공", new StatusInfo(50));

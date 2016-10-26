@@ -6,9 +6,9 @@ import dnf_InterfacesAndExceptions.StatList;
 import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 import dnf_InterfacesAndExceptions.UndefinedStatusKey;
 
-@SuppressWarnings("serial")
 public class StatusAndName implements java.io.Serializable, Cloneable
 {
+	private static final long serialVersionUID = -8422551765301136795L;
 	public int name;
 	public AbstractStatusInfo stat;
 	public boolean changeable;
@@ -141,6 +141,7 @@ public class StatusAndName implements java.io.Serializable, Cloneable
 		reverseHash.put(StatList.DAM_INC_ADD, "데미지 추가 증가(%) +"); reverseHash.put(StatList.DAM_CRT_ADD, "크리티컬 데미지 추가 증가(%) +");
 		reverseHash.put(StatList.DEF_DEC_IGN, "적 방어력 무시(%) -");
 		reverseHash.put(StatList.WEP_NODEF_PHY_INC, "방어무시 물리 공격력 증가(%) +"); reverseHash.put(StatList.WEP_NODEF_MAG_INC, "방어무시 마법 공격력 증가(%) +");
+		reverseHash.put(StatList.MAST_REFORGE, "재련 독립 공격력 %증가 +");
 		
 		reverseHashsetted=true;
 	}

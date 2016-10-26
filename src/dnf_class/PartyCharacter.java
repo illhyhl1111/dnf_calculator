@@ -24,20 +24,20 @@ public class PartyCharacter extends IconObject{
 		this.job=job;
 	}
 	
-	public void setBuff(String name, String feature, StatusList statList)
+	public void setBuff(String name, String feature, StatusList statList, String version)
 	{
 		HashMap<String, Buff> buffMap = buffList.get(name);
 		if(buffMap==null){
 			buffMap = new HashMap<String, Buff>();
 			buffList.put(name, buffMap);
 		}
-		Buff buff = new Buff(name, Item_rarity.NONE);
+		Buff buff = new Buff(name, Item_rarity.NONE, version);
 		buff.dStat = statList;
 		buffMap.put(name+"/"+feature, buff);
 	}
-	public void setBuff(String name, StatusList statList)
+	public void setBuff(String name, StatusList statList, String version)
 	{
-		setBuff(name, name, statList);
+		setBuff(name, name, statList, version);
 	}
 	
 	public Buff getBuff(String buffName, String feature)

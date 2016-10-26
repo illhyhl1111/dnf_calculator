@@ -69,6 +69,11 @@ public class InventoryCardPack extends DnFComposite
 		//85~90 레전방어구(단일)
 		num++;
 		constraintList[num] = new ItemConstraint(85, 90, character.getJob());
+		constraintList[num].partList.add(Equip_part.ROBE);
+		constraintList[num].partList.add(Equip_part.TROUSER);
+		constraintList[num].partList.add(Equip_part.SHOULDER);
+		constraintList[num].partList.add(Equip_part.BELT);
+		constraintList[num].partList.add(Equip_part.SHOES);
 		constraintList[num].typeList.add(Equip_type.FABRIC);
 		constraintList[num].typeList.add(Equip_type.LEATHER);
 		constraintList[num].typeList.add(Equip_type.MAIL);
@@ -81,6 +86,11 @@ public class InventoryCardPack extends DnFComposite
 		//85~90 레전방어구(세트)
 		num++;
 		constraintList[num] = new ItemConstraint(85, 90, character.getJob());
+		constraintList[num].partList.add(Equip_part.ROBE);
+		constraintList[num].partList.add(Equip_part.TROUSER);
+		constraintList[num].partList.add(Equip_part.SHOULDER);
+		constraintList[num].partList.add(Equip_part.BELT);
+		constraintList[num].partList.add(Equip_part.SHOES);
 		constraintList[num].typeList.add(Equip_type.FABRIC);
 		constraintList[num].typeList.add(Equip_type.LEATHER);
 		constraintList[num].typeList.add(Equip_type.MAIL);
@@ -100,6 +110,11 @@ public class InventoryCardPack extends DnFComposite
 		constraintList[num].setList.add(SetName.REAL_PROFIGHTER_ACCESSORY);
 		constraintList[num].setList.add(SetName.ROMANTICE);
 		constraintList[num].setList.add(SetName.ROOTOFDISEASE);
+		constraintList[num].setList.add(SetName.REAL_PROFIGHTER_FABRIC);
+		constraintList[num].setList.add(SetName.REAL_PROFIGHTER_HARMOR);
+		constraintList[num].setList.add(SetName.REAL_PROFIGHTER_LEATHER);
+		constraintList[num].setList.add(SetName.REAL_PROFIGHTER_MAIL);
+		constraintList[num].setList.add(SetName.REAL_PROFIGHTER_PLATE);
 		
 		//80~90 에픽 악세(단일)
 		num++;
@@ -128,11 +143,6 @@ public class InventoryCardPack extends DnFComposite
 		constraintList[num].setList.add(SetName.CURSEOFSEAGOD);
 		constraintList[num].setList.add(SetName.DEVASTEDGRIEF);
 		constraintList[num].setList.add(SetName.GODOFFIGHT);
-		constraintList[num].setList.add(SetName.REAL_PROFIGHTER_FABRIC);
-		constraintList[num].setList.add(SetName.REAL_PROFIGHTER_HARMOR);
-		constraintList[num].setList.add(SetName.REAL_PROFIGHTER_LEATHER);
-		constraintList[num].setList.add(SetName.REAL_PROFIGHTER_MAIL);
-		constraintList[num].setList.add(SetName.REAL_PROFIGHTER_PLATE);
 		constraintList[num].setList.add(SetName.GRACIA);
 		constraintList[num].setList.add(SetName.GREATGLORY);
 		constraintList[num].setList.add(SetName.GUILDACCESSORY_FIRE);

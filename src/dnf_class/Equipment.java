@@ -12,9 +12,9 @@ import dnf_calculator.StatusAndName;
 import dnf_calculator.StatusInfo;
 import dnf_infomation.GetDictionary;
 
-@SuppressWarnings("serial")
 public class Equipment extends Item
 {
+	private static final long serialVersionUID = 5714666159783111476L;
 	public final Equip_part part;							//부위
 	private Dimension_stat dimStat;							//차원작
 	private int reinforce;									//강화수치
@@ -23,11 +23,11 @@ public class Equipment extends Item
 	public final Equip_type type;							//재질
 	public final int level;									//레벨
 	public boolean enabled;
-	public final boolean isRareItem;
+	public boolean isRareItem;
 	
-	public Equipment(String name, Item_rarity rarity, Equip_part part, Card card, SetName setName, Equip_type type, int level, boolean isRare)
+	public Equipment(String name, Item_rarity rarity, Equip_part part, Card card, SetName setName, Equip_type type, int level, boolean isRare, String version)
 	{	
-		super(name, "image\\Equipment\\"+name+".png", rarity);
+		super(name, "image\\Equipment\\"+name+".png", rarity, version);
 		this.part=part;
 		this.card=card;
 		this.setName=setName;
@@ -60,13 +60,13 @@ public class Equipment extends Item
 		}
 		
 	}
-	public Equipment(String name, Item_rarity rarity, Equip_part part, Equip_type type, int level, boolean isRare)
+	public Equipment(String name, Item_rarity rarity, Equip_part part, Equip_type type, int level, boolean isRare, String version)
 	{
-		this(name, rarity, part, new Card(), SetName.NONE, type, level, isRare);
+		this(name, rarity, part, new Card(), SetName.NONE, type, level, isRare, version);
 	}
-	public Equipment(String name, Item_rarity rarity, Equip_part part, Equip_type type, SetName setName, int level, boolean isRare)
+	public Equipment(String name, Item_rarity rarity, Equip_part part, Equip_type type, SetName setName, int level, boolean isRare, String version)
 	{
-		this(name, rarity, part, new Card(), setName, type, level, isRare);
+		this(name, rarity, part, new Card(), setName, type, level, isRare, version);
 	}
 	public Equipment(Equip_part part) {
 		super();

@@ -6,9 +6,9 @@ import dnf_InterfacesAndExceptions.StatList;
 import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 import dnf_InterfacesAndExceptions.UndefinedStatusKey;
 
-@SuppressWarnings("serial")
 public class StatusList implements java.io.Serializable, Cloneable {
 	
+	private static final long serialVersionUID = -950365505210777854L;
 	public LinkedList<StatusAndName> statList;
 	
 	public StatusList(){
@@ -112,46 +112,58 @@ public class StatusList implements java.io.Serializable, Cloneable {
 		switch(type)
 		{
 		case FIRE:
-			statList.add(new StatusAndName(StatList.ELEM_FIRE, new ElementInfo(enableElement, stat)));
+			statList.add(new StatusAndName(StatList.ELEM_FIRE, new ElementInfo(enableElement, stat), changeable, enableable));
 			break;
 		case WATER:
-			statList.add(new StatusAndName(StatList.ELEM_WATER, new ElementInfo(enableElement, stat)));
+			statList.add(new StatusAndName(StatList.ELEM_WATER, new ElementInfo(enableElement, stat), changeable, enableable));
 			break;
 		case LIGHT:
-			statList.add(new StatusAndName(StatList.ELEM_LIGHT, new ElementInfo(enableElement, stat)));
+			statList.add(new StatusAndName(StatList.ELEM_LIGHT, new ElementInfo(enableElement, stat), changeable, enableable));
 			break;
 		case DARKNESS:
-			statList.add(new StatusAndName(StatList.ELEM_DARKNESS, new ElementInfo(enableElement, stat)));
+			statList.add(new StatusAndName(StatList.ELEM_DARKNESS, new ElementInfo(enableElement, stat), changeable, enableable));
 			break;
 		case NONE:
 			break;
 		}
 	}
 	
-	public void addSkill(String skillName, int skillLevel)
+	public void addSkill(String skillName, int skillLevel, boolean changeable, boolean enableable)
 	{
 		try {
-			statList.add(new StatusAndName("스킬", new SkillStatusInfo(skillLevel, 0, skillName)));
+			statList.add(new StatusAndName("스킬", new SkillStatusInfo(skillLevel, 0, skillName), changeable, enableable));
+		} catch (UndefinedStatusKey e) {
+			e.printStackTrace();
+		}
+	}
+	public void addSkill(String skillName, int skillLevel)
+	{
+		addSkill(skillName, skillLevel, false, false);
+	}
+	public void addSkillRange(int start, int end , int skillLevel, boolean TP, boolean changeable, boolean enableable)
+	{
+		try {
+			statList.add(new StatusAndName("스킬범위", new SkillRangeStatusInfo(skillLevel, start, end, TP), changeable, enableable));
 		} catch (UndefinedStatusKey e) {
 			e.printStackTrace();
 		}
 	}
 	public void addSkillRange(int start, int end , int skillLevel, boolean TP)
 	{
+		addSkillRange(start, end , skillLevel, TP, false, false);
+	}
+	
+	public void addSkill_damage(String skillName, double skillIncrease, boolean changeable, boolean enableable)
+	{
 		try {
-			statList.add(new StatusAndName("스킬범위", new SkillRangeStatusInfo(skillLevel, start, end, TP)));
+			statList.add(new StatusAndName("스킬", new SkillStatusInfo(0, skillIncrease, skillName), changeable, enableable));
 		} catch (UndefinedStatusKey e) {
 			e.printStackTrace();
 		}
 	}
-	
 	public void addSkill_damage(String skillName, double skillIncrease)
 	{
-		try {
-			statList.add(new StatusAndName("스킬", new SkillStatusInfo(0, skillIncrease, skillName)));
-		} catch (UndefinedStatusKey e) {
-			e.printStackTrace();
-		}
+		addSkill_damage(skillName, skillIncrease, false, false);
 	}
 	
 	public void changeStat(int order, AbstractStatusInfo stat)

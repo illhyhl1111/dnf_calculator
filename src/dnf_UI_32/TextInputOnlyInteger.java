@@ -40,8 +40,11 @@ public class TextInputOnlyInteger implements VerifyListener
         if(!isInteger || Character.isLetter(e.character))
             e.doit = false;
         	
-        if(newS.isEmpty() || newS.equals("-")){
+        if(newS.equals("-")){
         	e.doit = true;
+        }
+        else if(newS.isEmpty()){
+        	((Text)e.widget).setText("0");
         }
         else if(isInteger && Integer.valueOf(newS)>max){
         	e.doit = false;

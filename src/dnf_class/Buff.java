@@ -7,9 +7,9 @@ public class Buff extends Item
 	private static final long serialVersionUID = 9074409084429656502L;
 	public boolean enabled;
 	
-	public Buff(String name, Item_rarity rarity)
+	public Buff(String name, Item_rarity rarity, String version)
 	{
-		super(name, "image\\Buff\\"+name+".png", rarity);
+		super(name, "image\\Buff\\"+name+".png", rarity, version);
 		enabled=false;
 	}
 	public Buff(){ super();}

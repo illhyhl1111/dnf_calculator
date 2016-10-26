@@ -1,22 +1,26 @@
 package dnf_UI_32;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
 import dnf_class.Characters;
+import dnf_infomation.GetDictionary;
 
 public class VillageUI extends DnFComposite
 {
 	private TabFolder villageFolder;
-	
+	private Shell shell;
 	private EquipmentInfoUI equipUI;
 	private TabItem equipTab;
 	private EquipmentInfoUI avatarUI;
@@ -24,12 +28,15 @@ public class VillageUI extends DnFComposite
 	private Button toDungeonButton;
 	private Button selectCharacterButton;
 	private Characters character;
+	private Canvas version;
 	
 	VillageUI(Shell shell, Characters character)
 	{
 		this.character=character;
+		this.shell=shell;
 		mainComposite = new Composite(shell, SWT.NONE);
 		mainComposite.setLayout(new FormLayout());
+		mainComposite.setBackgroundImage(GetDictionary.getBackground(character.getJob(), shell));
 		
 		toDungeonButton = new Button(mainComposite, SWT.PUSH);
 		toDungeonButton.setText("수련의 방 입장");
@@ -42,6 +49,8 @@ public class VillageUI extends DnFComposite
 	{
 		villageFolder = new TabFolder(mainComposite, SWT.NONE);
 		villageFolder.setLayoutData(new FormData());
+		mainComposite.layout();
+		shell.layout();
 		
 		equipTab = new TabItem(villageFolder, SWT.NONE);
 		String str1 = "장비";
@@ -62,16 +71,29 @@ public class VillageUI extends DnFComposite
 			}
 		});
 		
-		FormData dungeonBData = new FormData(100, 100);
-		dungeonBData.left = new FormAttachment(villageFolder, 10);
-		toDungeonButton.setLayoutData(dungeonBData);
+		FormData buttonData = new FormData(100, 100);
+		buttonData.bottom = new FormAttachment(100, -10);
+		buttonData.right = new FormAttachment(100, -10);
+		toDungeonButton.setLayoutData(buttonData);
 		
-		FormData selectCharBData = new FormData(100, 100);
-		selectCharBData.left = new FormAttachment(villageFolder, 10);
-		selectCharBData.top = new FormAttachment(toDungeonButton, 10);
-		selectCharacterButton.setLayoutData(selectCharBData);
+		buttonData = new FormData(100, 100);
+		buttonData.bottom = new FormAttachment(toDungeonButton, -10);
+		buttonData.right = new FormAttachment(100, -10);
+		selectCharacterButton.setLayoutData(buttonData);
+		
+		version = new Canvas(mainComposite, SWT.NO_REDRAW_RESIZE | SWT.TRANSPARENT);
+		FormData formData = new FormData(200, 40);
+		formData.right = new FormAttachment(toDungeonButton, -10);
+		formData.bottom = new FormAttachment(100, 0);
+		version.setLayoutData(formData);
+		version.addPaintListener(new PaintListener() {
+	        public void paintControl(PaintEvent e) {
+	         e.gc.drawImage(GetDictionary.versionImage, 0, 0);
+	        }
+	    });
 		
 		mainComposite.layout();
+		shell.setText("수련의 방");
 	}
 	
 	@Override

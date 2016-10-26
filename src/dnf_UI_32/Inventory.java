@@ -14,6 +14,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 
 import dnf_InterfacesAndExceptions.Emblem_type;
 import dnf_InterfacesAndExceptions.Equip_part;
@@ -34,8 +35,8 @@ public class Inventory extends DnFComposite
 	final static int inventoryCol=15;
 	final static int inventory2Col=2;
 	final static int inventoryRow=5;
-	final static int inventorySize=inventoryCol*inventoryRow;
-	final static int inventory2Size=inventory2Col*inventoryRow;
+	final int inventorySize;
+	final int inventory2Size;
 	Characters character;
 	DnFComposite superInfo;
 	Composite parent;
@@ -56,6 +57,9 @@ public class Inventory extends DnFComposite
 		this.parent=parent;
 		this.location=location;
 		
+		inventorySize = inventoryCol*inventoryRow<itemList1.size() ? inventoryCol*inventoryRow : itemList1.size();
+		inventory2Size = inventory2Col*inventoryRow>itemList2.size() ? inventory2Col*inventoryRow : itemList2.size();
+		
 		mainComposite = new Composite(parent, SWT.NONE);
 		GridLayout mainLayout = new GridLayout();
 		mainLayout.numColumns=2;
@@ -72,7 +76,9 @@ public class Inventory extends DnFComposite
 		inventoryLayout.marginHeight=0;
 		inventoryLayout.marginWidth=0;
 		inventory1.setLayout(inventoryLayout);
-		inventory1.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
+		GridData data = new GridData(SWT.LEFT, SWT.TOP, false, false);
+		data.heightHint = (InterfaceSize.INFO_BUTTON_SIZE+inventoryLayout.verticalSpacing ) *5;
+		inventory1.setLayoutData(data);
 		
 		inventoryLayout = new GridLayout(inventory2Col, true);
 		inventoryLayout.horizontalSpacing=3;
@@ -81,6 +87,9 @@ public class Inventory extends DnFComposite
 		inventoryLayout.marginWidth=0;
 		inventory2.setLayout(inventoryLayout);
 		inventory2.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
+		
+		inventory1.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_DARK_GRAY));
+		inventory2.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_DARK_GRAY));
 		
 		inventoryList1 = (ItemButton<Item>[]) new ItemButton<?>[inventorySize];
 		inventoryList2 = (ItemButton<Item>[]) new ItemButton<?>[inventory2Size];
@@ -129,9 +138,8 @@ public class Inventory extends DnFComposite
 
 				SetListener listenerGroup = new SetListener(inventoryList[index], character, superInfo, parent);
 				
-				if(mode==0) inventoryList[index].getButton().addListener(SWT.MouseDown, listenerGroup.equipListener(vault)); 			// add MouseDown Event - unequip
-				else if(mode==1) inventoryList[index].getButton().addListener(SWT.MouseDown, listenerGroup.equipListener()); 			// add MouseDown Event - unequip
-				else if(mode==2) inventoryList[index].getButton().addListener(SWT.MouseDown, listenerGroup.equipListener(vault));
+				if(mode==1 || getUserItemMode) inventoryList[index].getButton().addListener(SWT.MouseDown, listenerGroup.equipListener()); 			// add MouseDown Event - unequip
+				else inventoryList[index].getButton().addListener(SWT.MouseDown, listenerGroup.equipListener(vault));
 				inventoryList[index].getButton().addListener(SWT.MouseDoubleClick, listenerGroup.modifyListener(this));			// add MouseDoubleClick - modify
 				inventoryList[index].getButton().addListener(SWT.MouseEnter, listenerGroup.makeItemInfoListener(parent.getShell(), location));			// add MouseEnter Event - make composite
 				inventoryList[index].getButton().addListener(SWT.MouseExit, listenerGroup.disposeItemInfoListener()); 		// add MouseExit Event - dispose composite

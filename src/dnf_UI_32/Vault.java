@@ -1,5 +1,6 @@
 package dnf_UI_32;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import org.eclipse.swt.SWT;
@@ -26,10 +27,9 @@ import dnf_class.Item;
 public class Vault extends Dialog 
 {
 	LinkedList<Item> itemList;
-	ItemButton<Item>[] vault;
+	ArrayList<ItemButton<Item>> vault;
 	final static int vaultCol = 20;
 	final static int vaultRow = 30;
-	final static int vaultSize = vaultCol*vaultRow;
 	private Composite vaultComposite;
 	private ScrolledComposite scrollComposite;
 	private Composite itemInfo;
@@ -43,7 +43,6 @@ public class Vault extends Dialog
 	private Shell parent;
 	Shell save;
 	
-	@SuppressWarnings("unchecked")
 	public Vault(Shell parent, Characters character)
 	{
 		super(parent);
@@ -69,27 +68,31 @@ public class Vault extends Dialog
 		inventoryLayout.marginHeight=0;
 		inventoryLayout.marginWidth=0;
 		vaultComposite.setLayout(inventoryLayout);
+		vaultComposite.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_DARK_GRAY));
 		
-		vault = (ItemButton<Item>[]) new ItemButton<?>[vaultSize];
+		vault = new ArrayList<ItemButton<Item>>();
 		
-		int index=0;
 		Equip_type prevType=Equip_type.WEAPON;
 		
+		int index=0;
 		for(Item i : itemList){
 			if(i.getEquipType()!=prevType){
-				int margin = (vaultSize-index)%5;
-				for(; index%vaultCol!=0 && index%5!=0; index++)
-					vault[index] = new ItemButton<Item>(vaultComposite, new Item(), InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE, false);
-				if(margin<3)
-					for(int j=0; index%vaultCol!=0 && j<5; j++)
-						vault[index++] = new ItemButton<Item>(vaultComposite, new Item(), InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE, false);
+				int margin = vaultCol-index%vaultCol;
+				if(margin!=vaultCol){
+					vault.add(new ItemButton<Item>(vaultComposite, new Item(), InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE, false));
+					GridData data = new GridData((InterfaceSize.INFO_BUTTON_SIZE+3)*margin-3, InterfaceSize.INFO_BUTTON_SIZE);
+					data.horizontalSpan=margin;
+					vault.get(vault.size()-1).getButton().setLayoutData(data);
+					vault.get(vault.size()-1).getButton().setVisible(false);
+				}
+				index=0;
 			}
-				
-			vault[index] = new ItemButton<Item>(vaultComposite, i, InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE, true);
+			
+			vault.add(new ItemButton<Item>(vaultComposite, i, InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE, true));
 			if(!i.getName().equals("이름없음"))
 			{
 				// add MouseExit Event - dispose composite
-				vault[index].getButton().addListener(SWT.MouseExit, new Listener() {
+				vault.get(vault.size()-1).getButton().addListener(SWT.MouseExit, new Listener() {
 			         @Override
 			         public void handleEvent(Event e) {
 			        	 if(itemInfo!=null && !itemInfo.isDisposed()){
@@ -99,7 +102,7 @@ public class Vault extends Dialog
 			     });
 				
 				// add MouseMove Event - move composite
-				vault[index].getButton().addListener(SWT.MouseMove, new Listener() {
+				vault.get(vault.size()-1).getButton().addListener(SWT.MouseMove, new Listener() {
 			         @Override
 			         public void handleEvent(Event e) {
 			        	 if(itemInfo!=null && !itemInfo.isDisposed()){
@@ -107,14 +110,13 @@ public class Vault extends Dialog
 		        		 }
 			         }
 			     });
-				
-				index++;
-				prevType=i.getEquipType();
 			}
+			prevType=i.getEquipType();
+			index++;
 		}
 		
-		for(; index<vaultSize; index++)
-			vault[index] = new ItemButton<Item>(vaultComposite, new Item(), InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE, false);
+		/*for(; index<vaultSize; index++)
+			vault[index] = new ItemButton<Item>(vaultComposite, new Item(), InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE, false);*/
 		
 		scrollComposite.setContent(vaultComposite);
 		vaultComposite.setSize(vaultComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
@@ -144,15 +146,15 @@ public class Vault extends Dialog
 		Composite composite = (Composite) super.createDialogArea(parent);
 		scrollComposite.setParent(composite);
 
-		int index=-1;
+		int index=0;
 		for(Item i : itemList){
 			
 			if(!i.getName().contains("없음"))
 			{
-				while(vault[++index].getItem().getName().contains("없음"));
+				while(vault.get(index).getItem().getName().contains("없음")) index++;
 				
 				// add MouseDown Event - get item - inventory to vault
-				vault[index].getButton().addListener(SWT.MouseDown, new Listener() {
+				vault.get(index).getButton().addListener(SWT.MouseDown, new Listener() {
 					@Override
 			        public void handleEvent(Event e) {
 						if(e.button==3){
@@ -169,7 +171,7 @@ public class Vault extends Dialog
 			    });
 				
 				// add MouseEnter Event - make composite
-				vault[index].getButton().addListener(SWT.MouseEnter, new Listener() {
+				vault.get(index).getButton().addListener(SWT.MouseEnter, new Listener() {
 			         @Override
 			         public void handleEvent(Event e) {
 			        	 if(i.getName().contains("없음")) return;
@@ -189,6 +191,7 @@ public class Vault extends Dialog
 			        }
 			    });
 			}
+			index++;
 		}
 		
 		return composite;

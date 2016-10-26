@@ -3,6 +3,7 @@ package dnf_infomation;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import dnf_InterfacesAndExceptions.CalculatorVersion;
 import dnf_InterfacesAndExceptions.Character_type;
 import dnf_InterfacesAndExceptions.Element_type;
 import dnf_InterfacesAndExceptions.Job;
@@ -11,6 +12,7 @@ import dnf_InterfacesAndExceptions.Skill_type;
 import dnf_InterfacesAndExceptions.StatList;
 import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 import dnf_InterfacesAndExceptions.UndefinedStatusKey;
+import dnf_InterfacesAndExceptions.Weapon_detailType;
 import dnf_calculator.FunctionStat;
 import dnf_calculator.StatusList;
 import dnf_class.Characters;
@@ -37,6 +39,7 @@ public class SkillInfo {
 		int masterLevel=0;
 		int interval=0;
 		Element_type element=null;
+		String version=null;
 		Skill skill=null;
 		
 		SkillLevelInfo levelInfo = null;
@@ -112,15 +115,20 @@ public class SkillInfo {
 				else throw new ParsingException(i-1, temp);
 			}
 			
+			if(data[i] instanceof String && ((String)data[i]).contains("ver_"))
+				version = (String) data[i++];
+			else
+				version = CalculatorVersion.VER_1_0_a;
+			
 			if(jobDefined){
-				if(isTPSkill) skill = new TPSkill(name, target, job, firstLevel, maxLevel, masterLevel, interval);
-				else if(type==Skill_type.SWITCHING) skill = new SwitchingSkill(name, job, firstLevel, maxLevel, masterLevel, interval);
-				else skill = new Skill(name, type, job, firstLevel, maxLevel, masterLevel, interval, element);
+				if(isTPSkill) skill = new TPSkill(name, target, job, firstLevel, maxLevel, masterLevel, interval, version);
+				else if(type==Skill_type.SWITCHING) skill = new SwitchingSkill(name, job, firstLevel, maxLevel, masterLevel, interval, version);
+				else skill = new Skill(name, type, job, firstLevel, maxLevel, masterLevel, interval, element, version);
 			}
 			else{
-				if(isTPSkill) skill = new TPSkill(name, target, charType, firstLevel, maxLevel, masterLevel, interval);
-				else if(type==Skill_type.SWITCHING) skill = new SwitchingSkill(name, charType, firstLevel, maxLevel, masterLevel, interval);
-				else skill = new Skill(name, type, charType, firstLevel, maxLevel, masterLevel, interval, element);
+				if(isTPSkill) skill = new TPSkill(name, target, charType, firstLevel, maxLevel, masterLevel, interval, version);
+				else if(type==Skill_type.SWITCHING) skill = new SwitchingSkill(name, charType, firstLevel, maxLevel, masterLevel, interval, version);
+				else skill = new Skill(name, type, charType, firstLevel, maxLevel, masterLevel, interval, element, version);
 			}
 			
 			while(true)
@@ -242,7 +250,7 @@ public class SkillInfo {
 	
 	public static Object[] skillInfo_gunner()
 	{
-		FunctionStat fStat[] = new FunctionStat[2];
+		FunctionStat fStat[] = new FunctionStat[3];
 		
 		//듀얼트리거
 		fStat[0] = new FunctionStat(){
@@ -280,12 +288,42 @@ public class SkillInfo {
 			}
 		};
 		
+		//데바리
+		fStat[2] = new FunctionStat(){
+			private static final long serialVersionUID = 2285683560097970220L;
+			double save;
+			@Override
+			public StatusList function(Characters character, Monster monster, Object item) {
+				StatusList statList = new StatusList();
+				Skill skill = (Skill)item;
+				try {
+					if(character.getItemSetting().weapon.weaponType!=Weapon_detailType.GUN_REVOLVER){
+						double temp;
+						temp = skill.skillInfo.getLast().stat.statList.getFirst().stat.getStatToDouble();
+						if(temp!=0) save=temp;
+						
+						skill.skillInfo.getLast().stat.statList.getFirst().stat.setInfo(0.0);
+					} 
+					
+					else{
+						if(skill.skillInfo.getLast().stat.statList.getFirst().stat.getStatToDouble()==0)
+							skill.skillInfo.getLast().stat.statList.getFirst().stat.setInfo(save);
+					}
+				}
+				catch (StatusTypeMismatch e) {
+					e.printStackTrace();
+				}
+				
+				return statList;
+			}
+		};
+		
 		
 		Object[] data = new Object[] {
 				
 				///////////////런처
 				//캐넌볼
-				"캐넌볼", Skill_type.ACTIVE, Job.LAUNCHER_F, 5, 60, 50, 2, Element_type.NONE,
+				"캐넌볼", Skill_type.ACTIVE, Job.LAUNCHER_F, 20, 60, 50, 2, Element_type.NONE,
 				"36 3964*2 0 0 0", "+ 4052*2", "+ 4138*2", "+ 4225*2", "+ 4313*2", "+ 4398*2", null,
 				//슈타
 				"슈타이어 대전차포", "", "", 20, 60, 50, 2, Element_type.FIRE,
@@ -359,7 +397,7 @@ public class SkillInfo {
 				"14", "증뎀버프 33", "15", "증뎀버프 34", "+", "증뎀버프 +2", "+", "증뎀버프 +1", "반복 2",
 				//알파서폿
 				"알파 서포트", "", "", 75, 40, 30, 3,
-				"6", fStat[1], "물공뻥 24 & 독공뻥 24 & 물리방무뻥 24", "+", fStat[1], "물공뻥 +2 & 독공뻥 +2 & 물리방무뻥 +2", "반복 1",
+				"6", "물공뻥 24 & 독공뻥 24 & 물리방무뻥 24 & 재련뻥 24", "+", "물공뻥 +2 & 독공뻥 +2 & 물리방무뻥 +2 & 재련뻥 +2", "반복 1",
 				//애자파츠
 				"AJ 강화파츠", "", "", "", "", "", "",
 				"6", "스킬 M-3 화염방사기 % 61.18 & 스킬 화염 강타 % 28.74 & 스킬 팜페로 부스터 % 60.29 & 스킬 M-137 개틀링건 % 69.35 & 스킬 바베~큐 % 36 & 스킬 슈타이어 대전차포 % 36 & 스킬 FM-31 그레네이드 런처 % 36 & "
@@ -422,14 +460,14 @@ public class SkillInfo {
 				"베일드 컷", Skill_type.DAMAGE_BUF, Job.RANGER_F, 48, 60, 50, 3, Element_type.NONE, 
 				"15 2240 0 0 0", "증뎀버프 33","+ 2330", "증뎀버프 35","+ 2419", "증뎀버프 37","+ 2509", "증뎀버프 39","+ 2598", "증뎀버프 41","+ 2688", "증뎀버프 43", null,
 				"킬 포인트", Skill_type.DAMAGE_BUF, Job.RANGER_F, 75, 40, 30, 3, Element_type.NONE, "설명 만크리를 가정한 공격력입니다",
-				"6 6105*3*1.14+18317 0 0 0", "크증버프 14 & 스킬 킬 포인트 % -14","+ 6647*3*1.16+19942", "크증버프 16 & 스킬 킬 포인트 % -16","+ 7198*3*1.18+21567", "크증버프 18 & 스킬 킬 포인트 % -18",
-				"+ 7730*3*1.2+23192", "크증버프 20 & 스킬 킬 포인트 % -20","+ 8272*3*1.22+24817", "크증버프 22 & 스킬 킬 포인트 % -22","+ 8813*3*1.24+26441", "크증버프 24 & 스킬 킬 포인트 % -24", null,
+				"6 6105*3*1.14+18317 0 0 0", "크증버프 14 & 스킬 킬 포인트 % -14/1.14","+ 6647*3*1.16+19942", "크증버프 16 & 스킬 킬 포인트 % -16/1.16","+ 7198*3*1.18+21567", "크증버프 18 & 스킬 킬 포인트 % -18/1.18",
+				"+ 7730*3*1.2+23192", "크증버프 20 & 스킬 킬 포인트 % -20/1.20","+ 8272*3*1.22+24817", "크증버프 22 & 스킬 킬 포인트 % -22/1.22","+ 8813*3*1.24+26441", "크증버프 24 & 스킬 킬 포인트 % -24/1.24", null,
 				"쏘우 블레이드", Skill_type.BUF_ACTIVE, "", 75, 20, 10, 3,
 				"6", "증뎀버프 24", "+", "증뎀버프 +2", "반복 1",
 				"체인 글린트", Skill_type.BUF_ACTIVE, "", 80, 20, 10, 3,
 				"4", "증뎀버프 30", "+", "증뎀버프 +3", "반복 1",
 				"데스 바이 리볼버", Skill_type.SWITCHING, "", 30, 20, 10, 3, 
-				"10", "크증버프 43", null,
+				"10", fStat[2], "크증버프 43", null,
 				"트리플 클러치", Skill_type.BUF_ACTIVE, "", 20, 11, 1, 3,
 				"1", "스킬 탑스핀 % 10 & 스킬 라이징샷 % 10 & 스킬 니들 소배트 % 10 & 스킬 헤드샷 % 15", "+", "스킬 탑스핀 % +2 & 스킬 라이징샷 % +2 & 스킬 니들 소배트 % +2 & 스킬 헤드샷 % +3", "반복 1",
 				"웨스턴 파이어", Skill_type.BUF_ACTIVE, "", 30, 1, 1, 3, "설명 편의상 헤드샷의 증뎀버프로 구현함",
@@ -472,8 +510,8 @@ public class SkillInfo {
 				"M-137 개틀링건", Skill_type.ACTIVE, Character_type.GUNNER_F, 5, 60, 50, 2, Element_type.NONE,
 				"42 223*20 1.859*20 0 0", "+ 228*20 1.900*20", "+ 232*20 1.940*20", "+ 237*20 1.970*20", "+ 241*20 2.010*20", "+ 246*20 2.06*20", "+ 251*20 2.09*20", null,
 				//바베큐
-				"바베~큐", "", "", 10, 60, 50, 2, "",
-				"41 7200 72 0 0", "+ 7350 73.5", "+ 7480 74.8", "+ 7630 76.29", "+ 779 77.9", null,
+				"바베~큐", "", "", 10, 60, 50, 2, "", CalculatorVersion.VER_1_0_b,
+				"41 7200 72 0 0", "+ 7350 73.5", "+ 7480 74.8", "+ 7630 76.29", "+ 7790 77.9", null,
 				//화방
 				"M-3 화염방사기", "", "", 15, 60, 50, 2, Element_type.FIRE,
 				"38 446*13 3.720*13 0 0", "+ 456*13 3.8*13", "+ 466*13 3.89*13", "+ 476*13 3.96*13", "+ 488*13 4.06*13", "+ 498*13 4.149*13", null,

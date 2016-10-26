@@ -10,9 +10,9 @@ import dnf_InterfacesAndExceptions.Skill_type;
 import dnf_calculator.StatusList;
 import dnf_infomation.GetDictionary;
 
-@SuppressWarnings("serial")
 public class Avatar extends Item
 {
+	private static final long serialVersionUID = -1422368468046095134L;
 	public final Avatar_part part;
 	private Emblem emblem1;
 	private Emblem emblem2;
@@ -21,9 +21,9 @@ public class Avatar extends Item
 	public LinkedList<String> coatSkillList;
 	private String coatSkill;
 	
-	public Avatar(String name, Item_rarity rarity, Avatar_part part, Emblem emblem1, Emblem emblem2, Emblem platinum, SetName setName)
+	public Avatar(String name, Item_rarity rarity, Avatar_part part, Emblem emblem1, Emblem emblem2, Emblem platinum, SetName setName, String version)
 	{
-		super(name, "image\\Avatar\\"+name+".png", rarity);
+		super(name, "image\\Avatar\\"+name+".png", rarity, version);
 		this.part=part;
 		this.emblem1=emblem1;
 		this.emblem2=emblem2;
@@ -31,9 +31,9 @@ public class Avatar extends Item
 		this.setName=setName;
 	}
 	
-	public Avatar(String name, Item_rarity rarity, Avatar_part part, SetName setName)
+	public Avatar(String name, Item_rarity rarity, Avatar_part part, SetName setName, String version)
 	{
-		super(name, "image\\Avatar\\"+name+".png", rarity);
+		super(name, "image\\Avatar\\"+name+".png", rarity, version);
 		this.part=part;
 		emblem1 = new Emblem();
 		emblem2 = new Emblem();
@@ -53,7 +53,7 @@ public class Avatar extends Item
 		if(part!=Avatar_part.COAT) return false;
 		coatSkillList = new LinkedList<String>();
 		
-		for(Skill skill : GetDictionary.charDictionary.getSkillList(job, 90)){
+		for(Skill skill : GetDictionary.getSkillList(job, 90)){
 			if(skill.type!=Skill_type.TP && skill.maxLevel!=1)
 				coatSkillList.add(skill.getItemName());
 		}

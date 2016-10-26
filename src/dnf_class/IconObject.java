@@ -28,7 +28,10 @@ public abstract class IconObject implements Cloneable, java.io.Serializable
 	public String getIcon() { return iconAddress;}
 	public void setIcon(String icon) {
 		if(icon==null) iconAddress = icon; 
-		else iconAddress = icon.replace(':', '-');
+		else{
+			iconAddress = icon.replace(':', '-');
+			iconAddress = iconAddress.replace('/', '&');
+		}
 	}
 	
 	public String getDisabledIcon() {

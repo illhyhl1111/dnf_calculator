@@ -14,15 +14,19 @@ import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -41,20 +45,45 @@ public class SelectCharacter extends DnFComposite{
 	public LinkedList<BriefCharacterInfo> characterList;
 	private BriefCharacterInfo selectedName;
 	private Shell shell;
+	Canvas loading;
+	Canvas version;
 	
 	public SelectCharacter(Shell shell)
 	{
 		this.shell=shell;
 		selectedName=null;
+	
+		shell.setBounds(shell.getDisplay().getBounds().width/2-529, shell.getDisplay().getBounds().height/2-306, 1034, 612);
+		shell.setText("캐릭터 선택");
+		shell.setLayout(new FormLayout());
+		shell.setBackgroundImage(GetDictionary.getBackground(Job.NONE, shell));
+		loading = new Canvas(shell, SWT.NO_REDRAW_RESIZE | SWT.TRANSPARENT);
+		FormData formData = new FormData(150, 55);
+		formData.left = new FormAttachment(0, 5);
+		formData.bottom = new FormAttachment(100, 0);
+		loading.setLayoutData(formData);
+		loading.addPaintListener(new PaintListener() {
+	        public void paintControl(PaintEvent e) {
+	         e.gc.drawImage(GetDictionary.loadingImage,0,0);
+	        }
+	    });
+	    version = new Canvas(shell, SWT.NO_REDRAW_RESIZE | SWT.TRANSPARENT);
+		formData = new FormData(200, 40);
+		formData.right = new FormAttachment(100, 5);
+		formData.bottom = new FormAttachment(100, 0);
+		version.setLayoutData(formData);
+		version.addPaintListener(new PaintListener() {
+	        public void paintControl(PaintEvent e) {
+	         e.gc.drawImage(GetDictionary.versionImage, 0, 0);
+	        }
+	    });
+		
+		shell.open();
 	}
 	
 	@SuppressWarnings("unchecked")
 	public void setSelectionComposite()
-	{
-		/*Shell shell = new Shell(Display.getCurrent(), SWT.NONE);
-		shell.setText("캐릭터 선택");
-		shell.setLayout(new FormLayout());*/
-		
+	{		
 		try{
 			ObjectInputStream in = new ObjectInputStream(new FileInputStream("data\\characterList.dfd"));
 			Object temp = in.readObject();
@@ -66,7 +95,6 @@ public class SelectCharacter extends DnFComposite{
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-		
 		renew();
 	}
 	
@@ -85,13 +113,18 @@ public class SelectCharacter extends DnFComposite{
 
 	@Override
 	public void renew() {
-		for(Control control : shell.getChildren()) control.dispose();
+		for(Control control : shell.getChildren())
+			if(! (control instanceof Canvas)) control.dispose();
 		
 		ScrolledComposite scrollComposite = new ScrolledComposite(shell, SWT.V_SCROLL | SWT.BORDER);
 		scrollComposite.setExpandVertical(true);
 		scrollComposite.setExpandHorizontal(true);
 		scrollComposite.setAlwaysShowScrollBars(true);
-		scrollComposite.setLayoutData(new FormData(750, 400));
+		FormData scrollFormData = new FormData(850, 400);
+		scrollFormData.left = new FormAttachment(50, -425);
+		scrollFormData.right = new FormAttachment(50, 425);
+		scrollFormData.top = new FormAttachment(10, 0);
+		scrollComposite.setLayoutData(scrollFormData);
 		scrollComposite.addListener(SWT.Activate, new Listener() {
 			public void handleEvent(Event e) {
 				scrollComposite.setFocus();
@@ -100,6 +133,7 @@ public class SelectCharacter extends DnFComposite{
 		
 		Composite charSelectionComposite = new Composite(scrollComposite, SWT.BORDER);
 		charSelectionComposite.setLayout(new GridLayout(6, true));
+		//charSelectionComposite.setBackgroundMode(SWT.INHERIT_DEFAULT);
 		
 		for(BriefCharacterInfo info : characterList){
 			Composite character = new Composite(charSelectionComposite, SWT.NONE);
@@ -131,7 +165,7 @@ public class SelectCharacter extends DnFComposite{
 		makeCharacterButton.setText("캐릭터 생성");
 		FormData buttonData = new FormData(100, 60);
 		buttonData.top = new FormAttachment(scrollComposite, 10);
-		buttonData.left = new FormAttachment(0, 5);
+		buttonData.left = new FormAttachment(50, -420);
 		makeCharacterButton.setLayoutData(buttonData);
 		
 		Combo deleteCharacterCombo = new Combo(shell, SWT.READ_ONLY);
@@ -201,6 +235,7 @@ public class SelectCharacter extends DnFComposite{
 				renew();
 			}
 		});
+		loading.dispose();
 		
 		scrollComposite.setContent(charSelectionComposite);
 		scrollComposite.setMinSize(charSelectionComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));

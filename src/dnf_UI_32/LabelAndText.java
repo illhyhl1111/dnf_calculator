@@ -4,6 +4,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
@@ -19,6 +20,8 @@ abstract class LabelAndInput
 	{
 		this.parent=parent;
 		composite = new Composite(parent, SWT.NONE);
+		composite.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+		composite.setBackgroundMode(SWT.INHERIT_FORCE);
 		GridLayout compositeLayout = new GridLayout();
 		compositeLayout.numColumns=2;
 		composite.setLayout(compositeLayout);

@@ -31,7 +31,7 @@ public class Status implements Cloneable, java.io.Serializable {
 		"무기물공합", "물리방무뎀",
 		"무기마공합", "마법방무뎀", 
 		"독공", "재련독공수치",
-		"독공 %증가", "크리저항감소",
+		"독공 %증가", "재련 %증가",
 		"물리마스터리", "물리마스터리2",
 		"마법마스터리", "마법마스터리2",
 		"물리방무증가", "마법방무증가", 
@@ -49,7 +49,7 @@ public class Status implements Cloneable, java.io.Serializable {
 		"고정물방깍", "고정마방깍",
 		"%물방깍_템", "%마방깍_템",
 		"%물방깍_스킬", "%마방깍_스킬",
-		"적 방어력 무시"
+		"적 방어력 무시", "크리저항감소"
 		
 	};
 	public static final int nonInfoStatNum=nonInfoStatOrder.length;
@@ -141,6 +141,7 @@ public class Status implements Cloneable, java.io.Serializable {
 		statHash.put("방무", StatList.DEF_DEC_IGN);	 statHash.put("적방무", StatList.DEF_DEC_IGN); statHash.put("적 방어력 무시", StatList.DEF_DEC_IGN);
 		statHash.put("물리방무증가", StatList.WEP_NODEF_PHY_INC); statHash.put("마법방무증가", StatList.WEP_NODEF_MAG_INC);
 		statHash.put("물리방무뻥", StatList.WEP_NODEF_PHY_INC); statHash.put("마법방무뻥", StatList.WEP_NODEF_MAG_INC);
+		statHash.put("재련 %증가", StatList.MAST_REFORGE); statHash.put("재련뻥", StatList.MAST_REFORGE);
 		
 		statHashsetted=true;
 	}

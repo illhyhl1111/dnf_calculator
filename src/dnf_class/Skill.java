@@ -3,6 +3,7 @@ package dnf_class;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import dnf_InterfacesAndExceptions.CalculatorVersion;
 import dnf_InterfacesAndExceptions.Character_type;
 import dnf_InterfacesAndExceptions.Element_type;
 import dnf_InterfacesAndExceptions.Job;
@@ -38,7 +39,9 @@ public class Skill extends IconObject implements Comparable<Skill>{
 	public int dungeonLevel;
 	public double dungeonIncrease;
 	
-	public Skill(String name, Skill_type type, Job job, int firstLevel, int maxLevel, int masterLevel, int levelInterval, Element_type element)
+	public String Version;
+	
+	public Skill(String name, Skill_type type, Job job, int firstLevel, int maxLevel, int masterLevel, int levelInterval, Element_type element, String version)
 	{
 		super();
 		this.setName(name);
@@ -63,9 +66,11 @@ public class Skill extends IconObject implements Comparable<Skill>{
 		this.dungeonIncrease=1;
 		
 		explanation = new LinkedList<String>();
+		
+		Version=version;
 	}
 	
-	public Skill(String name, Skill_type type, Character_type charType, int firstLevel, int maxLevel, int masterLevel, int levelInterval, Element_type element)
+	public Skill(String name, Skill_type type, Character_type charType, int firstLevel, int maxLevel, int masterLevel, int levelInterval, Element_type element, String version)
 	{
 		super();
 		this.setName(name);
@@ -90,6 +95,7 @@ public class Skill extends IconObject implements Comparable<Skill>{
 		this.dungeonIncrease=1;
 		
 		explanation = new LinkedList<String>();
+		Version=version;
 	}
 	
 	public Skill() {
@@ -103,6 +109,7 @@ public class Skill extends IconObject implements Comparable<Skill>{
 		element=Element_type.NONE;
 		
 		explanation = new LinkedList<String>();
+		Version = CalculatorVersion.DEFAULT;
 	}
 
 	public boolean isSkillOfChar(Job job)

@@ -13,9 +13,9 @@ public class TPSkill extends Skill implements java.io.Serializable{
 	private static final long serialVersionUID = 640436407807049964L;
 	public final String TPSkill_Target;
 	
-	public TPSkill(String name, String target, Job job, int firstLevel, int maxLevel, int masterLevel, int levelIncrease)
+	public TPSkill(String name, String target, Job job, int firstLevel, int maxLevel, int masterLevel, int levelIncrease, String version)
 	{
-		super(name, Skill_type.TP, job, firstLevel, maxLevel, masterLevel, 5, Element_type.NONE);
+		super(name, Skill_type.TP, job, firstLevel, maxLevel, masterLevel, 5, Element_type.NONE, version);
 		TPSkill_Target=target;
 		
 		if(levelIncrease>=0){
@@ -26,9 +26,9 @@ public class TPSkill extends Skill implements java.io.Serializable{
 			}
 		}
 	}
-	public TPSkill(String name, String target, Character_type type, int firstLevel, int maxLevel, int masterLevel, int levelIncrease)
+	public TPSkill(String name, String target, Character_type type, int firstLevel, int maxLevel, int masterLevel, int levelIncrease, String version)
 	{
-		super(name, Skill_type.TP, type, firstLevel, maxLevel, masterLevel, 5, Element_type.NONE);
+		super(name, Skill_type.TP, type, firstLevel, maxLevel, masterLevel, 5, Element_type.NONE, version);
 		TPSkill_Target=target;
 		
 		if(levelIncrease>=0){

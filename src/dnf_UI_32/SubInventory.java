@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 
 import dnf_InterfacesAndExceptions.InterfaceSize;
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
@@ -17,7 +18,7 @@ public class SubInventory extends DnFComposite
 	ItemButton<Item>[] inventoryList;
 	final static int inventoryCol=15;
 	final static int inventoryRow=2;
-	final static int inventorySize=inventoryCol*inventoryRow;
+	final int inventorySize;
 	Characters character;
 	UserInfo userInfo;
 	Composite parent;
@@ -38,6 +39,9 @@ public class SubInventory extends DnFComposite
 		inventoryLayout.marginWidth=0;
 		mainComposite.setLayout(inventoryLayout);
 		
+		mainComposite.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_DARK_GRAY));
+		
+		inventorySize = inventoryCol*inventoryRow<itemList.size() ? inventoryCol*inventoryRow : itemList.size();
 		inventoryList = (ItemButton<Item>[]) new ItemButton<?>[inventorySize];
 	}
 	
@@ -62,14 +66,16 @@ public class SubInventory extends DnFComposite
 			index++;
 		}
 		
-		for(; index<inventorySize; index++)
+		/*for(; index%inventoryCol==0; index++)
 			inventoryList[index] = new ItemButton<Item>(mainComposite, new Item(), InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE, false);
+			*/
 	}
 	
 	public ItemButton<Item> getItem(String name) throws ItemNotFoundedException
 	{
 		for(ItemButton<Item> i : inventoryList)
 		{
+			if(i.getItem()==null) break;
 			if(i.getItem().getName().equals(name)) return i;
 		}
 		throw new ItemNotFoundedException(name);

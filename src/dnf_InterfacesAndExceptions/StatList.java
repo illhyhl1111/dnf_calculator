@@ -25,9 +25,10 @@ public interface StatList									// 스탯 종류에 붙는 고유한 식별번
 	int DAM_INC_ALL=INTNUM_START+31;																								// 모공증
 	int DAM_INC_ADD=INTNUM_START+32; int DAM_CRT_ADD=INTNUM_START+33;																// 증추증, 크추증
 	int DEF_DEC_IGN=INTNUM_START+34;																								// 적방무
-	int WEP_NODEF_PHY_INC=INTNUM_START+35; int WEP_NODEF_MAG_INC=INTNUM_START+36; 
-	int NONE=INTNUM_START+37;																										// 없음	
-	int INTNUM = 38;								// 총 int형 스탯 개수
+	int WEP_NODEF_PHY_INC=INTNUM_START+35; int WEP_NODEF_MAG_INC=INTNUM_START+36;
+	int MAST_REFORGE=INTNUM_START+37;
+	int NONE=INTNUM_START+38;																										// 없음
+	int INTNUM = 39;								// 총 int형 스탯 개수
 	int INTNUM_END = INTNUM_START+INTNUM-1;
 	///////////////////////////////////////	
 	int DOUBLENUM_START = INTNUM_END+1;	

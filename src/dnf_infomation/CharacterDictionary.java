@@ -6,16 +6,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedList;
 
+import dnf_InterfacesAndExceptions.CalculatorVersion;
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_InterfacesAndExceptions.Job;
 import dnf_InterfacesAndExceptions.ParsingException;
 import dnf_InterfacesAndExceptions.Skill_type;
 import dnf_calculator.StatusList;
 import dnf_class.Monster;
+import dnf_class.PartyCharacter;
 import dnf_class.Skill;
 
 public class CharacterDictionary implements java.io.Serializable, Cloneable
@@ -27,6 +27,10 @@ public class CharacterDictionary implements java.io.Serializable, Cloneable
 	public final LinkedList<Skill> skillList;
 	private LinkedList<CharInfoBox> basicStatList;
 	public final LinkedList<Monster> monsterList;
+	public LinkedList<PartyCharacter> partyList;
+	
+	private String VERSION = CalculatorVersion.CHARACTER_VERSION;
+	public static final String Directory = "data\\CharacterDictionary-"+CalculatorVersion.CHARACTER_VERSION+".dfd";
 	
 	public CharacterDictionary() 
 	{
@@ -42,26 +46,15 @@ public class CharacterDictionary implements java.io.Serializable, Cloneable
 		
 		monsterList = new LinkedList<Monster>();
 		MonsterInfo.getInfo(monsterList);
-	}
-	
-	public LinkedList<Skill> getSkillList(Job job, int level)
-	{
-		LinkedList<Skill> list = new LinkedList<Skill>();
-		for(Skill s : skillList){
-			if(s.isSkillOfChar(job)){
-				s.masterSkill(level, true);
-				list.add(s);
-			}
-		}
 		
-		Collections.sort(list);
-		return list;
+		partyList = new LinkedList<PartyCharacter>();
+		PartyCharacterInfo.getInfo(partyList);
 	}
 	
 	public LinkedList<String> getAvatarSkillList(Job job){
 		LinkedList<String> list= new LinkedList<String>();
 		
-		for(Skill skill : getSkillList(job, 90)){
+		for(Skill skill : GetDictionary.getSkillList(job, 90)){
 			if(skill.type!=Skill_type.TP) list.add(skill.getItemName());
 		}
 		return list;
@@ -83,12 +76,28 @@ public class CharacterDictionary implements java.io.Serializable, Cloneable
 		throw new ItemNotFoundedException(name);
 	}
 	
+	public LinkedList<PartyCharacter> getPartyList(Job job)
+	{
+		LinkedList<PartyCharacter> list = new LinkedList<PartyCharacter>();
+		for(PartyCharacter b : partyList)
+			if(b.job!=job) list.add(b);					//TODO 홀리제외
+		
+		return list;
+	}
+	
+	public PartyCharacter getPartyCharacter(String name) throws ItemNotFoundedException
+	{
+		for(PartyCharacter p : partyList)
+			if(p.getName().equals(name)) return p;
+		throw new ItemNotFoundedException(name);
+	}
+	
 	@Override
 	public Object clone()
 	{
 		CharacterDictionary charDictionary;
 		try{
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream("data\\CharacterDictionary.dfd"));
+			ObjectInputStream in = new ObjectInputStream(new FileInputStream(CharacterDictionary.Directory));
 			Object temp = in.readObject();
 
 			charDictionary = (CharacterDictionary)temp;
@@ -107,6 +116,8 @@ public class CharacterDictionary implements java.io.Serializable, Cloneable
 			return null;
 		}
 	}
+
+	public String getVERSION() { return VERSION;}
 }
 
 class SaveCharacterDictionary {
@@ -115,7 +126,7 @@ class SaveCharacterDictionary {
 		try{
 			CharacterDictionary charDic = new CharacterDictionary();
 			
-			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("data\\CharacterDictionary.dfd"));
+			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(CharacterDictionary.Directory));
 			out.writeObject(charDic);
 			out.close();
 		}

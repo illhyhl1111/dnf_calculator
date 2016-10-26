@@ -9,9 +9,9 @@ public class Drape extends Item
 	 */
 	private static final long serialVersionUID = 4070506482238398315L;
 
-	public Drape(String name, String icon, Item_rarity rarity)
+	public Drape(String name, String icon, Item_rarity rarity, String version)
 	{
-		super(name, icon, rarity);
+		super(name, icon, rarity, version);
 	}
 	public Drape(){ super();}
 	

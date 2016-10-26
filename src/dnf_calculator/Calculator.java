@@ -35,10 +35,11 @@ public class Calculator {
 			double dec_defence=(1-getPhysicalPercentDefence(character, object));							// 방어력에 의해 감소하는 비율
 			CalculateElement elementCal = new CalculateElement(object, stat, element);								// 각 속강별 데미지 계산
 			
-			double inc_strength=1+stat.getStat(StatList.STR)*(100.0+stat.getStat(StatList.STR_INC))/100.0/250;					// 1+힘*(100+힘뻥)/100/250
+			int strength = (int) (stat.getStat(StatList.STR)*(100.0+stat.getStat(StatList.STR_INC))/100.0);
+			double inc_strength=1+strength/250;																					// 1+힘*(100+힘뻥)/100/250
 			int inc_weapon1=(int)((stat.getStat(StatList.WEP_PHY)*(100+stat.getStat(StatList.MAST_PHY_2)))/100);				// [무기물공*(100+마스터리2)/100]
 			int inc_weapon2=(int)((inc_weapon1*(stat.getStat(StatList.MAST_PHY)+100))/100);										// [[무기물공*(100+마스터리2)/100]*(100+마스터리1)/100]
-			int defIgnore=(int)((stat.getStat(StatList.WEP_NODEF_PHY)*(100-object.getStat(Monster_StatList.DIFFICULTY)))/100);	
+			double defIgnore=((stat.getStat(StatList.WEP_NODEF_PHY)*(100-object.getStat(Monster_StatList.DIFFICULTY)))/100);	
 			defIgnore=(int) (defIgnore*(100+stat.getStat(StatList.WEP_NODEF_PHY_INC))/100);										// 방어무시데미지
 			double frontATK=inc_strength*inc_weapon2*dec_defence*elementCal.get_inc_elem()+defIgnore;							// (힘*물공)*방어력*속강+방무뎀
 			
@@ -67,9 +68,10 @@ public class Calculator {
 			double dec_defence=(1-getPhysicalPercentDefence(character, object));							// 방어력에 의해 감소하는 비율
 			CalculateElement elementCal = new CalculateElement(object, stat, element);								// 각 속강별 데미지 계산
 			
-			double inc_strength=1+stat.getStat(StatList.STR)*(100.0+stat.getStat(StatList.STR_INC))/100.0/250;		// 1+힘*(100+힘뻥)/100/250
-			int inc_indep=(int)(stat.getStat(StatList.WEP_IND)*(double)(100+stat.getStat(StatList.MAST_IND))/100
-					+(double)stat.getStat(StatList.WEP_IND_REFORGE));										// 독공*독공뻥+재련 
+			int strength = (int) (stat.getStat(StatList.STR)*(100.0+stat.getStat(StatList.STR_INC))/100.0);
+			double inc_strength=1+strength/250;																// 1+힘*(100+힘뻥)/100/250
+			int inc_indep=(int)(stat.getStat(StatList.WEP_IND)*(100+stat.getStat(StatList.MAST_IND))/100);
+			inc_indep+= (int)(stat.getStat(StatList.WEP_IND_REFORGE)*(100+stat.getStat(StatList.MAST_REFORGE))/100);		// 독공*독공뻥+재련 *재련뻥
 			double frontATK=inc_strength*inc_indep*dec_defence*elementCal.get_inc_elem();					// 힘*독공*방어력*속강
 			
 			double inc_critical = getIncCrt(object, stat);
@@ -97,7 +99,8 @@ public class Calculator {
 			double dec_defence=(1-getMagicalPercentDefence(character, object));							// 방어력에 의해 감소하는 비율
 			CalculateElement elementCal = new CalculateElement(object, stat, element);								// 각 속강별 데미지 계산
 			
-			double inc_strength=1+stat.getStat(StatList.INT)*(100.0+stat.getStat(StatList.INT_INC))/100.0/250;									// 1+지능/250
+			int strength = (int) (stat.getStat(StatList.INT)*(100.0+stat.getStat(StatList.INT_INC))/100.0);
+			double inc_strength=1+strength/250;																						// 1+지능/250
 			int inc_weapon1=(int)((stat.getStat(StatList.WEP_MAG)*(100+stat.getStat(StatList.MAST_MAG_2)))/100);					// [무기마공*(100+마스터리2)/100]
 			int inc_weapon2=(int)((inc_weapon1*(stat.getStat(StatList.MAST_MAG)+100))/100);											// [[무기마공*(100+마스터리2)/100]*(100+마스터리1)/100]
 			int defIgnore=(int)((stat.getStat(StatList.WEP_NODEF_MAG)*(100-object.getStat(Monster_StatList.DIFFICULTY)))/100);
@@ -128,9 +131,10 @@ public class Calculator {
 			double dec_defence=(1-getMagicalPercentDefence(character, object));							// 방어력에 의해 감소하는 비율
 			CalculateElement elementCal = new CalculateElement(object, stat, element);								// 각 속강별 데미지 계산
 			
-			double inc_strength=1+stat.getStat(StatList.INT)*(100.0+stat.getStat(StatList.INT_INC))/100.0/250;		// 1+지능/250
-			int inc_indep=(int)(stat.getStat(StatList.WEP_IND)*(double)(100+stat.getStat(StatList.MAST_IND))/100
-					+(double)stat.getStat(StatList.WEP_IND_REFORGE));										// 독공*독공뻥+재련 
+			int strength = (int) (stat.getStat(StatList.INT)*(100.0+stat.getStat(StatList.INT_INC))/100.0);
+			double inc_strength=1+strength/250;																// 1+지능/250
+			int inc_indep=(int)(stat.getStat(StatList.WEP_IND)*(100+stat.getStat(StatList.MAST_IND))/100);
+			inc_indep+= (int)(stat.getStat(StatList.WEP_IND_REFORGE)*(100+stat.getStat(StatList.MAST_REFORGE))/100);		// 독공*독공뻥+재련 *재련뻥 
 			double frontATK=inc_strength*inc_indep*dec_defence*elementCal.get_inc_elem();					// 지능*독공*방어력*속강
 			
 			double inc_critical = getIncCrt(object, stat);
@@ -183,10 +187,14 @@ public class Calculator {
 		//////////////////////////////
 		
 		double inc_add;																												// 추뎀항
-		double add_whole=(100.0+stat.getStat(StatList.DAM_ADD)+stat.getStat(StatList.DAM_ADD_FIRE)*elementCal.get_inc_fire()
-				+stat.getStat(StatList.DAM_ADD_WATER)*elementCal.get_inc_water()
-				+stat.getStat(StatList.DAM_ADD_LIGHT)*elementCal.get_inc_light()
-				+stat.getStat(StatList.DAM_ADD_DARKNESS)*elementCal.get_inc_darkness())/100.0;										// 추뎀+속추뎀 총합
+		double add_whole=(100.0+stat.getStat(StatList.DAM_ADD));
+		if(object.getStat(Monster_StatList.DEFENSIVE_PHY)!=0){
+			add_whole+=stat.getStat(StatList.DAM_ADD_FIRE)*elementCal.get_inc_fire()
+					+stat.getStat(StatList.DAM_ADD_WATER)*elementCal.get_inc_water()
+					+stat.getStat(StatList.DAM_ADD_LIGHT)*elementCal.get_inc_light()
+					+stat.getStat(StatList.DAM_ADD_DARKNESS)*elementCal.get_inc_darkness();										// 추뎀+속추뎀 총합
+		}
+		add_whole/=100.0;
 		if(object.getBool(Monster_StatList.BACKATK)) add_whole+=stat.getStat(StatList.DAM_ADD_BACK);								// 백어택 추뎀
 		double avgCritical_add=stat.getStat(StatList.CRT_LOW)+3.0;																	// 추뎀크리 확률
 		if(avgCritical_add>100.0) avgCritical_add=100.0;
@@ -212,12 +220,12 @@ public class Calculator {
 		int level = character.getLevel();
 		Status stat=character.dungeonStatus;
 		
-		int fixedDef=object.getStat(Monster_StatList.DEFENSIVE_PHY);												// 기본방어력
+		double fixedDef=object.getStat(Monster_StatList.DEFENSIVE_PHY);												// 기본방어력
 		fixedDef-=stat.getStat(StatList.DEF_DEC_FIXED_PHY);															// 기본방어력-고정방깍
 		if(fixedDef<0) fixedDef=0;
-		fixedDef=(int)(fixedDef*(100.0-stat.getStat(StatList.DEF_DEC_PERCENT_PHY_SKILL))/100);						// (기본방어력-고정방깍)*(100-%방깍)/100
-		fixedDef=(int)(fixedDef*(100.0-stat.getStat(StatList.DEF_DEC_PERCENT_PHY_ITEM)*(double)object.getStat(Monster_StatList.TYPE)/100.0)/100.0);		//(위)*(100-템%방깍*패널티(100~50)/100)/100
-		fixedDef=(int)(fixedDef*(100.0-stat.getStat(StatList.DEF_DEC_IGN))/100);									// (위)*(100-적 방어력 무시)/100
+		fixedDef=fixedDef*(100.0-stat.getStat(StatList.DEF_DEC_PERCENT_PHY_SKILL))/100;								// (기본방어력-고정방깍)*(100-%방깍)/100
+		fixedDef=fixedDef*(100.0-stat.getStat(StatList.DEF_DEC_PERCENT_PHY_ITEM)*(double)object.getStat(Monster_StatList.TYPE)/100.0)/100.0;		//(위)*(100-템%방깍*패널티(100~50)/100)/100
+		fixedDef=(int)(fixedDef*(100.0-stat.getStat(StatList.DEF_DEC_IGN))/100);											// (위)*(100-적 방어력 무시)/100
 		
 		if(fixedDef<0) return 0;
 		double result = ((double)(fixedDef))/((double)(fixedDef+level*200));										// %방어력=고정방어력/(고정방어력+레벨*200)
@@ -267,7 +275,7 @@ public class Calculator {
 	{
 		try{
 			int inc_weapon1=(int)((stat.getStat(StatList.WEP_PHY)*(100+stat.getStat(StatList.MAST_PHY_2)))/100);				// [무기물공*(100+마스터리2)/100]
-			int inc_weapon2=(int)((inc_weapon1*(stat.getStat(StatList.MAST_PHY)+100))/100);										// [[무기물공*(100+마스터리2)/100]*(100+마스터리1)/100]
+			int inc_weapon2=(int)( (inc_weapon1*(stat.getStat(StatList.MAST_PHY)+100))/100 + 0.9999);							// [[무기물공*(100+마스터리2)/100]*(100+마스터리1)/100] - 소숫점포함
 			return (int)(inc_weapon2*(1+getInfoStrength(stat)/250.0)+ stat.getStat("물리방무")*(100+stat.getStat(StatList.WEP_NODEF_PHY_INC))/100);
 		}
 		catch(StatusTypeMismatch | UndefinedStatusKey e)
@@ -280,7 +288,7 @@ public class Calculator {
 	{
 		try{
 			int inc_weapon1=(int)((stat.getStat(StatList.WEP_MAG)*(100+stat.getStat(StatList.MAST_MAG_2)))/100);				// [무기마공*(100+마스터리2)/100]
-			int inc_weapon2=(int)((inc_weapon1*(stat.getStat(StatList.MAST_MAG)+100))/100);										// [[무기마공*(100+마스터리2)/100]*(100+마스터리1)/100]
+			int inc_weapon2=(int)( (inc_weapon1*(stat.getStat(StatList.MAST_MAG)+100))/100 + 0.9999);							// [[무기마공*(100+마스터리2)/100]*(100+마스터리1)/100] - 소숫점포함
 			return (int)(inc_weapon2*(1+getInfoStrength(stat)/250.0)+ stat.getStat("마법방무")*(100+stat.getStat(StatList.WEP_NODEF_MAG_INC))/100 );
 		}
 		catch(StatusTypeMismatch | UndefinedStatusKey e)
@@ -292,9 +300,11 @@ public class Calculator {
 	public static int getInfoIndependentATK(Status stat)
 	{
 		try{
-			return (int)(stat.getStat("독립공격")*(100.0+stat.getStat("독공뻥"))/100.0+stat.getStat("재련독공"));
+			int inc_indep=(int)(stat.getStat(StatList.WEP_IND)*(100+stat.getStat(StatList.MAST_IND))/100);
+			inc_indep+= (int)(stat.getStat(StatList.WEP_IND_REFORGE)*(100+stat.getStat(StatList.MAST_REFORGE))/100);		// 독공*독공뻥+재련 *재련뻥
+			return inc_indep;
 		}
-		catch(StatusTypeMismatch | UndefinedStatusKey e)
+		catch(StatusTypeMismatch e)
 		{
 			e.printStackTrace();
 			return -1;

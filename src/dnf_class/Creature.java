@@ -2,12 +2,13 @@ package dnf_class;
 
 import dnf_InterfacesAndExceptions.Item_rarity;
 
-@SuppressWarnings("serial")
 public class Creature extends Item
 {
-	public Creature(String name, Item_rarity rarity)
+	private static final long serialVersionUID = -8170582599826405449L;
+
+	public Creature(String name, Item_rarity rarity, String version)
 	{
-		super(name, "image\\Creature\\"+name+".png", rarity);
+		super(name, "image\\Creature\\"+name+".png", rarity, version);
 	}
 	public Creature(){ super();}
 	

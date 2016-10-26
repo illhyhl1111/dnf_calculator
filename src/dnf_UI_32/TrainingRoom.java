@@ -225,10 +225,10 @@ class SettingComposite extends DnFComposite
 		
 		for(int i=0; i<3; i++){
 			partyCombo[i] = new Combo(partySettings, SWT.READ_ONLY);
-			partyCharacterList[i] = new String[1+character.userItemList.getPartyList(character.getJob()).size()];
+			partyCharacterList[i] = new String[1+character.characterInfoList.getPartyList(character.getJob()).size()];
 			partyCharacterList[i][0] =partyDefaultSelection;
 			index=1;
-			for(PartyCharacter party : character.userItemList.getPartyList(character.getJob()))
+			for(PartyCharacter party : character.characterInfoList.getPartyList(character.getJob()))
 				partyCharacterList[i][index++]=party.getName();
 			partyCombo[i].setItems(partyCharacterList[i]);
 			formData = new FormData(100, SWT.DEFAULT);
@@ -337,7 +337,7 @@ class SettingComposite extends DnFComposite
 		}
 		
 		try {
-			PartyCharacter partyCharacter = character.userItemList.getPartyCharacter(partyCombo[partyIndex].getText());
+			PartyCharacter partyCharacter = character.characterInfoList.getPartyCharacter(partyCombo[partyIndex].getText());
 			
 			if(partyCharacter.job == Job.CRUSADER && partyOptionCombo1[partyIndex].getText().equals(Saint.settingFeatureName) && renew){
 				SaintMaker dialog = new SaintMaker((Saint) partyCharacter);
@@ -375,14 +375,14 @@ class SettingComposite extends DnFComposite
 		}
 		
 		try {
-			PartyCharacter party = character.userItemList.getPartyCharacter(partyCombo[partyIndex].getText());
+			PartyCharacter party = character.characterInfoList.getPartyCharacter(partyCombo[partyIndex].getText());
 			String[] optionList = party.getBuffFeatureList(0);
 			if(optionList[0].equals("--")) partyOptionCombo1[partyIndex].setEnabled(false);
 			else partyOptionCombo1[partyIndex].setEnabled(true);
 			partyOptionCombo1[partyIndex].setItems(optionList);
 			partyOptionCombo1[partyIndex].select(0);
 			
-			party = character.userItemList.getPartyCharacter(partyCombo[partyIndex].getText());
+			party = character.characterInfoList.getPartyCharacter(partyCombo[partyIndex].getText());
 			optionList = party.getBuffFeatureList(1);
 			if(optionList[0].equals("--")) partyOptionCombo2[partyIndex].setEnabled(false);
 			else partyOptionCombo2[partyIndex].setEnabled(true);
