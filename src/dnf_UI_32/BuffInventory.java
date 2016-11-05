@@ -2,6 +2,7 @@ package dnf_UI_32;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 
@@ -28,8 +29,8 @@ import dnf_class.Skill;
 
 public class BuffInventory extends DnFComposite{
 	LinkedList<Buff> itemSet;
-	HashSet<Skill> passiveSet;
-	HashSet<Buff> buffSet;
+	LinkedList<Skill> passiveSet;
+	LinkedList<Buff> buffSet;
 	ItemButton<IconObject>[] inventoryList;
 	final static int inventoryCol=17;
 	final static int inventoryRow=3;
@@ -68,20 +69,23 @@ public class BuffInventory extends DnFComposite{
 		setInventoryBlocks(background);
 	}
 	
-	private <T extends IconObject> HashSet<T> getBuffListToSet(LinkedList<T> list)
+	private <T extends IconObject> LinkedList<T> removeDuplicate(LinkedList<T> list)
 	{
-		HashSet<T> set = new HashSet<T>();
-		for(T item : list)
-			set.add(item);
+		HashSet<T> hashSet = new HashSet<T>();
+		Iterator<T> iter = list.iterator();
+		while(iter.hasNext()){
+			boolean result = hashSet.add(iter.next());
+			if(!result) iter.remove();
+		}
 		
-		return set;
+		return list;
 	}
 	
 	private void setInventoryBlocks(Composite background)
 	{	
 		itemSet = character.userItemList.getAllBuffList();
-		passiveSet = getBuffListToSet(character.getBuffSkillList());
-		buffSet = getBuffListToSet(trainingRoom.getBuffList());
+		passiveSet = removeDuplicate(character.getBuffSkillList());
+		buffSet = removeDuplicate(trainingRoom.getBuffList());
 		LinkedList<Collection<? extends IconObject>> allList = new LinkedList<Collection<? extends IconObject>>();
 		allList.add(itemSet);
 		allList.add(passiveSet);
@@ -114,6 +118,8 @@ public class BuffInventory extends DnFComposite{
 								}
 							}
 						});
+					else if(i.getName().contains("수련의 방 버프"))
+						inventoryList[index].getButton().addListener(SWT.MouseDoubleClick, listenerGroup.modifyListener(null));
 				}
 				else if(i instanceof Skill)
 					inventoryList[index].getButton().addListener(SWT.MouseEnter, listenerGroup.makeSkillInfoListener(background));	// add MouseEnter Event - make composite
@@ -128,7 +134,7 @@ public class BuffInventory extends DnFComposite{
 				IconObject i;
 				if(row==1) i = new Skill();
 				else i = new Buff();
-				inventoryList[index] = new ItemButton<IconObject>(mainComposite, i, InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE, false);
+				inventoryList[index] = new ItemButton<IconObject>(mainComposite, i, InterfaceSize.INFO_BUTTON_SIZE, InterfaceSize.INFO_BUTTON_SIZE);
 				
 				SetListener listenerGroup = new SetListener(inventoryList[index], character, superInfo, parent);
 				
@@ -156,8 +162,8 @@ public class BuffInventory extends DnFComposite{
 
 	@Override
 	public void renew() {
-		passiveSet = getBuffListToSet(character.getBuffSkillList());
-		buffSet = getBuffListToSet(trainingRoom.getBuffList());
+		passiveSet = removeDuplicate(character.getBuffSkillList());
+		buffSet = removeDuplicate(trainingRoom.getBuffList());
 		LinkedList<Collection<? extends IconObject>> allList = new LinkedList<Collection<? extends IconObject>>();
 		allList.add(itemSet);
 		allList.add(passiveSet);
@@ -173,14 +179,14 @@ public class BuffInventory extends DnFComposite{
 		{
 			for(IconObject i : set){
 				inventoryList[index].setItem(i);
-				inventoryList[index].renewImage(true);
+				inventoryList[index].renewImage();
 				index++;
 			}
 		
 			for(; index/inventoryCol==row; index++){
 				if(row==1) inventoryList[index].setItem(new Skill());
 				else inventoryList[index].setItem(new Buff());
-				inventoryList[index].renewImage(true);
+				inventoryList[index].renewImage();
 			}
 			row++;
 		}

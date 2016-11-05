@@ -25,19 +25,24 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
-import dnf_InterfacesAndExceptions.Avatar_part;
 import dnf_InterfacesAndExceptions.Dimension_stat;
+import dnf_InterfacesAndExceptions.DnFColor;
 import dnf_InterfacesAndExceptions.Emblem_type;
+import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_InterfacesAndExceptions.ItemFileNotReaded;
 import dnf_InterfacesAndExceptions.StatList;
 import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 import dnf_InterfacesAndExceptions.UnknownInformationException;
 import dnf_calculator.ElementInfo;
+import dnf_calculator.SkillRangeStatusInfo;
+import dnf_calculator.SkillStatusInfo;
 import dnf_calculator.StatusAndName;
 import dnf_calculator.StatusInfo;
 import dnf_class.Avatar;
+import dnf_class.Buff;
 import dnf_class.Card;
+import dnf_class.Creature;
 import dnf_class.Emblem;
 import dnf_class.Equipment;
 import dnf_class.Item;
@@ -94,6 +99,18 @@ public class ChangeItemStatus extends Dialog{
 			if(item instanceof Equipment) originalItem=GetDictionary.getEquipment(item.getItemName());
 			else if(item instanceof Title) originalItem=GetDictionary.getTitle(item.getItemName());
 			else if(item instanceof Card) originalItem=GetDictionary.getCard(item.getItemName());
+			else if(item instanceof Buff) {
+				for(Buff buff : GetDictionary.itemDictionary.buffList)
+					if(buff.getName().equals(item.getName())) originalItem=buff;
+			}
+			else if(item instanceof Avatar) originalItem=GetDictionary.itemDictionary.getAvatar(item.getItemName());
+			else if(item instanceof Creature){
+				for(Creature c : GetDictionary.itemDictionary.creatureList)
+					if(c.getName().equals(item.getItemName())){
+						originalItem=c;
+						break;
+					}
+			}
 			else originalItem=null;
 		} catch (ItemFileNotReaded | ItemNotFoundedException e) {
 			e.printStackTrace();
@@ -205,22 +222,33 @@ public class ChangeItemStatus extends Dialog{
 		switch(item.getRarity())
 		{
 		case EPIC:
-			name.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_DARK_YELLOW));
-			rarity.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_DARK_YELLOW));
+			name.setForeground(DnFColor.EPIC);
+			rarity.setForeground(DnFColor.EPIC);
 			break;
 		case UNIQUE:
-			name.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_MAGENTA));
-			rarity.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_MAGENTA));
+			name.setForeground(DnFColor.UNIQUE);
+			rarity.setForeground(DnFColor.UNIQUE);
 			break;
 		case LEGENDARY:
-			name.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_DARK_GREEN));
-			rarity.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_DARK_GREEN));
+			name.setForeground(DnFColor.LEGENDARY);
+			rarity.setForeground(DnFColor.LEGENDARY);
 			break;
 		case RARE:
-			name.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_CYAN));
-			rarity.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_CYAN));
+			name.setForeground(DnFColor.RARE);
+			rarity.setForeground(DnFColor.RARE);
 			break;
-			
+		case CHRONICLE:
+			name.setForeground(DnFColor.CHRONICLE);
+			rarity.setForeground(DnFColor.CHRONICLE);
+			break;
+		case UNCOMMON:
+			name.setForeground(DnFColor.UNCOMMON);
+			rarity.setForeground(DnFColor.UNCOMMON);
+			break;
+		case COMMON:
+			name.setForeground(DnFColor.COMMON);
+			rarity.setForeground(DnFColor.COMMON);
+			break;
 		default:
 		}
 		
@@ -256,7 +284,7 @@ public class ChangeItemStatus extends Dialog{
 			try{
 				tempStat = item.vStat.statList.get(item.getDimStatIndex());
 				tempLabel = new Label(composite, SWT.WRAP);
-				GridData labelData = new GridData(SWT.LEFT, SWT.TOP,false, false, 1, 1);
+				GridData labelData = new GridData(SWT.RIGHT, SWT.TOP,false, false, 1, 1);
 				labelData.grabExcessHorizontalSpace=true;
 				labelData.minimumWidth=100;
 				tempLabel.setLayoutData(labelData);
@@ -290,7 +318,7 @@ public class ChangeItemStatus extends Dialog{
 				tempStat2 = item.vStat.statList.get(item.getIgnIndex()+1);
 				
 				tempLabel = new Label(composite, SWT.WRAP);
-				tempLabel.setLayoutData(new GridData(SWT.LEFT, SWT.TOP,false, false, 1, 1));
+				tempLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP,false, false, 1, 1));
 
 				tempText = new Text(composite, SWT.NONE);
 				tempText.setEditable(false);
@@ -302,7 +330,7 @@ public class ChangeItemStatus extends Dialog{
 				tempText.setLayoutData(textData);
 				
 				tempLabel2 = new Label(composite, SWT.WRAP);
-				tempLabel2.setLayoutData(new GridData(SWT.LEFT, SWT.TOP,false, false, 1, 1));
+				tempLabel2.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP,false, false, 1, 1));
 				
 				tempText2 = new Text(composite, SWT.NONE);
 				tempText2.setEditable(false);
@@ -338,7 +366,7 @@ public class ChangeItemStatus extends Dialog{
 			try{
 				tempStat = item.vStat.statList.get(item.getReforgeIndex());
 				tempLabel = new Label(composite, SWT.WRAP);
-				GridData labelData = new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1);
+				GridData labelData = new GridData(SWT.RIGHT, SWT.TOP, false, false, 1, 1);
 				labelData.grabExcessHorizontalSpace=true;
 				labelData.minimumWidth=100;
 				tempLabel.setLayoutData(labelData);
@@ -370,7 +398,7 @@ public class ChangeItemStatus extends Dialog{
 			try{
 				tempStat = item.vStat.statList.get(item.getAidStatIndex());
 				tempLabel = new Label(composite, SWT.WRAP);
-				tempLabel.setLayoutData(new GridData(SWT.LEFT, SWT.TOP,false, false, 1, 1));
+				tempLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP,false, false, 1, 1));
 				
 				tempText = new Text(composite, SWT.NONE);
 				tempText.setEditable(false);
@@ -467,7 +495,7 @@ public class ChangeItemStatus extends Dialog{
 			
 			int index = item.getItemStatIndex();
 			Iterator<StatusAndName> maxS;
-			if(originalItem!=null)
+			if(originalItem!=null && !originalItem.getName().contains("아바타 상의"))
 			{
 				maxS = originalItem.vStat.statList.subList(index, item.vStat.statList.size()).iterator();
 				List<StatusAndName> itemStatList = item.vStat.statList.subList(index, item.vStat.statList.size());
@@ -508,7 +536,7 @@ public class ChangeItemStatus extends Dialog{
 				}
 			}
 			
-			if(item instanceof Avatar && ((Avatar)item).part==Avatar_part.COAT){
+			if(item instanceof Avatar && ((Avatar)item).part==Equip_part.ACOAT){
 				label = new Label(composite, SWT.NONE);
 				label.setText("아바타 상의 옵션 변경");
 				label.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
@@ -724,7 +752,7 @@ public class ChangeItemStatus extends Dialog{
 		
 		strength = String.format("%.1f", s.stat.getStatToDouble());
 		maxStrength = String.format("%.1f", maxS.stat.getStatToDouble());
-		if(s.stat instanceof ElementInfo && maxStrength.equals("0.0")){
+		if(s.stat instanceof ElementInfo && maxStrength.equals("0.0") || s.stat instanceof SkillStatusInfo && strength.equals("0.0")){
 			statNum=null;
 			enable=null;
 		}
@@ -738,6 +766,11 @@ public class ChangeItemStatus extends Dialog{
 				name = s.stat.getStatToString()+name;
 			statName.setText(name);
 			statName.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false));
+			
+			if(s.stat instanceof SkillRangeStatusInfo && ((SkillRangeStatusInfo)s.stat).getTP())
+			{
+				statName.setText("TP - "+statName.getText());
+			}
 			
 			statNum = new Text(itemInfo, SWT.NONE);
 			statNum.setText(strength);
@@ -755,6 +788,9 @@ public class ChangeItemStatus extends Dialog{
 			enable.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, true, false));
 			enable.setSelection(s.enabled);
 			
+			statName.setEnabled(s.enabled);
+			statNum.setEnabled(s.enabled);
+			maxStatNum.setEnabled(s.enabled);
 			
 			if(s.changeable){
 				statNum.addVerifyListener(new TextInputOnlyNumbers(Integer.valueOf(maxStrength)));
@@ -784,7 +820,7 @@ public class ChangeItemStatus extends Dialog{
 		
 		if(s.stat instanceof ElementInfo && ((ElementInfo)s.stat).getElementEnabled()==true)
 		{
-			stat2 = new Label(itemInfo, SWT.WRAP);
+			stat2 = new Label(itemInfo, SWT.WRAP | SWT.CENTER);
 			switch(s.name)
 			{
 			case StatList.ELEM_FIRE:
@@ -800,10 +836,11 @@ public class ChangeItemStatus extends Dialog{
 				stat2.setText(" 무기에 암속성 부여");
 				break;
 			}
-			stat2.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 3, 1));
-			if(enable == null){
+			stat2.setEnabled(s.enabled);
+			if(enable == null && s.enableable){
+				stat2.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 3, 1));
 				enable2 = new Button(itemInfo, SWT.CHECK);
-				enable2.setText("활성화");
+				enable2.setText("옵션 켜기");
 				enable2.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, true, false));
 				
 				enable2.setSelection(s.enabled);
@@ -817,15 +854,66 @@ public class ChangeItemStatus extends Dialog{
 				});
 			}
 			else{
-				enable2=null;
-				enable.addSelectionListener(new SelectionAdapter()
+				stat2.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 4, 1));
+				if(enable!=null){
+					enable2=null;
+					enable.addSelectionListener(new SelectionAdapter()
+					{
+						@Override
+						public void widgetSelected(SelectionEvent e) {
+							boolean enabled = enable.getSelection();
+							stat2.setEnabled(enabled);
+						}
+					});
+				}
+				else{
+					stat2.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 3, 1));
+					enable2 = new Button(itemInfo, SWT.CHECK);
+					enable2.setSelection(true);
+					enable2.setVisible(false);
+				}
+			}
+		}
+		else if(s.stat instanceof SkillStatusInfo && ((SkillStatusInfo)s.stat).getIncrease()>1.0005)
+		{
+			stat2 = new Label(itemInfo, SWT.WRAP | SWT.CENTER);
+			stat2.setEnabled(s.enabled);
+			stat2.setText(s.stat.getStatToString()+" 데미지 증가 + "+ String.format("%.1f", ((SkillStatusInfo)s.stat).getIncrease()));
+			if(enable == null && s.enableable){
+				stat2.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 3, 1));
+				enable2 = new Button(itemInfo, SWT.CHECK);
+				enable2.setText("옵션 켜기");
+				enable2.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, true, false));
+				
+				enable2.setSelection(s.enabled);
+				enable2.addSelectionListener(new SelectionAdapter()
 				{
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						boolean enabled = enable.getSelection();
+						boolean enabled = enable2.getSelection();
 						stat2.setEnabled(enabled);
 					}
 				});
+			}
+			else{
+				stat2.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 4, 1));
+				if(enable!=null){
+					enable2=null;
+					enable.addSelectionListener(new SelectionAdapter()
+					{
+						@Override
+						public void widgetSelected(SelectionEvent e) {
+							boolean enabled = enable.getSelection();
+							stat2.setEnabled(enabled);
+						}
+					});
+				}
+				else{
+					stat2.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 3, 1));
+					enable2 = new Button(itemInfo, SWT.CHECK);
+					enable2.setSelection(true);
+					enable2.setVisible(false);
+				}
 			}
 		}
 		else enable2=null;
@@ -869,16 +957,17 @@ public class ChangeItemStatus extends Dialog{
 	    if(replicateEnabled){
 	    	int mode=3;
 		    String buttonStr="아이템 복제";
+		    final GridData leftButtonData = new GridData(SWT.LEFT, SWT.CENTER, true, true);
+		    final Button replicateButton = createButton(buttonBar, mode, buttonStr, false);
+		    replicateButton.setText(buttonStr);
+		    replicateButton.setLayoutData(leftButtonData);
 		    if(item.replicateNum!=0){
 		    	mode=4;
 		    	buttonStr="아이템 삭제";
+		    	final Button deleteButton = createButton(buttonBar, mode, buttonStr, false);
+		    	deleteButton.setText(buttonStr);
+		    	deleteButton.setLayoutData(leftButtonData);
 		    }
-		    
-		    final Button replicateButton = createButton(buttonBar, mode, buttonStr, false);
-		    replicateButton.setText(buttonStr);
-		    
-		    final GridData leftButtonData = new GridData(SWT.LEFT, SWT.CENTER, true, true);
-		    replicateButton.setLayoutData(leftButtonData);
 	    }
 
 	    // add the dialog's button bar to the right
@@ -903,7 +992,7 @@ public class ChangeItemStatus extends Dialog{
 			if(item instanceof Weapon)
 				((Weapon)item).setReforgeNum(currentReforge);
 		}
-		else if(item instanceof Avatar && ((Avatar)item).part==Avatar_part.COAT){
+		else if(item instanceof Avatar && ((Avatar)item).part==Equip_part.ACOAT){
 			((Avatar)item).setCoatSkill(skillListCombo.getText());
 			super.okPressed();
 			return;
@@ -917,7 +1006,11 @@ public class ChangeItemStatus extends Dialog{
 		for(Entry<Integer, Wrapper> e : vStatEntry)
 			if(e.getValue()!=null){
 				boolean enable = e.getValue().hasButton;
-				if(enable) enable = e.getValue().getButton().getSelection();
+				try{
+					if(enable) enable = e.getValue().getButton().getSelection();
+				} catch(NullPointerException e2){
+					continue;
+				}
 				if(e.getValue().textHasData())
 					item.vStat.changeStat(e.getKey(), Double.valueOf(e.getValue().getText().getText()), enable);
 				else item.vStat.changeStat(e.getKey(), 0, enable);
@@ -926,7 +1019,11 @@ public class ChangeItemStatus extends Dialog{
 		for(Entry<Integer, Wrapper> e : dStatEntry)
 			if(e.getValue()!=null){
 				boolean enable = e.getValue().hasButton;
-				if(enable) enable = e.getValue().getButton().getSelection();
+				try{
+					if(enable) enable = e.getValue().getButton().getSelection();
+				} catch(NullPointerException e2){
+					continue;
+				}
 				if(e.getValue().textHasData())
 					item.dStat.changeStat(e.getKey(), Double.valueOf(e.getValue().getText().getText()), enable);
 				else item.dStat.changeStat(e.getKey(), 0, enable);

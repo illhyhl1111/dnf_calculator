@@ -1,26 +1,45 @@
 package dnf_UI_32;
 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
 
+import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.DeviceData;
-import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.program.Program;
+import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
+import dnf_InterfacesAndExceptions.CalculatorVersion;
 import dnf_class.Characters;
 import dnf_infomation.GetDictionary;
 
@@ -41,12 +60,12 @@ public class CalculatorUITest {
 		else display = new Display();
 		
 		Shell selectionShell = new Shell(display);
-		selectionShell.setSize(800, 550);
+		selectionShell.setSize(1024, 768);
 		selectionShell.setText("캐릭터 선택");
 		selectionShell.setLayout(new FormLayout());
 		
 		Label loadingLabel = new Label(selectionShell, SWT.CENTER);
-		loadingLabel.setText("데이터를 읽는 중입니다 ㄱㄷ");
+		loadingLabel.setText("로오오오딩중");
 		loadingLabel.setLayoutData(new FormData());
 		selectionShell.open();
 		GetDictionary.readFile();
@@ -100,9 +119,8 @@ public class CalculatorUITest {
 		
 		villageUI.get_toDungeonButton().addListener(SWT.Selection, event -> {
 			villageUI.disposeContent();
-			dungeonUI.makeComposite(vault);
+			dungeonUI.makeComposite(skillTree, vault);
 			stackLayout.topControl = dungeonUI.getComposite();
-			skillTree.superInfo=dungeonUI;
 			shell.setText("수련의 방");
 			shell.layout();
 		});
@@ -110,7 +128,6 @@ public class CalculatorUITest {
 		dungeonUI.get_toVillageButton().addListener(SWT.Selection, event -> {
 			dungeonUI.disposeContent();
 			villageUI.makeComposite(skillTree, vault);
-			skillTree.superInfo=villageUI;
 			stackLayout.topControl = villageUI.getComposite();
 			shell.setText("인포창");
 			shell.layout();
@@ -188,28 +205,119 @@ public class CalculatorUITest {
 	}
 }
 
+class NewVersion extends TitleAreaDialog {
+
+    private String[] explain;
+    private String URL;
+    private String version;
+    public boolean readed;
+
+    public NewVersion(Shell parentShell, String version, String URL, ArrayList<String> explain) {
+    	super(parentShell);
+    	this.version = version;
+    	this.explain=explain.toArray(new String[0]);
+    	this.URL=URL;
+    	readed=false;
+    }
+
+    @Override
+    public void create() {
+            super.create();
+            setTitle("업데이트 알림");
+            setMessage("새로운 버전이 나왔습니다. 와와", IMessageProvider.INFORMATION);
+    }
+
+    @Override
+    protected Control createDialogArea(Composite parent) {
+            Composite area = (Composite) super.createDialogArea(parent);
+            Composite container = new Composite(area, SWT.NONE);
+            container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+            GridLayout layout = new GridLayout(2, false);
+            container.setLayout(layout);
+
+            createInput(container);
+            return area;
+    }
+
+    private void createInput(Composite container) {
+    	Label versionLabel = new Label(container, SWT.NONE);
+    	versionLabel.setText("최근 버전 : "+version);
+    	versionLabel.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 2, 1));
+    	
+    	Label currentVersionLabel = new Label(container, SWT.NONE);
+    	currentVersionLabel.setText("현재 버전 : "+CalculatorVersion.MAIN_VERSION);
+    	currentVersionLabel.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 2, 1));
+
+    	NewVersion thisShell = this;
+    	Label URLLabel = new Label(container, SWT.NONE);
+    	URLLabel.setText("다운로드 링크 : ");
+    	Link link = new Link(container, SWT.NONE);
+    	link.setText("<A>"+URL+"</A>");
+    	link.addSelectionListener(new SelectionAdapter(){
+    		@Override
+	        public void widgetSelected(SelectionEvent e) {
+    			System.out.println("You have selected: "+e.text);
+    			Program.launch(e.text);
+				readed=true;
+				thisShell.close();
+	        }
+	    });
+    	        
+    	Label explLabel = new Label(container, SWT.NONE);
+		explLabel.setText("\n\n최근 변경사항 : ");
+		explLabel.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 2, 1));
+    	for(String expl : explain){
+    		explLabel = new Label(container, SWT.NONE);
+    		explLabel.setText(expl);
+    		explLabel.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 2, 1));
+    	}
+    }
+}
+
 class CalculatorUILoad
 {
 	public static void main(String[] args)
 	{
 		Display display = new Display();
-		
 		Shell selectionShell = new Shell(display);
-		selectionShell.setSize(800, 550);
-		selectionShell.setText("캐릭터 선택");
-		selectionShell.setLayout(new FormLayout());
-		
-		Label loadingLabel = new Label(selectionShell, SWT.CENTER);
-		loadingLabel.setText("데이터를 읽는 중입니다 ㄱㄷ");
-		FormData loadData = new FormData();
-		loadData.top = new FormAttachment(0, 270);
-		loadData.left = new FormAttachment(0, 330);
-		loadingLabel.setLayoutData(loadData);
-		selectionShell.open();
-		GetDictionary.readFile();
 		
 		SelectCharacter selectionSet = new SelectCharacter(selectionShell);
-		selectionSet.setSelectionComposite();
+		
+		URL url;
+		try {
+			// get URL content
+			url = new URL("https://raw.githubusercontent.com/illhyhl1111/dnf_calculator/master/RecentVersion");
+			URLConnection conn = url.openConnection();
+
+			// open the stream and put it into BufferedReader
+			BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			String recentVersion = br.readLine();
+			System.out.println(recentVersion);
+			if(!recentVersion.equals(CalculatorVersion.MAIN_VERSION)){
+				String URL = br.readLine();
+				ArrayList<String> explain = new ArrayList<String>();
+				while(true){
+					String temp = br.readLine();
+					if(temp==null) break;
+					else explain.add(temp);
+				}
+				NewVersion updateShell = new NewVersion(selectionShell, recentVersion, URL, explain);
+				updateShell.create();
+				updateShell.open();
+				
+				if(updateShell.readed) selectionShell.dispose();
+			}
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		
+		if(!selectionShell.isDisposed()){
+			GetDictionary.readFile();
+			selectionSet.setSelectionComposite();
+		}
 		while (!selectionShell.isDisposed()) {
 		    if (!display.readAndDispatch())
 		        display.sleep();
@@ -221,6 +329,7 @@ class CalculatorUILoad
 			ObjectInputStream in = new ObjectInputStream(new FileInputStream("data\\character_"+selectionSet.getSelected().name+".dfd"));
 			Object temp = in.readObject();
 			character = (Characters)temp;
+			character.updateDictionary();
 			in.close();
 		}catch(FileNotFoundException e)
 		{
@@ -255,34 +364,44 @@ class CalculatorUILoad
 			shell.setMinimumSize(1600, 900);
 			shell.setBounds(0, 0, 1600, 900);
 		}
+		shell.setBackgroundImage(GetDictionary.getBackground(character.getJob(), shell));
+		VillageUI villageUI = new VillageUI(shell, character);
+		Canvas loading = new Canvas(shell, SWT.NO_REDRAW_RESIZE | SWT.TRANSPARENT);
+		
+		loading.setBounds(0, 0, 150, shell.getClientArea().height);
+		loading.addPaintListener(new PaintListener() {
+	        public void paintControl(PaintEvent e) {
+	         e.gc.drawImage(GetDictionary.loadingImage,5,shell.getClientArea().height-55);
+	        }
+	    });
+		stackLayout.topControl=loading;
 		shell.open();
 		
-		VillageUI villageUI = new VillageUI(shell, character);
 		DungeonUI dungeonUI = new DungeonUI(shell, character);
 		SkillTree skillTree = new SkillTree(shell, character, villageUI);
 		Vault vault = new Vault(shell, character);
 		
 		villageUI.makeComposite(skillTree, vault);
-	
 		
 		stackLayout.topControl = villageUI.getComposite();
 		shell.setText("인포창");
 		
 		villageUI.get_toDungeonButton().addListener(SWT.Selection, event -> {
+			stackLayout.topControl=loading;
+			shell.layout();
 			villageUI.disposeContent();
-			dungeonUI.makeComposite(vault);
+			dungeonUI.makeComposite(skillTree, vault);
 			stackLayout.topControl = dungeonUI.getComposite();
-			skillTree.superInfo=dungeonUI;
-			shell.setText("수련의 방");
 			shell.layout();
 		});
 		
 		dungeonUI.get_toVillageButton().addListener(SWT.Selection, event -> {
+			stackLayout.topControl=loading;
+			shell.layout();
 			dungeonUI.disposeContent();
 			villageUI.makeComposite(skillTree, vault);
-			skillTree.superInfo=villageUI;
 			stackLayout.topControl = villageUI.getComposite();
-			shell.setText("인포창");
+			skillTree.superInfo=villageUI;
 			shell.layout();
 		});
 		
@@ -290,10 +409,6 @@ class CalculatorUILoad
 			terminateSignal.selectionShellterminated=false;
 			shell.dispose();
 			Shell newShell = new Shell(display);
-			newShell.setSize(800, 550);
-			newShell.setText("캐릭터 선택");
-			newShell.setLayout(new FormLayout());
-			
 			SelectCharacter selectionSet = new SelectCharacter(newShell);
 			selectionSet.setSelectionComposite();
 			newShell.open();
@@ -314,6 +429,7 @@ class CalculatorUILoad
 					ObjectInputStream in = new ObjectInputStream(new FileInputStream("data\\character_"+selectionSet.getSelected().name+".dfd"));
 					Object temp = in.readObject();
 					newCharacter = (Characters)temp;
+					newCharacter.updateDictionary();
 					in.close();
 				}catch(FileNotFoundException e)
 				{

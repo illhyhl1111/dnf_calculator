@@ -95,7 +95,7 @@ public class Parser {
 				if(skillRange.length>1) end = Integer.valueOf(skillRange[1]);
 				boolean TP=false;
 				if(data[0].equals("TP스킬")) TP=true;
-				list.addSkillRange(start, end, Integer.valueOf(data[2]), TP);
+				list.addSkillRange(start, end, Integer.valueOf(data[2]), TP, changeable, enableable);
 				return Integer.valueOf(data[2]);
 			}
 			catch(NumberFormatException e) {
@@ -106,11 +106,11 @@ public class Parser {
 				}
 				
 				if(data[data.length-selectOptionCount-2].equals("%")){
-					list.addSkill_damage(skillName, parseForm(data[data.length-selectOptionCount-1], 0));
+					list.addSkill_damage(skillName, parseForm(data[data.length-selectOptionCount-1], 0), changeable, enableable);
 					return parseForm(data[data.length-selectOptionCount-1], 0);
 				}
 				else{
-					list.addSkill(skillName, (int) (parseForm(data[data.length-selectOptionCount-1], 0)+0.00001));
+					list.addSkill(skillName, (int)Math.round(parseForm(data[data.length-selectOptionCount-1], 0)), changeable, enableable);
 					return parseForm(data[data.length-selectOptionCount-1], 0);
 				}
 			}

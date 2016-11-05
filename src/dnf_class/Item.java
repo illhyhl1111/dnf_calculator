@@ -4,22 +4,24 @@ import java.util.LinkedList;
 
 import dnf_calculator.FunctionStatusList;
 import dnf_calculator.StatusList;
+import dnf_InterfacesAndExceptions.CalculatorVersion;
 import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.Equip_type;
 import dnf_InterfacesAndExceptions.Item_rarity;
 import dnf_InterfacesAndExceptions.SetName;
 
-@SuppressWarnings("serial")
 public class Item extends IconObject implements Comparable<Item>
 {
+	private static final long serialVersionUID = 959789520197485666L;
 	private Item_rarity rarity;									//희귀도
 	public StatusList vStat;									//마을스탯
 	public StatusList dStat;									//인던스탯
 	public FunctionStatusList fStat;							//조건부 스탯
 	public LinkedList<String> explanation;						//설명
 	public int replicateNum;
+	public String Version;
 	
-	public Item(String name, String icon, Item_rarity rarity)
+	public Item(String name, String icon, Item_rarity rarity, String version)
 	{
 		super();
 		this.setName(name);
@@ -30,6 +32,7 @@ public class Item extends IconObject implements Comparable<Item>
 		fStat = new FunctionStatusList();
 		explanation = new LinkedList<String>();
 		replicateNum=0;
+		this.Version=version;
 	}
 	public Item()
 	{
@@ -40,6 +43,7 @@ public class Item extends IconObject implements Comparable<Item>
 		fStat = new FunctionStatusList();
 		explanation = new LinkedList<String>();
 		replicateNum=0;
+		this.Version=CalculatorVersion.DEFAULT;
 	}
 	
 	public Item_rarity getRarity() { return rarity;}
@@ -65,8 +69,11 @@ public class Item extends IconObject implements Comparable<Item>
 	@Override
 	public boolean equals(Object o)
 	{
-		if(o instanceof Item)
+		if(o instanceof Item){
 			if(getName().equals(((Item) o).getName()) ) return true;
+		}
+		else if(o instanceof String)
+			if(o.equals(getName())) return true;
 		return false;
 	}
 	
@@ -77,8 +84,8 @@ public class Item extends IconObject implements Comparable<Item>
 	public boolean setEmblem2(Emblem emblem) {return false;}
 	public boolean setPlatinum(Emblem emblem) {return false;}
 	public Equip_part getPart() {return null;}
-	public boolean getEnabled() {return true;}
-	public void setEnabled(boolean enabled){}
+	/*public boolean getEnabled() {return true;}
+	public void setEnabled(boolean enabled){}*/
 	public SetName getSetName() {return SetName.NONE;}
 	public Equip_type getEquipType() {return Equip_type.NONE;}
 	

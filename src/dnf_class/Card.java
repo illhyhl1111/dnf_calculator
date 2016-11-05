@@ -3,23 +3,23 @@ package dnf_class;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import dnf_InterfacesAndExceptions.CalculatorVersion;
 import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.Item_rarity;
 
-@SuppressWarnings("serial")
 public class Card extends Item implements java.io.Serializable
 {
 	private static final long serialVersionUID = 4716963298958477792L;
 	private ArrayList<Equip_part> availableType;
-	public Card(String name, Item_rarity rarity)
+	public Card(String name, Item_rarity rarity, String version)
 	{
-		super(name, "image\\Card\\"+name+".png", rarity);
+		super(name, "image\\Card\\"+name+".png", rarity, version);
 		availableType = new ArrayList<Equip_part>();
 	}
 	
 	public Card()
 	{
-		super("카드없음", null, Item_rarity.NONE);
+		super("카드없음", null, Item_rarity.NONE, CalculatorVersion.DEFAULT);
 		availableType = new ArrayList<Equip_part>();
 	}
 	
@@ -59,6 +59,14 @@ public class Card extends Item implements java.io.Serializable
 		return false;
 	}
 	
+	public int availableOrder()
+	{
+		int result=0;
+		for(Equip_part part : availableType)
+			if(part.order>result) result=part.order;
+		return result;
+	}
+	
 	@Override
 	public String getTypeName() { return "보주";}
 	
@@ -68,7 +76,8 @@ public class Card extends Item implements java.io.Serializable
 		else if(!(arg instanceof Card)) return 1;			// 1.
 		Card arg2 = (Card)arg;
 		
-		if(arg2.getRarity()!=this.getRarity()) return this.getRarity().rarity-arg2.getRarity().rarity;		// 2.
-		return arg2.getName().compareTo(this.getName());
+		if(arg2.availableOrder()!=availableOrder()) return arg2.availableOrder()-availableOrder();
+		if(arg2.getRarity()!=this.getRarity()) return arg2.getRarity().rarity-this.getRarity().rarity;		// 2.
+		return this.getName().compareTo(arg2.getName());
 	}
 }

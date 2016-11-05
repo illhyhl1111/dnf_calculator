@@ -3,22 +3,22 @@ package dnf_class;
 import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.Item_rarity;
 
-@SuppressWarnings("serial")
 public class Title extends Item
 {
+	private static final long serialVersionUID = 1992662128558331176L;
 	private Card card;										//보주
 	public final Equip_part part;							//부위
 	public boolean enabled;
-	public Title(String name, Item_rarity rarity, Card card)
+	public Title(String name, Item_rarity rarity, Card card, String version)
 	{
-		super(name, "image\\Title\\"+name+".png", rarity);
+		super(name, "image\\Title\\"+name+".png", rarity, version);
 		this.card=card;
 		part=Equip_part.TITLE;
 		enabled=false;
 	}
-	public Title(String name, Item_rarity rarity)
+	public Title(String name, Item_rarity rarity, String version)
 	{
-		super(name, "image\\Title\\"+name+".png", rarity);
+		super(name, "image\\Title\\"+name+".png", rarity, version);
 		this.card=new Card();
 		part=Equip_part.TITLE;
 		enabled=false;
@@ -50,10 +50,10 @@ public class Title extends Item
 		return false;
 	}
 	
-	@Override
+	/*@Override
 	public boolean getEnabled() {return enabled;}
 	@Override
-	public void setEnabled(boolean enabled){this.enabled=enabled;}
+	public void setEnabled(boolean enabled){this.enabled=enabled;}*/
 	
 	@Override
 	public int compareTo(Item arg) {

@@ -6,9 +6,9 @@ import dnf_InterfacesAndExceptions.StatList;
 import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 import dnf_InterfacesAndExceptions.UndefinedStatusKey;
 
-@SuppressWarnings("serial")
 public class StatusAndName implements java.io.Serializable, Cloneable
 {
+	private static final long serialVersionUID = -8422551765301136795L;
 	public int name;
 	public AbstractStatusInfo stat;
 	public boolean changeable;
@@ -75,7 +75,7 @@ public class StatusAndName implements java.io.Serializable, Cloneable
 		else throw new UndefinedStatusKey(name);
 		
 		if(StatList.DOUBLENUM_START<=this.name && this.name<=StatList.DOUBLENUM_END) this.stat=new DoubleStatusInfo(stat);
-		else if(StatList.INTNUM_START<=this.name && this.name<=StatList.INTNUM_END) this.stat=new StatusInfo((int) (stat+0.00001));
+		else if(StatList.INTNUM_START<=this.name && this.name<=StatList.INTNUM_END) this.stat=new StatusInfo((int)Math.round(stat));
 		else throw new StatusTypeMismatch("double");
 	}
 	public StatusAndName(String name, int stat) throws UndefinedStatusKey, StatusTypeMismatch
@@ -131,8 +131,9 @@ public class StatusAndName implements java.io.Serializable, Cloneable
 		reverseHash.put(StatList.CRT_PHY, "물리 크리티컬 히트 +"); reverseHash.put(StatList.CRT_MAG, "마법 크리티컬 히트 +"); reverseHash.put(StatList.CRT_LOW, "적 크리티컬 저항 -");
 		reverseHash.put(StatList.CRT_BACK_PHY, "백어택 물리 크리티컬 히트 +"); reverseHash.put(StatList.CRT_BACK_MAG, "백어택 마법 크리티컬 히트 +");
 		
-		reverseHash.put(StatList.MAST_IND, "독립 공격력 %증가 +"); reverseHash.put(StatList.MAST_PHY, "물리 공격력 %증가 +"); reverseHash.put(StatList.MAST_MAG, "마법 공격력 %증가 +");
-		reverseHash.put(StatList.MAST_PHY_2, "물리 공격력 %증가(2) +"); reverseHash.put(StatList.MAST_MAG_2, "마법 공격력 %증가(2) +");
+		reverseHash.put(StatList.MAST_IND, "독공 마스터리(%) +"); reverseHash.put(StatList.MAST_PHY, "물리 마스터리(%) +"); reverseHash.put(StatList.MAST_MAG, "마법 마스터리(%) +");
+		reverseHash.put(StatList.MAST_INDEP_ITEM, "독립 공격력 %증가 +"); reverseHash.put(StatList.MAST_PHY_ITEM, "물리 공격력 %증가 +"); reverseHash.put(StatList.MAST_MAG_ITEM, "마법 공격력 %증가 +");
+		reverseHash.put(StatList.MAST_PHY_2, "물리 마스터리(2) +"); reverseHash.put(StatList.MAST_MAG_2, "마법 마스터리(2) +");
 		reverseHash.put(StatList.BUF_INC, "스킬 데미지 증가(%) +"); reverseHash.put(StatList.BUF_CRT, "스킬 크리티컬 데미지 증가(%) +");
 		
 		reverseHash.put(StatList.SKILL, " Lv + "); reverseHash.put(StatList.SKILL_RANGE, " Lv 스킬 + ");
@@ -141,6 +142,7 @@ public class StatusAndName implements java.io.Serializable, Cloneable
 		reverseHash.put(StatList.DAM_INC_ADD, "데미지 추가 증가(%) +"); reverseHash.put(StatList.DAM_CRT_ADD, "크리티컬 데미지 추가 증가(%) +");
 		reverseHash.put(StatList.DEF_DEC_IGN, "적 방어력 무시(%) -");
 		reverseHash.put(StatList.WEP_NODEF_PHY_INC, "방어무시 물리 공격력 증가(%) +"); reverseHash.put(StatList.WEP_NODEF_MAG_INC, "방어무시 마법 공격력 증가(%) +");
+		//reverseHash.put(StatList.MAST_REFORGE, "재련 독립 공격력 %증가 +");
 		
 		reverseHashsetted=true;
 	}

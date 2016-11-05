@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import dnf_calculator.AbstractStatusInfo;
 import dnf_calculator.BooleanInfo;
 import dnf_calculator.DoubleStatusInfo;
+import dnf_calculator.LongStatusInfo;
 import dnf_InterfacesAndExceptions.MonsterType;
 import dnf_InterfacesAndExceptions.Monster_StatList;
 import dnf_InterfacesAndExceptions.UndefinedStatusKey;
@@ -31,17 +32,20 @@ public class Monster extends IconObject implements java.io.Serializable{							/
 	{
 		super();
 		this.setName(name);
-		this.setIcon("image//Monster//"+name+".png");
+		this.setIcon("image\\Monster\\"+name+".png");
 		monstInfo = new AbstractStatusInfo[Monster_StatList.STATNUM];
 		int i;
 		for(i=0; i<Monster_StatList.BOOLNUM; i++)
 			monstInfo[i] = new BooleanInfo(false);
 		
-		for(; i<Monster_StatList.STATNUM-Monster_StatList.DOUBLENUM; i++)
+		for(; i<Monster_StatList.STATNUM-Monster_StatList.DOUBLENUM-Monster_StatList.LONGNUM; i++)
 			monstInfo[i] = new StatusInfo(0);
 		
-		for(; i<Monster_StatList.STATNUM; i++)
+		for(; i<Monster_StatList.STATNUM-Monster_StatList.LONGNUM; i++)
 			monstInfo[i] = new DoubleStatusInfo(0.0);
+		
+		for(; i<Monster_StatList.STATNUM; i++)
+			monstInfo[i] = new LongStatusInfo(0);
 		
 		monstInfo[Monster_StatList.TYPE-Monster_StatList.STARTNUM] = new StatusInfo(MonsterType.NORMAL);
 		monsterFeature = new HashMap<MonsterOption, StatusList>();
@@ -57,11 +61,14 @@ public class Monster extends IconObject implements java.io.Serializable{							/
 		for(i=0; i<Monster_StatList.BOOLNUM; i++)
 			monstInfo[i] = new BooleanInfo(false);
 		
-		for(; i<Monster_StatList.STATNUM-Monster_StatList.DOUBLENUM; i++)
+		for(; i<Monster_StatList.STATNUM-Monster_StatList.DOUBLENUM-Monster_StatList.LONGNUM; i++)
 			monstInfo[i] = new StatusInfo(0);
 		
-		for(; i<Monster_StatList.STATNUM; i++)
+		for(; i<Monster_StatList.STATNUM-Monster_StatList.LONGNUM; i++)
 			monstInfo[i] = new DoubleStatusInfo(0.0);
+		
+		for(; i<Monster_StatList.STATNUM; i++)
+			monstInfo[i] = new LongStatusInfo(0);
 		
 		monstInfo[Monster_StatList.TYPE-Monster_StatList.STARTNUM] = new StatusInfo(MonsterType.NORMAL);
 		monsterFeature = new HashMap<MonsterOption, StatusList>();
@@ -149,6 +156,17 @@ public class Monster extends IconObject implements java.io.Serializable{							/
 		else throw new UndefinedStatusKey(stat);
 	}
 	
+	public long getLongStat(int stat) throws StatusTypeMismatch
+	{
+		return (long) monstInfo[stat-Monster_StatList.STARTNUM].getStatToDouble();
+	}
+	public long getLongStat(String stat) throws UndefinedStatusKey, StatusTypeMismatch
+	{
+		if(getStatHash().containsKey(stat))
+			return (long) monstInfo[getStatHash().get(stat)-Monster_StatList.STARTNUM].getStatToDouble();
+		else throw new UndefinedStatusKey(stat);
+	}
+	
 	public boolean getBool(int stat) throws StatusTypeMismatch
 	{
 		if(monstInfo[stat-Monster_StatList.STARTNUM] instanceof BooleanInfo)
@@ -182,6 +200,19 @@ public class Monster extends IconObject implements java.io.Serializable{							/
 		else throw new StatusTypeMismatch("Double");
 	}
 	
+	public void setLongStat(int stat, long strength) throws StatusTypeMismatch
+	{
+		if(monstInfo[stat-Monster_StatList.STARTNUM] instanceof LongStatusInfo)
+			((LongStatusInfo)monstInfo[stat-Monster_StatList.STARTNUM]).setInfo(strength);
+		else throw new StatusTypeMismatch("Long");
+	}
+	public void setLongStat(int stat, int strength) throws StatusTypeMismatch
+	{
+		if(monstInfo[stat-Monster_StatList.STARTNUM] instanceof LongStatusInfo)
+			((LongStatusInfo)monstInfo[stat-Monster_StatList.STARTNUM]).setInfo(strength);
+		else throw new StatusTypeMismatch("Long");
+	}
+	
 	public void setStat(String stat, Object strength) throws UndefinedStatusKey, StatusTypeMismatch
 	{
 		if(getStatHash().containsKey(stat)){
@@ -192,6 +223,10 @@ public class Monster extends IconObject implements java.io.Serializable{							/
 				setBooleanStat(getStatHash().get(stat), (boolean)strength);
 			else if(monstInfo[statNum-Monster_StatList.STARTNUM] instanceof DoubleStatusInfo && strength instanceof Double)
 				setDoubleStat(getStatHash().get(stat), (double)strength);
+			else if(monstInfo[statNum-Monster_StatList.STARTNUM] instanceof LongStatusInfo && strength instanceof Long)
+				setLongStat(getStatHash().get(stat), (long)strength);
+			else if(monstInfo[statNum-Monster_StatList.STARTNUM] instanceof LongStatusInfo && strength instanceof Integer)
+				setLongStat(getStatHash().get(stat), (int)strength);
 			else throw new StatusTypeMismatch(strength.getClass().getName());
 		}
 		else throw new UndefinedStatusKey(stat);

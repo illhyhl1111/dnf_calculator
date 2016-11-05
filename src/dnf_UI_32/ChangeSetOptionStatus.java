@@ -26,6 +26,8 @@ import dnf_InterfacesAndExceptions.SetName;
 import dnf_InterfacesAndExceptions.StatList;
 import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 import dnf_calculator.ElementInfo;
+import dnf_calculator.SkillRangeStatusInfo;
+import dnf_calculator.SkillStatusInfo;
 import dnf_calculator.StatusAndName;
 import dnf_class.SetOption;
 import dnf_infomation.GetDictionary;
@@ -140,11 +142,12 @@ public class ChangeSetOptionStatus extends Dialog{
 		Text statNum;
 		Label maxStatNum;
 		Button enable;
+		Button enable2;
 		Label stat2;
 		
 		strength = String.format("%.1f", s.stat.getStatToDouble());
 		maxStrength = String.format("%.1f", maxS.stat.getStatToDouble());
-		if(s.stat instanceof ElementInfo && maxStrength.equals("0.0")){
+		if(s.stat instanceof ElementInfo && maxStrength.equals("0.0") || s.stat instanceof SkillStatusInfo && strength.equals("0.0")){
 			statNum=null;
 			enable=null;
 		}
@@ -153,8 +156,16 @@ public class ChangeSetOptionStatus extends Dialog{
 			if(maxStrength.contains(".0")) maxStrength=maxStrength.substring(0, maxStrength.length()-2);
 			
 			statName  = new Label(itemInfo, SWT.NONE);
-			statName.setText(StatusAndName.getStatHash().get(s.name));
+			String name = StatusAndName.getStatHash().get(s.name);
+			if(s.name==StatList.SKILL || s.name==StatList.SKILL_RANGE)
+				name = s.stat.getStatToString()+name;
+			statName.setText(name);
 			statName.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false));
+			
+			if(s.stat instanceof SkillRangeStatusInfo && ((SkillRangeStatusInfo)s.stat).getTP())
+			{
+				statName.setText("TP - "+statName.getText());
+			}
 			
 			statNum = new Text(itemInfo, SWT.NONE);
 			statNum.setText(strength);
@@ -172,6 +183,9 @@ public class ChangeSetOptionStatus extends Dialog{
 			enable.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, true, false));
 			enable.setSelection(s.enabled);
 			
+			statName.setEnabled(s.enabled);
+			statNum.setEnabled(s.enabled);
+			maxStatNum.setEnabled(s.enabled);
 			
 			if(s.changeable){
 				statNum.addVerifyListener(new TextInputOnlyNumbers(Integer.valueOf(maxStrength)));
@@ -201,7 +215,7 @@ public class ChangeSetOptionStatus extends Dialog{
 		
 		if(s.stat instanceof ElementInfo && ((ElementInfo)s.stat).getElementEnabled()==true)
 		{
-			stat2 = new Label(itemInfo, SWT.WRAP);
+			stat2 = new Label(itemInfo, SWT.WRAP | SWT.CENTER);
 			switch(s.name)
 			{
 			case StatList.ELEM_FIRE:
@@ -217,13 +231,14 @@ public class ChangeSetOptionStatus extends Dialog{
 				stat2.setText(" 무기에 암속성 부여");
 				break;
 			}
-			stat2.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 3, 1));
-			if(enable == null){
-				Button enable2 = new Button(itemInfo, SWT.CHECK);
-				enable2.setText("활성화");
+			stat2.setEnabled(s.enabled);
+			if(enable == null && s.enableable){
+				stat2.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false, 3, 1));
+				enable2 = new Button(itemInfo, SWT.CHECK);
+				enable2.setText("옵션 켜기");
 				enable2.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, true, false));
-				
-				enable2.setSelection(true);
+
+				enable2.setSelection(s.enabled);
 				enable2.addSelectionListener(new SelectionAdapter()
 				{
 					@Override
@@ -234,18 +249,71 @@ public class ChangeSetOptionStatus extends Dialog{
 				});
 			}
 			else{
-				enable.addSelectionListener(new SelectionAdapter()
+				stat2.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 4, 1));
+				if(enable!=null){
+					enable2=null;
+					enable.addSelectionListener(new SelectionAdapter()
+					{
+						@Override
+						public void widgetSelected(SelectionEvent e) {
+							boolean enabled = enable.getSelection();
+							stat2.setEnabled(enabled);
+						}
+					});
+				}
+				else{
+					stat2.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 3, 1));
+					enable2 = new Button(itemInfo, SWT.CHECK);
+					enable2.setSelection(true);
+					enable2.setVisible(false);
+				}
+			}
+		}
+		else if(s.stat instanceof SkillStatusInfo && ((SkillStatusInfo)s.stat).getIncrease()>1.0005)
+		{
+			stat2 = new Label(itemInfo, SWT.WRAP | SWT.CENTER);
+			stat2.setText(s.stat.getStatToString()+" 데미지 증가 + "+ String.format("%.1f", ((SkillStatusInfo)s.stat).getIncrease()));
+			stat2.setEnabled(s.enabled);
+			if(enable == null && s.enableable){
+				stat2.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 3, 1));
+				enable2 = new Button(itemInfo, SWT.CHECK);
+				enable2.setText("옵션 켜기");
+				enable2.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, true, false));
+				
+				enable2.setSelection(s.enabled);
+				enable2.addSelectionListener(new SelectionAdapter()
 				{
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						boolean enabled = enable.getSelection();
+						boolean enabled = enable2.getSelection();
 						stat2.setEnabled(enabled);
 					}
 				});
 			}
+			else{
+				stat2.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 4, 1));
+				if(enable!=null){
+					enable2=null;
+					enable.addSelectionListener(new SelectionAdapter()
+					{
+						@Override
+						public void widgetSelected(SelectionEvent e) {
+							boolean enabled = enable.getSelection();
+							stat2.setEnabled(enabled);
+						}
+					});
+				}
+				else{
+					stat2.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 3, 1));
+					enable2 = new Button(itemInfo, SWT.CHECK);
+					enable2.setSelection(true);
+					enable2.setVisible(false);
+				}
+			}
 		}
-		
-		return new Wrapper(statNum, enable);
+		else enable2=null;
+		if(enable!=null) return new Wrapper(statNum, enable);
+		return new Wrapper(statNum, enable2);
 	}
 	
 	@Override

@@ -6,9 +6,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
-
-
-
 import dnf_calculator.Calculator;
 import dnf_calculator.Status;
 import dnf_class.Characters;

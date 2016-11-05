@@ -3,6 +3,7 @@ package dnf_infomation;
 import java.util.Arrays;
 import java.util.LinkedList;
 
+import dnf_InterfacesAndExceptions.CalculatorVersion;
 import dnf_InterfacesAndExceptions.Character_type;
 import dnf_InterfacesAndExceptions.Element_type;
 import dnf_InterfacesAndExceptions.Equip_part;
@@ -39,6 +40,7 @@ public class EquipmentInfo {
 		SetName setName=null;
 		int level=0;
 		boolean isRare=false;
+		String version=null;
 		String[] stat=null;
 		
 		Equipment equipment;
@@ -89,14 +91,19 @@ public class EquipmentInfo {
 				else if(temp.equals(""));	//이전 값 유지
 				else throw new ParsingException(i-1, temp);
 				
-				//레벨
+				//제작
 				temp = data[i++];
 				if(temp instanceof Boolean) isRare = (boolean) temp;
 				else if(temp.equals(""));	//이전 값 유지
 				else throw new ParsingException(i-1, temp);
 				
-				if(isWeapon) equipment = new Weapon(name, rarity, weaponType, setName, level, isRare);
-				else equipment = new Equipment(name, rarity, part, type, setName, level, isRare);
+				if(data[i] instanceof String && ((String)data[i]).contains("ver_"))
+					version = (String) data[i++];
+				else
+					version = CalculatorVersion.VER_1_0_a;
+				
+				if(isWeapon) equipment = new Weapon(name, rarity, weaponType, setName, level, isRare, version);
+				else equipment = new Equipment(name, rarity, part, type, setName, level, isRare, version);
 			}
 			catch(Exception e){
 				e.printStackTrace();
@@ -150,11 +157,11 @@ public class EquipmentInfo {
 	
 	public static Object[] equipmentInfo()
 	{
-		FunctionStat fStat[] = new FunctionStat[11];
+		FunctionStat fStat[] = new FunctionStat[20];
 		
 		//익스포젼 헤비 각반
 		fStat[0] = new FunctionStat() {
-			private static final long serialVersionUID = -4590364678263064444L;
+			private static final long serialVersionUID = 1L;
 			@Override
 			public StatusList function(Characters character, Monster monster, Object item) {
 				Equipment equipment =(Equipment)item;
@@ -166,7 +173,7 @@ public class EquipmentInfo {
 		
 		//집척목, 암칼반
 		fStat[1] = new FunctionStat() {
-			private static final long serialVersionUID = 4036286523104766974L;
+			private static final long serialVersionUID = 1L;
 			@Override
 			public StatusList function(Characters character, Monster monster, Object item) {
 				int count=0;
@@ -185,7 +192,7 @@ public class EquipmentInfo {
 		
 		//황홀경
 		fStat[2] = new FunctionStat() {
-			private static final long serialVersionUID = -7780279158612957210L;			
+			private static final long serialVersionUID = 1L;
 			@Override
 			public StatusList function(Characters character, Monster monster, Object item) {
 				Equipment equipment =(Equipment)item;
@@ -200,7 +207,7 @@ public class EquipmentInfo {
 		
 		//흑백마음
 		fStat[3] = new FunctionStat() {
-			private static final long serialVersionUID = -7780279158612957210L;		
+			private static final long serialVersionUID = 1L;
 			@Override
 			public StatusList function(Characters character, Monster monster, Object item) {
 				StatusList statList = new StatusList();
@@ -212,28 +219,30 @@ public class EquipmentInfo {
 		
 		//조테카
 		fStat[4] = new FunctionStat() {
-			private static final long serialVersionUID = -7055122057802138808L;
+			private static final long serialVersionUID = 1L;
 			@Override
 			public StatusList function(Characters character, Monster monster, Object item) {
 				StatusList statList = new StatusList();
-				if(character.getItemSetting().weapon.getName().startsWith("구원의 이기 - "))
+				if(character.getItemSetting().weapon.getName().startsWith("구원의 이기 - ") && character.getItemSetting().weapon.dStat.statList.getLast().enabled)
 					statList.addStatList("스증뎀", 12.5);
+				else if(character.getItemSetting().weapon.getName().startsWith("창성의 구원자 - ") && character.getItemSetting().weapon.dStat.statList.getLast().enabled)
+					statList.addStatList("스증뎀", (137.0/122.0-1)*100);
 				return statList;
 			}
 		};
 		
 		//조로크
 		fStat[5] = new FunctionStat() {
-			private static final long serialVersionUID = -4289570411103128538L;
+			private static final long serialVersionUID = 1L;
 			@Override
 			public StatusList function(Characters character, Monster monster, Object item) {
 				StatusList statList = new StatusList();
 				Weapon weapon = character.getItemSetting().weapon;
-				if(character.getItemSetting().weapon.getName().startsWith("구원의 이기 - ")){
+				if(character.getItemSetting().weapon.getName().startsWith("구원의 이기 - ") || character.getItemSetting().weapon.getName().startsWith("창성의 구원자 - ")){
 					try {
-						int phy = (int)(weapon.vStat.findStat(StatList.WEP_PHY).stat.getStatToDouble()*0.15+0.00001);
-						int mag = (int)(weapon.vStat.findStat(StatList.WEP_MAG).stat.getStatToDouble()*0.15+0.00001);
-						int ind = (int)(weapon.vStat.findStat(StatList.WEP_IND).stat.getStatToDouble()*0.18+0.00001);
+						int phy = (int)Math.round(weapon.vStat.findStat(StatList.WEP_PHY).stat.getStatToDouble()*0.15);
+						int mag = (int)Math.round(weapon.vStat.findStat(StatList.WEP_MAG).stat.getStatToDouble()*0.15);
+						int ind = (int)Math.round(weapon.vStat.findStat(StatList.WEP_IND).stat.getStatToDouble()*0.18);
 						statList.addStatList("물공", phy);
 						statList.addStatList("마공", mag);
 						statList.addStatList("독공", ind);
@@ -247,12 +256,14 @@ public class EquipmentInfo {
 		
 		//조그네스
 		fStat[6] = new FunctionStat() {
-			private static final long serialVersionUID = -1627633319961139363L;
+			private static final long serialVersionUID = 1L;
 			@Override
 			public StatusList function(Characters character, Monster monster, Object item) {
 				StatusList statList = new StatusList();
 				if(character.getItemSetting().weapon.getName().startsWith("구원의 이기 - "))
 					statList.addStatList("스증뎀", (155.0/135.0-1)*100);
+				else if(character.getItemSetting().weapon.getName().startsWith("창성의 구원자 - "))
+					statList.addStatList("스증뎀", (160.0/140.0-1)*100);
 				return statList;
 			}
 		};
@@ -260,7 +271,6 @@ public class EquipmentInfo {
 		//고스로리 드레스
 		fStat[7] = new FunctionStat() {
 			private static final long serialVersionUID = 1L;
-
 			@Override
 			public StatusList function(Characters character, Monster monster, Object item) {
 				StatusList statList = new StatusList();
@@ -276,7 +286,7 @@ public class EquipmentInfo {
 		
 		//불꽃너울
 		fStat[8] = new FunctionStat(){
-			private static final long serialVersionUID = 5505622447332872280L;
+			private static final long serialVersionUID = 1L;
 
 			@Override
 			public StatusList function(Characters character, Monster monster, Object item) {
@@ -313,7 +323,7 @@ public class EquipmentInfo {
 		
 		//파워드 철갑
 		fStat[9] = new FunctionStat(){
-			private static final long serialVersionUID = 7481039452146325482L;
+			private static final long serialVersionUID = 1L;
 			@Override
 			public StatusList function(Characters character, Monster monster, Object item) {
 				StatusList statList = new StatusList();
@@ -336,8 +346,9 @@ public class EquipmentInfo {
 			}
 		};
 		
+		//목각
 		fStat[10] = new FunctionStat(){
-			private static final long serialVersionUID = 3985320867418376540L;
+			private static final long serialVersionUID = 1L;
 			@Override
 			public StatusList function(Characters character, Monster monster, Object item) {
 				StatusList statList = new StatusList();
@@ -345,6 +356,55 @@ public class EquipmentInfo {
 				if(type!=Character_type.DEMONICLANCER && type!=Character_type.GUNNER_F && type!=Character_type.GUNNER_M &&
 						type!=Character_type.MAGE_F && type!=Character_type.MAGE_M){
 					statList.addSkillRange(45, 45, 1, false);
+				}
+				return statList;
+			}
+		};
+		
+		//나가자라
+		fStat[11] = new FunctionStat(){
+			private static final long serialVersionUID = 1L;
+			@Override
+			public StatusList function(Characters character, Monster monster, Object item) {
+				StatusList statList = new StatusList();
+				Equipment equip = (Equipment)item;
+				int reinforce = equip.getReinforce()>15 ? 15 : equip.getReinforce();
+				if(equip.getPart()==Equip_part.ROBE) statList.addStatList("추뎀", reinforce);
+				else if(equip.getPart()==Equip_part.SHOULDER) statList.addStatList("스증뎀", reinforce);
+				return statList;
+			}
+		};
+	
+		//칠죄종
+		fStat[12] = new FunctionStat(){
+			private static final long serialVersionUID = 1L;
+			@Override
+			public StatusList function(Characters character, Monster monster, Object item) {
+				StatusList statList = new StatusList();
+				Equipment equip = (Equipment)item;
+				switch(equip.getPart()){
+				case ROBE:
+					for(Skill skill : character.getSkillList())
+						if(skill.firstLevel==45) statList.addSkill_damage(skill.getName(), 12);
+					break;
+				case TROUSER:
+					for(Skill skill : character.getSkillList())
+						if(skill.firstLevel==40) statList.addSkill_damage(skill.getName(), 12);
+					break;
+				case SHOULDER:
+					for(Skill skill : character.getSkillList())
+						if(skill.firstLevel==35) statList.addSkill_damage(skill.getName(), 15);
+					break;
+				case BELT:
+					for(Skill skill : character.getSkillList())
+						if(skill.firstLevel==30) statList.addSkill_damage(skill.getName(), 15);
+					break;
+				case SHOES:
+					for(Skill skill : character.getSkillList())
+						if(skill.firstLevel==25) statList.addSkill_damage(skill.getName(), 15);
+					break;
+				default:
+					break;
 				}
 				return statList;
 			}
@@ -424,16 +484,16 @@ public class EquipmentInfo {
 				"오기일의 꽃 버선", "", "--", "", "", "", "",
 				"힘 83 가변", "지능 114 가변", "모속강 14 가변", "물크 5", "마크 5", "모공증 3", null,
 				/////게슈펜슈트
-				"망상의 파라노이아", "", Equip_part.ROBE, "", SetName.GESPENST, 90, true,
-				"설명 (미구현)", null,
-				"애착의 나르시즘", "", "--", "", "", "", "",
-				"설명 (미구현)", null,
-				"붕괴의 게슈탈트", "", "--", "", "", "", "",
-				"설명 (미구현)", null,
-				"죽음의 타나토스", "", "--", "", "", "", "",
-				"설명 (미구현)", null,
-				"인격의 페르소나", "", "--", "", "", "", "",
-				"설명 (미구현)", null,
+				"망상의 파라노이아", "", Equip_part.ROBE, "", SetName.GESPENST, 90, true, 
+				"지능 53 가변", "ㄷ 힘 -50", "ㄷ 지능 -50", "ㄷ 스킬 1-85 1 선택", "ㄷ 스킬 1-85 1 선택", "설명 현실은 곧 꿈이 되고", "설명 꿈은 곧 현실이 되니", null,
+				"애착의 나르시즘", "", "--", "", "", "", "", 
+				"지능 53 가변", "물크 5", "마크 5", "모속강 45 가변", "설명 벗어날 수 없는 애증에 빠져", null,
+				"붕괴의 게슈탈트", "", "--", "", "", "", "", 
+				"지능 43 가변", "%물방깍_템 25 선택", "%마방깍_템 25 선택", "설명 현실과 꿈의 경계가 붕괴할 때", null,
+				"죽음의 타나토스", "", "--", "", "", "", "", 
+				"지능 32 가변", "ㄷ 화속깍 35 선택", "ㄷ 수속깍 35 선택", "ㄷ 명속깍 35 선택", "ㄷ 암속깍 35 선택", "설명 스스로를 죽음으로 옭아멜 것이다.",  null,
+				"인격의 페르소나", "", "--", "", "", "", "", 
+				"지능 32 가변", "물공 61 가변", "마공 61 가변", "독공 69 가변", "모공증 15", "설명 네 안의 또 다른 네가.", null,
 				
 				//////////가죽
 				/////카멜
@@ -462,7 +522,7 @@ public class EquipmentInfo {
 				"밤의 그림자 상의", "", Equip_part.ROBE, "", SetName.ASSASSIN, 85, "",
 				"힘 92 가변", "지능 92 가변", "증뎀 18", null,
 				"붉은 송곳니 하의", "", "--", "", "", "", "",
-				"힘 92 가변", "지능 92 가변", "크증뎀 18", null,
+				"힘 92 가변", "지능 92 가변", "크증뎀 15", null,
 				"어둠의 칼날 어깨", "", "--", "", "", "", "",
 				"힘 67 가변", "지능 67 가변", "물크 5", "마크 5", "ㄷ 물크 10 선택", "ㄷ 마크 10 선택", null,
 				"죽음의 장막 벨트", "", "--", "", "", "", "",
@@ -477,7 +537,7 @@ public class EquipmentInfo {
 				"강인한 레이온 갈기 숄더", "", "--", "", "", "", "",
 				"힘 35 가변", "지능 35 가변", "추크증 12", null,
 				"저먼채널 레이 휩 벨트", "", "--", "", "", "", "",
-				"힘 26 가변", "지능 26 가변", "물공 132 가변", "마공 132 가변", "독공 132 가변", "증뎀 10", null,
+				"힘 26 가변", "지능 26 가변", "물공 132 가변", "마공 132 가변", "독공 152 가변", "증뎀 10", null,
 				"창공의 알바트로스 깃털 부츠", "", "--", "", "", "", "",
 				"힘 26 가변", "지능 26 가변", "물크 5", "마크 5", "크증뎀 15", null,
 				/////블랙포멀, 신사
@@ -492,16 +552,16 @@ public class EquipmentInfo {
 				"블랙 포멀 부츠", "", "--", "", "", "", "",
 				"힘 158 가변", "지능 158 가변", "물공 66 가변", "마공 66 가변", "독공 76 가변", "추크증 4", null,
 				/////핀드
-				"니힐룸의 이공간", "", Equip_part.ROBE, "", SetName.FIENDVENATOR, 90, true,
-				"설명 (미구현)", null,
+				"니힐룸의 이공간", "", Equip_part.ROBE, "", SetName.FIENDVENATOR, 90, true, 
+				"힘 45 가변", "지능 45 가변", "모속강 18 가변", "추뎀 12", "설명 만물의 시간을 보내며", "설명 이 순간만을 기다렸다", null,
 				"니겔루스의 초합금", "", "--", "", "", "", "",
-				"설명 (미구현)", null,
-				"갈바누스의 성장", "", "--", "", "", "", "",
-				"설명 (미구현)", null,
-				"위로르의 증기", "", "--", "", "", "", "",
-				"설명 (미구현)", null,
-				"루벨루스의 염화", "", "--", "", "", "", "",
-				"설명 (미구현)", null,
+				"힘 45 가변", "지능 45 가변", "암속강 18 가변", "ㄷ 물공뻥 12", "ㄷ 마공뻥 12", "ㄷ 독공뻥 12", "설명 누구도 감당할 수 없는", "설명 무력을 가진 자", null,
+				"갈바누스의 성장", "", "--", "", "", "", "", 
+				"힘 35 가변", "지능 35 가변", "명속강 18 가변", "모공증 12", "설명 에너지의 주인이자", "설명 그 자체인 자", null,
+				"위로르의 증기", "", "--", "", "", "", "", 
+				"힘 26 가변", "지능 26 가변", "수속강 18 가변", "추증뎀 12", "설명 눈이 보이지만 잡을 수 없고", "설명 그 어디에도 존재하는 자", null,
+				"루벨루스의 염화", "", "--", "", "", "", "", 
+				"힘 26 가변", "지능 26 가변", "화속강 18 가변", "추크증 12", "설명 끊임없는 불길로", "설명 모든 것을 태우는 자", null,
 
 				/////////경갑
 				/////서브마린
@@ -560,16 +620,16 @@ public class EquipmentInfo {
 				"눈부신 황금 갑주 신발", "", "--", "", "", "", "",
 				"힘 109 가변", "지능 98 가변", "모속강 22", "ㄷ 힘뻥 5", "ㄷ 지능뻥 5", null,
 				/////초대륙
-				"초대륙 - 발바라의 대지", "", Equip_part.ROBE, "", SetName.SUPERCONTINENT, 90, true,
-				"설명 (미구현)", null,
-				"초대륙 - 판게아의 지진", "", "--", "", "", "", "",
-				"설명 (미구현)", null,
-				"초대륙 - 파노티아의 화산", "", "--", "", "", "", "",
-				"설명 (미구현)", null,
-				"초대륙 - 로디니아의 용암", "", "--", "", "", "", "",
-				"설명 (미구현)", null,
-				"초대륙 - 케놀랜드의 지각", "", "--", "", "", "", "",
-				"설명 (미구현)", null,
+				"초대륙 - 발바라의 대지", "", Equip_part.ROBE, "", SetName.SUPERCONTINENT, 90, true, 
+				"힘 53 가변", "지능 35 가변", "스킬 1-85 1", "스킬 15-48 1", "설명 모든 세계는 이곳으로 부터 시작되니", null,
+				"초대륙 - 판게아의 지진", "", "--", "", "", "", "", 
+				"힘 53 가변", "지능 35 가변", "추증뎀 18", "ㄷ 물크 7 선택", "ㄷ 마크 7 선택", "설명 아직 끝나지 않았음을..", null,
+				"초대륙 - 파노티아의 화산", "", "--", "", "", "", "", 
+				"힘 43 가변", "지능 29 가변", "추크증 18", "설명 억겁의 세월을 보내며", null,
+				"초대륙 - 로디니아의 용암", "", "--", "", "", "", "", 
+				"힘 32 가변", "지능 21 가변", "ㄷ 물크 2 선택", "ㄷ 마크 2 선택", "ㄷ 모공증 18 선택", "설명 셀수 없는 탄생과 죽음이 지나가고", null,
+				"초대륙 - 케놀랜드의 지각", "", "--", "", "", "", "", 
+				"힘 32 가변", "지능 21 가변", "ㄷ 물크 2 선택", "ㄷ 마크 2 선택", "ㄷ 물공뻥 18 선택", "ㄷ 마공뻥 18 선택", "ㄷ 독공뻥 18 선택", "설명 살아남은 모든 것들의 진화는", null,
 				
 				/////////중갑
 				/////미다홀
@@ -609,11 +669,11 @@ public class EquipmentInfo {
 				"리엑터 코어 메일", "", Equip_part.ROBE, "", SetName.NONE, 90, "",
 				"힘 48 가변", "지능 35 가변", "증뎀 12", "크증뎀 10", null,
 				"익스포젼 헤비 각반", "", "--", "", "", "", "",
-				"힘 48 가변", "지능 35 가변", "ㄷ 모공증 15 선택", "ㄷ 스증 15 선택", fStat[0], "설명 옵션 2개 모두 선택시 스증옵션만 적용", null,
+				"힘 48 가변", "지능 35 가변", "ㄷ 모공증 15 선택", "ㄷ 스증 15 선택", fStat[0], "설명 옵션 2개 모두 선택시 스증옵션 적용", null,
 				"컨테미네이션 폴드런", "", "--", "", "", "", "",
 				"힘 122 가변", "지능 111 가변", "모공증 12 선택", null,
 				"퓨어로드 코일", "", "--", "", "", "", "",
-				"힘 112 가변", "지능 103 가변", "ㄷ 물공 100 가변", "ㄷ 마공 100 가변", "ㄷ 독공 100 가변", "ㄷ 물공 80", "ㄷ 마공 80", "ㄷ 독공 80", null,
+				"힘 112 가변", "지능 103 가변", "ㄷ 물공 100", "ㄷ 마공 100", "ㄷ 독공 115", "ㄷ 물공 80 선택", "ㄷ 마공 80 선택", "ㄷ 독공 92 선택", null,
 				"멜트다운 사바톤", "", "--", "", "", "", "",
 				"힘 525 가변", "지능 516 가변", null,
 				/////고대전쟁의 여신
@@ -628,16 +688,16 @@ public class EquipmentInfo {
 				"천년전쟁 영웅의 체인슈즈", "", "--", "", "", "", "",
 				"힘 30 가변", "지능 21 가변", "모속강 26 가변", "물크 10", "마크 10", null,
 				/////나자라라
-				"역린의 마나스빈", "", Equip_part.ROBE, "", SetName.NAGARAJA, 90, true,
-				"설명 (미구현)", null,
+				"역린의 마나스빈", "", Equip_part.ROBE, "", SetName.NAGARAJA, 90, true, 
+				"힘 48 가변", "지능 35 가변", "추뎀 7", fStat[11], "설명 강화/증폭 1마다 추가데미지 1% 증가(최대 15강)", "설명  ", "설명 모든 것을 혼돈에 빠뜨려", null,
 				"유해교반의 바스키", "", "--", "", "", "", "",
-				"설명 (미구현)", null,
+				"힘 48 가변", "지능 35 가변", "화속강 14 가변", "ㄷ 물공뻥 13", "ㄷ 마공뻥 13", "ㄷ 독공뻥 13", "설명 끝없는 욕심의 무게가", null,
 				"해룡왕 사가라", "", "--", "", "", "", "",
-				"설명 (미구현)", null,
+				"힘 40 가변", "지능 29 가변", "수속강 14 가변", fStat[11], "설명 강화/증폭 1마다 스킬 데미지 1% 증가(최대 15강)", "설명  ", "설명 죽음의 끝에 홀로남아", null,
 				"자객의 탁샤카", "", "--", "", "", "", "",
-				"설명 (미구현)", null,
+				"힘 30 가변", "지능 21 가변", "암속강 14 가변", "ㄷ 물크 25 선택", "ㄷ 마크 25 선택", "설명 모든 것을 집어 삼키리라", null,
 				"거련의 우트파라카", "", "--", "", "", "", "",
-				"설명 (미구현)", null,
+				"힘 30 가변", "지능 21 가변", "명속강 14 가변", "스킬 48-80 2", "설명 평화는 오래 가지 못하였으니", null,
 				
 				/////////판금
 				/////인피티니
@@ -668,7 +728,7 @@ public class EquipmentInfo {
 				"플레이트 매직아머 하의", "", "--", "", "", "", "",
 				"힘 98 가변", "지능 98 가변", "ㄷ 물공 100 선택", "ㄷ 마공 100 선택", "ㄷ 독공 100 선택", null,
 				"플레이트 레인지아머 보호대", "", "--", "", "", "", "",
-				"힘 34 가변", "지능 34 가변", "물크 7", "마크 7", "ㄷ 크증뎀 15", null,
+				"힘 34 가변", "지능 34 가변", "물크 7", "마크 7", "ㄷ 크증뎀 15 선택", null,
 				"플레이트 앱솔루트아머 벨트", "", "--", "", "", "", "",
 				"힘 190 가변", "지능 190 가변", null,
 				"플레이트 윙아머 부츠", "", "--", "", "", "", "",
@@ -697,15 +757,16 @@ public class EquipmentInfo {
 				"힘 136 가변", "지능 136 가변", "물크 7", "마크 7", "스킬 35-48 1", null,
 				/////칠죄종
 				"오만에 가득찬 눈", "", Equip_part.ROBE, "", SetName.SEVENSINS, 90, true,
-				"설명 (미구현)", null,
-				"폭식하는 입", "", "--", "", "", "", "",
-				"설명 (미구현)", null,
-				"탐식을 쥐는 손", "", "--", "", "", "", "",
-				"설명 (미구현)", null,
+				"힘 100 가변", "지능 100 가변", "스킬 스트라이킹 3", "스킬 스트라이킹 % 15", "ㄷ 적방무 15 선택", fStat[12], "설명 45레벨 스킬 공격력 12% 증가", "설명  ", "설명 오만함에 잠기기 시작한 자는", null,
+				"폭식하는 입", "", "--", "", "", "", "", 
+				"힘 100 가변", "지능 100 가변", "스킬 지혜의 축복 3", "스킬 지혜의 축복 % 15", "ㄷ 물공뻥 15 선택", "ㄷ 마공뻥 15 선택", "ㄷ 독공뻥 15 선택",
+				fStat[12], "설명 40레벨 스킬 공격력 12% 증가", "설명  ", "설명 주체할 수 없는 탐의 말로는", null,
+				"탐식을 쥐는 손", "", "--", "", "", "", "", 
+				"힘 211 가변", "지능 211 가변", "스킬 크로스 크래쉬 3", "스킬 크로스 크래쉬 % 20", "ㄷ 스증 8", fStat[12], "설명 35레벨 스킬 공격력 15% 증가", "설명  ", "설명 모든 것을 가지려는 욕심과", null,
 				"질투를 말하는 혀", "", "--", "", "", "", "",
-				"설명 (미구현)", null,
+				"힘 81 가변", "지능 81 가변", "스킬 여명의 축복 3", "스킬 여명의 축복 % 20", "모공증 12", fStat[12], "설명 30레벨 스킬 공격력 15% 증가", "설명  ", "설명 모든 것을 질투하기 시작하고", null,
 				"나태함을 가진 발", "", "--", "", "", "", "",
-				"설명 (미구현)", null,
+				"힘 81 가변", "지능 81 가변", "물크 25", "마크 25", fStat[12], "설명 25레벨 스킬 공격력 15% 증가", "설명  ", "설명 결국 모든 것을 잃을 지어니", null,
 				
 				/////////악세
 				/////슈스
@@ -717,9 +778,9 @@ public class EquipmentInfo {
 				"힘 58 가변", "지능 58 가변", "모속강 12 가변", null,
 				/////얼공
 				"차가운 공주의 목걸이", "", Equip_part.NECKLACE, "", SetName.ICEQUEEN, 85, "",
-				"지능 41 가변", "수속강 22 가변", "ㄷ 수속부여", null,
+				"지능 41 가변", "수속강 30 가변", null,
 				"냉정한 공주의 팔찌", "", "--", "", "", "", "",
-				"힘 41 가변", "수속강 30 가변", null,
+				"힘 41 가변",  "수속강 22 가변", "ㄷ 수속부여", null,
 				"싸늘한 공주의 반지", "", "--", "", "", "", "",
 				"힘 62 가변", "지능 62 가변", "수속강 30 가변", null,
 				/////정마
@@ -757,7 +818,7 @@ public class EquipmentInfo {
 				"이기의 조력자 - 쿠로", "", Equip_part.NECKLACE, "", "", "", false,
 				"지능 41 가변", null,
 				"이기의 조력자 - 마테카", "", "--", "", "", "", "",
-				"힘 41 가변", fStat[4], "설명 구원의 이기 무기 개방시 스킬데미지 증가량 20->35%", null,
+				"힘 41 가변", fStat[4], "설명 구원의 이기 무기 개방시 스킬데미지 증가량 20->35%", "설명 창성의 구원자 무기 개방시 스킬데미지 증가량 22->37%", null,
 				"이기의 조력자 - 네르베",  "", "--", "", "", "", "",
 				"힘 62 가변", "지능 62 가변", "설명 그냥 예의상 구현해봄", null,
 				
@@ -804,7 +865,7 @@ public class EquipmentInfo {
 				"피쉬 볼 라인", "", "", "", "", 90, false,
 				"힘 42 가변", "지능 42 가변", "물크 5", "마크 5", "스킬 45-80 2", null,
 				"흑백의 경계 : 가면", "", "", "", "", "", "",
-				"힘 42 가변", "지능 42 가변", "ㄷ 물공뻥 5", "ㄷ 마공뻥 5", "ㄷ 독공뻥 5", "ㄷ 물크 30 선택", "ㄷ 마크 30 선택", "설명 함정카드 발동", "설명 딴딴딴따 따~라라 따~라라", null,
+				"힘 42 가변", "지능 42 가변", "ㄷ 물공뻥 5", "ㄷ 마공뻥 5", "ㄷ 독공뻥 5", "ㄷ 물크 30 선택", "ㄷ 마크 30 선택", "설명 함정카드 발동", null,
 				"파르스의 황금잔", "", "", "", "", "", true,
 				"힘 42 가변", "지능 42 가변", "모속강 18 가변", "ㄷ 힘뻥 18 선택", "ㄷ 지능뻥 18 선택", "설명 운빨", null,
 				/////마법석
@@ -815,8 +876,8 @@ public class EquipmentInfo {
 				"무한한 탐식의 근원", "", "", "", "", "", true,
 				"힘 61 가변", "지능 61 가변", "모속강 70 가변", null,
 				"이기의 조력자 - 아그네스", "", "", "", "", "", false,
-				"힘 121 가변", "지능 121 가변", fStat[6], "설명 구원의 이기 스킬 데미지 증가량 35->55%", null,
-				"무한한 탐식의 기원", "", "", "", "", "",  "",
+				"힘 121 가변", "지능 121 가변", fStat[6], "설명 구원의 이기 스킬 데미지 증가량 35->55%", "설명 창성의 구원자 스킬 데미지 증가량 40->60%", null,
+				"무한한 탐식의 기원", "", "", "", "", "",  true,
 				"힘 242 가변", "지능 242 가변", null,
 				"비뮤트 스톤", "", "", "", "", 90, false,
 				"힘 118 가변", "지능 118 가변", "모공증 18", null,
@@ -855,7 +916,15 @@ public class EquipmentInfo {
 				"흑백의 경계 : 혼돈", "", "", "", "", "", "",
 				"힘 184 가변", "지능 184 가변", "ㄷ 물공뻥 15 선택", "ㄷ 마공뻥 15 선택", "ㄷ 독공뻥 15", null,
 				"바벨로니아의 상징", "", "", "", "", "", true,
-				"힘 63 가변", "지능 63 가변", "모속강 18 가변", "모공증 18 가변", "설명 겜", "설명 수련의 방에서 제대로 작동하지 않습니다", null,
+				"힘 63 가변", "지능 63 가변", "모속강 18 가변", "ㄷ 모공증 18 선택", "설명 겜", "설명 수련의 방에서 제대로 작동하지 않습니다", null,
+				
+				/////군주
+				"루멘 바실리움", Item_rarity.EPIC, Equip_part.AIDEQUIPMENT, "", SetName.MONARCHOFHEVELON, 90, true, 
+				"힘 42 가변", "지능 41 가변", "모공증 20", "설명 빛은 구원이 아니며, 어둠 또한 안식이 아니다", null,
+				"테네브레 누스", "", Equip_part.EARRING, "", "", "", "", 
+				"힘 117 가변", "지능 116 가변", "ㄷ 물공뻥 22", "ㄷ 마공뻥 22", "ㄷ 독공뻥 22", "설명 빛과 어둠의 조화를 나 헤블론의 군주가 맹세하노라", null,
+				"솔리움 폰스", "", Equip_part.MAGICSTONE, "", "", "", "", 
+				"힘 62 가변", "지능 62 가변", "스킬 1-85 1", "ㄷ 스증뎀 10", "설명 그 무한한 영광의 끝을 느껴보아라", null,
 				
 				/////////////테스트용
 				/*, "테스트 아이템", Item_rarity.EPIC, Equip_part.NECKLACE, Equip_type.NONE, SetName.NONE, 90, false,
@@ -1109,7 +1178,7 @@ public class EquipmentInfo {
 				"필리르 - 차고 넘치는 분노", "", Equip_part.NECKLACE, Equip_type.ACCESSORY, SetName.NONE, 80, false,
 				"지능 37 가변", "ㄷ 힘뻥 15 선택", "ㄷ 물크 3 선택", null,
 				"필리르 - 꺼지지 않는 화염", "", "--", "", "", "", "",
-				"힘 37 가변", "화속강 10 가변", "ㄷ 화속강 32 선택", "ㄷ 화속부여", null,
+				"힘 37 가변", "화속강 10 가변", "ㄷ 화속강 32 선택", "ㄷ 화속부여 선택", null,
 				"필리르 - 냉철한 판단", "", "--", "", "", "", "",
 				"힘 56 가변", "지능 56 가변", "ㄷ 지능뻥 15 선택", "ㄷ 마크 3 선택", null,
 				
@@ -1189,7 +1258,7 @@ public class EquipmentInfo {
 				"얼어붙은 자의 굳건함", "", "", "", "", "", "",
 				"힘 40 가변", "ㄷ 수속깍 20 선택", null,
 				"빛나는 자의 엄격함", "", "", "", "", "", "",
-				"힘 40 가변", "명속강 12 가변", "ㄷ 명속부여", null,
+				"힘 40 가변", "명속강 12 가변", "ㄷ 명속부여 선택", null,
 				
 				"제농의 심장", "", "--", "", "", "", "",
 				"힘 191 가변", "ㄷ 힘 100 선택", "ㄷ 힘 100 선택", null,
@@ -1329,7 +1398,7 @@ public class EquipmentInfo {
 				"베키의 병아리반 팔찌", "", "--", "", "", "", "",
 				"힘 42 가변", "지능 42 가변", "증뎀 10", "크증뎀 10", "설명 철컹철컹", null,
 				"제미누스 트윈링", "", "--", "", "", "", "",
-				"힘 63 가변", "지능 63 가변", "설명 30초마다 자신을 포함한 랜덤한 파티원의 스킬 중 쿨타임이 30초 이내의 모든 스킬 쿨타임 30% 감소..?", null,
+				"힘 63 가변", "지능 63 가변", "설명 30초마다 자신을 포함한 랜덤한 파티원의 스킬 중\n쿨타임이 30초 이내의 모든 스킬 쿨타임 30% 감소", null,
 				
 				///////////////특수장비
 				"크레이지 이반 선동자의 폭탄", "", Equip_part.AIDEQUIPMENT, Equip_type.SPECIALEQUIP, SetName.NONE, 85, false,
@@ -1374,7 +1443,7 @@ public class EquipmentInfo {
 				"무언의 건설자 장갑", "", "", "", SetName.TACITCONSTRUCTOR, "", "",
 				"힘 41 가변", "지능 41 가변", "물크 9", "마크 9", "스킬 48 2", "스킬 85 1", null,
 				
-				"아포피스의 눈", "", Equip_part.MAGICSTONE, "", "", 90, "",
+				"아포피스의 눈", "", Equip_part.MAGICSTONE, "", SetName.NONE, 90, "",
 				"힘 58 가변", "지능 58 가변", "물크 3", "마크 3", "ㄷ %물방깍_템 10 선택", "ㄷ %마방깍_템 10 선택", null,
 				"응축된 사념구", "", "", "", "", "", "",
 				"힘 58 가변", "지능 58 가변", "독공 110 가변", null,
@@ -1398,7 +1467,7 @@ public class EquipmentInfo {
 				"힘 58 가변", "지능 58 가변", "암속강 30 가변", "ㄷ 암속깍 20 선택", "설명 암속깍의 조건은 캐스팅시 5%입니다", null,
 				"그림시커의 빛나는 눈동자", "", "", "", "", "", "",
 				"힘 58 가변", "지능 58 가변", "암속강 24 가변", null,
-				"루멘 칼리고", "", "", "", "", 90, "",
+				"루멘 칼리고", "", "", "",  "", 90, "",
 				"힘 150 가변", "지능 150 가변", "추뎀 10", null,
 				"무언의 건설자 수석", "", "", "", SetName.TACITCONSTRUCTOR, "", "",
 				"힘 62 가변", "지능 62 가변", "ㄷ 스증뎀 12 선택", null,
@@ -1435,31 +1504,38 @@ public class EquipmentInfo {
 	
 	public static Object[] weaponInfo()
 	{
-		FunctionStat fStat[] = new FunctionStat[20];
+		FunctionStat fStat[] = new FunctionStat[70];
 		
-		//다중선택시 마지막 옵션으로 적용
+		//다중선택시 마지막 옵션으로 적용(단리연산항)
 		FunctionStat multiCheck = new FunctionStat(){
-			private static final long serialVersionUID = -7055122057802138808L;
+			private static final long serialVersionUID = 1L;
 			@Override
 			public StatusList function(Characters character, Monster monster, Object item) {
+				StatusList statList = new StatusList();
 				int count=0;
+				double sum=0;
 				Equipment equipment = (Equipment)item;
 				int num = equipment.dStat.statList.size();
-				for(int i=0; i<num; i++)
-					if(equipment.dStat.statList.get(i).enabled) count++;
-								
-				if(count>1){
-					for(int i=0; i<num-1; i++)
-						equipment.dStat.statList.get(i).enabled=false;
-					equipment.dStat.statList.get(num-1).enabled=true;
+				for(int i=0; i<num; i++){
+					try {
+						if(equipment.dStat.statList.get(i).enabled){
+							count++;
+							if(i!=num-1) sum-=equipment.dStat.statList.get(i).stat.getStatToDouble();
+						}
+						else if(i==num-1) sum+=equipment.dStat.statList.get(i).stat.getStatToDouble();
+					}
+					catch (StatusTypeMismatch e) {
+						e.printStackTrace();
+					}
 				}
-				return new StatusList();
+				if(count>1) statList.addStatList(equipment.dStat.statList.getFirst().name, sum);
+				return statList; 
 			}
 		};
 		
 		//이기 속성
 		FunctionStat enableElement = new FunctionStat(){
-			private static final long serialVersionUID = -4289570411103128538L;
+			private static final long serialVersionUID = 1L;
 
 			@Override
 			public StatusList function(Characters character, Monster monster, Object item) {
@@ -1472,7 +1548,7 @@ public class EquipmentInfo {
 		
 		//레홀
 		fStat[0] = new FunctionStat(){
-			private static final long serialVersionUID = -4289570411103128538L;
+			private static final long serialVersionUID = 1L;
 
 			@Override
 			public StatusList function(Characters character, Monster monster, Object item) {
@@ -1499,7 +1575,7 @@ public class EquipmentInfo {
 		
 		//실불
 		fStat[1] = new FunctionStat(){
-			private static final long serialVersionUID = 4683501406496269136L;
+			private static final long serialVersionUID = 1L;
 			@Override
 			public StatusList function(Characters character, Monster monster, Object item) {
 				StatusList statList = new StatusList();
@@ -1510,11 +1586,11 @@ public class EquipmentInfo {
 		
 		//골드럭스
 		fStat[2] = new FunctionStat(){
-			private static final long serialVersionUID = -6086275352177792432L;
+			private static final long serialVersionUID = 1L;
 			@Override
 			public StatusList function(Characters character, Monster monster, Object item) {
 				StatusList statList = new StatusList();
-				if(character.getJob()==Job.RANGER_F) 		//TODO
+				if(character.getJob()==Job.RANGER_F || character.getJob()==Job.RANGER_M)
 					statList.addSkillRange(1, 80, 1, false);
 				
 				int sum=0;
@@ -1564,7 +1640,7 @@ public class EquipmentInfo {
 		
 		//이온 리펄서
 		fStat[3] = new FunctionStat(){
-			private static final long serialVersionUID = 8871754132243738754L;
+			private static final long serialVersionUID = 1L;
 
 			@Override
 			public StatusList function(Characters character, Monster monster, Object item) {
@@ -1577,7 +1653,7 @@ public class EquipmentInfo {
 		
 		//도굴왕
 		fStat[4] = new FunctionStat(){
-			private static final long serialVersionUID = -7856672477333603458L;
+			private static final long serialVersionUID = 1L;
 			@Override
 			public StatusList function(Characters character, Monster monster, Object item) {
 				StatusList statList = new StatusList();
@@ -1606,7 +1682,7 @@ public class EquipmentInfo {
 		
 		//테슬라
 		fStat[5] = new FunctionStat(){
-			private static final long serialVersionUID = 7854162089450295598L;
+			private static final long serialVersionUID = 1L;
 
 			@Override
 			public StatusList function(Characters character, Monster monster, Object item) {
@@ -1615,29 +1691,183 @@ public class EquipmentInfo {
 					statList.addSkill("M-3 화염방사기", 3);
 					statList.addSkill("화염 강타", 4);
 				}
-				/*else if(character.getJob()==Job.LAUNCHER_M){
+				else if(character.getJob()==Job.LAUNCHER_M){
 					statList.addSkill("레이저 라이플", 3);
 					statList.addSkill("충전 레이저 라이플", 4);
-				}*/
+				}
+				return statList;
+			}
+		};
+		
+		//무게추
+		fStat[6] = new FunctionStat(){
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public StatusList function(Characters character, Monster monster, Object item) {
+				Element_type type = CalculateElement.getLargestType(character.dungeonStatus);
+				StatusList statList = new StatusList();
+				switch(type){
+				case FIRE:
+					statList.addStatList("화추뎀", 18);
+					break;
+				case WATER:
+					statList.addStatList("수추뎀", 18);
+					break;
+				case LIGHT:
+					statList.addStatList("명추뎀", 18);
+					break;
+				case DARKNESS:
+					statList.addStatList("암추뎀", 18);
+					break;
+				default:
+					statList.addStatList("화추뎀", 18);
+					break;
+				}
+				return statList;
+			}
+		};
+		//천총
+		fStat[7] = new FunctionStat(){
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public StatusList function(Characters character, Monster monster, Object item) {
+				StatusList statList = new StatusList();
+				if(character.getJob()==Job.CHAOS){
+					statList.addStatList("지능", 120);
+					statList.addStatList("독공", 75);
+				}
+				return statList;
+			}
+		};
+		
+		//암별
+		fStat[8] = new FunctionStat(){
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public StatusList function(Characters character, Monster monster, Object item) {
+				Element_type type = CalculateElement.getLargestType(character.dungeonStatus);
+				StatusList statList = new StatusList();
+				statList.addStatList(type, 25, false, false, false);
+				return statList;
+			}
+		};
+		
+		//염화도
+		fStat[9] = new FunctionStat(){
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public StatusList function(Characters character, Monster monster, Object item) {
+				StatusList statList = new StatusList();
+				Weapon weapon = (Weapon)item;
+				boolean enabled_35 = weapon.dStat.statList.get(0).enabled;
+				boolean enabled_10 = weapon.dStat.statList.get(1).enabled;
+				boolean enabled_7 = weapon.dStat.statList.get(2).enabled;
+				boolean enabled_5 = weapon.dStat.statList.get(3).enabled;
+				if(enabled_7 && enabled_35) statList.addStatList("화추뎀", -35);
+				if(enabled_5 && enabled_10) statList.addStatList("화추뎀", -10);
+				return statList;
+			}
+		};
+		
+		//트리니티
+		fStat[10] = new FunctionStat(){
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public StatusList function(Characters character, Monster monster, Object item) {
+				StatusList statList = new StatusList();
+				Weapon weapon = (Weapon)item;
+				boolean enabled_33 = weapon.dStat.statList.get(0).enabled;
+				boolean enabled_333 = weapon.dStat.statList.get(1).enabled;
+				boolean enabled_21 = weapon.dStat.statList.get(2).enabled;
+				if(enabled_21 && enabled_33) statList.addStatList("추뎀", -33);
+				if(enabled_21 && enabled_333) statList.addStatList("추뎀", -333);
+				return statList;
+			}
+		};
+		
+		//거누형
+		fStat[11] = new FunctionStat(){
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public StatusList function(Characters character, Monster monster, Object item) {
+				StatusList statList = new StatusList();
+				Weapon weapon = (Weapon)item;
+				if(weapon.getReinforce()>15) statList.addStatList("추뎀", 15);
+				else statList.addStatList("추뎀", weapon.getReinforce());
+				//TODO 맹룡 베기수 1 감소, 딜 50% 증가
+				return statList;
+			}
+		};
+		
+		//이빨
+		fStat[12] = new FunctionStat(){
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public StatusList function(Characters character, Monster monster, Object item) {
+				StatusList statList = new StatusList();
+				Weapon weapon = (Weapon)item;
+				int checked=0;
+				for(StatusAndName s: weapon.dStat.statList)
+					if(s.enabled) checked++;
+				if(checked>=4) statList.addStatList("추뎀", -18);
+				else statList.addStatList("추뎀", -checked*5);
+				return statList;
+			}
+		};
+		
+		//귀면도
+		fStat[13] = new FunctionStat(){
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public StatusList function(Characters character, Monster monster, Object item) {
+				StatusList statList = new StatusList();
+				try {
+					int STR = (int) character.dungeonStatus.getStat(StatList.STR);
+					int INT = (int) character.dungeonStatus.getStat(StatList.INT);
+					if(STR>INT){
+						statList.addStatList(StatList.INT, new StatusInfo(-300));
+						statList.addStatList(StatList.STR, new StatusInfo(300));
+					}
+					else{
+						statList.addStatList(StatList.INT, new StatusInfo(300));
+						statList.addStatList(StatList.STR, new StatusInfo(-300));
+					}
+				} catch (StatusTypeMismatch e) {
+					e.printStackTrace();
+				}
+				for(Skill skill : character.getSkillList())
+					if(skill.firstLevel==40 || skill.firstLevel==50)
+						statList.addSkill_damage(skill.getName(), 30);
 				return statList;
 			}
 		};
 		
 		/* Format
-		"", "", "", Weapon_detailType., "", 80, "",
-		"물공  가변", "마공  가변", "독공  가변", "힘  가변", "지능  가변",
+		"", "", "", Weapon_detailType., "", 80, false,
+		"물공  가변", "마공  가변", "독공 611 가변", "힘  가변", "지능  가변",
 		null,
 		"", "", "", "", "", 85, "",
-		"물공  가변", "마공  가변", "독공  가변", "힘  가변", "지능  가변", 
+		"물공  가변", "마공  가변", "독공 648 가변", "힘  가변", "지능  가변", 
 		null,
 		"", "", "", "", "", "", "",
-		"물공  가변", "마공  가변", "독공  가변", "힘  가변", "지능  가변", 
+		"물공  가변", "마공  가변", "독공 648 가변", "힘  가변", "지능  가변", 
 		null,
 		"구원의 이기 - ", "", "", "", "", "", true,
-		"물공  가변", "마공  가변", "독공  가변", "힘  가변", "지능  가변", 
+		"물공  가변", "마공  가변", "독공 648 가변", "힘  가변", "지능  가변", 
 		null,
 		"", "", "", "", "", 90, false,
-		"물공  가변", "마공  가변", "독공  가변", "힘  가변", "지능  가변", 
+		"물공  가변", "마공  가변", "독공 686 가변", "힘  가변", "지능  가변", 
+		null,
+		"", "", "", "", "", 90, true,
+		"물공  가변", "마공  가변", "독공 686 가변", "힘  가변", "지능  가변", 
 		null,
 		*/
 		
@@ -1659,11 +1889,14 @@ public class EquipmentInfo {
 				"ㄷ 스증뎀 35", "ㄷ 스증뎀 20 선택", enableElement, "설명 자신의 가장 높은 속성강화 수치의 속성을 무기에 부여한다.", null,
 				"거포 우르반", "", "", "", "", 90, false,
 				"물공 1302 가변", "마공 781 가변", "독공 686 가변", "힘 112 가변", "ㄷ 힘뻥 20", "추뎀 40", null,
+				"창성의 구원자 - 핸드캐넌", "", "", "", "", "", true,
+				"물공 1302 가변", "마공 781 가변", "독공 686 가변", "힘 112 가변",
+				"ㄷ 스증뎀 40", "ㄷ 스증뎀 22 선택", enableElement, "설명 자신의 가장 높은 속성강화 수치의 속성을 무기에 부여한다.", null,
 				/////머스켓
-				"화염의 닐 스나이퍼", "", "", Weapon_detailType.GUN_MUSKET, "", 80, "",
+				"화염의 닐 스나이퍼", "", "", Weapon_detailType.GUN_MUSKET, "", 80, false,
 				"물공 1065 가변", "마공 926 가변", "독공 611 가변", "힘 68 가변", "지능 101 가변",
 				"화속강 24 가변", "스킬 닐 스나이핑 3", "설명 닐 스나이핑 공격시 35% 화속성 추가 데미지", "설명 구현상의 문제로 해당 수치의 스증뎀으로 적용(데미지는 정상적으로 계산됨)", null, 	//TODO 닐스구현
-				"코드넘버 608", "", "", "", "", 85, "",
+				"코드넘버 608", "", "", "", "", 85, "", 
 				"물공 1131 가변", "마공 983 가변", "독공 648 가변", "힘 72 가변", "지능 107 가변", 
 				"스킬 플래시 마인 5", "스킬 M-61 마인 2", "ㄷ 증뎀 10 선택", "추뎀 22", null,
 				"룰 오브 썸", "", "", "", "", "", "",
@@ -1676,8 +1909,11 @@ public class EquipmentInfo {
 				"Code N : 오라클", "", "", "", "", 90, false,
 				"물공 1198 가변", "마공 1042 가변", "독공 686 가변", "힘 75 가변", "지능 112 가변", 
 				"물크 25", "마크 25", "스킬 유탄 마스터리 3", "스킬 전장의 영웅 3", "ㄷ 스증뎀 30", "TP스킬 1-85 1", null,
+				"창성의 구원자 - 머스켓", "", "", "", "", "", true,
+				"물공 1198 가변", "마공 1042 가변", "독공 686 가변", "힘 75 가변", "지능 112 가변",
+				"ㄷ 스증뎀 40", "ㄷ 스증뎀 22 선택", enableElement, "설명 자신의 가장 높은 속성강화 수치의 속성을 무기에 부여한다.", null,
 				/////리볼버
-				"외톨이 잭볼버", "", "", Weapon_detailType.GUN_REVOLVER, "", 80,  "",
+				"외톨이 잭볼버", "", "", Weapon_detailType.GUN_REVOLVER, "", 80, false,
 				"물공 1114 가변", "마공 834 가변", "독공 691 가변", "힘 68 가변",
 				"물크 15", "스킬 니들 소배트 4", "스킬 탑스핀 2", "스킬 소닉 스파이크 2", "스킬 건블레이드 2", "스킬 마하킥 4", "스킬 윈드밀 2", "스킬 에어레이드 2", "스킬 스타일리쉬 1", null,
 				"총열개조 웨블리 마크", "", "", "", "", 80,  "",
@@ -1686,17 +1922,20 @@ public class EquipmentInfo {
 				"로드 오브 레인저", "", "", "", "", 85,  "",
 				"물공 1053 가변", "마공 886 가변", "독공 648 가변", "힘 72 가변",
 				"물크 12", "마크 10", "증뎀 60 가변", null, 
-				"실버 불렛", "", "", "", "", "",  "",
+				"실버 불렛", "", "", "", "", "",  "", 
 				"물공 1053 가변", "마공 886 가변", "독공 648 가변", "힘 72 가변",
 				"명속강 35 가변", "명속부여", fStat[1], "설명 언데드, 악마, 정령 타입 적 공격 시 18% 추가 데미지(미구현)", "설명 은탄 탄 무제한으로 변경", null,
 				"구원의 이기 - 리볼버", "", "", "", "", "", true,
-				"물공 1053 가변", "마공 886 가변", "독공 648 가변", "힘 72 가변",
+				"물공 1053 가변", "마공 886 가변", "독공 648 가변", "힘 72 가변", "물크 2",
 				"ㄷ 스증뎀 35", "ㄷ 스증뎀 20 선택", enableElement, "설명 자신의 가장 높은 속성강화 수치의 속성을 무기에 부여한다.", null,
 				"골드 럭스", "", "", "", "", 90, false,
 				"물공 1114 가변", "마공 937 가변", "독공 686 가변", "힘 75 가변", 
 				"물크 2", fStat[2], "설명 레인저 1~80 레벨 모든 스킬 Lv +1(특성 스킬 제외)", "설명 장착 중인 장비 레어리티에 따른 추가데미지 효과 발생", "설명 에픽-9% / 레전더리-7% / 유니크-5% (최대 6부위)", null,
+				"창성의 구원자 - 리볼버", "", "", "", "", "", true,
+				"물공 1114 가변", "마공 937 가변", "독공 686 가변", "힘 75 가변", "물크 2",
+				"ㄷ 스증뎀 40", "ㄷ 스증뎀 22 선택", enableElement, "설명 자신의 가장 높은 속성강화 수치의 속성을 무기에 부여한다.", null,
 				/////보우건
-				"폭풍의 역살", "", "", Weapon_detailType.GUN_BOWGUN, "", 80,  "",
+				"폭풍의 역살", "", "", Weapon_detailType.GUN_BOWGUN, "", 80, false,
 				"물공 834 가변", "마공 926 가변", "독공 611 가변", "힘 68 가변", "지능 34 가변",
 				"명속강 24 가변", "명속부여", "물크 3", "스킬 은탄 3", "스킬 G-35L 섬광류탄 3", "스킬 보우건 마스터리 3", "ㄷ 명속깍 15 선택", null,
 				"제네럴 보우건", "", "", "", "", 85, "",
@@ -1711,8 +1950,11 @@ public class EquipmentInfo {
 				"헬 하보크", "", "", "", "", 90,  false,
 				"물공 937 가변", "마공 1042 가변", "독공 686 가변", "힘 75 가변", "지능 37 가변", 
 				"물크 13", "마크 10", "스킬 보우건 마스터리 5", "추크증 40", null,
+				"창성의 구원자 - 보우건", "", "", "", "", "", true,
+				"물공 937 가변", "마공 1042 가변", "독공 686 가변", "힘 75 가변", "지능 37 가변", "물크 3",
+				"ㄷ 스증뎀 40", "ㄷ 스증뎀 22 선택", enableElement, "설명 자신의 가장 높은 속성강화 수치의 속성을 무기에 부여한다.", null,
 				/////자동권총
-				"반자동 셔플렉터", "", "", Weapon_detailType.GUN_AUTOPISTOL, "", 80,  "",
+				"반자동 셔플렉터", "", "", Weapon_detailType.GUN_AUTOPISTOL, "", 80, false,
 				"물공 694 가변", "마공 1019 가변", "독공 611 가변", "지능 68 가변",
 				"스킬 RX-78 랜드러너 3", "스킬 Ez-8 카운트다운 3", "스킬 트랜스폼 : G-0 배틀로이드 2", "스킬 G 익스텐션 3", "스킬 게이볼그 펀치 2", "스킬 최후의 투지 3", "ㄷ 명속 12", "ㄷ 화속 12", "스킬 RX-78 랜드러너 % 50", null,
 				"마이스터의 분노", "", "", "", "", 85,  "",
@@ -1728,10 +1970,12 @@ public class EquipmentInfo {
 				"이온 리펄서", "", "", "", "", 90,  false,
 				"물공 781 가변", "마공 1146 가변", "독공 686 가변", "지능 141 가변",
 				"ㄷ 스증 40", fStat[3], "설명 캐릭터가 거너(여)일 경우 명속성 강화 40 증가", "설명 캐릭터가 거너(남)일 경우 화속성 강화 40 증가", null,
-				
+				"창성의 구원자 - 자동권총", "", "", "", "", "", true,
+				"물공 781 가변", "마공 1146 가변", "독공 686 가변", "지능 141 가변",
+				"ㄷ 스증뎀 40", "ㄷ 스증뎀 22 선택", enableElement, "설명 자신의 가장 높은 속성강화 수치의 속성을 무기에 부여한다.", null,
 				///////////레전더리
 				/////핸드캐넌
-				"돌격대장의 슈퍼 캐넌", Item_rarity.LEGENDARY, "", Weapon_detailType.GUN_HCANON, "", 85, "",
+				"돌격대장의 슈퍼 캐넌", Item_rarity.LEGENDARY, "", Weapon_detailType.GUN_HCANON, "", 85, false,
 				"물공 1164 가변", "마공 699 가변", "독공 607 가변", "힘 101 가변",
 				"스킬 중화기 마스터리 3", "스킬 FM-31 그레네이드 런처 % 25", "스킬 FM-92 스팅어 % 44","스킬 FM-92 mk2 랜서 % 35", "스킬 양자 폭탄 % 22", null,
 				"그라인딩 오버필드", "", "", "", "", "", "",
@@ -1743,17 +1987,16 @@ public class EquipmentInfo {
 				"스킬 화염 강타 % 20", "스킬 레이저 라이플 % 20", fStat[4], "설명 중화기 마스터리 핸드캐넌 공격력 증가율 20% 증가", "설명 중화기 마스터리 공격력 증가율 10% 추가 증가", null,
 				"카르텔 에어머신 기관포", "", "", "", "", "", "",
 				"물공 1164 가변", "마공 699 가변", "독공 607 가변", "힘 145 가변", 
-				"스킬 슈타이어 대전차포 % 20", "설명 M-137 개틀링건 초당 발사수 2발 증가, 발사시간 1초 증가(미구현)", "설명 FM-그레네이드 런처 유탄 발사 수 2 증가(미구현)",
-				"설명 증뎀량이 써든 여부랑 AJ 여부랑 그레기는 남런/여런 차이랑 새봄 여부를 다 알아야되서 걍 안함 ", null,
+				"스킬 슈타이어 대전차포 % 20", "설명 M-137 개틀링건 초당 발사수 2발 증가, 발사시간 1초 증가(미구현)", "설명 FM-그레네이드 런처 유탄 발사 수 2 증가(미구현)", null,
 				"진혼의 캐넌", "", "", "", "", "", "",
 				"물공 1164 가변", "마공 699 가변", "독공 607 가변", "힘 134 가변", 
 				"물크 4", "마크 4", "추뎀 11", null,
 				"리버레이션 캐넌", "", "", "", "", "", "",
 				"물공 1164 가변", "마공 699 가변", "독공 607 가변", "힘 162 가변", 
-				"물크 7", "마크 7", "추뎀 16", null,
-				"플루의 집념", "", "", "", "", "", "",
+				"물크 7", "마크 7", "추뎀 16", null, 
+				"플루의 집념", "", "", "", "", "", "", 
 				"물공 1164 가변", "마공 699 가변", "독공 607 가변", "힘 101 가변", 
-				"ㄷ 힘 250 선택", "ㄷ 물크 25 선택", "설명 예아 아이 엠 어 장난감", null,
+				"ㄷ 힘 250 선택", "ㄷ 물크 25 선택", null,
 				"테라 : 리컨스트럭션 캐넌", "", "", "", "", 90, "",
 				"물공 1234 가변", "마공 740 가변", "독공 642 가변", "힘 107 가변", 
 				"물크 12", "마크 12", "스킬 1-85 1", null,
@@ -1785,7 +2028,242 @@ public class EquipmentInfo {
 				"물크 14", "마크 12", "스킬 1-85 1", null,
 				"스카이 리퀴드", "", "", "", "", "", "",
 				"물공 1057 가변", "마공 889 가변", "독공 642 가변", "힘 72 가변",
-				"물크 2", "수속강 30 가변", "수속부여", "수추뎀 8", "설명 패스트 드로우, 킬 포인트 쿨타임 25% 감소", null
+				"물크 2", "수속강 30 가변", "수속부여", "수추뎀 8", "설명 패스트 드로우, 킬 포인트 쿨타임 25% 감소", null,
+				
+				/////////////////귀검사
+				/////////에픽
+				/////대검
+				"데빌 오브 플레어", Item_rarity.EPIC, Equip_part.WEAPON, Weapon_detailType.SWORD_LONGSWORD, "", 80, "",
+				"물공 1198 가변", "마공 898 가변", "독공 611 가변", "힘 68 가변",
+				"화속강 22 가변", "화속부여", "ㄷ 화속강 15", "화추뎀 11 선택", "화추뎀 24 선택", "설명 화추뎀 기댓값 : 10.5%", null,
+				"별운검", "", "", "", "", 85, "",
+				"물공 1295 가변", "마공 950 가변", "독공 648 가변", "힘 72 가변", 
+				"증뎀 50", "ㄷ 힘뻥 -20 선택", null,
+				"양검 : 간장", "", "", "", "", "", "",
+				"물공 1267 가변", "마공 950 가변", "독공 648 가변", "힘 72 가변",
+				"화속강 40 가변", "화속부여", "ㄷ 명속부여 선택", "ㄷ 물크 10 선택", "ㄷ 화속강 30 선택", "ㄷ 명속강 70 선택", "ㄷ 크증뎀 15 선택", "ㄷ 화추뎀 12 선택", null,
+				"구원의 이기 - 대검", "", "", "", "", "", true,
+				"물공 1267 가변", "마공 950 가변", "독공 648 가변", "힘 72 가변", 
+				"ㄷ 스증뎀 35", "ㄷ 스증뎀 20 선택", enableElement, "설명 자신의 가장 높은 속성강화 수치의 속성을 무기에 부여한다.", null,
+				"성검 : 엑스칼리버", "", "", "", "", 90, false,
+				"물공 1337 가변", "마공 1002 가변", "독공 686 가변", "힘 75 가변", 
+				"모속강 100 가변", "스증뎀 18", enableElement, "설명 자신의 가장 높은 속성강화 수치의 속성을 무기에 부여한다.", null,
+				"창성의 구원자 - 대검", "", "", "", "", "", true,
+				"물공 1337 가변", "마공 1002 가변", "독공 686 가변", "힘 75 가변",
+				"ㄷ 스증뎀 40", "ㄷ 스증뎀 22 선택", enableElement, "설명 자신의 가장 높은 속성강화 수치의 속성을 무기에 부여한다.", null,
+				/////둔기
+				"분노한 헤라클레스", "", "", Weapon_detailType.SWORD_CLUB, "", 80, false,
+				"물공 1098 가변", "마공 948 가변", "독공 611 가변", "힘 101 가변",
+				"ㄷ 힘 500 가변", "ㄷ 힘 800 가변", null,
+				"미스틸테인", "", "", "", "", 85, "",
+				"물공 1162 가변", "마공 1003 가변", "독공 648 가변", "힘 167 가변", 
+				"암속강 50 가변", "암속부여", "추뎀 22", null,
+				"양얼의 나뭇가지", "", "", "", "", "", "",
+				"물공 1162 가변", "마공 1003 가변", "독공 648 가변", "힘 107 가변", 
+				"스킬 어둠의 둔기 마스터리 2", "스킬 48 1", "스킬 85 1", "ㄷ 증뎀 30 선택", "ㄷ 힘 125 가변", "ㄷ 추뎀 20 가변", null,
+				"구원의 이기 - 둔기", "", "", "", "", "", true,
+				"물공 1162 가변", "마공 1003 가변", "독공 648 가변", "힘 107 가변", 
+				"ㄷ 스증뎀 35", "ㄷ 스증뎀 20 선택", enableElement, "설명 자신의 가장 높은 속성강화 수치의 속성을 무기에 부여한다.", null,
+				"세계의 무게추", "", "", "", "", 90, false,
+				"물공 1224 가변", "마공 1058 가변", "독공 686 가변", "힘 112 가변", 
+				"암속강 40 가변", "명속강 40 가변", "암속부여", "명속부여", "스킬 75-85 1", fStat[6], "설명 자신의 가장 높은 속성의 추가데미지 18%", null,
+				"창성의 구원자 - 둔기", "", "", "", "", 90, true,
+				"물공 1224 가변", "마공 1058 가변", "독공 686 가변", "힘 112 가변", 
+				"ㄷ 스증뎀 40", "ㄷ 스증뎀 22 선택", enableElement, "설명 자신의 가장 높은 속성강화 수치의 속성을 무기에 부여한다.", null,
+				/////소검
+				"본 레드 드래곤", "", "", Weapon_detailType.SWORD_SHORTSWORD, "", 80, false,
+				"물공 948 가변", "마공 1147 가변", "독공 611 가변", "지능 68 가변", "마크 2",
+				"화속강 30 가변", "화속부여", "ㄷ 물공뻥 10 선택", "ㄷ 마공뻥 10 선택", "ㄷ 독공뻥 10 선택", "설명 공격 시 5% 확률로 적의 HP 20% 감소", null,
+				"천총운검", "", "", "", "", 85, "",
+				"물공 1003 가변", "마공 1214 가변", "독공 648 가변", "지능 72 가변", "마크 2", 
+				"스킬 심안 3", "스킬 충실한 종 3", "스킬 형질전환 3", "스킬 20-50 2", "추뎀 27", fStat[7], "설명 브레인 스톰 시전 시 150px 범위내 파티원의 지능 120, 독공 75 증가 오라", null,
+				"음검 : 막야", "", "", "", "", "", "",
+				"물공 1003 가변", "마공 1214 가변", "독공 648 가변", "지능 72 가변", "마크 2", 
+				"수속강 40 가변", "수속부여", "ㄷ 암속부여 선택", "ㄷ 마크 10 선택", "ㄷ 수속강 30 선택", "ㄷ 암속강 70 선택", "ㄷ 크증뎀 15 선택", "ㄷ 수추뎀 12 선택", null,
+				"구원의 이기 - 소검", "", "", "", "", "", true,
+				"물공 1003 가변", "마공 1214 가변", "독공 648 가변", "지능 72 가변", "마크 2", 
+				"ㄷ 스증뎀 35", "ㄷ 스증뎀 20 선택", enableElement, "설명 자신의 가장 높은 속성강화 수치의 속성을 무기에 부여한다.", null,
+				"암흑의 별", "", "", "", "", 90, false,
+				"물공 1058 가변", "마공 1280 가변", "독공 686 가변", "지능 75 가변", "마크 17", 
+				"물크 15", "모공증 42", fStat[8], "설명 자신의 가장 높은 속성강화 수치의 속성 강화 25 증가", null,
+				"창성의 구원자 - 소검", "", "", "", "", 90, true,
+				"물공 1058 가변", "마공 1280 가변", "독공 686 가변", "지능 75 가변", "마크 2", 
+				"ㄷ 스증뎀 40", "ㄷ 스증뎀 22 선택", enableElement, "설명 자신의 가장 높은 속성강화 수치의 속성을 무기에 부여한다.", null,
+				/////도
+				"블리츠 쟝닝", "", "", Weapon_detailType.SWORD_KATANA, "", 80, false,
+				"물공 948 가변", "마공 1048 가변", "독공 611 가변", "힘 68 가변", "지능 101 가변", "물크 2",
+				"명속강 24 가변", "명속부여", "ㄷ 추뎀 20 선택", "ㄷ 명속강 20 가변", null,
+				"염화도 - 카라벨라", "", "", Weapon_detailType.SWORD_KATANA, "", 80, false,
+				"물공 948 가변", "마공 1048 가변", "독공 611 가변", "힘 68 가변", "지능 101 가변", "물크 2",
+				"화속강 24 가변", "화속부여", "ㄷ 화추뎀 35 선택", "ㄷ 화추뎀 10 선택", "ㄷ 화추뎀 7 선택", "ㄷ 화추뎀 5 선택", "ㄷ 화속강 5 선택", "ㄷ 화속강 5 선택", fStat[9], 
+				"설명 화추뎀 7%(35% 옵션의 기댓값) 선택시 35% 옵션은 적용되지 않습니다", "설명 화추뎀 5%(10% 옵션의 기댓값) 선택시 10% 옵션은 적용되지 않습니다", null,
+				"트리니티 이터니아", "", "", "", "", 85, "",
+				"물공 1053 가변", "마공 1164 가변", "독공 680 가변", "힘 72 가변", "지능 107 가변", "물크 2", 
+				"ㄷ 추뎀 33 선택", "ㄷ 추뎀 333 선택", "ㄷ 추뎀 21 선택", "ㄷ 물공뻥 9 가변", "ㄷ 마공뻥 9 가변", "ㄷ 독공뻥 9 가변", fStat[10], 
+				"설명 스킬 사용 시 33% 확률로 33초 이내의 스킬 중 쿨타임이 가장 높은 스킬 쿨타임 초기화", "설명 추뎀 기댓값 수치(21%)을 사용설정할 경우 나머지 추뎀옵션 선택은 무시됩니다", null,
+				"명도 마사무네", "", "", "", "", "", "",
+				"물공 1003 가변", "마공 1109 가변", "독공 648 가변", "힘 72 가변", "지능 107 가변", 
+				"명속부여", "물크 20", "마크 20", "스킬 오버드라이브 2", "스킬 어둠의 도 마스터리 2", "스킬 신검합일 2", "크증뎀 32", null,
+				"마법검 : 칠지도", "", "", "", "", "", "",
+				"물공 1003 가변", "마공 1219 가변", "독공 789 가변", "힘 72 가변", "지능 272 가변", "물크 2", 
+				"마크 15", "ㄷ 지능 700 선택", "설명 공격 시 흑염검, 부동명왕진, 디스트로이어, 웨이브 스핀의 남은 쿨타임 20% 감소", null,
+				"구원의 이기 - 도", "", "", "", "", "", true,
+				"물공 1003 가변", "마공 1109 가변", "독공 648 가변", "힘 72 가변", "지능 107 가변", "물크 2", 
+				"ㄷ 스증뎀 35", "ㄷ 스증뎀 20 선택", enableElement, "설명 자신의 가장 높은 속성강화 수치의 속성을 무기에 부여한다.", null,
+				"요도 : 무라마사", "", "", "", "", 90, false,
+				"물공 1058 가변", "마공 1169 가변", "독공 686 가변", "힘 75 가변", "지능 112 가변", 
+				"암속부여", "물크 7", "마크 7", "적방무 20", "추증뎀 35", null,
+				"창성의 구원자 - 도", "", "", "", "", 90, true,
+				"물공 1058 가변", "마공 1169 가변", "독공 686 가변", "힘 75 가변", "지능 112 가변", "물크 2", 
+				"ㄷ 스증뎀 40", "ㄷ 스증뎀 22 선택", enableElement, "설명 자신의 가장 높은 속성강화 수치의 속성을 무기에 부여한다.", null,
+				/////광검
+				"고통의 여왕의 비명", "", "", Weapon_detailType.SWORD_LIGHTSWORD, "", 80, false,
+				"물공 928 가변", "마공 898 가변", "독공 611 가변", "힘 68 가변",
+				"암속강 30 가변", "암속부여", "스킬 리 귀검술 2", "스킬 어둠의 광검 마스터리 3", "스킬 양의공 5", "ㄷ 물공뻥 15", "ㄷ 마공뻥 15", "ㄷ 독공뻥 15", null,
+				"뇌검 : 고룬", "", "", "", "", 85, "",
+				"물공 982 가변", "마공 950 가변", "독공 648 가변", "힘 72 가변", 
+				"명속강 45 가변", "명속부여", "물크 10", "마크 10", "명추뎀 8", null,
+				"발뭉", "", "", "", "", "", "",
+				"물공 982 가변", "마공 950 가변", "독공 648 가변", "힘 72 가변",  
+				"스킬 오버드라이브 2", "스킬 어둠의 광검 마스터리 2", "스킬 오기조원 2", "ㄷ 증뎀 60 가변", null,
+				"구원의 이기 - 광검", "", "", "", "", "", true,
+				"물공 982 가변", "마공 950 가변", "독공 648 가변", "힘 72 가변",  
+				"ㄷ 스증뎀 35", "ㄷ 스증뎀 20 선택", enableElement, "설명 자신의 가장 높은 속성강화 수치의 속성을 무기에 부여한다.", null,
+				"쉘 오브 브리니클", "", "", "", "", 90, false,
+				"물공 1035 가변", "마공 1002 가변", "독공 686 가변", "힘 75 가변", 
+				"수속강 35 가변", "수속부여", "스킬 극 귀검술, 참철식 2", "스킬 삼매진화 2", "ㄷ 수속깍 22 선택", "수추뎀 15", null,
+				"창성의 구원자 - 광검", "", "", "", "", 90, true,
+				"물공 1035 가변", "마공 1002 가변", "독공 686 가변", "힘 75 가변", 
+				"ㄷ 스증뎀 40", "ㄷ 스증뎀 22 선택", enableElement, "설명 자신의 가장 높은 속성강화 수치의 속성을 무기에 부여한다.", null,
+				
+				///////////레전더리
+				/////대검
+				"진혼의 그레이트 소드", Item_rarity.LEGENDARY, "", Weapon_detailType.SWORD_LONGSWORD, "", 85, false,
+				"물공 1202 가변", "마공 901 가변", "독공 607 가변", "힘 101 가변",
+				"물크 4", "마크 4", "추뎀 11", null,
+				"리버레이션 그레이트 소드", "", "", "", "", "", "",
+				"물공 1202 가변", "마공 901 가변", "독공 607 가변", "힘 129 가변",
+				"물크 7", "마크 7", "추뎀 16", null,
+				"거대 누골의 형상", "", "", "", "", "", "",
+				"물공 1202 가변", "마공 901 가변", "독공 607 가변", "힘 68 가변",
+				"ㄷ 추뎀 12 선택", fStat[11], "설명 강화/증폭 수치 1당 추가데미지 1% 증가(최대 15강)", "설명 맹룡단공참 스킬 최대 베기수 1 감소, 공격력 50% 증가(미구현)", null,
+				"파괴의 용암석 대검", "", "", "", "", "", "",
+				"물공 1202 가변", "마공 901 가변", "독공 607 가변", "힘 310 가변",
+				"화속부여", "설명 어퍼 슬래쉬, 어퍼실드, 승천검, 어퍼 시전 시 마그토늄 파이브의 일격 사용", null,
+				"브로딘 왕의 보검", "", "", "", "", "", "",
+				"물공 1268 가변", "마공 901 가변", "독공 607 가변", "힘 68 가변",
+				"ㄷ 증뎀 15 선택", null,
+				"악령 봉인 집행검", "", "", "", "", "", "",
+				"물공 1202 가변", "마공 901 가변", "독공 607 가변", "힘 68 가변",
+				"암속강 22 가변", "암속부여", "ㄷ 암속추 15 선택", "설명 암속성 추가데미지 발동조건 : 악마형, 언데드 몬스터", null,
+				"테라 : 리컨스트럭션 그레이트 소드", "", "", "", "", 90, "",
+				"물공 1269 가변", "마공 953 가변", "독공 642 가변", "힘 72 가변",
+				"물크 12", "마크 12", "스킬 1-85 1", null,
+				"매화육궁", "", "", "", "", "", "",
+				"물공 1269 가변", "마공 953 가변", "독공 642 가변", "힘 72 가변",
+				"물크 15", "마크 15", "스킬 45 3", "추뎀 18", null,
+				/////둔기
+				"진혼의 크래셔", Item_rarity.LEGENDARY, "", Weapon_detailType.SWORD_CLUB, "", 85, false,
+				"물공 1102 가변", "마공 952 가변", "독공 607 가변", "힘 134 가변",
+				"물크 4", "마크 4", "추뎀 11", null,
+				"리버레이션 크래셔", "", "", "", "", "", "",
+				"물공 1102 가변", "마공 952 가변", "독공 607 가변", "힘 162 가변",
+				"물크 7", "마크 7", "추뎀 16", null,
+				"타르바자 퀘이커", "", "", "", "", "", "",
+				"물공 1102 가변", "마공 952 가변", "독공 607 가변", "힘 101 가변",
+				"화속강 18 가변", "화속부여", "ㄷ 화추뎀 20 선택", null,
+				"누골의 거대한 가시", "", "", "", "", "", "",
+				"물공 1102 가변", "마공 952 가변", "독공 607 가변", "힘 101 가변",
+				"ㄷ 추뎀 15 선택", null,
+				"공작 유리스의 아귀", "", "", "", "", "", "",
+				"물공 1102 가변", "마공 952 가변", "독공 607 가변", "힘 101 가변",
+				"설명 피깍쳐에오", null,
+				"해머왕 브레이커", "", "", "", "", "", "",
+				"물공 1102 가변", "마공 952 가변", "독공 607 가변", "힘 101 가변",
+				"ㄷ 추뎀 15 선택", null,
+				"테라 : 리컨스트럭션 크래셔", "", "", "", "", 90, "",
+				"물공 1164 가변", "마공 1005 가변", "독공 642 가변", "힘 107 가변",
+				"물크 12", "마크 12", "스킬 1-85 1", null,
+				"슬링숏 스매쉬", "", "", "", "", "", "",
+				"물공 1164 가변", "마공 1005 가변", "독공 642 가변", "힘 107 가변",
+				"스킬 둔기 마스터리 3", "스킬 어둠의 둔기 마스터리 3", "스킬 파쇄의 둔기 마스터리 3", "모공증 12", "추뎀 10", "ㄷ 추뎀 10 선택", "설명 추뎀 조건 : 인간형 타입", null,
+				/////소검
+				"진혼의 소드", Item_rarity.LEGENDARY, "", Weapon_detailType.SWORD_SHORTSWORD, "", 85, false,
+				"물공 952 가변", "마공 1152 가변", "독공 607 가변", "지능 101 가변",
+				"물크 4", "마크 6", "추뎀 11", null,
+				"리버레이션 소드", "", "", "", "", "", "",
+				"물공 952 가변", "마공 1152 가변", "독공 607 가변", "지능 129 가변",
+				"물크 7", "마크 9", "추뎀 16", null,
+				"킬조의 영혼검", "", "", "", "", "", "",
+				"물공 952 가변", "마공 1152 가변", "독공 607 가변", "지능 68 가변", "마크 2",
+				"수속강 22 가변", "수속부여", "ㄷ 추뎀 25 선택", "ㄷ 추뎀 13 선택", "스킬 소검 마스터리 2", "스킬 귀참 2", "스킬 툼스톤 2", "스킬 카잔 2", "스킬 냉기의 사야 2",
+				"스킬 흑염의 칼라 2", "스킬 파동검 빙인 3", "스킬 어둠의 소검 마스터리 2", "스킬 다크 슬래쉬 2", "스킬 다크 폴 2", "스킬 속성의 소검 마스터리 2", "스킬 이보브 3",
+				"스킬 리버레이트 - 벅샷 3", "스킬 브레인 스톰 3", "스킬 파이널 어택 3", multiCheck, "설명 추뎀 기댓값(13%) 선택시 기댓값으로 적용", null,
+				"마력이 담긴 날카로운 이빨", "", "", "", "", "", "",
+				"물공 952 가변", "마공 1152 가변", "독공 607 가변", "지능 68 가변", "마크 2",
+				"추뎀 18", "ㄷ 화속강 30 선택", "ㄷ 수속강 30 선택", "ㄷ 명속강 30 선택", "ㄷ 암속강 30 선택", "설명 속성강화 옵션 체크 하나당 추뎀 5% 감소", fStat[12], null,
+				"미스트 단원의 소검", "", "", "", "", "", "",
+				"물공 952 가변", "마공 1152 가변", "독공 607 가변", "지능 68 가변", "마크 2",
+				"ㄷ 크증뎀 20 선택", null,
+				"킬조의 얼음유령 소검", "", "", "", "", "", "",
+				"물공 952 가변", "마공 1152 가변", "독공 607 가변", "지능 68 가변", "마크 2",
+				"수속강 18 가변", "ㄷ 추뎀 10 선택", "설명 추가데미지 옵션의 조건 : 빙결상태의 적", null,
+				"테라 : 리컨스트럭션 소드", "", "", "", "", 90, "",
+				"물공 1005 가변", "마공 1217 가변", "독공 642 가변", "지능 72 가변",
+				"물크 12", "마크 14", "스킬 1-85 1", null,
+				"퓨리피온 소드", "", "", "", "", "", "",
+				"물공 1148 가변", "마공 1360 가변", "독공 806 가변", "지능 72 가변", "마크 2",
+				"스킬 1-45 1", "모공증 5", "설명 공격 시 3% 확률로 쿨타임 100초 이하의 모든 스킬 쿨타임 20% 감소(쿨타임 25초)", null,
+				/////도
+				"진혼의 블레이드", Item_rarity.LEGENDARY, "", Weapon_detailType.SWORD_KATANA, "", 85, false,
+				"물공 952 가변", "마공 1052 가변", "독공 607 가변", "힘 101 가변", "지능 134 가변",
+				"물크 6", "마크 4", "추뎀 11", null,
+				"리버레이션 블레이드", "", "", "", "", "", "",
+				"물공 952 가변", "마공 1052 가변", "독공 607 가변", "힘 129 가변", "지능 162 가변",
+				"물크 9", "마크 7", "추뎀 16", null,
+				"찬란한 불꽃의 샤벨", "", "", "", "", "", "",
+				"물공 1021 가변", "마공 1128 가변", "독공 657 가변", "힘 68 가변", "지능 101 가변", "물크 2",
+				"화속부여", "ㄷ 화속강 20 가변", "ㄷ 크증뎀 20 선택", null,
+				"타우 캡틴의 날카로운 늑골", "", "", "", "", "", "",
+				"물공 952 가변", "마공 1052 가변", "독공 607 가변", "힘 68 가변", "지능 101 가변",
+				"물크 10", "마크 8", "ㄷ 크증뎀 20 선택", null,
+				"카르텔의 톱날 블레이드", "", "", "", "", "", "",
+				"물공 952 가변", "마공 1052 가변", "독공 607 가변", "힘 68 가변", "지능 101 가변", "물크 2",
+				"ㄷ 힘 100 가변", "ㄷ 지능 100 가변", "ㄷ 물크 10 가변", "ㄷ 마크 10 가변", "추뎀 14", null,
+				"무명전사의 도", "", "", "", "", "", "",
+				"물공 952 가변", "마공 1052 가변", "독공 607 가변", "힘 112 가변", "지능 167 가변",
+				"물크 15", "마크 15", "스킬 1-20 3", "ㄷ 힘 100 가변", "ㄷ 지능 100 가변", "ㄷ 추뎀 5 선택", "설명 힘/지능 옵션 조건 : 적 처치시 두당 +2", "설명 추가데미지 조건 : 네임드 몬스터", null,
+				"테라 : 리컨스트럭션 블레이드", "", "", "", "", "", "",
+				"물공 1005 가변", "마공 1111 가변", "독공 642 가변", "힘 72 가변", "지능 107 가변",
+				"물크 14", "마크 12", "스킬 1-85 1", null,
+				"자켈리네 일검 : 귀면도", "", "", "", "", 90, "",
+				"물공 1005 가변", "마공 1111 가변", "독공 642 가변", "힘 72 가변", "지능 107 가변", "물크 2",
+				"설명 힘,지능 중 낮은 스탯을 높은 스탯으로 변환(최대 300)", "설명 40 ~ 45Lv 스킬 공격력 30% 증가", "추크증 7", fStat[13], null,
+				/////광검
+				"진혼의 빔소드", Item_rarity.LEGENDARY, "", Weapon_detailType.SWORD_LIGHTSWORD, "", 85, false,
+				"물공 932 가변", "마공 901 가변", "독공 607 가변", "힘 101 가변",
+				"물크 4", "마크 4", "추뎀 11", null,
+				"리버레이션 빔소드", "", "", "", "", "", "",
+				"물공 932 가변", "마공 901 가변", "독공 607 가변", "힘 129 가변",
+				"물크 7", "마크 7", "추뎀 16", null,
+				"사나운 원념의 폭발", "", "", "", "", "", "",
+				"물공 932 가변", "마공 901 가변", "독공 607 가변", "힘 68 가변",
+				"암속강 22 가변", "암속부여", "물크 10", null,
+				"어둠에 잠식된 빛", "", "", "", "", "", "",
+				"물공 977 가변", "마공 945 가변", "독공 637 가변", "힘 68 가변",
+				"ㄷ 암속부여 선택", "ㄷ 힘뻥 7 선택", "ㄷ 암속강 12 선택", "ㄷ 물공뻥 10 선택", "ㄷ 암속강 25 선택", null, 
+				"빛으로 향하는 명예", "", "", "", "", "", "",
+				"물공 932 가변", "마공 901 가변", "독공 607 가변", "힘 68 가변",
+				"명속강 16 가변", "명속부여", "ㄷ 추뎀 10 선택", null,
+				"더러운 파문에 흔들리는 암검", "", "", "", "", "", "",
+				"물공 932 가변", "마공 901 가변", "독공 607 가변", "힘 68 가변",
+				"암속강 14 가변", "암속부여", "스킬 물리 백 어택 5", "ㄷ 추뎀 15 선택", null,
+				"테라 : 리컨스트럭션 빔소드", "", "", "", "", "", "",
+				"물공 985 가변", "마공 953 가변", "독공 642 가변", "힘 72 가변",
+				"물크 12", "마크 12", "스킬 1-85 1", null,
+				"악검 데스렌더", "", "", "", "", 90, "",
+				"물공 985 가변", "마공 953 가변", "독공 642 가변", "힘 72 가변",
+				"스킬 극 귀검술, 참철식 1", "스킬 어둠의 광검 마스터리 2", "스킬 삼매진화 1", "크증뎀 20", "추크증 10", "설명 아니 이럴거면 그냥 크증뎀 30을 달지", null,
 		};
 		
 		return data;

@@ -15,7 +15,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 
-import dnf_InterfacesAndExceptions.Avatar_part;
 import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.InterfaceSize;
 import dnf_InterfacesAndExceptions.Location;
@@ -64,20 +63,20 @@ class UserItemInfo extends DnFComposite
 		itemButtonList = (ItemButton<Item>[]) new ItemButton<?>[ITEMNUM];
 
 		int BUTTON_SIZE = InterfaceSize.INFO_BUTTON_SIZE;
-		itemButtonList[0] = new ItemButton<Item>(leftItemInfoComposite, character.getEquipmentList().get(Equip_part.SHOULDER), BUTTON_SIZE, BUTTON_SIZE, true);
-		itemButtonList[1] = new ItemButton<Item>(leftItemInfoComposite, character.getEquipmentList().get(Equip_part.ROBE), BUTTON_SIZE, BUTTON_SIZE, true);
-		itemButtonList[2] = new ItemButton<Item>(leftItemInfoComposite, character.getEquipmentList().get(Equip_part.TROUSER), BUTTON_SIZE, BUTTON_SIZE, true);
-		itemButtonList[3] = new ItemButton<Item>(leftItemInfoComposite, character.getEquipmentList().get(Equip_part.BELT), BUTTON_SIZE, BUTTON_SIZE, true);
-		itemButtonList[4] = new ItemButton<Item>(leftItemInfoComposite, character.getEquipmentList().get(Equip_part.SHOES), BUTTON_SIZE, BUTTON_SIZE, true);
+		itemButtonList[0] = new ItemButton<Item>(leftItemInfoComposite, character.getEquipmentList().get(Equip_part.SHOULDER), BUTTON_SIZE, BUTTON_SIZE);
+		itemButtonList[1] = new ItemButton<Item>(leftItemInfoComposite, character.getEquipmentList().get(Equip_part.ROBE), BUTTON_SIZE, BUTTON_SIZE);
+		itemButtonList[2] = new ItemButton<Item>(leftItemInfoComposite, character.getEquipmentList().get(Equip_part.TROUSER), BUTTON_SIZE, BUTTON_SIZE);
+		itemButtonList[3] = new ItemButton<Item>(leftItemInfoComposite, character.getEquipmentList().get(Equip_part.BELT), BUTTON_SIZE, BUTTON_SIZE);
+		itemButtonList[4] = new ItemButton<Item>(leftItemInfoComposite, character.getEquipmentList().get(Equip_part.SHOES), BUTTON_SIZE, BUTTON_SIZE);
 		
-		itemButtonList[5] = new ItemButton<Item>(rightItemInfoComposite, character.getWeapon(), BUTTON_SIZE, BUTTON_SIZE, true);
-		itemButtonList[6] = new ItemButton<Item>(rightItemInfoComposite, character.getTitle(), BUTTON_SIZE, BUTTON_SIZE, true);
-		itemButtonList[7] = new ItemButton<Item>(rightItemInfoComposite, character.getEquipmentList().get(Equip_part.BRACELET), BUTTON_SIZE, BUTTON_SIZE, true);
-		itemButtonList[8] = new ItemButton<Item>(rightItemInfoComposite, character.getEquipmentList().get(Equip_part.NECKLACE), BUTTON_SIZE, BUTTON_SIZE, true);
-		itemButtonList[9] = new ItemButton<Item>(rightItemInfoComposite, character.getEquipmentList().get(Equip_part.AIDEQUIPMENT), BUTTON_SIZE, BUTTON_SIZE, true);
-		itemButtonList[10] = new ItemButton<Item>(rightItemInfoComposite, character.getEquipmentList().get(Equip_part.RING), BUTTON_SIZE, BUTTON_SIZE, true);
-		itemButtonList[11] = new ItemButton<Item>(rightItemInfoComposite, character.getEquipmentList().get(Equip_part.EARRING), BUTTON_SIZE, BUTTON_SIZE, true);
-		itemButtonList[12] = new ItemButton<Item>(rightItemInfoComposite, character.getEquipmentList().get(Equip_part.MAGICSTONE), BUTTON_SIZE, BUTTON_SIZE, true);
+		itemButtonList[5] = new ItemButton<Item>(rightItemInfoComposite, character.getWeapon(), BUTTON_SIZE, BUTTON_SIZE);
+		itemButtonList[6] = new ItemButton<Item>(rightItemInfoComposite, character.getTitle(), BUTTON_SIZE, BUTTON_SIZE);
+		itemButtonList[7] = new ItemButton<Item>(rightItemInfoComposite, character.getEquipmentList().get(Equip_part.BRACELET), BUTTON_SIZE, BUTTON_SIZE);
+		itemButtonList[8] = new ItemButton<Item>(rightItemInfoComposite, character.getEquipmentList().get(Equip_part.NECKLACE), BUTTON_SIZE, BUTTON_SIZE);
+		itemButtonList[9] = new ItemButton<Item>(rightItemInfoComposite, character.getEquipmentList().get(Equip_part.AIDEQUIPMENT), BUTTON_SIZE, BUTTON_SIZE);
+		itemButtonList[10] = new ItemButton<Item>(rightItemInfoComposite, character.getEquipmentList().get(Equip_part.RING), BUTTON_SIZE, BUTTON_SIZE);
+		itemButtonList[11] = new ItemButton<Item>(rightItemInfoComposite, character.getEquipmentList().get(Equip_part.EARRING), BUTTON_SIZE, BUTTON_SIZE);
+		itemButtonList[12] = new ItemButton<Item>(rightItemInfoComposite, character.getEquipmentList().get(Equip_part.MAGICSTONE), BUTTON_SIZE, BUTTON_SIZE);
 		
 		Point buttonS = itemButtonList[0].getButton().computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		buttonS.x+=3; buttonS.y+=3;
@@ -119,7 +118,7 @@ class UserItemInfo extends DnFComposite
 		
 		for(int i=0; i<ITEMNUM; i++)
 		{
-			itemButtonList[i].renewImage(true);
+			itemButtonList[i].renewImage();
 		}
 	}
 	
@@ -139,8 +138,8 @@ class UserAvatarInfo extends DnFComposite
 	private ItemButton<Item> drapeButton;
 	static final int AVATARNUM=10;
 	private Characters character;
-	Avatar_part[] partOrder= { Avatar_part.CAP, Avatar_part.HAIR, Avatar_part.FACE, Avatar_part.NECK, Avatar_part.COAT,
-			Avatar_part.SKIN, Avatar_part.BELT, Avatar_part.PANTS, Avatar_part.SHOES, Avatar_part.AURA};
+	Equip_part[] partOrder= { Equip_part.ACAP, Equip_part.AHAIR, Equip_part.AFACE, Equip_part.ANECK, Equip_part.ACOAT,
+			Equip_part.ASKIN, Equip_part.ABELT, Equip_part.APANTS, Equip_part.ASHOES, Equip_part.AURA};
 	
 	@SuppressWarnings("unchecked")
 	public UserAvatarInfo(Composite parent, Characters character, DnFComposite superInfo)
@@ -229,12 +228,12 @@ class UserAvatarInfo extends DnFComposite
 	{
 		for(int i=0; i<AVATARNUM; i++){
 			itemButtonList[i].setItem(character.getAvatarList().get(partOrder[i]));
-			itemButtonList[i].renewImage(true);
+			itemButtonList[i].renewImage();
 		}
 		creatureButton.setItem(character.getCreature());
-		creatureButton.renewImage(true);
+		creatureButton.renewImage();
 		drapeButton.setItem(character.getDrape());
-		drapeButton.renewImage(true);
+		drapeButton.renewImage();
 	}
 	
 	public boolean equiped(Item item)

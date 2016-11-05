@@ -22,9 +22,9 @@ public class Weapon extends Equipment{
 	public Weapon_detailType weaponType;
 	private int reforge;
 	
-	public Weapon(String name, Item_rarity rarity, Card card, SetName setName, Weapon_detailType weaponType, int level, boolean isRare, int reforge)
+	public Weapon(String name, Item_rarity rarity, Card card, SetName setName, Weapon_detailType weaponType, int level, boolean isRare, int reforge, String version)
 	{	
-		super(name, rarity, Equip_part.WEAPON, card, setName, Equip_type.WEAPON, level, isRare);
+		super(name, rarity, Equip_part.WEAPON, card, setName, Equip_type.WEAPON, level, isRare, version);
 		this.setIcon("image\\Weapon\\"+name+".png");
 		this.weaponType =weaponType;
 		this.reforge=reforge;
@@ -33,13 +33,13 @@ public class Weapon extends Equipment{
 		vStat.addStatList("마법방무뎀", new StatusInfo(0), true);
 		vStat.addStatList("재련독공", 0, true);
 	}
-	public Weapon(String name, Item_rarity rarity, Weapon_detailType weaponType, SetName setName, int level, boolean isRare)
+	public Weapon(String name, Item_rarity rarity, Weapon_detailType weaponType, SetName setName, int level, boolean isRare, String version)
 	{
-		this(name, rarity, new Card(), setName, weaponType, level, isRare, 0);
+		this(name, rarity, new Card(), setName, weaponType, level, isRare, 0, version);
 	}
-	public Weapon(String name, Item_rarity rarity, Weapon_detailType weaponType, int level, boolean isRare)
+	public Weapon(String name, Item_rarity rarity, Weapon_detailType weaponType, int level, boolean isRare, String version)
 	{
-		this(name, rarity, new Card(), SetName.NONE, weaponType, level,isRare, 0);
+		this(name, rarity, new Card(), SetName.NONE, weaponType, level,isRare, 0, version);
 	}
 	public Weapon() {
 		super(Equip_part.WEAPON);

@@ -1,9 +1,12 @@
 package dnf_infomation;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Random;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
@@ -11,6 +14,7 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.OverlayIcon;
 
 import dnf_class.Avatar;
@@ -25,6 +29,7 @@ import dnf_class.PartyCharacter;
 import dnf_class.SetOption;
 import dnf_class.Skill;
 import dnf_class.Weapon;
+import dnf_InterfacesAndExceptions.CalculatorVersion;
 import dnf_InterfacesAndExceptions.Character_type;
 import dnf_InterfacesAndExceptions.InterfaceSize;
 import dnf_InterfacesAndExceptions.ItemFileNotReaded;
@@ -41,14 +46,22 @@ public class GetDictionary
 	public static CharacterDictionary charDictionary;
 	public static HashMap<String, Image> iconDictionary;
 	public static HashMap<String, Image> skillIconDictionary;
+	private static ArrayList<String> backgroundList;
+	private static Image backgroundImage=null;
+	private static Job backgroundJob=Job.NONE;
+	public static Image loadingImage = null;
+	public static Image versionImage = null;
 	static boolean readed=false;
+	static boolean backgroundReaded = false;
+	
+	public static String VERSION;
 
 	public static void readFile()
 	{
 		if(readed) return;
 		
 		try{
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream("data\\ItemDictionary.dfd"));
+			ObjectInputStream in = new ObjectInputStream(new FileInputStream(ItemDictionary.Directory));
 			Object temp = in.readObject();
 
 			itemDictionary = (ItemDictionary)temp;
@@ -69,7 +82,7 @@ public class GetDictionary
 		
 		
 		try{
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream("data\\CharacterDictionary.dfd"));
+			ObjectInputStream in = new ObjectInputStream(new FileInputStream(CharacterDictionary.Directory));
 			Object temp = in.readObject();
 
 			charDictionary = (CharacterDictionary)temp;
@@ -142,23 +155,6 @@ public class GetDictionary
 			}	
 		}
 		
-		for(PartyCharacter party : itemDictionary.partyList)
-		{
-			for(HashMap<String, Buff> entry : party.getBuffHash().values())
-			{
-				Buff buff = entry.values().iterator().next();
-				String icon = buff.getIcon();
-				image = new Image(Display.getCurrent(), icon);
-				iconDictionary.put(buff.getName(), resizeImage(image, InterfaceSize.INFO_BUTTON_SIZE));
-				image.dispose();
-				
-				icon = buff.getDisabledIcon();
-				image = new Image(Display.getCurrent(), icon);
-				iconDictionary.put(buff.getDisabledName(), resizeImage(image, InterfaceSize.INFO_BUTTON_SIZE));
-				image.dispose();
-			}
-		}
-		
 		for(Buff buff : itemDictionary.buffList)
 		{
 			String icon = buff.getDisabledIcon();
@@ -198,6 +194,80 @@ public class GetDictionary
 				iconDictionary.put(type.name()+" - filp", filp(image, false));
 			}
 		}
+		
+		//파티
+		for(PartyCharacter party : charDictionary.partyList)
+		{
+			for(HashMap<String, Buff> entry : party.getBuffHash().values())
+			{
+				Buff buff = entry.values().iterator().next();
+				String icon = buff.getIcon();
+				image = new Image(Display.getCurrent(), icon);
+				iconDictionary.put(buff.getName(), resizeImage(image, InterfaceSize.INFO_BUTTON_SIZE));
+				image.dispose();
+				
+				icon = buff.getDisabledIcon();
+				image = new Image(Display.getCurrent(), icon);
+				iconDictionary.put(buff.getDisabledName(), resizeImage(image, InterfaceSize.INFO_BUTTON_SIZE));
+				image.dispose();
+			}
+		}
+	}
+	
+	public static Image getBackground(Job job, Shell shell)
+	{ 
+		if(!backgroundReaded){
+			backgroundList = new ArrayList<String>();
+			for(Job jobs : Job.values())
+				if(jobs!=Job.NONE) backgroundList.add(jobs.getName()+".png");
+			backgroundList.add("안톤.png");
+			backgroundList.add("루크.png");
+			backgroundReaded=true;
+			
+			loadingImage = new Image(Display.getCurrent(), "image\\Background\\로딩중.png");
+			versionImage = new Image(Display.getCurrent(), "image\\Background\\"+CalculatorVersion.MAIN_VERSION+".png");
+		}
+		
+		if(job==Job.NONE){
+			if(backgroundImage!=null)
+				backgroundImage.dispose();
+			Random random = new Random();
+			String address = backgroundList.get(random.nextInt(backgroundList.size()));
+			Image image = new Image(Display.getCurrent(), "image\\Background\\"+address);
+			ImageData data = image.getImageData();
+			int width = data.width;
+			int height = data.height;
+			double wRate = (double)shell.getClientArea().width/width;
+			double hRate = (double)shell.getClientArea().height/height;
+			double rate = wRate>hRate ? hRate : wRate;
+			data = data.scaledTo((int)(width*rate), (int)(height*rate));
+			backgroundImage= new Image(Display.getCurrent(), data);
+			image.dispose();
+			backgroundJob=Job.NONE;
+		}
+		else if(backgroundJob!=job){
+			if(backgroundImage!=null)
+				backgroundImage.dispose();
+			
+			backgroundJob=job;
+			for(String jobName : backgroundList){
+				if(jobName.contains(job.getName())){
+					Image image = new Image(Display.getCurrent(), "image\\Background\\"+jobName);
+					ImageData data = image.getImageData();
+					int width = data.width;
+					int height = data.height;
+					double wRate = (double)shell.getClientArea().width/width;
+					double hRate = (double)shell.getClientArea().height/height;
+					double rate = wRate>hRate ? hRate : wRate;
+					data = data.scaledTo((int)(width*rate), (int)(height*rate));
+					backgroundImage= new Image(Display.getCurrent(), data);
+					image.dispose();
+					break;
+				}
+			}
+		}
+	
+		return backgroundImage;
 	}
 	
 	public static void getSkillIcon(Job job)
@@ -234,11 +304,15 @@ public class GetDictionary
 	    return new Image(display, imData);
 	}
 	
-	private static Image resizeImage(Image image, int size)
+	private static Image resizeImage(Image image, int x, int y)
 	{
 		ImageData data = image.getImageData();
-		data = data.scaledTo(size, size);
+		data = data.scaledTo(x, y);
 		return new Image(Display.getCurrent(), data);
+	}
+	private static Image resizeImage(Image image, int size)
+	{
+		return resizeImage(image, size, size);
 	}
 	
 	private static Image resizeMonsterImage(Image image)
@@ -338,7 +412,7 @@ public class GetDictionary
 	{
 		ItemDictionary itemDictionary=null;
 		try{
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream("data\\ItemDictionary.dfd"));
+			ObjectInputStream in = new ObjectInputStream(new FileInputStream(ItemDictionary.Directory));
 			Object temp = in.readObject();
 
 			itemDictionary = (ItemDictionary)temp;
@@ -367,15 +441,15 @@ public class GetDictionary
 		for(Emblem emblem : itemDictionary.emblemList){
 			emblem.setPlatinumOptionList(job);
 		}
-		
+
 		return itemDictionary;
 	}
 	
-	public static CharacterDictionary getNewCharDictionary(Job job)
+	public static CharacterDictionary getNewCharDictionary(Job job, int level)
 	{
 		CharacterDictionary charDictionary=null;
 		try{
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream("data\\CharacterDictionary.dfd"));
+			ObjectInputStream in = new ObjectInputStream(new FileInputStream(CharacterDictionary.Directory));
 			Object temp = in.readObject();
 
 			charDictionary = (CharacterDictionary)temp;
@@ -395,8 +469,25 @@ public class GetDictionary
 		for(int i=0; i<charDictionary.skillList.size(); i++){
 			if(!charDictionary.skillList.get(i).isSkillOfChar(job))
 				charDictionary.skillList.remove(i--);
+			else charDictionary.skillList.get(i).masterSkill(level, true);
 		}
 		
+		Collections.sort(charDictionary.skillList);
+		
 		return charDictionary;
+	}
+	
+	public static LinkedList<Skill> getSkillList(Job job, int level)
+	{
+		LinkedList<Skill> list = new LinkedList<Skill>();
+		for(Skill s : charDictionary.skillList){
+			if(s.isSkillOfChar(job)){
+				s.masterSkill(level, true);
+				list.add(s);
+			}
+		}
+		
+		Collections.sort(list);
+		return list;
 	}
 }

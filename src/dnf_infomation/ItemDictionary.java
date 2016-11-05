@@ -4,13 +4,18 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 
+import dnf_InterfacesAndExceptions.CalculatorVersion;
 import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_InterfacesAndExceptions.Job;
 import dnf_InterfacesAndExceptions.ParsingException;
 import dnf_InterfacesAndExceptions.SetName;
+import dnf_UI_32.Inventory;
+import dnf_calculator.FunctionStatusList;
+import dnf_calculator.StatusList;
 import dnf_class.Avatar;
 import dnf_class.Buff;
 import dnf_class.Card;
@@ -21,7 +26,6 @@ import dnf_class.Equipment;
 import dnf_class.Item;
 import dnf_class.ItemConstraint;
 import dnf_class.Jam;
-import dnf_class.PartyCharacter;
 import dnf_class.SetOption;
 import dnf_class.Setting;
 import dnf_class.Title;
@@ -43,12 +47,13 @@ public class ItemDictionary implements java.io.Serializable
 	public final LinkedList<Emblem> emblemList;
 	public final LinkedList<Jam> jamList;
 	public final LinkedList<Buff> buffList;
-	public final LinkedList<PartyCharacter> partyList;
 	
-	public final LinkedList<Equipment> equipList_user;
-	public final LinkedList<Title> titleList_user;
-	public final LinkedList<Avatar> avatarList_user;
-	public final LinkedList<Setting> settingList;
+	public final Item[] userInventory;
+	public static final int InventorySize = 225;
+	public LinkedList<Setting> settingList;
+	
+	private String VERSION = CalculatorVersion.ITEM_VERSION;
+	public static final String Directory = "data\\ItemDictionary-"+CalculatorVersion.ITEM_VERSION+".dfd";
 	
 	public ItemDictionary() 
 	{
@@ -86,12 +91,9 @@ public class ItemDictionary implements java.io.Serializable
 		buffList = new LinkedList<Buff>();
 		BuffItemInfo.getInfo(buffList);
 		
-		partyList = new LinkedList<PartyCharacter>();
-		PartyCharacterInfo.getInfo(partyList);
-		
-		equipList_user = new LinkedList<Equipment>();
-		titleList_user = new LinkedList<Title>();
-		avatarList_user = new LinkedList<Avatar>();
+		userInventory = new Item[Inventory.inventoryCol*Inventory.inventoryRow];
+		for(int i=0; i<InventorySize; i++)
+			userInventory[i]=new Item();
 		settingList = new LinkedList<Setting>();
 	}
 	
@@ -126,35 +128,41 @@ public class ItemDictionary implements java.io.Serializable
 		return list;
 	}
 	
-	@SuppressWarnings("unchecked")
+	/*@SuppressWarnings("unchecked")
 	public LinkedList<Item>[] separateCardList(ItemConstraint[] constraintList)
 	{
 		LinkedList<?>[] list = new LinkedList<?>[constraintList.length+1];
 		for(int i=0; i<constraintList.length+1; i++)
 			list[i] = new LinkedList<Item>();
 		
+		LinkedList<Equip_part> partList = new LinkedList<Equip_part>();
+		partList.add(Equip_part.RING);
+		partList.add(Equip_part.NECKLACE);
+		partList.add(Equip_part.BRACELET);
+		partList.add(Equip_part.EARRING);
+		partList.add(Equip_part.MAGICSTONE);
+		partList.add(Equip_part.AIDEQUIPMENT);
+		
 		int i;
 		for(Card c : cardList){
-			for(i=0; i<constraintList.length; i++){
-				if(c.available(constraintList[i].partList))
+			if(c.available(partList)) ((LinkedList<Item>)list[constraintList.length]).add(c);
+			for(i=0; i<constraintList.length; i++)
+				if(c.available(constraintList[i].partList)){
 					((LinkedList<Item>)list[i]).add(c);
 			}
 		}
-		
+
 		return (LinkedList<Item>[]) list;
-	}
+	}*/
 	
 	@SuppressWarnings("unchecked")
-	public LinkedList<Item>[] separateList(ItemConstraint[] constraintList, boolean getUserItemMode)
+	public LinkedList<Item>[] separateList(ItemConstraint[] constraintList)
 	{
 		LinkedList<?>[] list = new LinkedList<?>[constraintList.length+1];
 		for(int i=0; i<constraintList.length+1; i++)
 			list[i] = new LinkedList<Item>();
 		
 		int i;
-		LinkedList<Equipment> equipList;
-		if(getUserItemMode) equipList = equipList_user;
-		else equipList=this.equipList;
 		for(Equipment e : equipList){
 			for(i=0; i<constraintList.length; i++){
 				if(constraintList[i].equipInConstraint(e)){
@@ -193,9 +201,17 @@ public class ItemDictionary implements java.io.Serializable
 		LinkedList<Item> list = new LinkedList<Item>();
 		for(Card e : cardList)
 			list.add(e);
-		//for(Item e : etcList)
-			//list.add(e);
 		Collections.sort(list);
+		return list;
+	}
+	
+	public LinkedList<Item> getAllEmblemList()
+	{
+		LinkedList<Item> list = new LinkedList<Item>();
+		for(Emblem e : emblemList)
+			list.add(e);
+		Collections.sort(list);
+		Collections.reverse(list);
 		return list;
 	}
 	
@@ -204,22 +220,13 @@ public class ItemDictionary implements java.io.Serializable
 		Collections.sort(buffList);
 		return buffList;
 	}
-	
-	public LinkedList<PartyCharacter> getPartyList(Job job)
-	{
-		LinkedList<PartyCharacter> list = new LinkedList<PartyCharacter>();
-		for(PartyCharacter b : partyList)
-			if(b.job!=job) list.add(b);					//TODO 홀리제외
-		
-		return list;
-	}
 		
 	public Equipment getEquipment(String name) throws ItemNotFoundedException
 	{
 		for(Equipment e : equipList)
 			if(e.getName().equals(name)) return e;
-		for(Equipment e : equipList_user)
-			if(e.getName().equals(name)) return e;
+		for(Item i : userInventory)
+			if(i.getName().equals(name)) return (Equipment)i;
 		throw new ItemNotFoundedException(name);
 	}
 	
@@ -227,8 +234,8 @@ public class ItemDictionary implements java.io.Serializable
 	{
 		for(Title t : titleList)
 			if(t.getName().equals(name)) return t;
-		for(Title t : titleList_user)
-			if(t.getName().equals(name)) return t;
+		for(Item i : userInventory)
+			if(i.getName().equals(name)) return (Title)i;
 		throw new ItemNotFoundedException(name);
 	}
 	
@@ -236,13 +243,6 @@ public class ItemDictionary implements java.io.Serializable
 	{
 		for(Card e : cardList)
 			if(e.getName().equals(name)) return e;
-		throw new ItemNotFoundedException(name);
-	}
-	
-	public PartyCharacter getPartyCharacter(String name) throws ItemNotFoundedException
-	{
-		for(PartyCharacter p : partyList)
-			if(p.getName().equals(name)) return p;
 		throw new ItemNotFoundedException(name);
 	}
 	
@@ -267,8 +267,8 @@ public class ItemDictionary implements java.io.Serializable
 	public Avatar getAvatar(String name) throws ItemNotFoundedException {
 		for(Avatar a : avatarList)
 			if(a.getName().equals(name)) return a;
-		for(Avatar a : avatarList_user)
-			if(a.getName().equals(name)) return a;
+		for(Item i : userInventory)
+			if(i.getName().equals(name)) return (Avatar)i;
 		throw new ItemNotFoundedException(name);
 	}
 	
@@ -295,6 +295,13 @@ public class ItemDictionary implements java.io.Serializable
 		return true;
 	}
 	
+	public boolean itemInInventory(Item item){
+		for(Item i : userInventory){
+			if(i.getItemName().equals(item.getItemName())) return true;
+		}
+		return false;
+	}
+	
 	public <T extends Item> LinkedList<Item> getSortedList(LinkedList<T> set)
 	{
 		LinkedList<Item> aList = new LinkedList<Item>();
@@ -305,22 +312,16 @@ public class ItemDictionary implements java.io.Serializable
 		return aList;
 	}
 	
-	public Item makeReplicate(Item item, int leftInventoryButtonNum)
+	public Item makeReplicate(Item item, int index)
 	{
-		if(leftInventoryButtonNum<=0) return null;
-		
-		LinkedList<? extends Item> itemList;
-		if(item instanceof Equipment) itemList=equipList_user;
-		else if(item instanceof Title) itemList=titleList_user;
-		else if(item instanceof Avatar) itemList=avatarList_user;
-		else return null;
+		if(index<0) return null;
 		
 		LinkedList<Integer> replicateNumList = new LinkedList<Integer>();
 		int num=1;
 		
-		for(Item i : itemList)
+		for(Item i : userInventory)
 		{
-			if(i.getName().contains(item.getName()+"-복제")){
+			if(i.getName().contains(item.getItemName()+"-복제")){
 				replicateNumList.add(i.replicateNum);
 			}
 		}
@@ -331,26 +332,105 @@ public class ItemDictionary implements java.io.Serializable
 		
 		Item replicate = (Item) item.clone();
 		replicate.replicateNum=num;
-		String index = "";
-		if(num!=1) index="("+num+")";
-		replicate.setName(replicate.getItemName() + "-복제"+index);
-		replicate.setEnabled(true);
+		String indexStr = "";
+		if(num!=1) indexStr="("+num+")";
+		replicate.setName(replicate.getItemName() + "-복제"+indexStr);
 		
-		if(item instanceof Equipment) equipList_user.add((Equipment)replicate);
-		else if(item instanceof Title) titleList_user.add((Title)replicate);
-		else if(item instanceof Avatar) avatarList_user.add((Avatar)replicate);
-		
+		userInventory[index]=replicate;
 		return replicate;
 	}
 	
-	public boolean deleteReplicate(Item item)
+	public void updateVersion(ItemDictionary supremeDictionary)
 	{
-		boolean result=false;
-		if(item instanceof Equipment) result = equipList_user.remove(item);
-		else if(item instanceof Title) result = titleList_user.remove(item);
-		else if(item instanceof Avatar) result = avatarList_user.remove(item);
-		return result;
+		if(supremeDictionary.getVERSION().compareTo(VERSION)>0){
+			updateList(equipList, supremeDictionary.equipList);
+			updateList(cardList, supremeDictionary.cardList);
+			updateList(avatarList, supremeDictionary.avatarList);
+			updateList(creatureList, supremeDictionary.creatureList);
+			updateList(drapeList, supremeDictionary.drapeList);
+			updateList(emblemList, supremeDictionary.emblemList);
+			updateList(jamList, supremeDictionary.jamList);
+			updateList(buffList, supremeDictionary.buffList);
+			updateList(titleList, supremeDictionary.titleList);
+
+			HashMap<String, SetOption> updateList = new HashMap<String, SetOption>();
+			for(SetOption item : supremeDictionary.setOptionList)
+				if(item.Version.compareTo(VERSION)>0) updateList.put(item.setName.getName()+" "+item.requireNum, item);
+			
+			for(SetOption item : setOptionList){
+				SetOption update = updateList.remove(item.setName.getName()+" "+item.requireNum);
+				if(update!=null){
+					if(update.requireNum!=item.requireNum) System.out.println("asdf");
+					try {
+						item.fStat=(FunctionStatusList) update.fStat.clone();
+						item.vStat=(StatusList) update.vStat.clone();
+						item.dStat=(StatusList) update.dStat.clone();
+					} catch (CloneNotSupportedException e) {
+						e.printStackTrace();
+					}
+					item.Version=update.Version;
+					item.explanation=update.explanation;
+				}
+			}
+			
+			for(SetOption item : updateList.values())
+				setOptionList.add(item);
+		}
+		VERSION=supremeDictionary.getVERSION();
 	}
+	
+	private <T extends Item> void updateList(LinkedList<T> list, LinkedList<T> supremeList)
+	{
+		HashMap<String, T> updateList = new HashMap<String, T>();
+		for(T item : supremeList)
+			if(item.Version.compareTo(VERSION)>0) updateList.put(item.getName(), item);
+		
+		for(T item : list){
+			T update = updateList.remove(item.getName());
+			if(update!=null){
+				try{
+					StatusList temp = (StatusList) update.vStat.clone();
+					for(int i=0; i<update.getItemStatIndex(); i++)
+						temp.changeStat(i, item.vStat.statList.get(i).stat);
+					item.vStat=temp;
+					item.dStat=(StatusList) update.dStat.clone();
+					item.fStat=(FunctionStatusList) update.fStat.clone();
+					item.Version=update.Version;
+					item.explanation=update.explanation;
+					if(item instanceof Equipment){
+						Equipment equip = (Equipment)item;
+						equip.isRareItem = ((Equipment)update).isRareItem;
+					}
+					
+					/*if(duplicateList!=null){
+						int index = duplicateList.indexOf(item);
+						if(index>=0){
+							temp = (StatusList) update.vStat.clone();
+							for(int i=0; i<update.getItemStatIndex(); i++)
+								temp.changeStat(i, item.vStat.statList.get(i).stat);
+							item.vStat=temp;
+							duplicateList.get(index).dStat=(StatusList) update.dStat.clone();
+							duplicateList.get(index).fStat=(FunctionStatusList) update.fStat.clone();
+							duplicateList.get(index).Version=update.Version;
+							duplicateList.get(index).explanation=update.explanation;
+							if(item instanceof Equipment){
+								Equipment equip = (Equipment)duplicateList.get(index);
+								equip.isRareItem = ((Equipment)update).isRareItem;
+							}
+						}
+					}*/
+				}catch (CloneNotSupportedException e) {
+					e.printStackTrace();
+				}
+				
+			}
+		}
+		
+		for(T item : updateList.values())
+			list.add(item);
+	}
+	
+	public String getVERSION() { return VERSION;}
 }
 
 class SaveItemDictionary {
@@ -359,7 +439,7 @@ class SaveItemDictionary {
 		try{
 			ItemDictionary itemDic = new ItemDictionary();
 			
-			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("data\\ItemDictionary.dfd"));
+			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(ItemDictionary.Directory));
 			out.writeObject(itemDic);
 			out.close();
 		}

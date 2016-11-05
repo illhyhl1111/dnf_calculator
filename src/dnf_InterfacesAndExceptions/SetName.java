@@ -26,7 +26,7 @@ public enum SetName implements Serializable
 	REAL_PROFIGHTER_ACCESSORY("진 : 프로 싸움꾼의 악세서리 세트"), REAL_PROFIGHTER_SPECIALEQUIP("진 : 프로 싸움꾼의 특수장비 세트"),
 	GUILDACCESSORY_FIRE("타오르는 불꽃의 분노 세트"), GUILDACCESSORY_WATER("얼어붙은 냉기의 슬픔 세트"),
 	
-	TACITCONSTRUCTOR("무언의 건설자 세트"),
+	TACITCONSTRUCTOR("무언의 건설자 세트"), MONARCHOFHEVELON("헤블론의 군주 세트"),
 	
 	RAREAVATAR("레어 아바타 세트"), AVATAR("상급 아바타 세트");
 	

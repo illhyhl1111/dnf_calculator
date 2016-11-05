@@ -2,7 +2,7 @@ package dnf_class;
 
 import java.util.LinkedList;
 
-import dnf_InterfacesAndExceptions.Avatar_part;
+import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.Item_rarity;
 import dnf_InterfacesAndExceptions.Job;
 import dnf_InterfacesAndExceptions.SetName;
@@ -10,10 +10,10 @@ import dnf_InterfacesAndExceptions.Skill_type;
 import dnf_calculator.StatusList;
 import dnf_infomation.GetDictionary;
 
-@SuppressWarnings("serial")
 public class Avatar extends Item
 {
-	public final Avatar_part part;
+	private static final long serialVersionUID = -1422368468046095134L;
+	public final Equip_part part;
 	private Emblem emblem1;
 	private Emblem emblem2;
 	private Emblem platinumEmblem;
@@ -21,9 +21,9 @@ public class Avatar extends Item
 	public LinkedList<String> coatSkillList;
 	private String coatSkill;
 	
-	public Avatar(String name, Item_rarity rarity, Avatar_part part, Emblem emblem1, Emblem emblem2, Emblem platinum, SetName setName)
+	public Avatar(String name, Item_rarity rarity, Equip_part part, Emblem emblem1, Emblem emblem2, Emblem platinum, SetName setName, String version)
 	{
-		super(name, "image\\Avatar\\"+name+".png", rarity);
+		super(name, "image\\Avatar\\"+name+".png", rarity, version);
 		this.part=part;
 		this.emblem1=emblem1;
 		this.emblem2=emblem2;
@@ -31,16 +31,16 @@ public class Avatar extends Item
 		this.setName=setName;
 	}
 	
-	public Avatar(String name, Item_rarity rarity, Avatar_part part, SetName setName)
+	public Avatar(String name, Item_rarity rarity, Equip_part part, SetName setName, String version)
 	{
-		super(name, "image\\Avatar\\"+name+".png", rarity);
+		super(name, "image\\Avatar\\"+name+".png", rarity, version);
 		this.part=part;
 		emblem1 = new Emblem();
 		emblem2 = new Emblem();
 		platinumEmblem = new Emblem();
 		this.setName=setName;
 	}
-	public Avatar(Avatar_part part) {
+	public Avatar(Equip_part part) {
 		super();
 		this.part=part;
 		emblem1 = new Emblem();
@@ -50,10 +50,10 @@ public class Avatar extends Item
 	}
 	
 	public boolean setCoatOptionList(Job job){
-		if(part!=Avatar_part.COAT) return false;
+		if(part!=Equip_part.ACOAT) return false;
 		coatSkillList = new LinkedList<String>();
 		
-		for(Skill skill : GetDictionary.charDictionary.getSkillList(job, 90)){
+		for(Skill skill : GetDictionary.getSkillList(job, 90)){
 			if(skill.type!=Skill_type.TP && skill.maxLevel!=1)
 				coatSkillList.add(skill.getItemName());
 		}
@@ -95,6 +95,9 @@ public class Avatar extends Item
 		platinumEmblem = (Emblem) emblem.clone();
 		return true;
 	}
+	
+	@Override
+	public Equip_part getPart() {return part;}
 	
 	@Override
 	public Object clone()

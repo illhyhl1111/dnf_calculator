@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 
+import dnf_InterfacesAndExceptions.CalculatorVersion;
 import dnf_InterfacesAndExceptions.Item_rarity;
 import dnf_InterfacesAndExceptions.Job;
 import dnf_calculator.BuffCalculator;
@@ -45,7 +46,7 @@ public class Saint extends PartyCharacter{
 		super("홀리", Job.CRUSADER);
 	}
 	
-	public void setStat(int[] intStat, boolean[] boolStat, String setting)
+	public void setStat(int[] intStat, boolean[] boolStat, String setting, String version)
 	{
 		if(intStat.length!=intStatNum || boolStat.length!=boolStatNum) return;
 		stat_sta=intStat[0];
@@ -64,20 +65,20 @@ public class Saint extends PartyCharacter{
 		hasSaviour=boolStat[2];
 		setDivine=boolStat[3];
 		
-		setBuff("영광의 축복", setting, BuffCalculator.glorybless(this));
-		setBuff("스트라이킹", setting, BuffCalculator.striking(this));
-		setBuff("지혜의 축복", setting, BuffCalculator.wisebless(this));
-		setBuff("여명의 축복", setting, BuffCalculator.dawnbless(this));
-		setBuff("아포칼립스", setting, BuffCalculator.aprokalypse(this));
+		setBuff("영광의 축복", setting, BuffCalculator.glorybless(this), version);
+		setBuff("스트라이킹", setting, BuffCalculator.striking(this), version);
+		setBuff("지혜의 축복", setting, BuffCalculator.wisebless(this), version);
+		setBuff("여명의 축복", setting, BuffCalculator.dawnbless(this), version);
+		setBuff("아포칼립스", setting, BuffCalculator.aprokalypse(this), version);
 	}
 	
 	public void setUserHolyBuff()
 	{
-		setBuff("영광의 축복", settingFeatureName, BuffCalculator.glorybless(this));
-		setBuff("스트라이킹", settingFeatureName, BuffCalculator.striking(this));
-		setBuff("지혜의 축복", settingFeatureName, BuffCalculator.wisebless(this));
-		setBuff("여명의 축복", settingFeatureName, BuffCalculator.dawnbless(this));
-		setBuff("아포칼립스", settingFeatureName, BuffCalculator.aprokalypse(this));
+		setBuff("영광의 축복", settingFeatureName, BuffCalculator.glorybless(this), CalculatorVersion.CHARACTER_VERSION);
+		setBuff("스트라이킹", settingFeatureName, BuffCalculator.striking(this), CalculatorVersion.CHARACTER_VERSION);
+		setBuff("지혜의 축복", settingFeatureName, BuffCalculator.wisebless(this), CalculatorVersion.CHARACTER_VERSION);
+		setBuff("여명의 축복", settingFeatureName, BuffCalculator.dawnbless(this), CalculatorVersion.CHARACTER_VERSION);
+		setBuff("아포칼립스", settingFeatureName, BuffCalculator.aprokalypse(this), CalculatorVersion.CHARACTER_VERSION);
 	}
 	
 	@Override
@@ -98,21 +99,21 @@ public class Saint extends PartyCharacter{
 	}
 	
 	@Override
-	public void setBuff(String name, String feature, StatusList statList)
+	public void setBuff(String name, String feature, StatusList statList, String version)
 	{
 		HashMap<String, Buff> buffMap = getBuffHash().get(name);
 		if(buffMap==null){
 			buffMap = new HashMap<String, Buff>();
 			getBuffHash().put(name, buffMap);
 		}
-		Buff buff = new Buff(name, Item_rarity.NONE);
+		Buff buff = new Buff(name, Item_rarity.NONE, version);
 		buff.dStat = statList;
 		buffMap.put(feature, buff);
 	}
 	@Override
-	public void setBuff(String name, StatusList statList)
+	public void setBuff(String name, StatusList statList, String version)
 	{
-		setBuff(name, name, statList);
+		setBuff(name, name, statList, version);
 	}
 	
 	@Override

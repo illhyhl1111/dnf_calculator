@@ -6,6 +6,7 @@ import dnf_InterfacesAndExceptions.Emblem_type;
 import dnf_InterfacesAndExceptions.Item_rarity;
 import dnf_InterfacesAndExceptions.Job;
 import dnf_InterfacesAndExceptions.Skill_type;
+import dnf_InterfacesAndExceptions.CalculatorVersion;
 import dnf_calculator.StatusList;
 import dnf_infomation.GetDictionary;
 
@@ -16,13 +17,13 @@ public class Emblem extends Item
 	public LinkedList<String> platinumSkillList;
 	private String platinumSkill;
 	
-	public Emblem(String name, Item_rarity rarity, Emblem_type type)
+	public Emblem(String name, Item_rarity rarity, Emblem_type type, String version)
 	{
-		super(name, "image\\Emblem\\"+name+".png", rarity);
+		super(name, "image\\Emblem\\"+name+".png", rarity, version);
 		this.type=type;
 	}
 	public Emblem() {
-		super("엠블렘 없음", null, Item_rarity.NONE);
+		super("엠블렘 없음", null, Item_rarity.NONE, CalculatorVersion.DEFAULT);
 		type = Emblem_type.NONE;
 	}
 	
@@ -33,7 +34,7 @@ public class Emblem extends Item
 		if(type!=Emblem_type.PLATINUM || !getName().contains("스킬")) return false;
 		platinumSkillList = new LinkedList<String>();
 		
-		for(Skill skill : GetDictionary.charDictionary.getSkillList(job, 90)){
+		for(Skill skill : GetDictionary.getSkillList(job, 90)){
 			if(skill.type!=Skill_type.TP && skill.maxLevel!=1 && (skill.firstLevel<48 || skill.firstLevel==60 || skill.firstLevel==70)
 					&& !skill.getName().equals("광검 사용 가능") && !skill.getName().equals("권투 글러브 사용 가능") && !skill.getName().equals("원소폭격")
 					&& !skill.getName().equals("유탄 마스터리") && !skill.getName().equals("강인한 신념")) 

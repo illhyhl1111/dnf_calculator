@@ -23,8 +23,11 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
+import dnf_InterfacesAndExceptions.DnFColor;
 import dnf_InterfacesAndExceptions.InterfaceSize;
 import dnf_InterfacesAndExceptions.Skill_type;
+import dnf_InterfacesAndExceptions.StatusTypeMismatch;
+import dnf_calculator.SkillStatusInfo;
 import dnf_calculator.StatusAndName;
 import dnf_class.Characters;
 import dnf_class.Skill;
@@ -58,6 +61,7 @@ public class SkillTree extends Dialog{
 		TPSkillList = new LinkedList<ItemButton<Skill>>();
 		
 		Composite content = (Composite) super.createDialogArea(parent);
+		content.getShell().setBackground(DnFColor.infoBackground);
 		RowLayout contentLayout = new RowLayout(SWT.VERTICAL);
 		contentLayout.spacing=10;
 		contentLayout.wrap=false;
@@ -78,7 +82,14 @@ public class SkillTree extends Dialog{
 		int bSize = InterfaceSize.SKILL_BUTTON_SIZE;
 		
 		Iterator<Skill> charSkillIter = character.getSkillList().iterator();
-		Skill tempSkill = charSkillIter.next();
+		Skill tempSkill=null;
+		while(true){
+			if(charSkillIter.hasNext()){
+				tempSkill = charSkillIter.next();
+				if(!tempSkill.isTPSkill() && !tempSkill.isOptionSkill()) break;
+			}
+			else break;
+		}
 		
 		for(int i=0; i<skillLevel.length; i++)
 		{
@@ -92,7 +103,7 @@ public class SkillTree extends Dialog{
 					while(true){
 						if(charSkillIter.hasNext()){
 							tempSkill = charSkillIter.next();
-							if(!tempSkill.isTPSkill()) break;
+							if(!tempSkill.isTPSkill() && !tempSkill.isOptionSkill()) break;
 						}
 						else break;
 					}
@@ -149,8 +160,15 @@ public class SkillTree extends Dialog{
 					LinkedList<StatusAndName> statlist = button.getItem().getSkillLevelInfo(true, false).stat.statList;
 					String[] statList = new String[statlist.size()];
 					int j=0;
-					for(StatusAndName s : statlist)
-						statList[j++] = StatusAndName.getStatHash().get(s.name);
+					for(StatusAndName s : statlist){
+						if(s.stat instanceof SkillStatusInfo)
+							try {
+								statList[j++] = s.stat.getStatToString()+" 데미지 증가 % ";
+							} catch (StatusTypeMismatch e) {
+								e.printStackTrace();
+							}
+						else statList[j++] = StatusAndName.getStatHash().get(s.name);
+					}
 					button.getButton().addListener(SWT.MouseDoubleClick, listenerGroup.skillModifyListener(statList));
 				}
 			}

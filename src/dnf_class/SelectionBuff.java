@@ -13,9 +13,9 @@ public class SelectionBuff extends Buff{
 	public final boolean selectOneOption;
 	public HashMap<String, Entry<StatusList, Boolean>> selectionList;
 	
-	public SelectionBuff(String name, Item_rarity rarity, boolean selectOneOptionMode)
+	public SelectionBuff(String name, Item_rarity rarity, boolean selectOneOptionMode, String version)
 	{
-		super(name, rarity);
+		super(name, rarity, version);
 		selectionList = new HashMap<String, Entry<StatusList, Boolean>>();
 		this.selectOneOption=selectOneOptionMode;
 		
@@ -29,14 +29,19 @@ public class SelectionBuff extends Buff{
 	public void setSelection(String[] name, boolean[] selected)
 	{
 		int i;
-		dStat = new StatusList();
+		StatusList stat;
+		if(getName().equals("모험단") || getName().equals("길드 스탯")){
+			vStat = new StatusList();
+			stat = vStat;
+		}
+		else {
+			dStat = new StatusList();
+			stat = dStat;
+		}
 		for(i=0; i<name.length; i++){
 			selectionList.get(name[i]).setValue(selected[i]);
 			if(selected[i]){
-				if(selectOneOption)
-					dStat = selectionList.get(name[i]).getKey();
-				else dStat.statList.addAll(selectionList.get(name[i]).getKey().statList);
-					
+				stat.statList.addAll(selectionList.get(name[i]).getKey().statList);
 			}
 		}
 	}

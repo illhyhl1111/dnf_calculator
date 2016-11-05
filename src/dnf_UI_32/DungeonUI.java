@@ -1,5 +1,6 @@
 package dnf_UI_32;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -7,6 +8,8 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FormAttachment;
@@ -15,6 +18,7 @@ import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -29,6 +33,7 @@ import dnf_InterfacesAndExceptions.InterfaceSize;
 import dnf_InterfacesAndExceptions.Location;
 import dnf_class.Characters;
 import dnf_class.Setting;
+import dnf_infomation.GetDictionary;
 
 public class DungeonUI extends DnFComposite{
 	Button toVillageButton;
@@ -39,8 +44,10 @@ public class DungeonUI extends DnFComposite{
 	DealChart dealChart;
 	TrainingRoom trainingRoom;
 	BuffInventory buffInventory;
+	BestSettingFinder bestSettingFinder;
+	Inventory inventory;
 	
-	TabFolder inventoryFolder;
+	Combo settingsCombo;
 	
 	private Shell shell;
 	private Shell saveComposite;
@@ -55,10 +62,11 @@ public class DungeonUI extends DnFComposite{
 		toVillageButton.setText("마을로 돌아가기");
 	}
 	
-	public void makeComposite(Vault vault)
+	public void makeComposite(SkillTree skillTree, Vault vault)
 	{
 		mainComposite = new Composite(shell, SWT.NONE);
 		mainComposite.setLayout(new FormLayout());
+		mainComposite.setBackgroundImage(GetDictionary.getBackground(character.getJob(), shell));
 		
 		TabFolder infoFolder = new TabFolder(mainComposite, SWT.NONE);
 		FormData formData = new FormData();
@@ -74,16 +82,11 @@ public class DungeonUI extends DnFComposite{
 		avatarInfo = new UserInfo(infoFolder, character, Location.DUNGEON, this, 1);
 		avatarInfoTab.setControl(avatarInfo.getComposite());
 		
-		inventoryFolder = new TabFolder(mainComposite, SWT.NONE);
-		InventoryCardPack inventoryPack = new InventoryCardPack(inventoryFolder, character);
-		inventoryPack.setDungeonMode(this);
-		inventoryPack.setDungeonListener(vault);
-		formData = new FormData();
-		formData.bottom = new FormAttachment(100, 0);
-		formData.left = new FormAttachment(infoFolder, 10);
-		inventoryFolder.setLayoutData(formData);
+		inventory = new Inventory(mainComposite, character, this, Location.DUNGEON);
+		inventory.setListener(vault);
+		vault.setInventory(inventory);
 		
-		infoFolder.addSelectionListener(new SelectionAdapter() {
+		/*infoFolder.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(org.eclipse.swt.events.SelectionEvent event) {
 				if(infoFolder.getSelection()[0].getText().equals(itemInfoTab.getText())){
 					itemInfo.renew();
@@ -113,14 +116,20 @@ public class DungeonUI extends DnFComposite{
 					infoFolder.setSelection(itemInfoTab);
 				}
 			}
-		});
+		});*/
 		
 		dealChart = new DealChart(mainComposite, character);
 		formData = new FormData();
-		formData.right = new FormAttachment(100, -5);
+		formData.right = new FormAttachment(100, -3);
 		formData.height=InterfaceSize.DEALCHART_Y;
 		dealChart.setDealChart();
 		dealChart.getComposite().setLayoutData(formData);
+		
+		formData = new FormData();
+		formData.left = new FormAttachment(0, 145);
+		formData.top = new FormAttachment(0, 32);
+		dealChart.settingEvaluate.setLayoutData(formData);
+		dealChart.settingEvaluate.moveAbove(null);
 		
 		trainingRoom = new TrainingRoom(mainComposite, this, character);
 		formData = new FormData(InterfaceSize.TRAININGROOM_SIZE_X, InterfaceSize.TRAININGROOM_SIZE_Y);
@@ -135,13 +144,49 @@ public class DungeonUI extends DnFComposite{
 		formData.left = new FormAttachment(infoFolder, 10);
 		buffInventory.getComposite().setLayoutData(formData);
 		
+		formData = new FormData();
+		formData.top = new FormAttachment(buffInventory.getComposite(), 5);
+		formData.bottom = new FormAttachment(100, -5);
+		formData.left = new FormAttachment(infoFolder, 3);
+		inventory.getComposite().setLayoutData(formData);
+		
 		setItemSettingControls(infoFolder, dealChart);
+		
+		calculateSettings = new Button(mainComposite, SWT.PUSH);
+		calculateSettings.setText("세팅 최적화");
+		
+		bestSettingFinder = new BestSettingFinder(shell, character, settingsCombo);
+		calculateSettings.addSelectionListener(new SelectionAdapter(){
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				bestSettingFinder.open();
+			}
+		});
 		
 		toVillageButton.setParent(mainComposite);
 		FormData buttonData = new FormData(100, 100);
 		buttonData.bottom = new FormAttachment(100, -10);
 		buttonData.right = new FormAttachment(100, -10);
 		toVillageButton.setLayoutData(buttonData);
+		
+		buttonData = new FormData(100, 100);
+		buttonData.bottom = new FormAttachment(toVillageButton, -10);
+		buttonData.right = new FormAttachment(100, -10);
+		calculateSettings.setLayoutData(buttonData);
+		
+		Canvas version = new Canvas(mainComposite, SWT.NO_REDRAW_RESIZE | SWT.TRANSPARENT);
+		formData = new FormData(200, 40);
+		formData.right = new FormAttachment(toVillageButton, -10);
+		formData.bottom = new FormAttachment(100, 0);
+		version.setLayoutData(formData);
+		version.addPaintListener(new PaintListener() {
+	        public void paintControl(PaintEvent e) {
+	         e.gc.drawImage(GetDictionary.versionImage, 0, 0);
+	        }
+	    });
+		
+		skillTree.superInfo=this;
+		shell.setText("인포창");
 	}
 	
 	private void setItemSettingControls(Composite infoFolder, DealChart dealChart)
@@ -180,28 +225,36 @@ public class DungeonUI extends DnFComposite{
 		formData.right = new FormAttachment(infoFolder, 0, SWT.RIGHT);
 		deleteSettings.setLayoutData(formData);
 		
-		final Combo combo = new Combo(mainComposite, SWT.READ_ONLY);
+		Button deleteFindedSettings = new Button(mainComposite, SWT.NONE);
+		deleteFindedSettings.setText("최적화세팅 삭제");
+		formData = new FormData(100, 35);
+		formData.top = new FormAttachment(setSettings, 5);
+		formData.right = new FormAttachment(deleteSettings, -5);
+		deleteFindedSettings.setLayoutData(formData);
+		
+		settingsCombo = new Combo(mainComposite, SWT.READ_ONLY);
 		LinkedList<String> settings = new LinkedList<String>();
 		for(Setting setting : character.userItemList.settingList)
 			settings.add(setting.setting_name);
-		combo.setItems(settings.toArray(new String[0]));
+		settingsCombo.setItems(settings.toArray(new String[0]));
 		FormData comboData = new FormData();
 		comboData.top = new FormAttachment(infoFolder, 5);
 		comboData.left = new FormAttachment(separator, 3);
 		comboData.right = new FormAttachment(getSettings, -3);
-		combo.setLayoutData(comboData);
+		settingsCombo.setLayoutData(comboData);
 		
 		saveSettings.addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				SaveSettingDialog dialog = new SaveSettingDialog(shell);
+				SaveSettingDialog dialog = new SaveSettingDialog(shell, character.userItemList.settingList);
 				dialog.create();
 				
 				if (dialog.open() == Window.OK) {
 			        Setting setting = character.getItemSetting().saveToClone(dialog.getName());
 			        character.userItemList.settingList.add(setting);
+			        LinkedList<String> settings = new LinkedList<String>(Arrays.asList(settingsCombo.getItems()));
 			        settings.add(dialog.getName());
-					combo.setItems(settings.toArray(new String[0]));
+			        settingsCombo.setItems(settings.toArray(new String[0]));
 				}
 			}
 		});
@@ -209,7 +262,7 @@ public class DungeonUI extends DnFComposite{
 		getSettings.addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				String name = combo.getText();
+				String name = settingsCombo.getText();
 				Setting setting = null;
 				for(Setting s : character.userItemList.settingList){
 					if(s.setting_name.equals(name)){
@@ -238,7 +291,7 @@ public class DungeonUI extends DnFComposite{
 		setSettings.addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				String name = combo.getText();
+				String name = settingsCombo.getText();
 				Setting setting = null;
 				for(Setting s : character.userItemList.settingList){
 					if(s.setting_name.equals(name)){
@@ -266,17 +319,20 @@ public class DungeonUI extends DnFComposite{
 		deleteSettings.addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				String name = combo.getText();
+				String name = settingsCombo.getText();
 				Setting setting = null;
 				for(Setting s : character.userItemList.settingList){
-					if(s.setting_name.equals(name)) setting=s;
-					break;
+					if(s.setting_name.equals(name)){
+						setting=s;
+						break;
+					}
 				}
 				
 				if(setting!=null){
 					character.userItemList.settingList.remove(setting);
+					LinkedList<String> settings = new LinkedList<String>(Arrays.asList(settingsCombo.getItems()));
 					settings.remove(name);
-					combo.setItems(settings.toArray(new String[0]));
+					settingsCombo.setItems(settings.toArray(new String[0]));
 					MessageDialog dialog = new MessageDialog(shell, "성☆공", null,
 						    "세팅 "+name+" 을 삭제하였습니다.",
 						    MessageDialog.INFORMATION, new String[] { "ㅇㅋ" }, 0);
@@ -288,6 +344,28 @@ public class DungeonUI extends DnFComposite{
 						    MessageDialog.ERROR, new String[] { "납득" }, 0);
 					dialog.open();
 				}
+			}
+		});
+		
+		deleteFindedSettings.addSelectionListener(new SelectionAdapter(){
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				LinkedList<String> items = new LinkedList<String>();
+				LinkedList<Setting> newSettings = new LinkedList<Setting>();
+				for(Setting setting : character.userItemList.settingList){
+					if(!setting.setting_name.matches("^.*-\\d+위$")){
+						items.add(setting.setting_name);
+						newSettings.add(setting);
+					}
+				}
+
+				settingsCombo.setItems(items.toArray(new String[0]));
+				character.userItemList.settingList=newSettings;
+				MessageDialog dialog = new MessageDialog(shell, "성☆공", null,
+					    "모든 최적화세팅을 삭제하였습니다.",
+					    MessageDialog.INFORMATION, new String[] { "ㅇㅋ" }, 0);
+				dialog.open();
+				
 			}
 		});
 	}
@@ -317,9 +395,11 @@ public class DungeonUI extends DnFComposite{
         private Text text;
         private String name;
         private Label warning;
+        private LinkedList<Setting> settingList;
 
-        public SaveSettingDialog(Shell parentShell) {
+        public SaveSettingDialog(Shell parentShell, LinkedList<Setting> settingList) {
         	super(parentShell);
+        	this.settingList=settingList;
         }
 
         @Override
@@ -366,6 +446,10 @@ public class DungeonUI extends DnFComposite{
         private boolean saveInput() {
         	name = text.getText();
         	if(name.length()>10) return false;
+        	else{
+        		for(Setting setting : settingList)
+        			if(setting.setting_name.equals(name)) return false;
+        	}
         	return true;
         }
 
@@ -374,7 +458,7 @@ public class DungeonUI extends DnFComposite{
         	if(saveInput())
         		super.okPressed();
         	else{
-        		warning.setText("저장할 세팅의 이름은 최대 10글자입니다");
+        		warning.setText("저장할 세팅의 이름은 최대 10글자 / 중복 불가능입니다");
         	}
         }
 

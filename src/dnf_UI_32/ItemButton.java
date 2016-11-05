@@ -42,37 +42,23 @@ public class ItemButton<T extends IconObject>
 			button.setLayoutData(buttonFormData);
 		}
 
-		if(item instanceof Item) renewImage(((Item) item).getEnabled());
-		else renewImage(true);
-	}
-	public ItemButton(Composite parent, T item, int x, int y, boolean enabled)
-	{
-		this.item=item;
-		imageSize_x=x;
-		imageSize_y=y;
-		button = new Button(parent, SWT.PUSH);
-		if(parent.getLayout() instanceof GridLayout){
-			GridData buttonGridData = new GridData(x, y);
-			button.setLayoutData(buttonGridData);
-		}
-		else if(parent.getLayout() instanceof FormLayout){
-			FormData buttonFormData = new FormData(x, y);
-			button.setLayoutData(buttonFormData);
-		}
-		
-		renewImage(enabled);
+		renewImage();
 	}
 	
-	public void renewImage(boolean enabled)
+	public void renewImage()
 	{
-		if(offImageMode) return;
 		Image image;
 		HashMap<String, Image> dictionary;
 		if(item instanceof Skill) dictionary = GetDictionary.skillIconDictionary;
 		else dictionary = GetDictionary.iconDictionary;
 		
-		if(item.getIcon()==null || !enabled){
+		if(item.getIcon()==null){
 			image = GetDictionary.iconDictionary.get("디폴트");
+		}
+		else if(offImageMode){
+			if(item instanceof Skill && !((Skill)item).getBuffEnabled())
+				image = dictionary.get(item.getDisabledName());
+			else image = dictionary.get(item.getItemName());
 		}
 		else{
 			if(item instanceof Skill && !((Skill)item).getActiveEnabled())
