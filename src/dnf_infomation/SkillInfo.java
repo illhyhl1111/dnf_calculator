@@ -14,6 +14,7 @@ import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 import dnf_InterfacesAndExceptions.UndefinedStatusKey;
 import dnf_InterfacesAndExceptions.Weapon_detailType;
 import dnf_calculator.FunctionStat;
+import dnf_calculator.SkillStatusInfo;
 import dnf_calculator.StatusList;
 import dnf_class.Characters;
 import dnf_class.Monster;
@@ -29,7 +30,7 @@ public class SkillInfo {
 		int i=0;
 		String name=null;
 		Skill_type type=null;
-		String target=null;
+		String[] targets = null;
 		boolean isTPSkill=false;
 		Job job=null;
 		Character_type charType=null;
@@ -64,7 +65,7 @@ public class SkillInfo {
 			}
 			else if(temp.equals(""));	//이전 값 유지
 			else if(temp instanceof String){
-				target = (String) temp;
+				targets = ((String) temp).split(" & ");
 				isTPSkill=true;
 			}
 			else throw new ParsingException(i-1, temp);
@@ -121,12 +122,12 @@ public class SkillInfo {
 				version = CalculatorVersion.VER_1_0_a;
 			
 			if(jobDefined){
-				if(isTPSkill) skill = new TPSkill(name, target, job, firstLevel, maxLevel, masterLevel, interval, version);
+				if(isTPSkill) skill = new TPSkill(name, targets, job, firstLevel, maxLevel, masterLevel, interval, version);
 				else if(type==Skill_type.SWITCHING) skill = new SwitchingSkill(name, job, firstLevel, maxLevel, masterLevel, interval, version);
 				else skill = new Skill(name, type, job, firstLevel, maxLevel, masterLevel, interval, element, version);
 			}
 			else{
-				if(isTPSkill) skill = new TPSkill(name, target, charType, firstLevel, maxLevel, masterLevel, interval, version);
+				if(isTPSkill) skill = new TPSkill(name, targets, charType, firstLevel, maxLevel, masterLevel, interval, version);
 				else if(type==Skill_type.SWITCHING) skill = new SwitchingSkill(name, charType, firstLevel, maxLevel, masterLevel, interval, version);
 				else skill = new Skill(name, type, charType, firstLevel, maxLevel, masterLevel, interval, element, version);
 			}
@@ -204,11 +205,11 @@ public class SkillInfo {
 								else skillNum[j]=Parser.parseForm(stat[index++], skillNum[j]);
 							}
 						}
-						levelInfo = new SkillLevelInfo(skillLevel, (int)(skillNum[0]+0.00001), skillNum[1], (int)(skillNum[2]+0.00001), skillNum[3]);
+						levelInfo = new SkillLevelInfo(skillLevel, (int)Math.round(skillNum[0]), skillNum[1], (int)Math.round(skillNum[2]), skillNum[3]);
 					}
 					else levelInfo = new SkillLevelInfo(skillLevel);
 					
-					if(skill.hasBuff()){
+					if(skill.hasBuff() || (data[i] instanceof String && ((String)data[i]).startsWith("귀속"))){
 						temp = data[i++];
 						
 						if(temp instanceof FunctionStat){
@@ -219,6 +220,24 @@ public class SkillInfo {
 						if(temp!=null){
 							String[] statList = ((String)temp).split(" & ");
 							for(String str : statList){
+								if(str.contains("귀속")){
+									String[] skillAndPercent = str.split("/");
+									
+									int result;
+									if(skillAndPercent[skillAndPercent.length-1].startsWith("+")){
+										String compareStat = skillAndPercent[skillAndPercent.length-1];
+										result=Integer.valueOf(compareStat) + prevStat.get(statOrder).intValue();
+									}
+									else result=Integer.valueOf(skillAndPercent[skillAndPercent.length-1]);
+									levelInfo.percentList.put(skillAndPercent[1], result);
+									if(statOrder==prevStat.size()){
+										prevStat.add((double)result);
+										statOrder++;
+									}
+									else prevStat.set(statOrder++, (double)result);
+									continue;
+								}
+								
 								stat = ((String)str).split(" ");
 								if(stat[stat.length-1].startsWith("+")){
 									String compareStat = stat[stat.length-1];
@@ -248,20 +267,152 @@ public class SkillInfo {
 		}
 	}
 	
+	public static Object[] skillInfo_swordman()
+	{
+		FunctionStat fStat[] = new FunctionStat[2];
+		
+		//혈지군무 분신
+		fStat[0] = new FunctionStat(){
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public StatusList function(Characters character, Monster monster, Object item) {
+				StatusList statList = new StatusList();
+				Skill skill = (Skill)item;
+				int level = character.characterInfoList.getSkill("혈지군무").getSkillLevel(true, character.isBurning());
+				if(level!=0) skill.setSkillLevel(level);
+				double skillEnhance=0;
+				SkillLevelInfo skillInfo = character.characterInfoList.getSkill("마인의 검세").getSkillLevelInfo(true, character.isBurning());
+				if(character.characterInfoList.getSkill("마인의 검세").getSkillLevel(true, character.isBurning())!=0){
+					switch(skill.getName()){
+					case "혈지군무 - 발":
+						skillEnhance = ((SkillStatusInfo)skillInfo.stat.statList.get(4).stat).getIncrease();
+						break;
+					case "혈지군무 - 무":
+						skillEnhance = ((SkillStatusInfo)skillInfo.stat.statList.get(5).stat).getIncrease();
+						break;
+					case "혈지군무 - 사형조수":
+						skillEnhance = ((SkillStatusInfo)skillInfo.stat.statList.get(6).stat).getIncrease();
+						break;
+					case "혈지군무 - 폭류나선":
+						skillEnhance = ((SkillStatusInfo)skillInfo.stat.statList.get(0).stat).getIncrease();
+						break;
+					case "혈지군무 - 혈화난무":
+						skillEnhance = ((SkillStatusInfo)skillInfo.stat.statList.get(1).stat).getIncrease();
+						break;
+					}
+				}
+				skill.dungeonIncrease *= 100.0/(100+skillEnhance);
+				return statList;
+			}
+		};
+		
+		Object[] data = new Object[] {
+				
+				///////////////검마
+				"사복검 - 발", Skill_type.ACTIVE, Job.DEMONSLAYER, 15, 60, 50, 2, Element_type.NONE, 
+				"38 1298*10 0 0 0", "+ 1325*10", "+ 1298*10","+ 1353*10","+ 1380*10","+ 1409*10","+ 1437*10","+ 1464*10",null,
+				"사복검 - 무", Skill_type.ACTIVE, Job.DEMONSLAYER, 20, 60, 50, 2, Element_type.NONE, 
+				"36 2750*2+3666 0 0 0", "+ 2811*2+3748" , "+ 2874*2+3831", "+ 2932*2+3911", "+ 2998*2+3997", "+ 3059*2+4078", "+ 3117*2+4158", "+ 3181*2+4241", null,
+				"사복검 - 조", Skill_type.ACTIVE, Job.DEMONSLAYER, 25, 60, 50, 2, Element_type.NONE, 
+				"33 6098+3050*3 0 0 0", "+ 6245+3122*3", "+ 6391+3196*3", "+ 6536+3269*3", "+ 6683+3340*3", "+ 6828+3414*3", "+ 6975+3488*3", "+ 7120+3561*3", "+ 7266+3632*3", null,
+				//충격파 물리공격력은 직접타격엔 영향없고 독오 퍼뎀은 뜯기와 같음 (안맞은적만 적용)
+				"사형조수", Skill_type.ACTIVE, Job.DEMONSLAYER, 25, 60, 50, 2, Element_type.NONE, 
+				"33 5323+7987 0 0 0", "+ 5453+8178", "+ 5579+8370", "+ 5708+8564", "+ 5831+8749", "+ 5964+8944", "+ 6090+9133", "+ 6219+9329", "+ 6345+9517", null,
+				"폭류나선", Skill_type.ACTIVE, Job.DEMONSLAYER, 30, 60, 50, 2, Element_type.NONE, 
+				"31 1456*12 0 0 0", "+ 1491*12", "+ 1530*12", "+ 1564*12", "+ 1603*12", "+ 1639*12", "+ 1674*12", "+ 1712*12", "+ 1750*12", "+ 1785*12", "+ 1822*12", null,
+				"혈화난무", Skill_type.ACTIVE, Job.DEMONSLAYER, 35, 60, 50, 2, Element_type.NONE, 
+				"28 2092*11+5451 0 0 0", "+ 2150*11+5596", "+ 2206*11+5739", "+ 2264*11+5886", "+ 2320*11+6031", "+ 2378*11+6175",
+				"+ 2435*11+6325", "+ 2492*11+6469", "+ 2549*11+6613", "+ 2604*11+6760", "+ 2663*11+6908",  "+ 2720*11+7050", null,
+				"혈마인", Skill_type.ACTIVE, Job.DEMONSLAYER, 35, 60, 50, 2, Element_type.NONE, 
+				"28 6091+14011+1942*16 0 0 0", "+ 6256+14391+1994*16", "+ 6256+14391+1994*16", "+ 6422+14771+2048*16", "+ 6587+15151+2099*16", "+ 6752+15531+2153*16", "+ 6917+15911+2205*16",
+				"+ 7083+16291+2258*16", "+ 7248+16671+2311*16", "+ 7413+17052+2363*16", "+ 7578+17432+2416*16", "+ 7744+17812+2469*16", "+ 7909+18192+2521*16", null,
+				"검마격살", Skill_type.ACTIVE, Job.DEMONSLAYER, 45, 60, 50, 2, Element_type.NONE, 
+				"23 6693+17849+2232*8 0 0 0", "+ 6905+18413+2302*8", "+ 7106+18950+2369*8", "+ 7318+19515+2439*8", "+ 7529+20079+2510*8", "+ 7742+20644+2580*8",
+				"+ 7953+21209+2652*8", "+ 8165+21773+2722*8", "+ 8376+22337+2792*8", null,
+				"암연검 : 기가블레이드", Skill_type.ACTIVE, Job.DEMONSLAYER, 50, 40, 30, 5, Element_type.NONE, 
+				"10 2867*20+2648*7+2042*7+11469+17203+22943 0 0 0", "+ 3082*20+2845*7+2159*7+12332+18496+24664 0 0 0", "+ 3297*20+3044*7+2280*7+13192+19790+26387 0 0 0", "+ 3514*20+3242*7+2280*7+14053+21082+28113 0 0 0",
+				"+ 3729*20+3442*7+2403*7+14916+22374+29834 0 0 0", "+ 3945*20+3642*7+2523*7+15777+23666+31557 0 0 0", "9 2652*20+2451*7+1925*7+10606+15910+21222 0 0 0", null,
+				"포식자 갈로아", Skill_type.ACTIVE, Job.DEMONSLAYER, 60, 40, 30, 2, Element_type.NONE, 
+				"16 3239*12+5567*3 0 0 0", "+ 3420*12+5789*3", "+ 3553*12+6013*3", "+ 3685*12+6238*3", "+ 3818*12+6462*3", "+ 3950*12+6686*3",
+				"+ 4081*12+6910*3", "+ 4214*12+7133*3", null,
+				"역천의 프놈", Skill_type.ACTIVE, Job.DEMONSLAYER, 70, 40, 30, 2, Element_type.NONE, 
+				"11 2873*5+2393*8+14361 0 0 0", "+ 3018*5+2513*8+15084", "+ 3162*5+2634*8+15808", "+ 3308*5+2754*8+16531", "+ 3453*5+2876*8+17254",
+				"+ 3596*5+2996*8+17978", "+ 3742*5+3115*8+18701", "+ 3885*5+3237*8+19425", null,
+				"암연격 : 기가슬래쉬", Skill_type.ACTIVE, Job.DEMONSLAYER, 75, 40, 30, 2, Element_type.NONE, 
+				"8 64069 0 0 0", "+ 67870", "+ 71671", "+ 75472", "+ 79272", "+ 83073", "+ 86874", null,
+				"비인외도 : 극", Skill_type.ACTIVE, Job.DEMONSLAYER, 80, 40, 30, 2, Element_type.NONE, 
+				"6 64089 0 0 0", "+ 68402", "+ 72719", "+ 77032", "+ 81345", "+ 85659", null,
+				"파계검 : 라그나로크", Skill_type.ACTIVE, Job.DEMONSLAYER, 85, 40, 30, 5, Element_type.NONE, 
+				"2 3063*10+11336*3+42325 0 0 0", "+ 3640*10+13471*3+50293", "+ 4217*10+15604*3+58260", "+ 4794*10+17739*3+66228", "+ 5370*10+19874*3+74195", null,
+
+				"탐욕의 번제", Skill_type.BUF_ACTIVE, "", 50, 40, 30, 3,
+				"15", "증뎀버프 33", "+", "증뎀버프 +1.5", "반복 1",
+				"마인의 검세", Skill_type.PASSIVE, "", 75, 40, 30, 3,
+				"5", "스킬 폭류나선 % 32 & 스킬 혈화난무 % 48*0.596 & 스킬 사복검 - 조 % 32*0.6 & 스킬 검마격살 % 50*0.421+48*0.421 & 스킬 사복검 - 발 % 19 & 스킬 사복검 - 무 % 32 & 스킬 사형조수 % 32 & 스킬 암연검 : 기가블레이드 % 32 & "
+						+ "스킬 포식자 갈로아 % 32 & 스킬 역천의 프놈 % 32 & 스킬 암연격 : 기가슬래쉬 % 32 & 스킬 비인외도 : 극 % 32 & 스킬 파계검 : 라그나로크 % 32 & 스킬 혈지군무 % 32",
+				"6", "스킬 폭류나선 % +2 & 스킬 혈화난무 % +1.192 & 스킬 사복검 - 조 % 1.2 & 스킬 검마격살 % 50*0.421+50*0.421 & 스킬 사복검 - 발 % +2 & 스킬 사복검 - 무 % +2 & 스킬 사형조수 % +2 & 스킬 암연검 : 기가블레이드 % +2 & "
+						+ "스킬 포식자 갈로아 % +2 & 스킬 역천의 프놈 % +2 & 스킬 암연격 : 기가슬래쉬 % +2 & 스킬 비인외도 : 극 % +2 & 스킬 파계검 : 라그나로크 % +2 & 스킬 혈지군무 % +2",
+				"7", "스킬 폭류나선 % +2 & 스킬 혈화난무 % +1.192 & 스킬 사복검 - 조 % 1.2 & 스킬 검마격살 % 62.5*0.421+52*0.421 & 스킬 사복검 - 발 % +2 & 스킬 사복검 - 무 % +2 & 스킬 사형조수 % +2 & 스킬 암연검 : 기가블레이드 % +2 & " 
+						+ "스킬 포식자 갈로아 % +2 & 스킬 역천의 프놈 % +2 & 스킬 암연격 : 기가슬래쉬 % +2 & 스킬 비인외도 : 극 % +2 & 스킬 파계검 : 라그나로크 % +2 & 스킬 혈지군무 % +2",
+				"8", "스킬 폭류나선 % +2 & 스킬 혈화난무 % +1.192 & 스킬 사복검 - 조 % 1.2 & 스킬 검마격살 % 62.5*0.421+54*0.421 & 스킬 사복검 - 발 % +2 & 스킬 사복검 - 무 % +2 & 스킬 사형조수 % +2 & 스킬 암연검 : 기가블레이드 % +2 & "
+						+ "스킬 포식자 갈로아 % +2 & 스킬 역천의 프놈 % +2 & 스킬 암연격 : 기가슬래쉬 % +2 & 스킬 비인외도 : 극 % +2 & 스킬 파계검 : 라그나로크 % +2 & 스킬 혈지군무 % +2",
+				"9", "스킬 폭류나선 % +2 & 스킬 혈화난무 % +1.192 & 스킬 사복검 - 조 % 1.2 & 스킬 검마격살 % 62.5*0.421+56*0.421 & 스킬 사복검 - 발 % +2 & 스킬 사복검 - 무 % +2 & 스킬 사형조수 % +2 & 스킬 암연검 : 기가블레이드 % +2 & "
+						+ "스킬 포식자 갈로아 % +2 & 스킬 역천의 프놈 % +2 & 스킬 암연격 : 기가슬래쉬 % +2 & 스킬 비인외도 : 극 % +2 & 스킬 파계검 : 라그나로크 % +2 & 스킬 혈지군무 % +2",
+				"10", "스킬 폭류나선 % +2 & 스킬 혈화난무 % +1.192 & 스킬 사복검 - 조 % 1.2 & 스킬 검마격살 % 75*0.421+58*0.421 & 스킬 사복검 - 발 % +2 & 스킬 사복검 - 무 % +2 & 스킬 사형조수 % +2 & 스킬 암연검 : 기가블레이드 % +2 & "
+						+ "스킬 포식자 갈로아 % +2 & 스킬 역천의 프놈 % +2 & 스킬 암연격 : 기가슬래쉬 % +2 & 스킬 비인외도 : 극 % +2 & 스킬 파계검 : 라그나로크 % +2 & 스킬 혈지군무 % +2",
+				"11", "스킬 폭류나선 % +2 & 스킬 혈화난무 % +1.192 & 스킬 사복검 - 조 % 1.2 & 스킬 검마격살 % 75*0.421+60*0.421 & 스킬 사복검 - 발 % +2 & 스킬 사복검 - 무 % +2 & 스킬 사형조수 % +2 & 스킬 암연검 : 기가블레이드 % +2 & "
+						+ "스킬 포식자 갈로아 % +2 & 스킬 역천의 프놈 % +2 & 스킬 암연격 : 기가슬래쉬 % +2 & 스킬 비인외도 : 극 % +2 & 스킬 파계검 : 라그나로크 % +2 & 스킬 혈지군무 % +2",
+				"12", "스킬 폭류나선 % +2 & 스킬 혈화난무 % +1.192 & 스킬 사복검 - 조 % 1.2 & 스킬 검마격살 % 75*0.421+62*0.421 & 스킬 사복검 - 발 % +2 & 스킬 사복검 - 무 % +2 & 스킬 사형조수 % +2 & 스킬 암연검 : 기가블레이드 % +2 & "
+						+ "스킬 포식자 갈로아 % +2 & 스킬 역천의 프놈 % +2 & 스킬 암연격 : 기가슬래쉬 % +2 & 스킬 비인외도 : 극 % +2 & 스킬 파계검 : 라그나로크 % +2 & 스킬 혈지군무 % +2",
+				"13", "스킬 폭류나선 % +2 & 스킬 혈화난무 % +1.192 & 스킬 사복검 - 조 % 1.2 & 스킬 검마격살 % 87.5*0.421+64*0.421 & 스킬 사복검 - 발 % +2 & 스킬 사복검 - 무 % +2 & 스킬 사형조수 % +2 & 스킬 암연검 : 기가블레이드 % +2 & "
+						+ "스킬 포식자 갈로아 % +2 & 스킬 역천의 프놈 % +2 & 스킬 암연격 : 기가슬래쉬 % +2 & 스킬 비인외도 : 극 % +2 & 스킬 파계검 : 라그나로크 % +2 & 스킬 혈지군무 % +2", null,
+									
+				"광폭화", Skill_type.SWITCHING, "", 20, 30, 20, 3, 
+				"20", "증뎀버프 40 & 스킬 혈마인 % 30 & 스킬 혈지군무 % 30 & 스킬 검마격살 % 30 & 스킬 포식자 갈로아 % 30 & 스킬 역천의 프놈 % 30 & 스킬 암연검 : 기가블레이드 % 30 & 스킬 암연격 : 기가슬래쉬 % 30 & 스킬 파계검 : 라그나로크 % 30", null,
+				"사복검 - 강", Skill_type.SWITCHING, "", 30, 20, 10, 3, 
+				"10", "스킬 사복검 - 발 % 25.7 & 스킬 사복검 - 조 % 25.7 & 스킬 사복검 - 무 % 25.7 & 스킬 사형조수 % 25.7 & 스킬 폭류나선 % 25.7 & 스킬 혈화난무 % 25.7 & 스킬 비인외도 : 극 % 25.7 & 스킬 파계검 : 라그나로크 % 25.7", null,
+
+				"혈지군무", Skill_type.ACTIVE, "", 40, 30, 20, 3, Element_type.NONE,
+				"17 0 0 0 0", "귀속/혈지군무 - 발/100 & 귀속/혈지군무 - 무/100 & 귀속/혈지군무 - 사형조수/100 & 귀속/혈지군무 - 폭류나선/100 & 귀속/혈지군무 - 혈화난무/100",
+				"+", "귀속/혈지군무 - 발/100 & 귀속/혈지군무 - 무/100 & 귀속/혈지군무 - 사형조수/100 & 귀속/혈지군무 - 폭류나선/100 & 귀속/혈지군무 - 혈화난무/100", "반복 1",
+				"혈지군무 - 발", Skill_type.OPTION, "", 40, 30, 20, 3, "설명 몬스터에 사복검 - 발 개체를 붙입니다",
+				"17", fStat[0], "귀속/사복검 - 발/260", "+", fStat[0], "귀속/사복검 - 발/+4", "반복 1",
+				"혈지군무 - 무", Skill_type.OPTION, "", 40, 30, 20, 3, "설명 몬스터에 사복검 - 무 개체를 붙입니다",
+				"17", fStat[0], "귀속/사복검 - 무/236", "+", fStat[0], "귀속/사복검 - 무/240", "+", fStat[0], "귀속/사복검 - 무/244", "+", fStat[0], "귀속/사복검 - 무/247", "+", fStat[0], "귀속/사복검 - 무/251", 
+				"+", fStat[0], "귀속/사복검 - 무/254", "+", fStat[0], "귀속/사복검 - 무/258", "+", fStat[0], "귀속/사복검 - 무/262", "+", fStat[0], "귀속/사복검 - 무/266", "+", fStat[0], "귀속/사복검 - 무/269", "반복 3",
+				"혈지군무 - 사형조수", Skill_type.OPTION, "", 40, 30, 20, 3, "설명 몬스터에 사형조수 개체를 붙입니다",
+				"17", fStat[0], "귀속/사형조수/234", "+", fStat[0], "귀속/사형조수/238", "+", fStat[0], "귀속/사형조수/242", "+", fStat[0], "귀속/사형조수/245", "+", fStat[0], "귀속/사형조수/249", 
+				"+", fStat[0], "귀속/사형조수/252", "+", fStat[0], "귀속/사형조수/256", "+", fStat[0], "귀속/사형조수/259", "+", fStat[0], "귀속/사형조수/263", "+", fStat[0], "귀속/사형조수/266", "반복 3",
+				"혈지군무 - 폭류나선", Skill_type.OPTION, "", 40, 30, 20, 3, "설명 몬스터에 폭류나선 개체를 붙입니다",
+				"17", fStat[0], "귀속/폭류나선/130", "+", fStat[0], "귀속/폭류나선/+2", "반복 1",  
+				"혈지군무 - 혈화난무", Skill_type.OPTION, "", 40, 30, 20, 3, "설명 몬스터에 혈화난무 개체를 붙입니다",
+				"17", fStat[0], "귀속/혈화난무/65", "+", fStat[0], "귀속/혈화난무/+1", "반복 1",
+				
+				"사복검 강화", "사복검 - 발 & 사복검 - 조 & 사복검 - 무", "", 55, 5, 7, 11, null, 
+				"폭류나선 강화", "폭류나선", "", 55, 5, 7, 10, null,
+				"사형조수 강화", "사형조수", "", 55, 5, 7, 10, null,
+				"혈마인 강화", "혈마인", "", 65, 5, 7, 10, null,
+				"혈화난무 강화", "혈화난무", "", 65, 5, 7, 10, null,
+				"검마격살 강화", "검마격살", "", 65, 5, 7, 10, null,
+		};
+		return data;
+	}
+	
 	public static Object[] skillInfo_gunner()
 	{
 		FunctionStat fStat[] = new FunctionStat[3];
 		
 		//듀얼트리거
 		fStat[0] = new FunctionStat(){
-			private static final long serialVersionUID = -331944321054654526L;
+			private static final long serialVersionUID = 1L;
 
 			@Override
 			public StatusList function(Characters character, Monster monster, Object item) {
 				StatusList statList = new StatusList();
 				try {
-					int fire = (int) (character.dungeonStatus.getStat(StatList.ELEM_FIRE)+0.00001);
-					int light = (int) (character.dungeonStatus.getStat(StatList.ELEM_LIGHT)+0.00001);
+					int fire = (int)Math.round(character.dungeonStatus.getStat(StatList.ELEM_FIRE));
+					int light = (int)Math.round(character.dungeonStatus.getStat(StatList.ELEM_LIGHT));
 					if(fire>light) statList.addStatList(Element_type.LIGHT, fire-light, false, false, false);
 					else statList.addStatList(Element_type.FIRE, light-fire, false, false, false);
 				} catch (StatusTypeMismatch e) {
@@ -272,7 +423,7 @@ public class SkillInfo {
 		};
 		
 		fStat[1] = new FunctionStat(){
-			private static final long serialVersionUID = -331944321054654526L;
+			private static final long serialVersionUID = 1L;
 
 			@Override
 			public StatusList function(Characters character, Monster monster, Object item) {
@@ -290,7 +441,7 @@ public class SkillInfo {
 		
 		//데바리
 		fStat[2] = new FunctionStat(){
-			private static final long serialVersionUID = 2285683560097970220L;
+			private static final long serialVersionUID = 1;
 			double save;
 			@Override
 			public StatusList function(Characters character, Monster monster, Object item) {
@@ -397,7 +548,7 @@ public class SkillInfo {
 				"14", "증뎀버프 33", "15", "증뎀버프 34", "+", "증뎀버프 +2", "+", "증뎀버프 +1", "반복 2",
 				//알파서폿
 				"알파 서포트", "", "", 75, 40, 30, 3,
-				"6", "물공뻥 24 & 독공뻥 24 & 물리방무뻥 24 & 재련뻥 24", "+", "물공뻥 +2 & 독공뻥 +2 & 물리방무뻥 +2 & 재련뻥 +2", "반복 1",
+				"5", "물리마스터리 22 & 독공마스터리 22 & 물리방무뻥 22", "6", "물리마스터리 24 & 독공마스터리 24 & 물리방무뻥 24", "+", "물리마스터리 +2 & 독공마스터리 +2 & 물리방무뻥 +2", "반복 1",
 				//애자파츠
 				"AJ 강화파츠", "", "", "", "", "", "",
 				"6", "스킬 M-3 화염방사기 % 61.18 & 스킬 화염 강타 % 28.74 & 스킬 팜페로 부스터 % 60.29 & 스킬 M-137 개틀링건 % 69.35 & 스킬 바베~큐 % 36 & 스킬 슈타이어 대전차포 % 36 & 스킬 FM-31 그레네이드 런처 % 36 & "
@@ -510,7 +661,7 @@ public class SkillInfo {
 				"M-137 개틀링건", Skill_type.ACTIVE, Character_type.GUNNER_F, 5, 60, 50, 2, Element_type.NONE,
 				"42 223*20 1.859*20 0 0", "+ 228*20 1.900*20", "+ 232*20 1.940*20", "+ 237*20 1.970*20", "+ 241*20 2.010*20", "+ 246*20 2.06*20", "+ 251*20 2.09*20", null,
 				//바베큐
-				"바베~큐", "", "", 10, 60, 50, 2, "", CalculatorVersion.VER_1_0_b,
+				"바베~큐", "", "", 10, 60, 50, 2, "",
 				"41 7200 72 0 0", "+ 7350 73.5", "+ 7480 74.8", "+ 7630 76.29", "+ 7790 77.9", null,
 				//화방
 				"M-3 화염방사기", "", "", 15, 60, 50, 2, Element_type.FIRE,

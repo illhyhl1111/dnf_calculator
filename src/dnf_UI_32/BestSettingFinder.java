@@ -46,8 +46,11 @@ import dnf_InterfacesAndExceptions.SetName;
 import dnf_InterfacesAndExceptions.UnknownInformationException;
 import dnf_InterfacesAndExceptions.Weapon_detailType;
 import dnf_calculator.Calculator;
+import dnf_class.Avatar;
 import dnf_class.Card;
 import dnf_class.Characters;
+import dnf_class.Creature;
+import dnf_class.Drape;
 import dnf_class.Equipment;
 import dnf_class.Item;
 import dnf_class.Setting;
@@ -680,7 +683,7 @@ public class BestSettingFinder extends Dialog {
 		
 		LinkedList<SettingMaterial> newList = new LinkedList<SettingMaterial>();
 		HashMap<Equip_part, ArrayList<Item>> equipList = new HashMap<Equip_part, ArrayList<Item>>();
-		
+
 		ArrayList<Equip_part> armorList = new ArrayList<Equip_part>(); 
 		armorList.add(Equip_part.ROBE); armorList.add(Equip_part.TROUSER); armorList.add(Equip_part.SHOULDER);
 		armorList.add(Equip_part.BELT); armorList.add(Equip_part.SHOES);
@@ -706,6 +709,20 @@ public class BestSettingFinder extends Dialog {
 					equipList.put(part, new ArrayList<Item>());
 			}
 			
+			else if(part==Equip_part.CREATURE){
+				if(character.getItemSetting().creature.getName().contains("없음"))
+					equipList.put(part, new ArrayList<Item>());
+			}
+			else if(part==Equip_part.DRAPE){
+				if(character.getItemSetting().drape.getName().contains("없음"))
+					equipList.put(part, new ArrayList<Item>());
+			}
+			
+			else if(part.order<0){
+				if(character.getItemSetting().avatarList.get(part).getName().contains("없음"))
+					equipList.put(part, new ArrayList<Item>());
+			}
+			
 			else if(character.getItemSetting().equipmentList.get(part).getName().contains("없음"))
 				equipList.put(part, new ArrayList<Item>());
 		}
@@ -724,45 +741,46 @@ public class BestSettingFinder extends Dialog {
 			settingList.getFirst().setName=prevSet;
 		}
 		
-		for(Equipment e : character.userItemList.equipList){
-			if(e.enabled){
-				ArrayList<Item> list = equipList.get(e.getPart());
+		for(Item i : character.userItemList.userInventory){
+			if(!i.getName().contains("없음")){
+				ArrayList<Item> list = equipList.get(i.getPart());
 				if(list!=null){
-					if(armorList.contains(e.getPart()) && settingList.getFirst().setName!=null){
-						if(e.getSetName()==settingList.getFirst().setName) list.add(e);
+					if(armorList.contains(i.getPart()) && settingList.getFirst().setName!=null){
+						if(i.getSetName()==settingList.getFirst().setName) list.add(i);
 					}
-					else if(armorSetOnly && e.getSetName()!=SetName.NONE) list.add(e); 
-					else list.add(e);
+					else if(armorSetOnly && i.getSetName()!=SetName.NONE) list.add(i); 
+					else list.add(i);
 				}
 				else continue;
 				
 				//업그레이드
 				try{
-					switch(e.part){
+					Equipment superEquip=null;
+					switch(i.getPart()){
 					case NECKLACE: case BRACELET: case RING:
 					case AIDEQUIPMENT: case MAGICSTONE:
-						if(e.getName().contains("탐식의 ") && !e.getName().contains("무한한 ")){
-							Equipment upgrade = character.userItemList.getEquipment("무한한 "+e.getName());
-							if(!upgrade.enabled){
-								Equipment superEquip = (Equipment)upgrade.clone();
-								superEquip.setCard(e.getCard());
-								superEquip.setReinforce(e.getReinforce());
-								superEquip.setDimension(e.getDimentionStat());
-								anton[e.part.order] = superEquip;
+						if(i.getItemName().contains("탐식의 ") && !i.getItemName().contains("무한한 ")){
+							Equipment upgrade = character.userItemList.getEquipment("무한한 "+i.getItemName());
+							if(!character.userItemList.itemInInventory(upgrade)){
+								superEquip = (Equipment)upgrade.clone();
+								superEquip.setCard(i.getCard());
+								superEquip.setReinforce(((Equipment) i).getReinforce());
+								superEquip.setDimension(((Equipment) i).getDimentionStat());
+								anton[i.getPart().order] = superEquip;
 							}
 						}
 						break;
 						
 					case WEAPON:
-						if(e.getName().contains("구원의 이기 - ")){
-							Equipment upgrade = character.userItemList.getEquipment("창성의 구원자 - "+e.getName().substring(9));
-							if(!upgrade.enabled){
-								Weapon superEquip = (Weapon)upgrade.clone();
-								superEquip.setCard(e.getCard());
-								superEquip.setReinforce(e.getReinforce());
-								superEquip.setReforge(((Weapon)e).getReforge());
-								superEquip.setDimension(e.getDimentionStat());
-								luke.get(Equip_type.NONE)[e.part.order] = superEquip;
+						if(i.getItemName().contains("구원의 이기 - ")){
+							Equipment upgrade = character.userItemList.getEquipment("창성의 구원자 - "+i.getItemName().substring(9));
+							if(!character.userItemList.itemInInventory(upgrade)){
+								superEquip = (Weapon)upgrade.clone();
+								superEquip.setCard(i.getCard());
+								superEquip.setReinforce(((Equipment) i).getReinforce());
+								((Weapon)superEquip).setReforge(((Weapon)i).getReforge());
+								superEquip.setDimension(((Equipment) i).getDimentionStat());
+								luke.get(Equip_type.NONE)[i.getPart().order] = superEquip;
 							}
 						}
 						break;
@@ -770,41 +788,41 @@ public class BestSettingFinder extends Dialog {
 					case ROBE: case TROUSER: case SHOULDER:
 					case BELT: case SHOES:
 						Equipment upgrade=null;
-						if(e.setName.equals(SetName.OGGEILL)){
+						if(i.getSetName().equals(SetName.OGGEILL)){
 							for(Equipment equip : character.userItemList.equipList){
-								if(equip.setName.equals(SetName.GESPENST) && equip.part==e.part){
+								if(equip.setName.equals(SetName.GESPENST) && equip.part==i.getPart()){
 									upgrade = equip;
 									break;
 								}
 							}
 						}
-						else if(e.setName.equals(SetName.BLACKFORMAL)){
+						else if(i.getSetName().equals(SetName.BLACKFORMAL)){
 							for(Equipment equip : character.userItemList.equipList){
-								if(equip.setName.equals(SetName.FIENDVENATOR) && equip.part==e.part){
+								if(equip.setName.equals(SetName.FIENDVENATOR) && equip.part==i.getPart()){
 									upgrade = equip;
 									break;
 								}
 							}
 						}
-						else if(e.setName.equals(SetName.GOLDENARMOR)){
+						else if(i.getSetName().equals(SetName.GOLDENARMOR)){
 							for(Equipment equip : character.userItemList.equipList){
-								if(equip.setName.equals(SetName.SUPERCONTINENT) && equip.part==e.part){
+								if(equip.setName.equals(SetName.SUPERCONTINENT) && equip.part==i.getPart()){
 									upgrade = equip;
 									break;
 								}
 							}
 						}
-						else if(e.setName.equals(SetName.ANCIENTWAR)){
+						else if(i.getSetName().equals(SetName.ANCIENTWAR)){
 							for(Equipment equip : character.userItemList.equipList){
-								if(equip.setName.equals(SetName.NAGARAJA) && equip.part==e.part){
+								if(equip.setName.equals(SetName.NAGARAJA) && equip.part==i.getPart()){
 									upgrade = equip;
 									break;
 								}
 							}
 						}
-						else if(e.setName.equals(SetName.CENTURYONHERO)){
+						else if(i.getSetName().equals(SetName.CENTURYONHERO)){
 							for(Equipment equip : character.userItemList.equipList){
-								if(equip.setName.equals(SetName.SEVENSINS) && equip.part==e.part){
+								if(equip.setName.equals(SetName.SEVENSINS) && equip.part==i.getPart()){
 									upgrade = equip;
 									break;
 								}
@@ -812,12 +830,12 @@ public class BestSettingFinder extends Dialog {
 						}
 						else break;
 						
-						if(!upgrade.enabled){
-							Equipment superEquip = (Equipment)upgrade.clone();
-							superEquip.setCard(e.getCard());
-							superEquip.setReinforce(e.getReinforce());
-							superEquip.setDimension(e.getDimentionStat());
-							luke.get(e.getEquipType())[e.part.order] = superEquip;
+						if(upgrade!=null && !character.userItemList.itemInInventory(upgrade)){
+							superEquip = (Equipment)upgrade.clone();
+							superEquip.setCard(i.getCard());
+							superEquip.setReinforce(((Equipment) i).getReinforce());
+							superEquip.setDimension(((Equipment) i).getDimentionStat());
+							luke.get(i.getEquipType())[i.getPart().order] = superEquip;
 						}
 						break;
 					default:
@@ -827,51 +845,39 @@ public class BestSettingFinder extends Dialog {
 					e2.printStackTrace();
 				}
 			}
-			//생성
-			else{
-				if(equipList.get(e.getPart())==null) continue;
-				try{
-					switch(e.part){
-					case WEAPON:
-						if(e.getName().contains("구원의 이기 - ") && ((Weapon)e).weaponType==saviorType){
-							Weapon newEquip = (Weapon)e.clone();
+		}
+		for(Equipment e : character.userItemList.equipList){
+			if(equipList.get(e.getPart())==null) continue;
+			try{
+				switch(e.part){
+				case WEAPON:
+					if(e.getName().contains("구원의 이기 - ") && ((Weapon)e).weaponType==saviorType){
+						if(character.userItemList.itemInInventory(e)) continue;
+						Weapon newEquip = (Weapon)e.clone();
+						weaponSetting.setWeaponOption(newEquip);
+						anton[e.part.order] = newEquip;
+						
+						Equipment upgrade = character.userItemList.getEquipment("창성의 구원자 - "+e.getName().substring(9));
+						if(!character.userItemList.itemInInventory(upgrade)){
+							Weapon superEquip = (Weapon)upgrade.clone();
 							weaponSetting.setWeaponOption(newEquip);
-							anton[e.part.order] = newEquip;
-							
-							Equipment upgrade = character.userItemList.getEquipment("창성의 구원자 - "+e.getName().substring(9));
-							if(!upgrade.enabled){
-								Weapon superEquip = (Weapon)upgrade.clone();
-								weaponSetting.setWeaponOption(newEquip);
-								luke.get(Equip_type.NONE)[e.part.order] = superEquip;
-							}
+							luke.get(Equip_type.NONE)[e.part.order] = superEquip;
 						}
-						break;
-					case AIDEQUIPMENT: case MAGICSTONE: case EARRING:
-						if(e.getName().equals("루멘 바실리움") || e.getName().equals("솔리움 폰스") || e.getName().equals("테네브레 누스")){
-							Equipment newEquip = (Equipment)e.clone();
-							specialSetting.setSpecialEquipOption(newEquip);
-							luke.get(Equip_type.NONE)[e.part.order] = newEquip;
-						}
-						break;
-					default:
-						break;
 					}
-				}catch(ItemNotFoundedException e1){
-					e1.printStackTrace();
+					break;
+				case AIDEQUIPMENT: case MAGICSTONE: case EARRING:
+					if(e.getName().equals("루멘 바실리움") || e.getName().equals("솔리움 폰스") || e.getName().equals("테네브레 누스")){
+						if(character.userItemList.itemInInventory(e)) continue;
+						Equipment newEquip = (Equipment)e.clone();
+						specialSetting.setSpecialEquipOption(newEquip);
+						luke.get(Equip_type.NONE)[e.part.order] = newEquip;
+					}
+					break;
+				default:
+					break;
 				}
-			}
-		}
-		for(Title t : character.userItemList.titleList){
-			if(t.enabled){
-				ArrayList<Item> list = equipList.get(Equip_part.TITLE);
-				if(list!=null) list.add(t);
-			}
-		}
-			
-		for(Equipment e : character.userItemList.equipList_user){
-			if(e.enabled){
-				ArrayList<Item> list = equipList.get(e.getPart());
-				if(list!=null) list.add(e);
+			}catch(ItemNotFoundedException e1){
+				e1.printStackTrace();
 			}
 		}
 				
@@ -885,13 +891,16 @@ public class BestSettingFinder extends Dialog {
 					temp=(Setting) s.setting.clone();
 					if(part==Equip_part.WEAPON) temp.weapon=(Weapon)equip;
 					else if(part==Equip_part.TITLE) temp.title=(Title)equip;
-					else{
+					else if(part.order>=0){
 						if(armorSetOnly && armorList.contains(part)){
 							if(s.setName==null) newSet=equip.getSetName();
 							else if(s.setName!=equip.getSetName()) flag=false;
 						}
 						temp.equipmentList.replace(part, (Equipment)equip);
 					}
+					else if(part==Equip_part.CREATURE) temp.creature=(Creature)equip;
+					else if(part==Equip_part.DRAPE) temp.drape=(Drape)equip;
+					else temp.avatarList.replace(part, (Avatar)equip);
 					if(flag==false) flag=true;
 					else if(newSet!=null){
 						newList.add(new SettingMaterial(s.antonSoul, s.monolium, temp, newSet));
@@ -968,7 +977,7 @@ public class BestSettingFinder extends Dialog {
 				}
 			}
 			
-			settingList = newList;
+			if(newList.size()!=0) settingList = newList;
 			newList = new LinkedList<SettingMaterial>();
 		}	
 		

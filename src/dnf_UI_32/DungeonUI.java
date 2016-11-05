@@ -45,7 +45,7 @@ public class DungeonUI extends DnFComposite{
 	TrainingRoom trainingRoom;
 	BuffInventory buffInventory;
 	BestSettingFinder bestSettingFinder;
-	TabFolder inventoryFolder;
+	Inventory inventory;
 	
 	Combo settingsCombo;
 	
@@ -62,7 +62,7 @@ public class DungeonUI extends DnFComposite{
 		toVillageButton.setText("마을로 돌아가기");
 	}
 	
-	public void makeComposite(Vault vault)
+	public void makeComposite(SkillTree skillTree, Vault vault)
 	{
 		mainComposite = new Composite(shell, SWT.NONE);
 		mainComposite.setLayout(new FormLayout());
@@ -82,16 +82,11 @@ public class DungeonUI extends DnFComposite{
 		avatarInfo = new UserInfo(infoFolder, character, Location.DUNGEON, this, 1);
 		avatarInfoTab.setControl(avatarInfo.getComposite());
 		
-		inventoryFolder = new TabFolder(mainComposite, SWT.NONE);
-		InventoryCardPack inventoryPack = new InventoryCardPack(inventoryFolder, character);
-		inventoryPack.setDungeonMode(this);
-		inventoryPack.setDungeonListener(vault);
-		formData = new FormData();
-		formData.bottom = new FormAttachment(100, 0);
-		formData.left = new FormAttachment(infoFolder, 10);
-		inventoryFolder.setLayoutData(formData);
+		inventory = new Inventory(mainComposite, character, this, Location.DUNGEON);
+		inventory.setListener(vault);
+		vault.setInventory(inventory);
 		
-		infoFolder.addSelectionListener(new SelectionAdapter() {
+		/*infoFolder.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(org.eclipse.swt.events.SelectionEvent event) {
 				if(infoFolder.getSelection()[0].getText().equals(itemInfoTab.getText())){
 					itemInfo.renew();
@@ -121,11 +116,11 @@ public class DungeonUI extends DnFComposite{
 					infoFolder.setSelection(itemInfoTab);
 				}
 			}
-		});
+		});*/
 		
 		dealChart = new DealChart(mainComposite, character);
 		formData = new FormData();
-		formData.right = new FormAttachment(100, -5);
+		formData.right = new FormAttachment(100, -3);
 		formData.height=InterfaceSize.DEALCHART_Y;
 		dealChart.setDealChart();
 		dealChart.getComposite().setLayoutData(formData);
@@ -148,6 +143,12 @@ public class DungeonUI extends DnFComposite{
 		formData.top = new FormAttachment(trainingRoom.getComposite(), 5);
 		formData.left = new FormAttachment(infoFolder, 10);
 		buffInventory.getComposite().setLayoutData(formData);
+		
+		formData = new FormData();
+		formData.top = new FormAttachment(buffInventory.getComposite(), 5);
+		formData.bottom = new FormAttachment(100, -5);
+		formData.left = new FormAttachment(infoFolder, 3);
+		inventory.getComposite().setLayoutData(formData);
 		
 		setItemSettingControls(infoFolder, dealChart);
 		
@@ -184,6 +185,7 @@ public class DungeonUI extends DnFComposite{
 	        }
 	    });
 		
+		skillTree.superInfo=this;
 		shell.setText("인포창");
 	}
 	
@@ -244,7 +246,7 @@ public class DungeonUI extends DnFComposite{
 		saveSettings.addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				SaveSettingDialog dialog = new SaveSettingDialog(shell);
+				SaveSettingDialog dialog = new SaveSettingDialog(shell, character.userItemList.settingList);
 				dialog.create();
 				
 				if (dialog.open() == Window.OK) {
@@ -393,9 +395,11 @@ public class DungeonUI extends DnFComposite{
         private Text text;
         private String name;
         private Label warning;
+        private LinkedList<Setting> settingList;
 
-        public SaveSettingDialog(Shell parentShell) {
+        public SaveSettingDialog(Shell parentShell, LinkedList<Setting> settingList) {
         	super(parentShell);
+        	this.settingList=settingList;
         }
 
         @Override
@@ -442,6 +446,10 @@ public class DungeonUI extends DnFComposite{
         private boolean saveInput() {
         	name = text.getText();
         	if(name.length()>10) return false;
+        	else{
+        		for(Setting setting : settingList)
+        			if(setting.setting_name.equals(name)) return false;
+        	}
         	return true;
         }
 
@@ -450,7 +458,7 @@ public class DungeonUI extends DnFComposite{
         	if(saveInput())
         		super.okPressed();
         	else{
-        		warning.setText("저장할 세팅의 이름은 최대 10글자입니다");
+        		warning.setText("저장할 세팅의 이름은 최대 10글자 / 중복 불가능입니다");
         	}
         }
 

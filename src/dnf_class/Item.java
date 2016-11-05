@@ -84,8 +84,8 @@ public class Item extends IconObject implements Comparable<Item>
 	public boolean setEmblem2(Emblem emblem) {return false;}
 	public boolean setPlatinum(Emblem emblem) {return false;}
 	public Equip_part getPart() {return null;}
-	public boolean getEnabled() {return true;}
-	public void setEnabled(boolean enabled){}
+	/*public boolean getEnabled() {return true;}
+	public void setEnabled(boolean enabled){}*/
 	public SetName getSetName() {return SetName.NONE;}
 	public Equip_type getEquipType() {return Equip_type.NONE;}
 	

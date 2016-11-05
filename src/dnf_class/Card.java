@@ -59,6 +59,14 @@ public class Card extends Item implements java.io.Serializable
 		return false;
 	}
 	
+	public int availableOrder()
+	{
+		int result=0;
+		for(Equip_part part : availableType)
+			if(part.order>result) result=part.order;
+		return result;
+	}
+	
 	@Override
 	public String getTypeName() { return "보주";}
 	
@@ -68,7 +76,8 @@ public class Card extends Item implements java.io.Serializable
 		else if(!(arg instanceof Card)) return 1;			// 1.
 		Card arg2 = (Card)arg;
 		
-		if(arg2.getRarity()!=this.getRarity()) return this.getRarity().rarity-arg2.getRarity().rarity;		// 2.
-		return arg2.getName().compareTo(this.getName());
+		if(arg2.availableOrder()!=availableOrder()) return arg2.availableOrder()-availableOrder();
+		if(arg2.getRarity()!=this.getRarity()) return arg2.getRarity().rarity-this.getRarity().rarity;		// 2.
+		return this.getName().compareTo(arg2.getName());
 	}
 }

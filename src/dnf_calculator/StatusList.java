@@ -74,6 +74,11 @@ public class StatusList implements java.io.Serializable, Cloneable {
 			e.printStackTrace();
 		}
 	}
+	public void addStatList(int name, double stat) {
+		if(name<=StatList.ELEMENTNUM_END) statList.add(new StatusAndName(name, new ElementInfo((int) Math.round(stat))));
+		else if(name<=StatList.INTNUM_END) statList.add(new StatusAndName(name, new StatusInfo((int) Math.round(stat))));
+		else if(name<=StatList.DOUBLENUM_END) statList.add(new StatusAndName(name, new DoubleStatusInfo(stat)));
+	}
 	public void addStatList(String name, int stat, boolean changeable)
 	{
 		try {

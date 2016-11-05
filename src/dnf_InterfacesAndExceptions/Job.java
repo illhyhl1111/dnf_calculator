@@ -17,7 +17,7 @@ public enum Job implements java.io.Serializable
 	WEAPONMASTER(Character_type.SWORDMAN_M, "검신"), BUSERKER(Character_type.SWORDMAN_M, "블러드 이블"),
 	ASURA(Character_type.SWORDMAN_M, "인다라천"), SOULMASTER(Character_type.SWORDMAN_M, "다크로드"),
 	DARKTEMPELAR(Character_type.SWORDMAN_F, "네메시스"), SWORDMASTER(Character_type.SWORDMAN_F, "마제스티"),
-	VEGABOND(Character_type.SWORDMAN_F, "검제"), DEMONSLAYER(Character_type.SWORDMAN_F, "디어사이드"),
+	VEGABOND(Character_type.SWORDMAN_F, "검제"), DEMONSLAYER(Character_type.SWORDMAN_F, "디어사이드", "카인) 검魔"),
 	ELEMENTALMASTER(Character_type.MAGE_F, "오버마인드"), SUMMONER(Character_type.MAGE_F, "이클립스"), 
 	WITCH(Character_type.MAGE_F, "지니위즈"), BATTLEMAGE(Character_type.MAGE_F, "아슈타르테"),
 	ELEMENTALBOMBER(Character_type.MAGE_M, "오블리비언"), GLACIALMASTER(Character_type.MAGE_M, "이터널"), 
@@ -27,6 +27,7 @@ public enum Job implements java.io.Serializable
 	VANGUARD(Character_type.DEMONICLANCER, "워로드"), DUALIST(Character_type.DEMONICLANCER, "듀란달"),
 	ROUGE(Character_type.THIEF, "알키오네"), KUNOICH(Character_type.THIEF, "시라누이"),
 	SHODOWDANCER(Character_type.THIEF, "그림리퍼"), NECROMENCER(Character_type.THIEF, "타나토스"),
+	CHAOS(Character_type.KNIGHT, "마신"), ELVENKNIGHT(Character_type.THIEF, "가이아"),
 	
 	//UNIMPLEMENTED(Character_type.NONE, "미구현"),
 	//UNIMPLEMENTED_SWORDMAN(Character_type.SWORDMAN_M, "미구현-귀검사"),
@@ -69,7 +70,7 @@ public enum Job implements java.io.Serializable
 	public static String[] getImplementedList()
 	{
 		return new String[] {
-				LAUNCHER_F.getName(), RANGER_F.getName(),
+				LAUNCHER_F.getName(), RANGER_F.getName(), DEMONSLAYER.getName()
 		};
 	}
 }

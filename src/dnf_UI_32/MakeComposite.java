@@ -39,9 +39,10 @@ import dnf_infomation.ItemDictionary;
 
 public class MakeComposite {
 
-	public static void setSetInfoComposite(Composite itemInfo, Item item, int setNum, ItemDictionary itemDictionary)
+	public static void setSetInfoComposite(Composite itemInfo, Item item, int setNum, ItemDictionary itemDictionary, boolean transparentBackground)
 	{
-		itemInfo.setBackground(DnFColor.infoBackground_transparent);
+		if(transparentBackground) itemInfo.setBackground(DnFColor.infoBackground_transparent);
+		else itemInfo.setBackground(DnFColor.infoBackground);
 		itemInfo.setBackgroundMode(SWT.INHERIT_FORCE);
 		GridData leftData = new GridData(SWT.LEFT, SWT.TOP, true, false);
 		leftData.widthHint=InterfaceSize.SET_INFO_SIZE-10;
@@ -85,9 +86,8 @@ public class MakeComposite {
 					leftData = new GridData(SWT.LEFT, SWT.TOP, true, false);
 					leftData.widthHint=InterfaceSize.SET_INFO_SIZE-10;
 					option.setLayoutData(leftData);
-					option.setEnabled(false);
-					option.setForeground(DnFColor.DARK);
-					color = DnFColor.DARK;
+					option.setForeground(DnFColor.DISABLED);
+					color = DnFColor.DISABLED;
 					enabled=false;
 				}
 					
@@ -97,9 +97,10 @@ public class MakeComposite {
 				{
 					option = new Label(itemInfo, SWT.WRAP);
 					option.setText("\n――――――던전 입장 시 적용――――――\n\n");
-					option.setEnabled(enabled);
+					if(!enabled) option.setForeground(DnFColor.DISABLED);
+					else option.setForeground(DnFColor.infoStat);
 					for(StatusAndName s2 : s.dStat.statList)
-						setText(itemInfo, s2, enabled, color, InterfaceSize.SET_INFO_SIZE-10);
+						setText(itemInfo, s2, color, InterfaceSize.SET_INFO_SIZE-10);
 				}
 				
 				if(!s.explanation.isEmpty()){
@@ -131,8 +132,8 @@ public class MakeComposite {
 			itemInfo.dispose();
 			return;
 		}
-		itemInfo.setBackground(DnFColor.infoBackground_transparent);
-		//itemInfo.setBackground(new Color(Display.getDefault(), 30, 30, 30, 0));
+		if(character.option.transparentBackground) itemInfo.setBackground(DnFColor.infoBackground_transparent);
+		else itemInfo.setBackground(DnFColor.infoBackground);
 		itemInfo.setBackgroundMode(SWT.INHERIT_FORCE);
 		Label stat = new Label(itemInfo, SWT.WRAP);
 		String temp = item.getName();
@@ -165,9 +166,17 @@ public class MakeComposite {
 			stat.setForeground(DnFColor.RARE);
 			rarity.setForeground(DnFColor.RARE);
 			break;
+		case CHRONICLE:
+			stat.setForeground(DnFColor.CHRONICLE);
+			rarity.setForeground(DnFColor.CHRONICLE);
+			break;
 		case UNCOMMON:
 			stat.setForeground(DnFColor.UNCOMMON);
 			rarity.setForeground(DnFColor.UNCOMMON);
+			break;
+		case COMMON:
+			stat.setForeground(DnFColor.COMMON);
+			rarity.setForeground(DnFColor.COMMON);
 			break;
 		default:
 			stat.setForeground(DnFColor.COMMON);
@@ -355,6 +364,7 @@ public class MakeComposite {
 					if(emblem.getName().contains("없음")) continue;
 					stat = new Label(itemInfo, SWT.WRAP);				
 					stat.setText("\n"+stringList[i]);
+					stat.setForeground(DnFColor.infoStat);
 					leftData = new GridData();
 					leftData.widthHint=InterfaceSize.ITEM_INFO_SIZE-10;
 					stat.setLayoutData(leftData);
@@ -369,9 +379,10 @@ public class MakeComposite {
 		}
 	}
 	
-	public static void setSkillInfoComposite(Composite composite, Skill skill, Status stat, boolean isBurning)
+	public static void setSkillInfoComposite(Composite composite, Skill skill, Status stat, boolean isBurning, boolean transparentBackground)
 	{
-		composite.setBackground(DnFColor.infoBackground);
+		if(transparentBackground) composite.setBackground(DnFColor.infoBackground_transparent);
+		else composite.setBackground(DnFColor.infoBackground);
 		composite.setBackgroundMode(SWT.INHERIT_FORCE);
 		if(skill.getName().contains("없음"))
 		{
@@ -492,9 +503,10 @@ public class MakeComposite {
 		
 	}
 	
-	public static void setMonsterInfoComposite(Composite itemInfo, Monster monster)
+	public static void setMonsterInfoComposite(Composite itemInfo, Monster monster, boolean transparentBackground)
 	{
-		itemInfo.setBackground(DnFColor.infoBackground_transparent);
+		if(transparentBackground) itemInfo.setBackground(DnFColor.infoBackground_transparent);
+		else itemInfo.setBackground(DnFColor.infoBackground);
 		itemInfo.setBackgroundMode(SWT.INHERIT_FORCE);
 		GridData leftData = new GridData(SWT.LEFT, SWT.TOP, true, false);
 		leftData.widthHint=InterfaceSize.MONSTER_INFO_SIZE-10;
@@ -521,9 +533,10 @@ public class MakeComposite {
 		}
 	}
 	
-	public static void setMonsterOptionInfoComposite(Composite itemInfo, MonsterOption option)
+	public static void setMonsterOptionInfoComposite(Composite itemInfo, MonsterOption option, boolean transparentBackground)
 	{
-		itemInfo.setBackground(DnFColor.infoBackground_transparent);
+		if(transparentBackground) itemInfo.setBackground(DnFColor.infoBackground_transparent);
+		else itemInfo.setBackground(DnFColor.infoBackground);
 		itemInfo.setBackgroundMode(SWT.INHERIT_FORCE);
 		GridData leftData = new GridData(SWT.LEFT, SWT.TOP, true, false);
 		leftData.widthHint=InterfaceSize.MONSTER_INFO_SIZE-10;
@@ -648,7 +661,8 @@ public class MakeComposite {
 				else stat.setText(name+strength);
 			}
 			else stat.setText(name+strength);
-			stat.setEnabled(enable && s.enabled);
+			if(!enable || !s.enabled) stat.setForeground(DnFColor.DISABLED);
+			else stat.setForeground(textColor);
 			if(!s.enabled)
 				stat.setText(stat.getText()+"(옵션 꺼짐)");
 			
@@ -656,8 +670,6 @@ public class MakeComposite {
 			{
 				stat.setText("TP - "+stat.getText());
 			}
-			
-			stat.setForeground(textColor);
 		}
 		
 		if(s.stat instanceof ElementInfo && ((ElementInfo)s.stat).getElementEnabled()==true)
@@ -681,11 +693,10 @@ public class MakeComposite {
 				stat.setText(" 무기에 암속성 부여");
 				break;
 			}
-			stat.setEnabled(enable && s.enabled);
+			if(!enable || !s.enabled) stat.setForeground(DnFColor.DISABLED);
+			else stat.setForeground(textColor);
 			if(!s.enabled)
 				stat.setText(stat.getText()+"(옵션 꺼짐)");
-			
-			stat.setForeground(textColor);
 		}
 		
 		else if(s.stat instanceof SkillStatusInfo && ((SkillStatusInfo)s.stat).getIncrease()>1.0005)
@@ -695,10 +706,10 @@ public class MakeComposite {
 			gridData.widthHint=xSize;
 			stat.setLayoutData(gridData);
 			stat.setText(s.stat.getStatToString()+" 데미지 증가 + "+ String.format("%.1f", ((SkillStatusInfo)s.stat).getIncrease()));		
-			stat.setEnabled(enable && s.enabled);
+			if(!enable || !s.enabled) stat.setForeground(DnFColor.DISABLED);
+			else stat.setForeground(textColor);
 			if(!s.enabled)
 				stat.setText(stat.getText()+"(옵션 꺼짐)");
-			stat.setForeground(textColor);
 		}
 	}
 }

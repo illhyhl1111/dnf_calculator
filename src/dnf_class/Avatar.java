@@ -2,7 +2,7 @@ package dnf_class;
 
 import java.util.LinkedList;
 
-import dnf_InterfacesAndExceptions.Avatar_part;
+import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.Item_rarity;
 import dnf_InterfacesAndExceptions.Job;
 import dnf_InterfacesAndExceptions.SetName;
@@ -13,7 +13,7 @@ import dnf_infomation.GetDictionary;
 public class Avatar extends Item
 {
 	private static final long serialVersionUID = -1422368468046095134L;
-	public final Avatar_part part;
+	public final Equip_part part;
 	private Emblem emblem1;
 	private Emblem emblem2;
 	private Emblem platinumEmblem;
@@ -21,7 +21,7 @@ public class Avatar extends Item
 	public LinkedList<String> coatSkillList;
 	private String coatSkill;
 	
-	public Avatar(String name, Item_rarity rarity, Avatar_part part, Emblem emblem1, Emblem emblem2, Emblem platinum, SetName setName, String version)
+	public Avatar(String name, Item_rarity rarity, Equip_part part, Emblem emblem1, Emblem emblem2, Emblem platinum, SetName setName, String version)
 	{
 		super(name, "image\\Avatar\\"+name+".png", rarity, version);
 		this.part=part;
@@ -31,7 +31,7 @@ public class Avatar extends Item
 		this.setName=setName;
 	}
 	
-	public Avatar(String name, Item_rarity rarity, Avatar_part part, SetName setName, String version)
+	public Avatar(String name, Item_rarity rarity, Equip_part part, SetName setName, String version)
 	{
 		super(name, "image\\Avatar\\"+name+".png", rarity, version);
 		this.part=part;
@@ -40,7 +40,7 @@ public class Avatar extends Item
 		platinumEmblem = new Emblem();
 		this.setName=setName;
 	}
-	public Avatar(Avatar_part part) {
+	public Avatar(Equip_part part) {
 		super();
 		this.part=part;
 		emblem1 = new Emblem();
@@ -50,7 +50,7 @@ public class Avatar extends Item
 	}
 	
 	public boolean setCoatOptionList(Job job){
-		if(part!=Avatar_part.COAT) return false;
+		if(part!=Equip_part.ACOAT) return false;
 		coatSkillList = new LinkedList<String>();
 		
 		for(Skill skill : GetDictionary.getSkillList(job, 90)){
@@ -95,6 +95,9 @@ public class Avatar extends Item
 		platinumEmblem = (Emblem) emblem.clone();
 		return true;
 	}
+	
+	@Override
+	public Equip_part getPart() {return part;}
 	
 	@Override
 	public Object clone()

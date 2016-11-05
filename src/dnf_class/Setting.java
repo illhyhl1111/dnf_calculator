@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 
-import dnf_InterfacesAndExceptions.Avatar_part;
 import dnf_InterfacesAndExceptions.CalculatorVersion;
 import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.Equip_type;
@@ -22,7 +21,7 @@ public class Setting implements java.io.Serializable, Cloneable{
 	public HashMap<Equip_part, Equipment> equipmentList;
 	static final int EQUIPNUM=11;
 	public Weapon weapon;
-	public HashMap<Avatar_part, Avatar> avatarList;
+	public HashMap<Equip_part, Avatar> avatarList;
 	static final int AVATARNUM=10;
 	public Creature creature;
 	public Title title;
@@ -30,17 +29,17 @@ public class Setting implements java.io.Serializable, Cloneable{
 	public String setting_name;
 	
 	private static final HashMap<Equip_part, Equipment> magicalSealedEquip = new HashMap<Equip_part, Equipment>();
-	private static final HashMap<Avatar_part, Avatar> superiorAvatar = new HashMap<Avatar_part, Avatar>();
+	private static final HashMap<Equip_part, Avatar> superiorAvatar = new HashMap<Equip_part, Avatar>();
 	private static final HashMap<Weapon_detailType, Weapon> magicalSealedWeapon = new HashMap<Weapon_detailType, Weapon>();
 	
 	public Setting()
 	{
 		equipmentList = new HashMap<Equip_part, Equipment>();					//key : 장비 부위, value : 장비. 장비와 장비부위의 type이 같은곳에 장착됨
-		avatarList = new HashMap<Avatar_part, Avatar>();
+		avatarList = new HashMap<Equip_part, Avatar>();
 		
-		for(Equip_part v : Equip_part.values())									//장비목록과 장착장비 초기화
+		for(Equip_part v : Equip_part.equipValues())									//장비목록과 장착장비 초기화
 			if(v!=Equip_part.TITLE && v!=Equip_part.WEAPON) equipmentList.put(v, new Equipment(v));
-		for(Avatar_part v : Avatar_part.values())
+		for(Equip_part v : Equip_part.avatarValues())
 			avatarList.put(v,  new Avatar(v));
 		
 		weapon = new Weapon();
@@ -385,7 +384,7 @@ public class Setting implements java.io.Serializable, Cloneable{
 		Item i = (Item) item.clone();
 		i.replicateNum=1;
 		i.setName(i.getItemName() + "-복제 : "+name);
-		i.setEnabled(true);
+		//i.setEnabled(true);
 		
 		int index=0;
 		for(String s : i.explanation){
@@ -408,7 +407,7 @@ public class Setting implements java.io.Serializable, Cloneable{
 		for(Entry<Equip_part, Equipment> entry : equipmentList.entrySet())
 			replicate.equipmentList.replace(entry.getKey(), (Equipment) makeReplicate(entry.getValue(), name));
 		
-		for(Entry<Avatar_part, Avatar> entry : avatarList.entrySet())
+		for(Entry<Equip_part, Avatar> entry : avatarList.entrySet())
 			replicate.avatarList.replace(entry.getKey(), (Avatar) makeReplicate(entry.getValue(), name));
 		
 		replicate.weapon=(Weapon) makeReplicate(weapon, name);
@@ -441,6 +440,9 @@ public class Setting implements java.io.Serializable, Cloneable{
 		case RANGER_F:
 			magicalSealedSetting.weapon=magicalSealedWeapon.get(Weapon_detailType.GUN_REVOLVER);
 			break;
+		case DEMONSLAYER:
+			magicalSealedSetting.weapon=magicalSealedWeapon.get(Weapon_detailType.SWORD_LONGSWORD);
+			break;
 		default:
 			break;
 		}
@@ -456,7 +458,7 @@ public class Setting implements java.io.Serializable, Cloneable{
 		try {
 			replicate = (Setting) super.clone();
 			replicate.equipmentList = (HashMap<Equip_part, Equipment>) equipmentList.clone();
-			replicate.avatarList = (HashMap<Avatar_part, Avatar>) avatarList.clone();
+			replicate.avatarList = (HashMap<Equip_part, Avatar>) avatarList.clone();
 			
 			return replicate;
 		} catch (CloneNotSupportedException e) {

@@ -46,12 +46,12 @@ public class SetOptionInfo {
 		//오기일
 		temp = new SetOption(SetName.OGGEILL, 3, CalculatorVersion.VER_1_0_a);
 		temp.vStat.addStatList("모속강", 20);
-		temp.dStat.addStatList("물리마스터리", 10);
-		temp.dStat.addStatList("마법마스터리", 10);
+		temp.dStat.addStatList("물공뻥", 10);
+		temp.dStat.addStatList("마공뻥", 10);
 		temp.dStat.addStatList("독공뻥", 10);
 		setOptionList.add(temp);
 		temp = new SetOption(SetName.OGGEILL, 5, CalculatorVersion.VER_1_0_a);
-		temp.vStat.addStatList("모속강", 40);
+		temp.vStat.addStatList("모속강", 35);
 		temp.dStat.addStatList("힘뻥", 10);
 		temp.dStat.addStatList("지능뻥", 10);
 		temp.dStat.addStatList("모공증", 25);
@@ -215,8 +215,8 @@ public class SetOptionInfo {
 		temp = new SetOption(SetName.EYESHIELD, 5, CalculatorVersion.VER_1_0_a);
 		temp.vStat.addStatList("힘", 150);
 		temp.vStat.addStatList("지능", 150);
-		temp.dStat.addStatList("물리마스터리", 40, false, true);
-		temp.dStat.addStatList("마법마스터리", 40, false, true);
+		temp.dStat.addStatList("물공뻥", 40, false, true);
+		temp.dStat.addStatList("마공뻥", 40, false, true);
 		temp.dStat.addStatList("독공뻥", 40, false, true);
 		temp.dStat.addStatList("고정물방깍", 10000, false, true);
 		setOptionList.add(temp);
@@ -289,8 +289,8 @@ public class SetOptionInfo {
 		temp = new SetOption(SetName.FORBIDDENCONTRACT, 5, CalculatorVersion.VER_1_0_d);
 		temp.dStat.addStatList("힘", 300);
 		temp.dStat.addStatList("지능", 300);
-		temp.dStat.addStatList("물리마스터리", 20);
-		temp.dStat.addStatList("마법마스터리", 20);
+		temp.dStat.addStatList("물공뻥", 20);
+		temp.dStat.addStatList("마공뻥", 20);
 		temp.dStat.addStatList("독공뻥", 20);
 		temp.dStat.addStatList("물크", 30, false, true);
 		temp.dStat.addStatList("마크", 30, false, true);
@@ -311,6 +311,7 @@ public class SetOptionInfo {
 		temp.dStat.addStatList("모공증", 25, false, true);
 		setOptionList.add(temp);
 		temp = new SetOption(SetName.NAGARAJA, 5, CalculatorVersion.VER_1_0_b);
+		temp.vStat.addStatList("모속강", 25);
 		temp.dStat.addStatList("스증", 35, false, true);
 		setOptionList.add(temp);
 		
@@ -318,8 +319,8 @@ public class SetOptionInfo {
 		//인피니티
 		temp = new SetOption(SetName.INFINITY, 5, CalculatorVersion.VER_1_0_a);
 		temp.vStat.addSkillRange(60, 70, 1, false);
-		temp.dStat.addStatList("물리마스터리", 15, false, true);
-		temp.dStat.addStatList("마법마스터리", 15, false, true);
+		temp.dStat.addStatList("물공뻥", 15, false, true);
+		temp.dStat.addStatList("마공뻥", 15, false, true);
 		temp.dStat.addStatList("독공뻥", 15, false, true);
 		temp.vStat.addStatList("추뎀", 20);
 		setOptionList.add(temp);

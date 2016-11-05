@@ -22,7 +22,6 @@ public class Equipment extends Item
 	public final SetName setName;							//셋옵이름
 	public final Equip_type type;							//재질
 	public final int level;									//레벨
-	public boolean enabled;
 	public boolean isRareItem;
 	
 	public Equipment(String name, Item_rarity rarity, Equip_part part, Card card, SetName setName, Equip_type type, int level, boolean isRare, String version)
@@ -34,8 +33,7 @@ public class Equipment extends Item
 		this.type=type;
 		this.level=level;
 		this.isRareItem=isRare;
-		enabled=false;
-		
+
 		vStat.addStatList(StatList.NONE, new StatusInfo(0));					//임시 차원스탯
 		
 		if(part==Equip_part.AIDEQUIPMENT || part==Equip_part.MAGICSTONE)
@@ -75,7 +73,6 @@ public class Equipment extends Item
 		setName=SetName.NONE;
 		card = new Card();
 		level=0;
-		enabled=false;
 		this.isRareItem=false;
 		
 		vStat.addStatList(StatList.NONE, new StatusInfo(0));
@@ -277,10 +274,10 @@ public class Equipment extends Item
 		}
 		return false;
 	}
-	@Override
+	/*@Override
 	public boolean getEnabled() {return enabled;}
 	@Override
-	public void setEnabled(boolean enabled){this.enabled=enabled;}
+	public void setEnabled(boolean enabled){this.enabled=enabled;}*/
 	@Override
 	public SetName getSetName() {return setName;}
 	@Override

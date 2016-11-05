@@ -1,5 +1,6 @@
 package dnf_class;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -136,9 +137,14 @@ public class Skill extends IconObject implements Comparable<Skill>{
 		if(type==Skill_type.TP) return true;
 		else return false;
 	}
+	public boolean isOptionSkill()
+	{
+		if(type==Skill_type.OPTION) return true;
+		else return false;
+	}
 	public boolean isEnableable()
 	{
-		if(type==Skill_type.BUF_ACTIVE || type==Skill_type.DAMAGE_BUF || type==Skill_type.SWITCHING) return true;
+		if(type==Skill_type.BUF_ACTIVE || type==Skill_type.DAMAGE_BUF || type==Skill_type.SWITCHING || type==Skill_type.OPTION) return true;
 		else return false;
 	}
 	
@@ -224,7 +230,8 @@ public class Skill extends IconObject implements Comparable<Skill>{
 	public int getSkillLevel(boolean isDungeon, boolean isBurning){
 		if(skillLevel==0) return 0;
 		int level = skillLevel;
-		if(isDungeon)
+		if(isOptionSkill());
+		else if(isDungeon)
 			level+=dungeonLevel;
 		else
 			level+=villageLevel;
@@ -273,11 +280,13 @@ public class Skill extends IconObject implements Comparable<Skill>{
 		else return getName().compareTo(arg0.getName());
 	}
 	
+	@SuppressWarnings("unchecked")
 	public SkillLevelInfo getSkillLevelInfo(boolean isDungeon, boolean isBurning)
 	{
 		int level = getSkillLevel(isDungeon, isBurning);
 		double increase;
-		if(isDungeon)
+		if(isOptionSkill()) increase=1.0;
+		else if(isDungeon)
 			increase=dungeonIncrease;
 		else
 			increase=villageIncrease;
@@ -285,6 +294,8 @@ public class Skill extends IconObject implements Comparable<Skill>{
 		
 		SkillLevelInfo returnValue = new SkillLevelInfo(level, (int)(temp.phy_atk*increase), temp.phy_fix*increase, (int)(temp.mag_atk*increase), temp.mag_fix*increase);
 		returnValue.fromDictionary=temp.fromDictionary;
+		returnValue.indep_level=temp.indep_level;
+		returnValue.percentList=(HashMap<String, Integer>) temp.percentList.clone();
 		try {
 			returnValue.stat=(StatusList) temp.stat.clone();
 			returnValue.fStat=(FunctionStatusList) temp.fStat.clone();

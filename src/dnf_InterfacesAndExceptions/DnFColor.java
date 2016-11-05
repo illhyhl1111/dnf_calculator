@@ -5,7 +5,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 
 public interface DnFColor {
-	Color infoBackground_transparent = new Color(Display.getDefault(), 30, 30, 30, 255);
+	Color infoBackground_transparent = new Color(Display.getDefault(), 30, 30, 30, 0);
 	Color infoBackground = new Color(Display.getDefault(), 30, 30, 30);
 	Color infoStat = Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
 	Color infoExplanation = Display.getCurrent().getSystemColor(SWT.COLOR_GRAY);
@@ -15,7 +15,9 @@ public interface DnFColor {
 	Color RARE = new Color(Display.getDefault(), 165, 126, 205);
 	Color UNCOMMON = Display.getCurrent().getSystemColor(SWT.COLOR_CYAN);
 	Color COMMON = Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
+	Color CHRONICLE = Display.getCurrent().getSystemColor(SWT.COLOR_DARK_RED);
 	Color INCHANT = new Color(Display.getDefault(), 88, 239, 33);
 	Color DARK = Display.getCurrent().getSystemColor(SWT.COLOR_BLACK);
 	Color DARK_YELLOW = new Color(Display.getDefault(), 212, 214, 94);
+	Color DISABLED = Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GRAY);
 }

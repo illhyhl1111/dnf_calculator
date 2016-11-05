@@ -110,7 +110,7 @@ public class Parser {
 					return parseForm(data[data.length-selectOptionCount-1], 0);
 				}
 				else{
-					list.addSkill(skillName, (int) (parseForm(data[data.length-selectOptionCount-1], 0)+0.00001), changeable, enableable);
+					list.addSkill(skillName, (int)Math.round(parseForm(data[data.length-selectOptionCount-1], 0)), changeable, enableable);
 					return parseForm(data[data.length-selectOptionCount-1], 0);
 				}
 			}

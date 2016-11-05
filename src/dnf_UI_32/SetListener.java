@@ -1,10 +1,13 @@
 package dnf_UI_32;
 
+import java.awt.MouseInfo;
+
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSource;
 import org.eclipse.swt.dnd.DragSourceAdapter;
@@ -16,6 +19,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
@@ -28,6 +32,7 @@ import dnf_InterfacesAndExceptions.SetName;
 import dnf_class.Buff;
 import dnf_class.Card;
 import dnf_class.Characters;
+import dnf_class.Emblem;
 import dnf_class.IconObject;
 import dnf_class.Item;
 import dnf_class.Monster;
@@ -98,7 +103,7 @@ public class SetListener {
 		};
 	}
 	
-	public Listener equipListener(Vault vault)
+	public Listener equipListener(Vault vault, Inventory inventory)
 	{
 		ItemButton<Item> itemButton;
 		if(itemButton_wildCard.getItem() instanceof Item) itemButton = (ItemButton<Item>) itemButton_wildCard;
@@ -107,18 +112,17 @@ public class SetListener {
 		return new Listener() {
 	         @Override
 	         public void handleEvent(Event e) {
-	        	 if(e.button==3 && itemButton.getItem().getEnabled()){
+	        	 if(e.button==3){
 	        		 if(vault.getShell()==null){
 	        			 character.equip(itemButton.getItem());
 	        			 superInfo.renew();
 	        		 }
 	        		 else{
-	        			 itemButton.getItem().setEnabled(false);
-	        			 itemButton.renewImage(false);
 	        			 if(character.unequip(itemButton.getItem())){
 	        				 superInfo.renew();
 	        				 if(!itemInfo.isDisposed()) itemInfo.dispose();
 	        			 }
+	        			 inventory.removeItem(itemButton.getItem());
 	        			 if(itemInfo!=null && !itemInfo.isDisposed()){
 			        		 itemInfo.dispose();
 			        		 if(hasSetOption) setInfo.dispose();
@@ -155,7 +159,7 @@ public class SetListener {
 		return new Listener() {
 			@Override
 			public void handleEvent(Event event) {
-				if(event.button== 1 && itemButton.getItem().getEnabled())
+				if(event.button== 1)
 	        	 {
 					boolean replicateEnabled=false;
 					if(inventory!=null) replicateEnabled=true;
@@ -164,7 +168,7 @@ public class SetListener {
 	        		int result = changeItem.open();
 					if (Window.OK == result) {
 						itemButton.setItem(changeItem.item);
-						superInfo.renew();
+						if(superInfo!=null) superInfo.renew();
 					}
 					else if(result == 2)
 					{
@@ -173,16 +177,16 @@ public class SetListener {
 						if (Window.OK == changeSet.open()) {
 							character.userItemList.setSetOptions(setName, changeSet.setOption);
 							itemButton.setItem(changeItem.item);
-							superInfo.renew();			
+							if(superInfo!=null) superInfo.renew();			
 						}
 					}
 					else if(result == 3 && inventory!=null)
 					{
-						Item replicate = character.userItemList.makeReplicate(itemButton.getItem(), inventory.inventoryList2.length-inventory.itemList2.size());
+						int index = inventory.firstEmptyIndex();
+						Item replicate = character.userItemList.makeReplicate(itemButton.getItem(), index);
 						if(replicate!=null)
 						{
-							inventory.itemList2.add(replicate);
-							inventory.renew();
+							inventory.addItem(replicate, index);
 							MessageDialog dialog = new MessageDialog(parent.getShell(), "성☆공", null,
 								    "아이템 복제에 성공하였습니다!\n\n아이템 : "+itemButton.getItem().getName(),
 								    MessageDialog.INFORMATION, new String[] { "ㅇㅋ" }, 0);
@@ -198,15 +202,15 @@ public class SetListener {
 					}
 					else if(result == 4 && inventory!=null)
 					{
-						boolean success = character.userItemList.deleteReplicate(itemButton.getItem());
-						if(success)
+						int index = inventory.getIndex(itemButton.getItem());
+						if(index>=0)
 						{
+							String name = itemButton.getItem().getName();
 							if(character.unequip(itemButton.getItem()))
-								superInfo.renew();;
-							inventory.itemList2.remove(itemButton.getItem());
-							inventory.renew();
+								if(superInfo!=null) superInfo.renew();
+							inventory.removeItem(itemButton.getItem());
 							MessageDialog dialog = new MessageDialog(parent.getShell(), "성☆공", null,
-								    "아이템을 삭제하였습니다!\n\n아이템 : "+itemButton.getItem().getName(),
+								    "아이템을 삭제하였습니다!\n\n아이템 : "+name,
 								    MessageDialog.INFORMATION, new String[] { "ㅇㅋ" }, 0);
 							dialog.open();
 						}
@@ -238,7 +242,7 @@ public class SetListener {
 	        	Point setInfoSize=null;
 	        	Point itemInfoSize=null;
 
-	        	if(itemButton.getItem().getEnabled()){
+	        	if(itemButton.getItem().getIcon()!=null){
 	        		itemInfo = new Composite(background, SWT.BORDER);
 	        		GridLayout layout = new GridLayout(1, false);
 	        		layout.verticalSpacing=3;
@@ -255,7 +259,7 @@ public class SetListener {
 	        			if(character.getSetOptionList().get( itemButton.getItem().getSetName() )==null) setNum=0;
 	        			else setNum=character.getSetOptionList().get( itemButton.getItem().getSetName() );
 	        			
-	        			MakeComposite.setSetInfoComposite(setInfo, itemButton.getItem(), setNum, character.userItemList);
+	        			MakeComposite.setSetInfoComposite(setInfo, itemButton.getItem(), setNum, character.userItemList, character.option.transparentBackground);
 		        		setInfoSize = setInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		        		setInfo.moveAbove(null);
 	        		}
@@ -311,7 +315,7 @@ public class SetListener {
 	       		GridLayout layout = new GridLayout(1, false);
 	       		layout.verticalSpacing=3;
 	       		itemInfo.setLayout(layout);
-	       		MakeComposite.setSkillInfoComposite(itemInfo, skillButton.getItem(), character.dungeonStatus, character.isBurning());
+	       		MakeComposite.setSkillInfoComposite(itemInfo, skillButton.getItem(), character.dungeonStatus, character.isBurning(), character.option.transparentBackground);
 	       		Point itemInfoSize = itemInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 	       		setMousePoint(e, background, itemInfoSize, null);
 	       		itemInfo.setBounds((e.x+x0), (e.y+y0), InterfaceSize.ITEM_INFO_SIZE, itemInfoSize.y);
@@ -333,7 +337,7 @@ public class SetListener {
         		GridLayout layout = new GridLayout(1, false);
         		layout.verticalSpacing=3;
         		itemInfo.setLayout(layout);
-        		MakeComposite.setMonsterInfoComposite(itemInfo, monsterButton.getItem());
+        		MakeComposite.setMonsterInfoComposite(itemInfo, monsterButton.getItem(), character.option.transparentBackground);
         		Point itemInfoSize = itemInfo.computeSize(InterfaceSize.MONSTER_INFO_SIZE, SWT.DEFAULT);
         		itemInfo.moveAbove(null);
         		 
@@ -356,7 +360,7 @@ public class SetListener {
         		GridLayout layout = new GridLayout(1, false);
         		layout.verticalSpacing=3;
         		itemInfo.setLayout(layout);
-        		MakeComposite.setMonsterOptionInfoComposite(itemInfo, optionButton.getItem());
+        		MakeComposite.setMonsterOptionInfoComposite(itemInfo, optionButton.getItem(), character.option.transparentBackground);
         		Point itemInfoSize = itemInfo.computeSize(InterfaceSize.MONSTER_INFO_SIZE, SWT.DEFAULT);
         		itemInfo.moveAbove(null);
         		 
@@ -392,13 +396,13 @@ public class SetListener {
 	       		GridLayout layout = new GridLayout(1, false);
 	       		layout.verticalSpacing=3;
 	       		itemInfo.setLayout(layout);
-	       		MakeComposite.setSkillInfoComposite(itemInfo, skillButton.getItem(), character.dungeonStatus, character.isBurning());
+	       		MakeComposite.setSkillInfoComposite(itemInfo, skillButton.getItem(), character.dungeonStatus, character.isBurning(), character.option.transparentBackground);
 	       		Point itemInfoSize = itemInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 	       		setMousePoint(e, background, itemInfoSize, null);
 	       		itemInfo.setBounds((e.x+x0), (e.y+y0), InterfaceSize.ITEM_INFO_SIZE, itemInfoSize.y);
 	       		itemInfo.moveAbove(null);
 	       		
-	       		skillButton.renewImage(true);
+	       		skillButton.renewImage();
 			}
 		};
 	}
@@ -503,7 +507,86 @@ public class SetListener {
 		};
 	}
 	
-	public void setItemDrag()
+	class AutoMouseScroll extends Thread
+	{
+		boolean end = false;
+		ScrolledComposite scrollComposite;
+		Display display;
+		int scrollY;
+		int scrollX;
+		AutoMouseScroll(Point point, ScrolledComposite scrollComposite, Display display){
+			scrollX=point.x;
+			scrollY=point.y;
+			this.scrollComposite=scrollComposite;
+			this.display=display;
+		}
+		@Override
+		public void run(){
+			while(!end){					
+				try {
+					sleep(100);
+					int x = MouseInfo.getPointerInfo().getLocation().x-scrollX;
+					int y = MouseInfo.getPointerInfo().getLocation().y-scrollY;
+					if(display.isDisposed()) end=true;
+					else 
+						display.syncExec(new Runnable(){
+							@Override
+							public void run() {
+								if(scrollComposite.isDisposed()){
+									end=true;
+									return;
+								}
+								Point point = scrollComposite.getOrigin();
+								if(x>0 && x<scrollComposite.getSize().x){
+									if(y<20) scrollComposite.setOrigin(point.x, point.y-40);
+									else if(y<50) scrollComposite.setOrigin(point.x, point.y-20); 
+									else if(y>scrollComposite.getSize().y-20) scrollComposite.setOrigin(point.x, point.y+40);
+									else if(y>scrollComposite.getSize().y-50) scrollComposite.setOrigin(point.x, point.y+20);
+								}
+							}
+						});
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	public void setCardDrag(Display display, ScrolledComposite scrollComposite)
+	{
+		ItemButton<Item> itemButton;
+		if(itemButton_wildCard.getItem() instanceof Card || itemButton_wildCard.getItem() instanceof Emblem)
+			itemButton = (ItemButton<Item>) itemButton_wildCard;
+		else return;
+		
+		Transfer[] types = new Transfer[] { TextTransfer.getInstance() };
+		int operations = DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK;
+
+		final DragSource source = new DragSource(itemButton.getButton(), operations);
+		source.setTransfer(types);
+		source.addDragListener(new DragSourceAdapter() {
+			AutoMouseScroll autoScroll;
+			public void dragStart(DragSourceEvent event) {
+				event.doit = (itemButton.getButton().getImage() != null);
+				event.image = itemButton.getButton().getImage();
+				if(itemInfo!=null) itemInfo.dispose();
+				autoScroll = new AutoMouseScroll(scrollComposite.toDisplay(0, 0), scrollComposite, display);
+				autoScroll.start();
+			}
+
+			public void dragSetData(DragSourceEvent event) {
+				if(itemButton.getItem() instanceof Card) event.data = "Card - "+itemButton.getItem().getName();
+				else event.data = "Emblem - "+itemButton.getItem().getName();
+			}
+			
+			@Override
+			public void dragFinished(DragSourceEvent event) {
+				autoScroll.end=true;
+			}
+		});
+	}
+	
+	public void setItemDrag(int index, Display display, ScrolledComposite scrollComposite)
 	{
 		ItemButton<Item> itemButton;
 		if(itemButton_wildCard.getItem() instanceof Item) itemButton = (ItemButton<Item>) itemButton_wildCard;
@@ -514,15 +597,25 @@ public class SetListener {
 
 		final DragSource source = new DragSource(itemButton.getButton(), operations);
 		source.setTransfer(types);
+		
 		source.addDragListener(new DragSourceAdapter() {
+			AutoMouseScroll autoScroll;
 			public void dragStart(DragSourceEvent event) {
-				event.doit = (itemButton.getButton().getImage() != null);
+				event.doit = (itemButton.getItem().getIcon() != null);
 				event.image = itemButton.getButton().getImage();
 				if(itemInfo!=null) itemInfo.dispose();
+				if(setInfo!=null) setInfo.dispose();
+				autoScroll = new AutoMouseScroll(scrollComposite.toDisplay(0, 0), scrollComposite, display);
+				autoScroll.start();
 			}
 
 			public void dragSetData(DragSourceEvent event) {
-				event.data = itemButton.getItem().getName();
+				event.data = ""+index;
+			}
+			
+			@Override
+			public void dragFinished(DragSourceEvent event) {
+				autoScroll.end=true;
 			}
 		});
 	}
@@ -604,7 +697,7 @@ class ChangeSkillDialog extends TitleAreaDialog {
     	if(saveInput())
     		super.okPressed();
     	else{
-    		warning.setText("저장할 세팅의 이름은 최대 10글자입니다");
+    		warning.setText("숫자만 입력 가능합니다");
     	}
     }
 

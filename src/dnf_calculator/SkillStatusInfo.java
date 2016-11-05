@@ -20,7 +20,7 @@ public class SkillStatusInfo extends AbstractStatusInfo			// 스킬정보 저장
 	}
 	
 	public void setInfo(int strength) { level=strength;}
-	public void setInfo(double strength) { level=(int)(strength+0.00001);}
+	public void setInfo(double strength) { level=(int)Math.round(strength);}
 	public void setInfo(boolean bool) throws StatusTypeMismatch { throw new StatusTypeMismatch("Boolean->Integer");}
 	public double getStatToDouble() {return (double)level;}
 	public String getStatToString() {return name;}
@@ -28,6 +28,6 @@ public class SkillStatusInfo extends AbstractStatusInfo			// 스킬정보 저장
 	public void setInfo(int start, int end) throws StatusTypeMismatch { throw new StatusTypeMismatch("SkillRange->Skill");}
 	
 	public double getIncrease() {return increase;}
-	public void setIncrease(int increase) { this.increase=increase;}
+	public void setIncrease(double increase) { this.increase=increase;}
 	public void increaseStat(double strength) {increase = increase*strength;}
 }

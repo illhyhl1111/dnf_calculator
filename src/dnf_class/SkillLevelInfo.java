@@ -1,5 +1,7 @@
 package dnf_class;
 
+import java.util.HashMap;
+
 import dnf_calculator.FunctionStatusList;
 import dnf_calculator.StatusList;
 
@@ -15,18 +17,26 @@ public class SkillLevelInfo implements java.io.Serializable{
 	public int mag_atk;
 	public double phy_fix;
 	public double mag_fix;
+	public int indep_level;
+	public HashMap<String, Integer> percentList;
 	public boolean fromDictionary;
 	
-	public SkillLevelInfo(int level, int phy_atk, double phy_fix, int mag_atk, double mag_fix)
+	public SkillLevelInfo(int level, int phy_atk, double phy_fix, int mag_atk, double mag_fix, int indep_level)
 	{
 		skillLevel=level;
 		this.phy_atk=phy_atk;
 		this.phy_fix=phy_fix;
 		this.mag_atk=mag_atk;
 		this.mag_fix=mag_fix;
+		this.indep_level=indep_level;
 		stat = new StatusList();
 		fStat = new FunctionStatusList();
+		percentList = new HashMap<String, Integer>();
 		fromDictionary=true;
+	}
+	public SkillLevelInfo(int level, int phy_atk, double phy_fix, int mag_atk, double mag_fix)
+	{
+		this(level, phy_atk, phy_fix, mag_atk, mag_fix, -1);
 	}
 	
 	public SkillLevelInfo(int level)
@@ -38,6 +48,7 @@ public class SkillLevelInfo implements java.io.Serializable{
 		this.mag_fix=0;
 		stat = new StatusList();
 		fStat = new FunctionStatusList();
+		percentList = new HashMap<String, Integer>();
 		fromDictionary=true;
 	}
 	

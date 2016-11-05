@@ -5,6 +5,7 @@ import dnf_InterfacesAndExceptions.Element_type;
 import dnf_InterfacesAndExceptions.Job;
 import dnf_InterfacesAndExceptions.Skill_type;
 import dnf_InterfacesAndExceptions.StatusTypeMismatch;
+import dnf_calculator.SkillStatusInfo;
 import dnf_calculator.StatusAndName;
 
 public class SwitchingSkill extends Skill{
@@ -40,7 +41,10 @@ public class SwitchingSkill extends Skill{
 		int index=0;
 		for(StatusAndName s : skillInfo.getLast().stat.statList)
 			try {
-				s.stat.setInfo(num[index++]);
+				if(s.stat instanceof SkillStatusInfo)
+					((SkillStatusInfo)s.stat).setIncrease(num[index++]);
+				
+				else s.stat.setInfo(num[index++]);
 			} catch (StatusTypeMismatch e) {
 				e.printStackTrace();
 				return false;

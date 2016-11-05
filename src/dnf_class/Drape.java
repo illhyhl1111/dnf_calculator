@@ -1,5 +1,6 @@
 package dnf_class;
 
+import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.Item_rarity;
 
 public class Drape extends Item
@@ -17,4 +18,7 @@ public class Drape extends Item
 	
 	@Override
 	public String getTypeName() { return "휘장";}
+	
+	@Override
+	public Equip_part getPart() {return Equip_part.DRAPE;}
 }

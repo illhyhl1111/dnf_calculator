@@ -33,6 +33,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 
 import dnf_InterfacesAndExceptions.Dimension_stat;
+import dnf_InterfacesAndExceptions.DnFColor;
 import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.Equip_type;
 import dnf_InterfacesAndExceptions.InterfaceSize;
@@ -49,12 +50,12 @@ import dnf_infomation.GetDictionary;
 public class BatchModifier extends Dialog {
 	Shell shell;
 	final Characters character;
-	final InventoryCardPack inventory;
+	final Inventory inventory;
 	final UserInfo userInfo;
 	Point contentSize;
 	Equipment[] equipList;
 	
-	public BatchModifier(Shell shell, Characters character, UserInfo userInfo, InventoryCardPack inventory)
+	public BatchModifier(Shell shell, Characters character, UserInfo userInfo, Inventory inventory)
 	{
 		super(shell);
 		this.shell=shell;
@@ -81,6 +82,7 @@ public class BatchModifier extends Dialog {
 		contentLayout.spacing=10;
 		contentLayout.wrap=false;
 		content.setLayout(contentLayout);
+		content.getShell().setBackground(DnFColor.infoBackground);
 		
 		Label guideLabel = new Label(content, SWT.WRAP);
 		guideLabel.setText("\n ※\'인벤토리\' 내에 있는 모든 아이템을 일괄 강화 / 차원작 / 마법부여 합니다\n"
@@ -355,10 +357,10 @@ public class BatchModifier extends Dialog {
 		int BUTTON_SIZE = InterfaceSize.INFO_BUTTON_SIZE;
 		int i;
 		for(i=0; i<5; i++)
-			itemButtonList_wildCard[i] = new ItemButton<Item>(leftItemInfoComposite, equipList[i], BUTTON_SIZE, BUTTON_SIZE, true);
+			itemButtonList_wildCard[i] = new ItemButton<Item>(leftItemInfoComposite, equipList[i], BUTTON_SIZE, BUTTON_SIZE);
 		for(; i<UserItemInfo.ITEMNUM; i++){
-			if(i==6) itemButtonList_wildCard[i] = new ItemButton<Item>(rightItemInfoComposite, new Title(), BUTTON_SIZE, BUTTON_SIZE, true);
-			else itemButtonList_wildCard[i] = new ItemButton<Item>(rightItemInfoComposite, equipList[i], BUTTON_SIZE, BUTTON_SIZE, true);
+			if(i==6) itemButtonList_wildCard[i] = new ItemButton<Item>(rightItemInfoComposite, new Title(), BUTTON_SIZE, BUTTON_SIZE);
+			else itemButtonList_wildCard[i] = new ItemButton<Item>(rightItemInfoComposite, equipList[i], BUTTON_SIZE, BUTTON_SIZE);
 		}
 		
 		@SuppressWarnings("unchecked")
@@ -396,7 +398,7 @@ public class BatchModifier extends Dialog {
 					Card tempCard = b.getItem().getCard();
 					
 					LinkedList<Equip_part> tempList = new LinkedList<Equip_part>();
-					tempList.add(b.getItem().getPart());
+					tempList.add((Equip_part) b.getItem().getPart());
 					
 					for(Item e : inventory.getEnabledEquipment(tempList))
 						e.setCard(tempCard);
@@ -432,11 +434,6 @@ public class BatchModifier extends Dialog {
 	    createButton(parent, IDialogConstants.CANCEL_ID, "나가기", false);
 	}
 	
-	@Override
-	protected Point getInitialSize() {
-	    return new Point(contentSize.x+130, contentSize.y+100);
-	}
-	
 	public void setDrop(final ItemButton<Item> itemButton) {
 		Card card = itemButton.getItem().getCard();
 		itemButton.getButton().setImage(GetDictionary.iconDictionary.getOrDefault(card.getItemName(),
@@ -451,7 +448,10 @@ public class BatchModifier extends Dialog {
 			public void drop(DropTargetEvent event) {
 				if (itemButton.getItem() instanceof Equipment || itemButton.getItem() instanceof Title) {
 					try {
-						Card card = character.userItemList.getCard((String)event.data);
+						String name = (String)event.data;
+						if(name.contains("Card - ")) name = name.substring(7);
+						else return;
+						Card card = character.userItemList.getCard(name);
 						boolean succeed;
 						succeed = itemButton.getItem().setCard(card);
 						
@@ -460,13 +460,13 @@ public class BatchModifier extends Dialog {
 									GetDictionary.iconDictionary.get("디폴트")));
 							
 							MessageDialog dialog = new MessageDialog(shell, "성☆공", null,
-								    "마법부여 지정에 성공하였습니다!\n\n보주 : "+(String)event.data+"\n부위 : "+((Equipment)itemButton.getItem()).part.getName(),
+								    "마법부여 지정에 성공하였습니다!\n\n보주 : "+name+"\n부위 : "+((Equipment)itemButton.getItem()).part.getName(),
 								    MessageDialog.INFORMATION, new String[] { "ㅇㅋ" }, 0);
 							dialog.open();
 						}
 						else{
 							MessageDialog dialog = new MessageDialog(shell, "실★패", null,
-								    "마법부여 지정에 실패하였습니다\n\n보주 : "+(String)event.data+"\n가능한 장비 부위 : "+card.getPartToString(),
+								    "마법부여 지정에 실패하였습니다\n\n보주 : "+name+"\n가능한 장비 부위 : "+card.getPartToString(),
 								    MessageDialog.ERROR, new String[] { "납득" }, 0);
 							dialog.open();
 						}

@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 
-import dnf_InterfacesAndExceptions.Avatar_part;
 import dnf_InterfacesAndExceptions.Character_type;
 import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
@@ -15,6 +14,7 @@ import dnf_InterfacesAndExceptions.SetName;
 import dnf_InterfacesAndExceptions.StatList;
 import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 import dnf_InterfacesAndExceptions.UndefinedStatusKey;
+import dnf_UI_32.Options;
 import dnf_calculator.AbstractStatusInfo;
 import dnf_calculator.Calculator;
 import dnf_calculator.SkillRangeStatusInfo;
@@ -58,6 +58,8 @@ public class Characters implements java.io.Serializable
 	
 	public Monster target;
 	public String[] trainingRoomSeletion;
+	
+	public Options option;
 
 	public Characters(BriefCharacterInfo info)
 	{
@@ -94,6 +96,8 @@ public class Characters implements java.io.Serializable
 		
 		trainingRoomSeletion = new String[] { "몬스터 설정", "부가조건 설정", "파티원 설정", "부가조건 설정", "부가조건 설정", 
 				"파티원 설정", "부가조건 설정", "부가조건 설정", "파티원 설정", "부가조건 설정", "부가조건 설정"};
+		
+		option = new Options();
 		
 		for(Buff buff : userItemList.buffList){
 			if(buff.enabled) buffList.add(buff);
@@ -175,7 +179,7 @@ public class Characters implements java.io.Serializable
 		}
 		else if(item instanceof Avatar){
 			Avatar avatar = (Avatar)item; 
-			Avatar_part part = avatar.part;
+			Equip_part part = avatar.part;
 			previous = itemSetting.avatarList.get(avatar.part);
 			subtractSet(previous);
 			itemSetting.avatarList.replace(part, avatar);
@@ -244,7 +248,7 @@ public class Characters implements java.io.Serializable
 		}
 		else if(item instanceof Avatar){
 			Avatar avatar = (Avatar)item; 
-			Avatar_part part = avatar.part;
+			Equip_part part = avatar.part;
 			
 			if(itemSetting.avatarList.get(part).getName().equals(avatar.getName())){
 				itemSetting.avatarList.replace(part, new Avatar(part));
@@ -367,13 +371,15 @@ public class Characters implements java.io.Serializable
 		for(Skill skill : characterInfoList.skillList){
 			//if(!skill.getSkillLevelInfo(true).fStat.statList.isEmpty()) System.out.println("HI");
 			if(skill.buffEnabled(false)){
-				skill.getSkillLevelInfo(false, isBurning).stat.addListToStat(villageStatus);
-				skill.getSkillLevelInfo(false, isBurning).fStat.addListToStat(villageStatus, this, target, skill);
+				SkillLevelInfo skillInfo = skill.getSkillLevelInfo(false, isBurning);
+				skillInfo.stat.addListToStat(villageStatus);
+				if(!skillInfo.fStat.statList.isEmpty()) skillInfo.fStat.addListToStat(villageStatus, this, target, skill);
 			}
 			if(skill.buffEnabled(true)){
-				skill.getSkillLevelInfo(true, isBurning).stat.addListToStat(dungeonStatus);
-				if(!skill.getSkillLevelInfo(true, isBurning).fStat.statList.isEmpty())
-					skill.getSkillLevelInfo(true, isBurning).fStat.addListToStat(dungeonStatus, this, target, skill);
+				SkillLevelInfo skillInfo = skill.getSkillLevelInfo(true, isBurning);
+				skillInfo.stat.addListToStat(dungeonStatus);
+				if(!skillInfo.fStat.statList.isEmpty())
+					skillInfo.fStat.addListToStat(dungeonStatus, this, target, skill);
 			}
 		}
 	}
@@ -426,11 +432,13 @@ public class Characters implements java.io.Serializable
 						if(group.isEqualTo(name)){
 							if(isDungeon){
 								group.dungeonLevel += (int)statInfo.getStatToDouble();
-								group.dungeonIncrease *=(100+((SkillStatusInfo)statInfo).getIncrease())/100.0;
+								if(!group.isOptionSkill())
+									group.dungeonIncrease *=(100+((SkillStatusInfo)statInfo).getIncrease())/100.0;
 							}
 							else{
 								group.villageLevel += (int)statInfo.getStatToDouble();
-								group.villageIncrease *=(100+((SkillStatusInfo)statInfo).getIncrease())/100.0;
+								if(!group.isOptionSkill())
+									group.villageIncrease *=(100+((SkillStatusInfo)statInfo).getIncrease())/100.0;
 							}
 							break;
 						}
@@ -489,7 +497,7 @@ public class Characters implements java.io.Serializable
 		LinkedList<Skill> list = new LinkedList<Skill>();
 		for(Skill skill : characterInfoList.skillList)
 		{
-			if(skill.isEnableable() && skill.getActiveEnabled()){
+			if(skill.isEnableable() && (skill.isOptionSkill() || skill.getActiveEnabled())){
 				list.add(skill);
 			}
 		}
@@ -555,11 +563,11 @@ public class Characters implements java.io.Serializable
 			
 			Avatar avatar;
 			//힘엠블렘이 듀얼/물크 엠블렘보다 효율이 낮음
-			Avatar_part[] order = {Avatar_part.CAP, Avatar_part.HAIR, Avatar_part.COAT, Avatar_part.PANTS, Avatar_part.AURA, Avatar_part.SKIN};
+			Equip_part[] order = {Equip_part.ACAP, Equip_part.AHAIR, Equip_part.ACOAT, Equip_part.APANTS, Equip_part.AURA, Equip_part.ASKIN};
 			
 			if(rarity!=Item_rarity.UNCOMMON){
 				//모든 부위에 우선 듀얼엠블렘 장착
-				for(Avatar_part part : order){
+				for(Equip_part part : order){
 					avatar = itemSetting.avatarList.get(part);
 					if(!avatar.getName().contains("없음")){
 						avatar.setEmblem1(dual);
@@ -570,7 +578,7 @@ public class Characters implements java.io.Serializable
 				
 				if(Double.compare(crt, 97+redGreenCrt)>=0)	//초과
 				{
-					for(Avatar_part part : order){
+					for(Equip_part part : order){
 						avatar = itemSetting.avatarList.get(part);
 						if(!avatar.getName().contains("없음")){
 							if(avatar.setEmblem1(stat)) crt-=redGreenCrt;
@@ -583,7 +591,7 @@ public class Characters implements java.io.Serializable
 				}
 				else if(Double.compare(crt, 97)<0)	//미달
 				{
-					for(Avatar_part part : order){
+					for(Equip_part part : order){
 						avatar = itemSetting.avatarList.get(part);
 						if(!avatar.getName().contains("없음")){
 							if(avatar.setEmblem1(critical)) crt+=greenCrt-redGreenCrt;
@@ -598,7 +606,7 @@ public class Characters implements java.io.Serializable
 			
 			//빛작
 			else{
-				for(Avatar_part part : order){
+				for(Equip_part part : order){
 					avatar = itemSetting.avatarList.get(part);
 					if(!avatar.getName().contains("없음")){
 						if(!avatar.setEmblem1(stat)){
@@ -614,7 +622,7 @@ public class Characters implements java.io.Serializable
 				
 				if(Double.compare(crt, 97)<0)	//미달
 				{
-					for(Avatar_part part : new Avatar_part[] {Avatar_part.AURA, Avatar_part.SKIN}){
+					for(Equip_part part : new Equip_part[] {Equip_part.AURA, Equip_part.ASKIN}){
 						avatar = itemSetting.avatarList.get(part);
 						if(!avatar.getName().contains("없음")){
 							avatar.setEmblem1(critical);
@@ -693,7 +701,7 @@ public class Characters implements java.io.Serializable
 	public String getCharImageAddress() {return charImageAddress;}
 	public void setCharImageAddress(String charImageAddress) {this.charImageAddress = charImageAddress;}
 	public HashMap<Equip_part, Equipment> getEquipmentList() {return itemSetting.equipmentList;}
-	public HashMap<Avatar_part, Avatar> getAvatarList() {return itemSetting.avatarList;}
+	public HashMap<Equip_part, Avatar> getAvatarList() {return itemSetting.avatarList;}
 	public HashMap<SetName, Integer> getSetOptionList() {return setOptionList;}
 	public Creature getCreature() {return itemSetting.creature;}
 	public Title getTitle() {return itemSetting.title;}

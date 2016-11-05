@@ -25,9 +25,10 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
-import dnf_InterfacesAndExceptions.Avatar_part;
 import dnf_InterfacesAndExceptions.Dimension_stat;
+import dnf_InterfacesAndExceptions.DnFColor;
 import dnf_InterfacesAndExceptions.Emblem_type;
+import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_InterfacesAndExceptions.ItemFileNotReaded;
 import dnf_InterfacesAndExceptions.StatList;
@@ -41,6 +42,7 @@ import dnf_calculator.StatusInfo;
 import dnf_class.Avatar;
 import dnf_class.Buff;
 import dnf_class.Card;
+import dnf_class.Creature;
 import dnf_class.Emblem;
 import dnf_class.Equipment;
 import dnf_class.Item;
@@ -100,6 +102,14 @@ public class ChangeItemStatus extends Dialog{
 			else if(item instanceof Buff) {
 				for(Buff buff : GetDictionary.itemDictionary.buffList)
 					if(buff.getName().equals(item.getName())) originalItem=buff;
+			}
+			else if(item instanceof Avatar) originalItem=GetDictionary.itemDictionary.getAvatar(item.getItemName());
+			else if(item instanceof Creature){
+				for(Creature c : GetDictionary.itemDictionary.creatureList)
+					if(c.getName().equals(item.getItemName())){
+						originalItem=c;
+						break;
+					}
 			}
 			else originalItem=null;
 		} catch (ItemFileNotReaded | ItemNotFoundedException e) {
@@ -212,22 +222,33 @@ public class ChangeItemStatus extends Dialog{
 		switch(item.getRarity())
 		{
 		case EPIC:
-			name.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_DARK_YELLOW));
-			rarity.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_DARK_YELLOW));
+			name.setForeground(DnFColor.EPIC);
+			rarity.setForeground(DnFColor.EPIC);
 			break;
 		case UNIQUE:
-			name.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_MAGENTA));
-			rarity.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_MAGENTA));
+			name.setForeground(DnFColor.UNIQUE);
+			rarity.setForeground(DnFColor.UNIQUE);
 			break;
 		case LEGENDARY:
-			name.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_DARK_GREEN));
-			rarity.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_DARK_GREEN));
+			name.setForeground(DnFColor.LEGENDARY);
+			rarity.setForeground(DnFColor.LEGENDARY);
 			break;
 		case RARE:
-			name.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_CYAN));
-			rarity.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_CYAN));
+			name.setForeground(DnFColor.RARE);
+			rarity.setForeground(DnFColor.RARE);
 			break;
-			
+		case CHRONICLE:
+			name.setForeground(DnFColor.CHRONICLE);
+			rarity.setForeground(DnFColor.CHRONICLE);
+			break;
+		case UNCOMMON:
+			name.setForeground(DnFColor.UNCOMMON);
+			rarity.setForeground(DnFColor.UNCOMMON);
+			break;
+		case COMMON:
+			name.setForeground(DnFColor.COMMON);
+			rarity.setForeground(DnFColor.COMMON);
+			break;
 		default:
 		}
 		
@@ -474,7 +495,7 @@ public class ChangeItemStatus extends Dialog{
 			
 			int index = item.getItemStatIndex();
 			Iterator<StatusAndName> maxS;
-			if(originalItem!=null)
+			if(originalItem!=null && !originalItem.getName().contains("아바타 상의"))
 			{
 				maxS = originalItem.vStat.statList.subList(index, item.vStat.statList.size()).iterator();
 				List<StatusAndName> itemStatList = item.vStat.statList.subList(index, item.vStat.statList.size());
@@ -515,7 +536,7 @@ public class ChangeItemStatus extends Dialog{
 				}
 			}
 			
-			if(item instanceof Avatar && ((Avatar)item).part==Avatar_part.COAT){
+			if(item instanceof Avatar && ((Avatar)item).part==Equip_part.ACOAT){
 				label = new Label(composite, SWT.NONE);
 				label.setText("아바타 상의 옵션 변경");
 				label.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
@@ -936,16 +957,17 @@ public class ChangeItemStatus extends Dialog{
 	    if(replicateEnabled){
 	    	int mode=3;
 		    String buttonStr="아이템 복제";
+		    final GridData leftButtonData = new GridData(SWT.LEFT, SWT.CENTER, true, true);
+		    final Button replicateButton = createButton(buttonBar, mode, buttonStr, false);
+		    replicateButton.setText(buttonStr);
+		    replicateButton.setLayoutData(leftButtonData);
 		    if(item.replicateNum!=0){
 		    	mode=4;
 		    	buttonStr="아이템 삭제";
+		    	final Button deleteButton = createButton(buttonBar, mode, buttonStr, false);
+		    	deleteButton.setText(buttonStr);
+		    	deleteButton.setLayoutData(leftButtonData);
 		    }
-		    
-		    final Button replicateButton = createButton(buttonBar, mode, buttonStr, false);
-		    replicateButton.setText(buttonStr);
-		    
-		    final GridData leftButtonData = new GridData(SWT.LEFT, SWT.CENTER, true, true);
-		    replicateButton.setLayoutData(leftButtonData);
 	    }
 
 	    // add the dialog's button bar to the right
@@ -970,7 +992,7 @@ public class ChangeItemStatus extends Dialog{
 			if(item instanceof Weapon)
 				((Weapon)item).setReforgeNum(currentReforge);
 		}
-		else if(item instanceof Avatar && ((Avatar)item).part==Avatar_part.COAT){
+		else if(item instanceof Avatar && ((Avatar)item).part==Equip_part.ACOAT){
 			((Avatar)item).setCoatSkill(skillListCombo.getText());
 			super.okPressed();
 			return;

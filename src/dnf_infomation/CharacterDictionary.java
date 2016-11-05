@@ -37,6 +37,7 @@ public class CharacterDictionary implements java.io.Serializable, Cloneable
 		skillList = new LinkedList<Skill>();
 		try {
 			SkillInfo.getInfo(skillList, SkillInfo.skillInfo_gunner());
+			SkillInfo.getInfo(skillList, SkillInfo.skillInfo_swordman());
 		} catch (ParsingException e) {
 			e.printStackTrace();
 		}
@@ -49,6 +50,13 @@ public class CharacterDictionary implements java.io.Serializable, Cloneable
 		
 		partyList = new LinkedList<PartyCharacter>();
 		PartyCharacterInfo.getInfo(partyList);
+	}
+	
+	public Skill getSkill(String name){
+		for(Skill skill : skillList){
+			if(skill.getName().equals(name)) return skill;
+		}
+		return null;
 	}
 	
 	public LinkedList<String> getAvatarSkillList(Job job){

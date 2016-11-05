@@ -58,7 +58,7 @@ public class BuffItemInfo {
 		buff.vStat.addStatList(Element_type.FIRE, 0, true, false, true); buff.vStat.addStatList(Element_type.WATER, 0, true, false, true);
 		buff.vStat.addStatList(Element_type.LIGHT, 0, true, false, true); buff.vStat.addStatList(Element_type.DARKNESS, 0, true, false, true);
 		buff.vStat.addStatList("힘뻥", 100, true, true); buff.vStat.addStatList("지능뻥", 100, true, true);
-		buff.vStat.addStatList("물공뻥", 100, true, true); buff.vStat.addStatList("지능뻥", 100, true, true); buff.vStat.addStatList("독공뻥", 100, true, true);
+		buff.vStat.addStatList("물공뻥", 100, true, true); buff.vStat.addStatList("마공뻥", 100, true, true); buff.vStat.addStatList("독공뻥", 100, true, true);
 		buff.vStat.addStatList("증뎀", 100, true, true); buff.vStat.addStatList("크증뎀", 100, true, true);
 		buff.vStat.addStatList("추뎀", 100, true, true); buff.vStat.addStatList("화추뎀", 50, true, true);
 		buff.vStat.addStatList("수추뎀", 50, true, true); buff.vStat.addStatList("명추뎀", 50, true, true); buff.vStat.addStatList("암추뎀", 50, true, true);
@@ -74,13 +74,14 @@ public class BuffItemInfo {
 		buff.vStat.addStatList("적방무", 30, true, true); buff.vStat.addStatList("추증뎀", 100, true, true);
 		buff.vStat.addStatList("추크증", 100, true, true); buff.vStat.addStatList("스증뎀", 100, true, true); buff.vStat.addStatList("스증뎀", 100, true, true);
 		buff.vStat.addStatList("물크", 200, true, true); buff.vStat.addStatList("마크", 200, true, true); buff.vStat.addStatList("크리저항감소", 100, true, true);
+		buff.vStat.addStatList("물리마스터리", 100, true, true); buff.vStat.addStatList("마법마스터리", 100, true, true); buff.vStat.addStatList("독공마스터리", 100, true, true);
 		buff.vStat.addStatList("물리마스터리2", 100, true, true); buff.vStat.addStatList("마법마스터리2", 100, true, true);
 		buff.vStat.addStatList("증뎀버프", 100, true, true); buff.vStat.addStatList("증뎀버프", 100, true, true);
 		buff.vStat.addStatList("크증뎀버프", 100, true, true); buff.vStat.addStatList("크증뎀버프", 100, true, true);
 		buff.vStat.addStatList("고정물방깍", 100000, true, true); buff.vStat.addStatList("고정마방깍", 100000, true, true);
 		buff.vStat.addStatList("%물방깍_템", 100, true, true); buff.vStat.addStatList("%마방깍_템", 50, true, true);
 		buff.vStat.addStatList("%물방깍_스킬", 100, true, true); buff.vStat.addStatList("%마방깍_스킬", 100, true, true);
-		buff.vStat.addStatList("물리방무뻥", 100, true, true); buff.vStat.addStatList("마법방무뻥", 100, true, true); buff.vStat.addStatList("재련뻥", 100, true, true);
+		buff.vStat.addStatList("물리방무뻥", 100, true, true); buff.vStat.addStatList("마법방무뻥", 100, true, true);
 		for(StatusAndName s : buff.vStat.statList)
 			s.enabled=false;
 		buff.explanation.add("더블클릭하여 옵션을 변경하세오");

@@ -14,6 +14,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
+import dnf_InterfacesAndExceptions.Location;
 import dnf_class.Characters;
 import dnf_infomation.GetDictionary;
 
@@ -29,6 +30,7 @@ public class VillageUI extends DnFComposite
 	private Button selectCharacterButton;
 	private Characters character;
 	private Canvas version;
+	private Inventory inventory;
 	
 	VillageUI(Shell shell, Characters character)
 	{
@@ -52,16 +54,20 @@ public class VillageUI extends DnFComposite
 		mainComposite.layout();
 		shell.layout();
 		
+		inventory = new Inventory(mainComposite, character, this, Location.VILLAGE);
+		inventory.setListener(vault);
+		vault.setInventory(inventory);
+		
 		equipTab = new TabItem(villageFolder, SWT.NONE);
 		String str1 = "장비";
 		equipTab.setText(str1);
-		equipUI = new EquipmentInfoUI(villageFolder, character, vault, skillTree, 0);
+		equipUI = new EquipmentInfoUI(villageFolder, character, vault, skillTree, inventory, 0);
 		equipTab.setControl(equipUI.getComposite());
 		
 		avatarTab = new TabItem(villageFolder, SWT.NONE);
 		String str2 = "아바타/크리쳐/휘장";
 		avatarTab.setText(str2);
-		avatarUI = new EquipmentInfoUI(villageFolder, character, vault, skillTree, 1);
+		avatarUI = new EquipmentInfoUI(villageFolder, character, vault, skillTree, inventory, 1);
 		avatarTab.setControl(avatarUI.getComposite());
 		
 		villageFolder.addSelectionListener(new SelectionAdapter() {
@@ -70,6 +76,11 @@ public class VillageUI extends DnFComposite
 				else if(villageFolder.getSelection()[0].getText().equals(str2)) avatarUI.itemInfo.renew();
 			}
 		});
+		
+		FormData inventoryData = new FormData();
+		inventoryData.top = new FormAttachment(0, villageFolder.computeSize(-1, -1).y+5);
+		inventoryData.bottom = new FormAttachment(100, -5);
+		inventory.getComposite().setLayoutData(inventoryData);
 		
 		FormData buttonData = new FormData(100, 100);
 		buttonData.bottom = new FormAttachment(100, -10);
@@ -92,6 +103,7 @@ public class VillageUI extends DnFComposite
 	        }
 	    });
 		
+		skillTree.superInfo=this;
 		mainComposite.layout();
 		shell.setText("수련의 방");
 	}
@@ -106,6 +118,7 @@ public class VillageUI extends DnFComposite
 	public void disposeContent()
 	{
 		villageFolder.dispose();
+		inventory.getComposite().dispose();
 	}
 	
 	public Button get_toDungeonButton() {return toDungeonButton;}

@@ -26,9 +26,8 @@ public interface StatList									// 스탯 종류에 붙는 고유한 식별번
 	int DAM_INC_ADD=INTNUM_START+32; int DAM_CRT_ADD=INTNUM_START+33;																// 증추증, 크추증
 	int DEF_DEC_IGN=INTNUM_START+34;																								// 적방무
 	int WEP_NODEF_PHY_INC=INTNUM_START+35; int WEP_NODEF_MAG_INC=INTNUM_START+36;
-	int MAST_REFORGE=INTNUM_START+37;
-	int NONE=INTNUM_START+38;																										// 없음
-	int INTNUM = 39;								// 총 int형 스탯 개수
+	int NONE=INTNUM_START+37;																										// 없음
+	int INTNUM = 38;								// 총 int형 스탯 개수
 	int INTNUM_END = INTNUM_START+INTNUM-1;
 	///////////////////////////////////////	
 	int DOUBLENUM_START = INTNUM_END+1;	
@@ -38,8 +37,9 @@ public interface StatList									// 스탯 종류에 붙는 고유한 식별번
 	int CRT_BACK_PHY=DOUBLENUM_START+6; int CRT_BACK_MAG=DOUBLENUM_START+7;											// 물크, 마크, 크리저항감소, 백물크, 백마크
 	int MAST_IND=DOUBLENUM_START+8; int MAST_PHY=DOUBLENUM_START+9; int MAST_MAG=DOUBLENUM_START+10;				// 물공마스터리, 마공마스터리, 독공%증가
 	int MAST_PHY_2=DOUBLENUM_START+11; int MAST_MAG_2=DOUBLENUM_START+12;											//물공마스터리(종류 2), 마공마스터리(종류 2)
-	int BUF_INC=DOUBLENUM_START+13; int BUF_CRT=DOUBLENUM_START+14;													//(스킬) 증뎀버프, 크증뎀버프	
-	int DOUBLENUM = 15;														// 총 double형 스탯 개수
+	int BUF_INC=DOUBLENUM_START+13; int BUF_CRT=DOUBLENUM_START+14;													//(스킬) 증뎀버프, 크증뎀버프
+	int MAST_PHY_ITEM=DOUBLENUM_START+15; int MAST_MAG_ITEM=DOUBLENUM_START+16; int MAST_INDEP_ITEM=DOUBLENUM_START+17;		// 물리,마법,독공뻥
+	int DOUBLENUM = 18;														// 총 double형 스탯 개수
 	int DOUBLENUM_END = DOUBLENUM_START+DOUBLENUM-1;
 	///////////////////////////////////////	
 	int STATNUM = ELEMENTNUM+INTNUM+DOUBLENUM;								// 총 스탯 개수

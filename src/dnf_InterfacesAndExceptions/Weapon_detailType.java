@@ -2,7 +2,7 @@ package dnf_InterfacesAndExceptions;
 
 public enum Weapon_detailType {
 	SWORD_LONGSWORD(Weapon_type.SWORD, "대검"), SWORD_CLUB(Weapon_type.SWORD, "둔기"), SWORD_SHORTSWORD(Weapon_type.SWORD, "소검"),
-	SWORD_KATANA(Weapon_type.SWORD, "도"), SWORD_LIGHTSWORD(Weapon_type.SWORD, "광검"),
+	SWORD_KATANA(Weapon_type.SWORD, "도"), SWORD_LIGHTSWORD(Weapon_type.SWORD, new Job[]{Job.WEAPONMASTER, Job.VEGABOND, Job.DARKKNIGHT}, "광검"),
 	
 	FIGHTER_TONFA(Weapon_type.FIGHTER, "통파"), FIGHTER_CLAW(Weapon_type.FIGHTER, "클로"), FIGHTER_GAUNTLET(Weapon_type.FIGHTER, "건틀릿"),
 	FITGHTER_BOXGLOVE(Weapon_type.FIGHTER, "권투글러브"), FIGHTER_KNUCKLE(Weapon_type.FIGHTER, "너클"),
@@ -24,16 +24,16 @@ public enum Weapon_detailType {
 	NONE(Weapon_type.NONE, "없음");
 	
 	Weapon_type bigType;
-	Job required_job;
+	Job[] required_job;
 	String name;
 	
 	Weapon_detailType(Weapon_type type, String name)
 	{
 		bigType=type;
-		required_job=Job.NONE;
+		required_job=new Job[0];
 		this.name=name;
 	}
-	Weapon_detailType(Weapon_type type, Job required_job, String name)
+	Weapon_detailType(Weapon_type type, Job[] required_job, String name)
 	{
 		bigType=type;
 		this.required_job=required_job;
@@ -51,9 +51,11 @@ public enum Weapon_detailType {
 	
 	public boolean enabled(Job job)
 	{
-		if(required_job!=Job.NONE){
-			if(this.required_job==job) return true;
-			else return false;
+		if(required_job.length!=0){
+			for(Job rJob : required_job){
+				if(rJob==job) return true;
+			}
+			return false;
 		}
 		
 		if(this==NONE) return true;

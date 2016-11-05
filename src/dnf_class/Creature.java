@@ -1,5 +1,6 @@
 package dnf_class;
 
+import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.Item_rarity;
 
 public class Creature extends Item
@@ -14,4 +15,7 @@ public class Creature extends Item
 	
 	@Override
 	public String getTypeName() { return "크리쳐";}
+	
+	@Override
+	public Equip_part getPart() {return Equip_part.CREATURE;}
 }

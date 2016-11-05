@@ -50,10 +50,10 @@ public class Title extends Item
 		return false;
 	}
 	
-	@Override
+	/*@Override
 	public boolean getEnabled() {return enabled;}
 	@Override
-	public void setEnabled(boolean enabled){this.enabled=enabled;}
+	public void setEnabled(boolean enabled){this.enabled=enabled;}*/
 	
 	@Override
 	public int compareTo(Item arg) {

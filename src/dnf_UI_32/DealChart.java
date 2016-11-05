@@ -285,7 +285,7 @@ class DealInfo extends DnFComposite implements Comparable<DealInfo>{
 		layout.marginWidth=3;
 		mainComposite.setLayout(layout);
 		
-		icon = new ItemButton<Skill>(mainComposite, skill, InterfaceSize.SKILL_BUTTON_SIZE, InterfaceSize.SKILL_BUTTON_SIZE, true);
+		icon = new ItemButton<Skill>(mainComposite, skill, InterfaceSize.SKILL_BUTTON_SIZE, InterfaceSize.SKILL_BUTTON_SIZE);
 		icon.getButton().setLayoutData(new RowData(InterfaceSize.SKILL_BUTTON_SIZE, InterfaceSize.SKILL_BUTTON_SIZE));
 		icon.getButton().setAlignment(SWT.CENTER);
 		
@@ -319,7 +319,7 @@ class DealInfo extends DnFComposite implements Comparable<DealInfo>{
 
 	@Override
 	public void renew(){
-		icon.renewImage(true);
+		icon.renewImage();
 		
 		deal = Calculator.getDamage(icon.getItem(), monster, character);
 		
@@ -358,7 +358,7 @@ class DealInfo extends DnFComposite implements Comparable<DealInfo>{
 		dealLabel.setText(newStr+compareStr);
 		
 		try {
-			int hp = monster.getStat("체력");
+			long hp = monster.getLongStat("체력");
 			String text;
 			if(hp==0) text = "-";
 			else text = String.valueOf(Double.parseDouble(String.format("%.2f", ((double)deal)/hp*100))) +"%";			

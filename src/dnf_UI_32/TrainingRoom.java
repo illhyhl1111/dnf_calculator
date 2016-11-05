@@ -63,8 +63,8 @@ public class TrainingRoom extends DnFComposite
 			partyCharacter[i] = new Label(mainComposite, SWT.NONE);
 		}
 		
-		monsterButton = new ItemButton<Monster>(mainComposite, character.target, InterfaceSize.MONSTER_SIZE_X, InterfaceSize.MONSTER_SIZE_Y, true);
-		subMonsterButton = new ItemButton<MonsterOption>(mainComposite, character.target.getMonsterOption(), InterfaceSize.SUB_MONSTER_SIZE_X, InterfaceSize.SUB_MONSTER_SIZE_Y, true);
+		monsterButton = new ItemButton<Monster>(mainComposite, character.target, InterfaceSize.MONSTER_SIZE_X, InterfaceSize.MONSTER_SIZE_Y);
+		subMonsterButton = new ItemButton<MonsterOption>(mainComposite, character.target.getMonsterOption(), InterfaceSize.SUB_MONSTER_SIZE_X, InterfaceSize.SUB_MONSTER_SIZE_Y);
 		
 		FormData formData = new FormData(InterfaceSize.MONSTER_SIZE_X, InterfaceSize.MONSTER_SIZE_Y);
 		formData.bottom = new FormAttachment(100, -5);
@@ -125,8 +125,8 @@ public class TrainingRoom extends DnFComposite
 
 	@Override
 	public void renew() {
-		monsterButton.renewImage(true);
-		subMonsterButton.renewImage(true);
+		monsterButton.renewImage();
+		subMonsterButton.renewImage();
 		for(int i=0; i<3; i++)
 			partyCharacter[i].setImage(GetDictionary.iconDictionary.get(partyCharType[i].name()+" - filp"));
 	}
