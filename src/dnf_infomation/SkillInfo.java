@@ -20,6 +20,7 @@ import dnf_class.Characters;
 import dnf_class.Monster;
 import dnf_class.Skill;
 import dnf_class.SkillLevelInfo;
+import dnf_class.SubSkill;
 import dnf_class.SwitchingSkill;
 import dnf_class.TPSkill;
 
@@ -32,6 +33,7 @@ public class SkillInfo {
 		Skill_type type=null;
 		String[] targets = null;
 		boolean isTPSkill=false;
+		boolean isSubSkill=false;
 		Job job=null;
 		Character_type charType=null;
 		boolean jobDefined=true;
@@ -53,6 +55,7 @@ public class SkillInfo {
 
 		Object temp="first";
 		
+		try{
 		while(i<data.length)
 		{
 			name = (String) data[i++];
@@ -62,11 +65,20 @@ public class SkillInfo {
 			if(temp instanceof Skill_type){
 				type = (Skill_type) temp;
 				isTPSkill=false;
+				isSubSkill=false;
 			}
 			else if(temp.equals(""));	//이전 값 유지
 			else if(temp instanceof String){
-				targets = ((String) temp).split(" & ");
-				isTPSkill=true;
+				if(((String) temp).contains("원본 - ")){
+					targets = new String[]{((String)temp).substring(5)};
+					isSubSkill=true;
+					isTPSkill=false;
+				}
+				else{
+					targets = ((String) temp).split(" & ");
+					isTPSkill=true;
+					isSubSkill=false;
+				}
 			}
 			else throw new ParsingException(i-1, temp);
 			
@@ -108,12 +120,15 @@ public class SkillInfo {
 			else if(temp.equals(""));	//이전 값 유지
 			else throw new ParsingException(i-1, temp);
 			
-			if(!isTPSkill && (type==Skill_type.DAMAGE_BUF || type==Skill_type.ACTIVE)){
+			if(!isTPSkill && (type==Skill_type.DAMAGE_BUF || type==Skill_type.ACTIVE || type==Skill_type.OPTION)){
 				//속성
 				temp = data[i++];
 				if(temp instanceof Element_type) element = (Element_type) temp;
 				else if(temp.equals(""));	//이전 값 유지
-				else throw new ParsingException(i-1, temp);
+				else{
+					if(type!=Skill_type.OPTION) throw new ParsingException(i-1, temp);
+					else i--;
+				}
 			}
 			
 			if(data[i] instanceof String && ((String)data[i]).contains("ver_"))
@@ -123,11 +138,13 @@ public class SkillInfo {
 			
 			if(jobDefined){
 				if(isTPSkill) skill = new TPSkill(name, targets, job, firstLevel, maxLevel, masterLevel, interval, version);
+				else if(isSubSkill) skill = new SubSkill(name, targets[0], job, firstLevel, maxLevel, masterLevel, interval, version);
 				else if(type==Skill_type.SWITCHING) skill = new SwitchingSkill(name, job, firstLevel, maxLevel, masterLevel, interval, version);
 				else skill = new Skill(name, type, job, firstLevel, maxLevel, masterLevel, interval, element, version);
 			}
 			else{
 				if(isTPSkill) skill = new TPSkill(name, targets, charType, firstLevel, maxLevel, masterLevel, interval, version);
+				else if(isSubSkill) skill = new SubSkill(name, targets[0], charType, firstLevel, maxLevel, masterLevel, interval, version);
 				else if(type==Skill_type.SWITCHING) skill = new SwitchingSkill(name, charType, firstLevel, maxLevel, masterLevel, interval, version);
 				else skill = new Skill(name, type, charType, firstLevel, maxLevel, masterLevel, interval, element, version);
 			}
@@ -193,18 +210,19 @@ public class SkillInfo {
 					else if(stat[0].equals("-")) skillLevel--;
 					else skillLevel = Integer.parseInt(stat[0]);
 						
-					if(skill.hasDamage()){
+					if(skill.hasDamage() || skill.type==Skill_type.SWITCHING){
 						if(stat.length==5){
 							for(int j=0; j<4; j++)
 								skillNum[j]=Parser.parseForm(stat[j+1], skillNum[j]);
 						}
-						else{
+						else if(stat.length!=1){
 							int index=1;
 							for(int j=0; j<4; j++){
 								if(skillNum[j]==0) continue;
 								else skillNum[j]=Parser.parseForm(stat[index++], skillNum[j]);
 							}
 						}
+						else for(int j=0; j<4; j++) skillNum[j]=0;
 						levelInfo = new SkillLevelInfo(skillLevel, (int)Math.round(skillNum[0]), skillNum[1], (int)Math.round(skillNum[2]), skillNum[3]);
 					}
 					else levelInfo = new SkillLevelInfo(skillLevel);
@@ -220,15 +238,14 @@ public class SkillInfo {
 						if(temp!=null){
 							String[] statList = ((String)temp).split(" & ");
 							for(String str : statList){
+								if(str.isEmpty()) continue;
 								if(str.contains("귀속")){
 									String[] skillAndPercent = str.split("/");
 									
 									int result;
-									if(skillAndPercent[skillAndPercent.length-1].startsWith("+")){
-										String compareStat = skillAndPercent[skillAndPercent.length-1];
-										result=Integer.valueOf(compareStat) + prevStat.get(statOrder).intValue();
-									}
-									else result=Integer.valueOf(skillAndPercent[skillAndPercent.length-1]);
+									if(skillAndPercent[skillAndPercent.length-1].startsWith("+"))
+										result = (int) (Parser.parseForm(skillAndPercent[skillAndPercent.length-1], prevStat.get(statOrder))+0.0001);
+									else result = (int) (Parser.parseForm(skillAndPercent[skillAndPercent.length-1], 0)+0.0001);
 									levelInfo.percentList.put(skillAndPercent[1], result);
 									if(statOrder==prevStat.size()){
 										prevStat.add((double)result);
@@ -260,10 +277,23 @@ public class SkillInfo {
 			catch(Exception e)
 			{
 				e.printStackTrace();
+				System.out.println("앞1 : "+data[i-2]);
+				System.out.println("앞2 : "+data[i-3]);
+				System.out.println("뒤1 : "+data[i]);
+				System.out.println("뒤2 : "+data[i+1]);
 				throw new ParsingException(i-1, temp);
 			}
 				
 			skillList.add(skill);
+		}
+		}catch(Exception e)
+		{
+			e.printStackTrace();
+			System.out.println("앞1 : "+data[i-2]);
+			System.out.println("앞2 : "+data[i-3]);
+			System.out.println("뒤1 : "+data[i]);
+			System.out.println("뒤2 : "+data[i+1]);
+			throw new ParsingException(i-1, temp);
 		}
 	}
 	
@@ -401,7 +431,7 @@ public class SkillInfo {
 	
 	public static Object[] skillInfo_gunner()
 	{
-		FunctionStat fStat[] = new FunctionStat[3];
+		FunctionStat fStat[] = new FunctionStat[20];
 		
 		//듀얼트리거
 		fStat[0] = new FunctionStat(){
@@ -469,6 +499,99 @@ public class SkillInfo {
 			}
 		};
 		
+		//강화탄
+		fStat[4] = new FunctionStat(){
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public StatusList function(Characters character, Monster monster, Object item) {
+				Skill skill = (Skill)item;
+				StatusList statList = new StatusList();
+				if(character.characterInfoList.getSkill("강화탄(무)").buffEnabled(true)){
+					statList.addStatList("%물방깍_스킬", skill.getSkillLevel(true, character.isBurning()));
+					statList.addStatList("%마방깍_스킬", skill.getSkillLevel(true, character.isBurning()));
+				}
+				else if(character.characterInfoList.getSkill("강화탄(화)").buffEnabled(true))
+					statList.addStatList("화속깍", skill.getSkillLevel(true, character.isBurning())*2+2);
+				else if(character.characterInfoList.getSkill("강화탄(수)").buffEnabled(true))
+					statList.addStatList("수속깍", skill.getSkillLevel(true, character.isBurning())*2+2);
+				else if(character.characterInfoList.getSkill("강화탄(명)").buffEnabled(true))
+					statList.addStatList("명속깍", skill.getSkillLevel(true, character.isBurning())*2+2);
+					
+				if(character.characterInfoList.getSkill("강화탄(컨버전)").buffEnabled(true))
+					statList.addStatList("물리마스터리", -100);
+				else statList.addStatList("마법마스터리", -100);
+				return statList;
+			}
+		};
+		
+		//병기숙련
+		fStat[5] = new FunctionStat(){
+			private static final long serialVersionUID = 1;
+			@Override
+			public StatusList function(Characters character, Monster monster, Object item) {
+				Skill skill = (Skill)item;
+				StatusList statList = new StatusList();
+				if(character.getItemSetting().weapon.weaponType==Weapon_detailType.GUN_BOWGUN
+						|| character.getItemSetting().weapon.weaponType==Weapon_detailType.GUN_MUSKET){
+					int level = skill.getSkillLevel(true, character.isBurning());
+					statList.addStatList("물리마스터리", level);
+					statList.addStatList("마법마스터리", level);
+					statList.addStatList("독공마스터리", level);
+					statList.addStatList("물리방무뻥", level);
+					statList.addStatList("마법방무뻥", level);
+				}
+					
+				return statList;
+			}
+		};
+		
+		//매거진
+		fStat[6] = new FunctionStat(){
+			private static final long serialVersionUID = 1;
+			@Override
+			public StatusList function(Characters character, Monster monster, Object item) {
+				StatusList statList = new StatusList();
+				Skill hit = character.characterInfoList.getSkill("평타(1사이클)");
+				switch(character.getItemSetting().weapon.weaponType)
+				{
+				case GUN_BOWGUN:
+					hit.setSkillLevel(21);
+					hit.dungeonLevel=0;
+					break;
+				case GUN_MUSKET:
+					hit.setSkillLevel(10);
+					hit.dungeonLevel=0;
+					break;
+				case GUN_REVOLVER:
+					hit.setSkillLevel(12);
+					hit.dungeonLevel=0;
+					break;
+				case GUN_HCANON:
+					hit.setSkillLevel(6);
+					hit.dungeonLevel=0;
+					break;
+				case GUN_AUTOPISTOL:
+					hit.setSkillLevel(18);
+					hit.dungeonLevel=0;
+					break;
+				default:
+					break;
+				}
+				return statList;
+			}
+		};
+		
+		//기숙
+		fStat[7] = new FunctionStat(){
+			private static final long serialVersionUID = 1;
+			@Override
+			public StatusList function(Characters character, Monster monster, Object item) {
+				Skill skill = (Skill)item;
+				if(character.hasContract()) skill.setSkillLevel(character.getLevel());
+				return new StatusList();
+			}
+		};
 		
 		Object[] data = new Object[] {
 				
@@ -650,6 +773,90 @@ public class SkillInfo {
 				"더블 건호크 강화", "더블 건호크", Job.RANGER_F, 65, 7, 5, 10, null,
 				
 				
+				
+				//////////////////남스핏
+				/////액티브
+				"교차 사격", Skill_type.ACTIVE, Job.SPITFIRE_M, 25, 60, 50, 2, Element_type.NONE, CalculatorVersion.VER_1_0_d,
+				"33", "귀속/오버 차지/1311*3", "+", "귀속/오버 차지/1343*3", "+", "귀속/오버 차지/1374*3", "+", "귀속/오버 차지/1405*3", "+", "귀속/오버 차지/1437*3", "+", "귀속/오버 차지/1468*3", "+", "귀속/오버 차지/1499*3", null, 
+				"버스터 샷", Skill_type.ACTIVE,  "", 35, 60, 50, 2, Element_type.NONE, CalculatorVersion.VER_1_0_d,
+				"28", "귀속/오버 차지/7418", "+", "귀속/오버 차지/7619", "+", "귀속/오버 차지/7820", "+", "귀속/오버 차지/8022", "+", "귀속/오버 차지/8223", "+", "귀속/오버 차지/8424", null,  
+				"C4", Skill_type.ACTIVE, "", 35, 60, 50, 2, Element_type.NONE, CalculatorVersion.VER_1_0_d,
+				"28 23935 0 23935 0", "29 24584 24584", "30 25234 25234", "31 25883 25883", "32 26532 26532", "33 27182 27182", null,
+				"네이팜 탄", Skill_type.ACTIVE, "", 40, 60, 50 , 2,  Element_type.NONE, CalculatorVersion.VER_1_0_d,
+				"26", "귀속/오버 차지/6595", "+", "귀속/오버 차지/6784", "+", "귀속/오버 차지/6973", "+", "귀속/오버 차지/7163", "+", "귀속/오버 차지/7352", null,
+				"네이팜 탄(장판)", "원본 - 네이팜 탄", "", 40, 60, 50 , 2, Element_type.NONE, CalculatorVersion.VER_1_0_d,
+				"26 1450 0 1450 0", "", "27 1500 1500", "", "28 1540 1540", "", "29 1580 1580", "", "30 1620 1620", "", null,
+				"록 온 서포트", Skill_type.ACTIVE, "", 45, 60, 50, 2,  Element_type.NONE, CalculatorVersion.VER_1_0_d,
+				"23 7294*5 0 7294*5 0", "24 7523*5 7523*5", "25 7752*5 7752*5", "26 7981*5 7981*5", "27 8210*5 8210*5", "28 8439*5 8439*5", "29 8668*5 8668*5", null,
+				"특수기동전대 '블랙 로즈'", Skill_type.ACTIVE, "", 50, 40, 30, 5, Element_type.NONE, CalculatorVersion.VER_1_0_d,
+				"9 121735 0 121735 0", "10 131630 0 131630 0", "11 141524 141524", "12 151434 151434", "13 161328 161328", "14 171222 171222", "15 181116 181116", null,
+				"G-61 중력류탄", Skill_type.ACTIVE, "", 60, 40, 30, 2,  Element_type.NONE, CalculatorVersion.VER_1_0_d,
+				"16 394*30+11825 0 394*30+11825 0", "17 410*30+12301 410*30+12301", "18 425*30+12777 425*30+12777", "19 441*30+13253 441*30+13253", "20 457*30+13728 457*30+13728", "21 473*30+14204 473*30+14204", null,
+				"피스톨 카빈", Skill_type.ACTIVE, "", 70, 40, 30, 2, Element_type.NONE, CalculatorVersion.VER_1_0_d,
+				"11", "귀속/오버 차지/665*17", "+", "귀속/오버 차지/699*17",  "+", "귀속/오버 차지/721*17",  "+", "귀속/오버 차지/766*17",  
+				"+", "귀속/오버 차지/799*17",  "+", "귀속/오버 차지/833*17",  "+", "귀속/오버 차지/866*17",  "+", "귀속/오버 차지/900*17", null,
+				"데인저 클로즈", Skill_type.ACTIVE, "", 75, 40, 30, 2, Element_type.NONE, CalculatorVersion.VER_1_0_d,
+				"8", "귀속/오버 차지/6681*10/7.08", "+", "귀속/오버 차지/7077*10/7.08", "+", "귀속/오버 차지/7474*10/7.08", "+", "귀속/오버 차지/7870*10/7.08",    
+				"+", "귀속/오버 차지/8266*10/7.08", "+", "귀속/오버 차지/8663*10/7.08", "+", "귀속/오버 차지/9059*10/7.08", null,   
+				"G-38ARG 반응류탄", Skill_type.ACTIVE, "", 80, 40, 30, 2, Element_type.NONE, CalculatorVersion.VER_1_0_d,
+				"6 4101*10+17579 0 4101*10+17579 0", "7 4377*10+18762 4377*10+18762", "8 4653*10+19945 4653*10+19945",
+				"9 4930*10+21128 4930*10+21128", "10 5206*10+22311 5206*10+22311", "11 5482*10+23495 5482*10+23495", null, 
+				"슈퍼 노바", Skill_type.ACTIVE, "", 85, 40, 30, 5, Element_type.NONE, CalculatorVersion.VER_1_0_d,
+				"2 69827+1994*15 0 69827+1994*15 0", "3 82971+2370*15 82971+2370*15", "4 96115+2746*15 96115+2746*15", "5 109259+3121*15 109259+3121*15", "6 122403+3497*15 122403+3497*15", null,
+				"G-35L 섬광류탄", Skill_type.DAMAGE_BUF, "", 25, 60, 50, 2, Element_type.LIGHT, CalculatorVersion.VER_1_0_d,
+				"33 2526 0 2526 0", "크증버프 15 & 크리저항감소 10", "34 2586 2586", "크증버프 16 & 크리저항감소 10", "35 2646 2646", "크증버프 17 & 크리저항감소 10", "36 2707 2707", "크증버프 18 & 크리저항감소 10",
+				"37 2767 2767", "크증버프 19 & 크리저항감소 10", "38 2827 2827", "크증버프 20 & 크리저항감소 10", null, 
+				"G-18C 빙결류탄", Skill_type.ACTIVE, "", 30, 60, 50, 2, Element_type.WATER, CalculatorVersion.VER_1_0_d,
+				"31 6010 0 6010 0", "32 6162 6162", "33 6311 6311", "34 6463 6463", "35 6613 6613", null,
+				"M18 클레이모어", Skill_type.ACTIVE, "", 20, 60, 50, 2, Element_type.NONE, CalculatorVersion.VER_1_0_d,
+				"36 2439*3 0 2439 0", "37 2494*3 2494*3", "38 2548*3 2548*3", "39 2603*3 2603*3", "40 2657*3 2657*3", "41 2711*3 2711*3", null, 
+				"평타", Skill_type.ACTIVE, "", 1, 1, 1, 1, Element_type.NONE, CalculatorVersion.VER_1_0_d, "설명 한발의 데미지입니다",
+				"1 150 0 150 0", null,
+				"폭발탄", Skill_type.ACTIVE, "", 30, 20, 10, 3, Element_type.NONE, CalculatorVersion.VER_1_0_d, "설명 한발의 데미지입니다",
+				"10", "귀속/오버 차지/469", "+", "귀속/오버 차지/530", "+", "귀속/오버 차지/561", "+", "귀속/오버 차지/592", "+", "귀속/오버 차지/623", null,
+				"평타(1사이클)", Skill_type.ACTIVE, "", 1, 25, 1, 1, Element_type.NONE, CalculatorVersion.VER_1_0_d,
+				"1", "귀속/평타/200 & 귀속/폭발탄/100", "+", "귀속/평타/+100 & 귀속/폭발탄/+100", "반복 1",
+				
+				//////패시브
+				"오버 차지", Skill_type.SWITCHING, "", 15, 20, 10, 3, CalculatorVersion.VER_1_0_d, "설명 수치 다 입력해주셔야합니다 죄송ㅎ",
+				"10 427 0 427 0", "스킬 C4 % 34 & 스킬 네이팜 탄(장판) % 34 & 스킬 록 온 서포트 % 34 & 스킬 특수기동전대 '블랙 로즈' % 34 & 스킬 G-61 중력류탄 % 34 & 스킬 G-38ARG 반응류탄 % 34 & "
+				+ "스킬 슈퍼 노바 % 34 & 스킬 G-35L 섬광류탄 % 34 & 스킬 G-18C 빙결류탄 % 34 & 스킬 M18 클레이모어 % 34 & 스킬 평타 % 34", null,
+				"병기 숙련", Skill_type.PASSIVE, "", 15, 20, 10, 3, CalculatorVersion.VER_1_0_d,
+				"10", fStat[5], "", "+", fStat[5], "", "반복 1",
+				"강화탄", Skill_type.PASSIVE, "", 15, 20, 10, 3, CalculatorVersion.VER_1_0_d, "설명 강화탄을 찍지 않을 경우 물리/마법공격력이 모두 들어가는 참사가 발생합니다 빼지마세요",
+				"10", fStat[4], "", "+", fStat[4], "", "반복 1",
+				"강화탄(화)", Skill_type.OPTION, "", 1, 1, 1, 1, CalculatorVersion.VER_1_0_d, "설명 적용우선순위 : 무속->화->수->명",
+				"1", "", null,
+				"강화탄(수)", Skill_type.OPTION, "", 1, 1, 1, 1, CalculatorVersion.VER_1_0_d, "설명 적용우선순위 : 무속->화->수->명",
+				"1", "", null,
+				"강화탄(명)", Skill_type.OPTION, "", 1, 1, 1, 1, CalculatorVersion.VER_1_0_d, "설명 적용우선순위 : 무속->화->수->명",
+				"1", "", null,
+				"강화탄(무)", Skill_type.OPTION, "", 1, 1, 1, 1, CalculatorVersion.VER_1_0_d, "설명 적용우선순위 : 무속->화->수->명",
+				"1", "", null,
+				"강화탄(컨버전)", Skill_type.OPTION, "", 1, 1, 1, 1, CalculatorVersion.VER_1_0_d, "설명 컨버전을 킬 경우, 마공으로 전환됩니다",
+				"1", "", null,
+				"유탄 마스터리", Skill_type.PASSIVE, "", 20, 20, 10, 3, CalculatorVersion.VER_1_0_d,
+				"10", "스킬 G-14 파열류탄 % 10 & 스킬 G-35L 섬광류탄 % 10 & 스킬 G-18C 빙결류탄 % 10", "+", "스킬 G-14 파열류탄 % +1 & 스킬 G-35L 섬광류탄 % +1 & 스킬 G-18C 빙결류탄 % +1", "반복 1",
+				"듀얼 플리커", Skill_type.PASSIVE, "", 48, 30, 20, 3, CalculatorVersion.VER_1_0_d,
+				"15", "스증뎀 33", "+", "스증뎀 +1.5", "반복 1", 
+				"전장의 영웅", Skill_type.PASSIVE, "", 75, 20, 10, 3, CalculatorVersion.VER_1_0_d,
+				"4", "스증뎀 30", "+", "스증뎀 +2", "반복 1",
+				"패스티스트 건", Skill_type.PASSIVE, "", 30, 20, 5, 3, CalculatorVersion.VER_1_0_d,
+				"5", "스킬 평타 % 12", "+", "스킬 평타 % +0.5", "반복 1",
+				"매거진 드럼", Skill_type.PASSIVE, "", 15, 20, 10, 3, CalculatorVersion.VER_1_0_d,
+				"10", fStat[6], "스킬 평타 % 20", "+", fStat[6], "스킬 평타 % +2", "반복 1",
+				"기본기 숙련", Skill_type.PASSIVE, "", 1, 100, 100, 1, CalculatorVersion.VER_1_0_d,
+				"90", fStat[7], "스킬 평타 % 512.2", "+", fStat[7], "스킬 평타 % +5.8", "반복 1",
+				
+				/////TP
+				"류탄 강화", "G-14 파열류탄 & G-35L 섬광류탄 & G-18C 빙결류탄", "", 50, 7, 5, 10, CalculatorVersion.VER_1_0_d, null,
+				"교차 사격 강화", "교차 사격", "", 50, 7, 5, 10, CalculatorVersion.VER_1_0_d, null,
+				"버스터 샷 강화", "버스터 샷", "", 50, 7, 5, 10, CalculatorVersion.VER_1_0_d, null,
+				"M18 클레이모어 강화", "M18 클레이모어", "", 50, 7, 5, 10, CalculatorVersion.VER_1_0_d, null,
+				"C4 강화", "C4", "", 65, 7, 5, 10, CalculatorVersion.VER_1_0_d, null,
+				"네이팜 탄 강화", "네이팜 탄", "", 65, 7, 5, 10, CalculatorVersion.VER_1_0_d, null,
+				"록 온 서포트 강화", "록 온 서포트", "", 65, 7, 5, 10, CalculatorVersion.VER_1_0_d, null,
+				
 				///공용스킬
 				"고대의 기억", Skill_type.BUF_ACTIVE, Character_type.ALL, 15, 20, 10, 3,
 				"1", "지능 15", "+", "지능 +15", "반복 1",
@@ -666,6 +873,109 @@ public class SkillInfo {
 				//화방
 				"M-3 화염방사기", "", "", 15, 60, 50, 2, Element_type.FIRE,
 				"38 446*13 3.720*13 0 0", "+ 456*13 3.8*13", "+ 466*13 3.89*13", "+ 476*13 3.96*13", "+ 488*13 4.06*13", "+ 498*13 4.149*13", null,
+				"기본기 숙련 강화", "기본기 숙련", Character_type.ALL, 50, 5, 3, 10, CalculatorVersion.VER_1_0_d, null,
+			
+		};
+		
+		return data;
+	}
+	
+	public static Object[] skillInfo_mage()
+	{
+		FunctionStat fStat[] = new FunctionStat[20];
+		
+		//원소폭격
+		fStat[0] = new FunctionStat(){
+			private static final long serialVersionUID = 1;
+			@Override
+			public StatusList function(Characters character, Monster monster, Object item) {
+				Skill skill = (Skill)item;
+				int level = skill.getSkillLevel(true, character.isBurning());
+				StatusList statList = new StatusList();
+				for(Skill s : character.getSkillList())
+					if(s.getName().equals("검은 눈"))
+						if(s.getActiveEnabled()){
+							for(Skill dSkill : character.getSkillList()){
+								if(dSkill.hasDamage()){
+									switch(dSkill.getName()){
+									case "속성발동":
+										break;
+									case "파이어 로드": case "아이스 크리스탈 샤워": case "엘레멘탈 캐넌":
+										statList.addSkill_damage(dSkill.getName(), 13+level);
+									default:
+										statList.addSkill_damage(dSkill.getName(), 25+2*level);
+									}
+								}
+							}
+						}
+				return statList;
+			}
+		};
+		
+		Object[] data = new Object[] {
+				/////////////우럭
+				/////액티브
+				"크리스탈 어택", Skill_type.ACTIVE, Job.ELEMENTALBOMBER, 20, 60, 50, 2, Element_type.WATER, CalculatorVersion.VER_1_0_d,
+				"36 0 0 1705*7 0", "+ 1740", "+ 1788", "+ 1817", "+ 1854", null,
+				"파이어 로드", "", "", 25, 60, 50, 2, Element_type.FIRE, CalculatorVersion.VER_1_0_d,
+				"33 0 0 1032*12 0", "+ 1059", "+ 1083", "+ 1107", "+ 1133", "+ 1157", null,
+				"체인 라이트닝", "", "", 30, 60, 50, 2, Element_type.LIGHT, CalculatorVersion.VER_1_0_d,
+				"31 0 0 4242*4 0", "+ 4350", "+ 4458", "+ 4563", "+ 4669", null,
+				"암전", "", "", 30, 60, 50, 2, Element_type.DARKNESS, CalculatorVersion.VER_1_0_d,
+				"31 0 0 15251 0", "+ 15630", "+ 16017", "+ 16401", "+ 16783", null,
+				"아이스 크리스탈 샤워", "", "", 35, 60, 50, 2, Element_type.WATER, CalculatorVersion.VER_1_0_d,
+				"28 0 0 1241*14 0", "+ 1276*14", "+ 1310*14", "+ 1342*14", "+ 1377*14", "+ 1411*14", null,
+				"플레임 서클", "", "", 35, 60, 50, 2, Element_type.FIRE, CalculatorVersion.VER_1_0_d,
+				"28 0 0 1914*6+7654 0", "+ 1965*6+7863", "+ 2016*6+8071", "+ 2069*6+8280", "+ 2122*6+8489", "+ 2174*6+8697", null,
+				"라이트닝 월", "", "", 40, 60, 50, 2, Element_type.LIGHT, CalculatorVersion.VER_1_0_d,
+				"26 0 0 15025 0", "+ 15456", "+ 15893", "+ 16327", "+ 16757", null,
+				"다크니스 맨틀", "", "", 40, 60, 50, 2, Element_type.DARKNESS, CalculatorVersion.VER_1_0_d,
+				"26 0 0 20620 0", "+ 21224", "+ 21813", "+ 22411", "+ 23004", null,
+				"엘레멘탈 레인", Skill_type.ACTIVE, "", 45, 60, 50, 2, Element_type.ALL, CalculatorVersion.VER_1_0_d, "설명 검은 눈의 모속적용이 기본으로 되어있습니다",
+				"23 0 0 902*45+3701+12213 0", "+ 929*45+3817+12598", "+ 957*45+3934+12982", "+ 986*45+4051+13369", "+ 1014*45+4170+13756", "+ 1043*45+4286+14142", null,
+				"엘레멘탈 버스터", "", "", 50, 40, 30, 5, Element_type.ALL, CalculatorVersion.VER_1_0_d, "설명 검은 눈의 모속적용이 기본으로 되어있습니다",
+				"9 0 0 3916*30 0", "+ 4225*30", "+ 4534*30", "+ 4841*30", null,
+				"컨센트레이트", Skill_type.ACTIVE, "", 60, 40, 30, 2, Element_type.ALL, CalculatorVersion.VER_1_0_d,
+				"16 0 0 7297+17028 0", "+ 7592+17712", "+ 7886+18396", "+ 8179+19083", null,
+				"엘레멘탈 스트라이크", Skill_type.ACTIVE, "", 70, 40, 30, 2, Element_type.ALL, CalculatorVersion.VER_1_0_d,
+				"11 0 0 1865+35424 0", "+ 1958+37210", "+ 2053+38991", "+ 2148+40776", null,
+				"엘레멘탈 필드", Skill_type.DAMAGE_BUF, "", 75, 40, 30, 2, Element_type.ALL, CalculatorVersion.VER_1_0_d,
+				"8 0 0 35737 0", "화속깍 40 & 수속깍 40 & 명속깍 40 & 암속깍 40", "+ 37857", "화속깍 +2 & 수속깍 +2 & 명속깍 +2 & 암속깍 +2", "+ 39978", "화속깍 +2 & 수속깍 +2 & 명속깍 +2 & 암속깍 +2",
+				"+ 42098", "화속깍 +2 & 수속깍 +2 & 명속깍 +2 & 암속깍 +2", "+ 44217", "화속깍 +2 & 수속깍 +2 & 명속깍 +2 & 암속깍 +2", null,
+				"컨버젼스 캐넌", Skill_type.ACTIVE, "", 80, 40, 30, 2, Element_type.ALL, CalculatorVersion.VER_1_0_d,
+				"6 0 0 56526 0", "+ 60330", "+ 64135", "+ 67940", null,
+				"아마겟돈 스트라이크", Skill_type.ACTIVE, "", 85, 40, 30, 5, Element_type.ALL, CalculatorVersion.VER_1_0_d,
+				"2 0 0 4988+416*13+89798 0", "+ 5928+494*13+106701", "+ 6867+571*13+123604", "+ 7806+651*13+140507", "+ 8745+729*13+157412", "+ 9684+808*13+174313", null,
+				"속성발동", "", "", 15, 60, 50, 5, Element_type.ALL, CalculatorVersion.VER_1_0_d,
+				"16 0 0 1161 0", "+ 1221", "+ 1281", "+ 1341", null,
+				"엘레멘탈 캐넌", "", "", 15, 11, 1, 1, Element_type.ALL, CalculatorVersion.VER_1_0_d,
+				"1", "귀속/속성발동/500", "+", "귀속/속성발동/+10", "반복 1",
+				
+				/////패시브
+				"원소 폭격", Skill_type.BUF_ACTIVE, "", 30, 5, 5, 5, CalculatorVersion.VER_1_0_d, "설명 검은 눈의 효과 적용",
+				"5", fStat[0], "스킬 체인 라이트닝 % 10", null, 
+				"페이탈 엘레멘트", Skill_type.PASSIVE, "", 48, 40, 30, 3, CalculatorVersion.VER_1_0_d,
+				"15", "크증버프 24 & 마크 10.0", "+", "크증버프 +1.5 & 마크 +0.5", "반복 1",
+				"검은 눈", "", "", 75, 40, 30, 3, CalculatorVersion.VER_1_0_d, "설명 원소폭격 사용 시 스킬 데미지 증가",
+				"6", "", "+", "", null,
+				"엘레멘탈 포스", Skill_type.BUF_ACTIVE, "", 20, 11, 1, 1, CalculatorVersion.VER_1_0_d,
+				"1", "스킬 엘레멘탈 캐넌 % 50", "+", "스킬 엘레멘탈 캐넌 % +10", "반복 1",
+				"마나 폭주", Skill_type.SWITCHING, "", 25, 30, 20, 2, CalculatorVersion.VER_1_0_d,
+				"20", "스증뎀 42", null,
+				"엘레멘탈 실드", Skill_type.BUF_ACTIVE, "", 25, 20, 10, 2, CalculatorVersion.VER_1_0_d,
+				"10", "모속강 26", "+", "모속강 +2", "반복 1",
+				
+				//TP
+				"속성 발동 강화", "속성 발동", "", 50, 7, 5, 8, CalculatorVersion.VER_1_0_d, null,
+				"체인 라이트닝 강화", "체인 라이트닝", "", 55, 7, 5, 20, CalculatorVersion.VER_1_0_d, null,
+				"크리스탈 어택 강화", "크리스탈 어택", "", 55, 7, 5, 10, CalculatorVersion.VER_1_0_d, null,
+				"암전 강화", "암전", "", 55, 7, 5, 10, CalculatorVersion.VER_1_0_d, null,
+				"아이스 크리스탈 샤워 강화", "아이스 크리스탈 샤워", "", 55, 1, 1, 0, CalculatorVersion.VER_1_0_d, "설명 찍으면 버그로 딜이 감소한답니다 세상에", null,
+				"파이어 로드 강화", "파이어 로드", "", 55, 7, 5, 4, CalculatorVersion.VER_1_0_d, null,
+				"플레임 서클 강화", "플레임 서클", "", 55, 7, 5, 10, CalculatorVersion.VER_1_0_d, null,
+				"다크니스 맨틀 강화", "다크니스 맨틀", "", 65, 7, 5, 10, CalculatorVersion.VER_1_0_d, null,
+				"라이트닝 월 강화", "라이트닝 월", "", 65, 7, 5, 10, CalculatorVersion.VER_1_0_d, null,
+				"엘레멘탈 레인 강화", "엘레멘탈 레인", "", 65, 7, 5, 10, CalculatorVersion.VER_1_0_d, null
 		};
 		
 		return data;

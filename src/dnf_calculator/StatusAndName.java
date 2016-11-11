@@ -74,7 +74,8 @@ public class StatusAndName implements java.io.Serializable, Cloneable
 		if(Status.getStatHash().containsKey(name)) this.name = Status.getStatHash().get(name);
 		else throw new UndefinedStatusKey(name);
 		
-		if(StatList.DOUBLENUM_START<=this.name && this.name<=StatList.DOUBLENUM_END) this.stat=new DoubleStatusInfo(stat);
+		if(this.name<=StatList.ELEMENTNUM_END) this.stat=new ElementInfo((int)Math.round(stat));
+		else if(StatList.DOUBLENUM_START<=this.name && this.name<=StatList.DOUBLENUM_END) this.stat=new DoubleStatusInfo(stat);
 		else if(StatList.INTNUM_START<=this.name && this.name<=StatList.INTNUM_END) this.stat=new StatusInfo((int)Math.round(stat));
 		else throw new StatusTypeMismatch("double");
 	}

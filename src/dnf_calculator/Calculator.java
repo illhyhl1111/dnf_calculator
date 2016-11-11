@@ -17,6 +17,7 @@ public class Calculator {
 	public static long getDamage(Skill skill, Monster object, Characters character, int mode)
 	{
 		long deal=0;
+		if(skill.isOptionSkill() && !skill.getBuffEnabled()) return 0;
 		SkillLevelInfo skillInfo = skill.getSkillLevelInfo(true, character.isBurning());
 		if(skillInfo.hasPhy_per()) deal += Calculator.percentDamage_physical(skillInfo.phy_atk, skill.element, object, character, skillInfo.indep_level, mode);
 		if(skillInfo.hasPhy_fix()) deal += Calculator.fixedDamage_physical(skillInfo.phy_fix, skill.element, object, character, skillInfo.indep_level, mode);
@@ -43,7 +44,7 @@ public class Calculator {
 			CalculateElement elementCal = new CalculateElement(object, stat, element);								// 각 속강별 데미지 계산
 			
 			int strength = (int) (stat.getStat(StatList.STR)*(100.0+stat.getStat(StatList.STR_INC))/100.0);
-			double inc_strength=1+strength/250;																					// 1+힘*(100+힘뻥)/100/250
+			double inc_strength=1+strength/250.0;																					// 1+힘*(100+힘뻥)/100/250
 			int inc_weapon1=(int)((stat.getStat(StatList.WEP_PHY)*(100+stat.getStat(StatList.MAST_PHY_2)))/100);				// [무기물공*(100+마스터리2)/100]
 			int inc_weapon2=(int)((inc_weapon1*(stat.getStat(StatList.MAST_PHY)+100))/100);										// [[무기물공*(100+마스터리2)/100]*(100+마스터리1)/100]
 			inc_weapon2=(int) (inc_weapon2*(100+stat.getStat(StatList.MAST_PHY_ITEM))/100);
@@ -77,7 +78,7 @@ public class Calculator {
 			CalculateElement elementCal = new CalculateElement(object, stat, element);								// 각 속강별 데미지 계산
 			
 			int strength = (int) (stat.getStat(StatList.STR)*(100.0+stat.getStat(StatList.STR_INC))/100.0);
-			double inc_strength=1+strength/250;																// 1+힘*(100+힘뻥)/100/250
+			double inc_strength=1+strength/250.0;																// 1+힘*(100+힘뻥)/100/250
 			int inc_indep=(int)(stat.getStat(StatList.WEP_IND)*(100+stat.getStat(StatList.MAST_IND))/100*(100+stat.getStat(StatList.MAST_INDEP_ITEM))/100);
 			//inc_indep+= (int)(stat.getStat(StatList.WEP_IND_REFORGE)*(100+stat.getStat(StatList.MAST_REFORGE))/100);		// 독공*독공뻥+재련 *재련뻥
 			inc_indep+= (int)(stat.getStat(StatList.WEP_IND_REFORGE)*(100+stat.getStat(StatList.MAST_IND))/100);		// 독공*독공뻥+재련 *재련뻥												
@@ -109,7 +110,7 @@ public class Calculator {
 			CalculateElement elementCal = new CalculateElement(object, stat, element);								// 각 속강별 데미지 계산
 			
 			int strength = (int) (stat.getStat(StatList.INT)*(100.0+stat.getStat(StatList.INT_INC))/100.0);
-			double inc_strength=1+strength/250;																						// 1+지능/250
+			double inc_strength=1+strength/250.0;																						// 1+지능/250
 			int inc_weapon1=(int)((stat.getStat(StatList.WEP_MAG)*(100+stat.getStat(StatList.MAST_MAG_2)))/100);					// [무기마공*(100+마스터리2)/100]
 			int inc_weapon2=(int)((inc_weapon1*(stat.getStat(StatList.MAST_MAG)+100))/100);											// [[무기마공*(100+마스터리2)/100]*(100+마스터리1)/100]
 			inc_weapon2=(int) (inc_weapon2*(100+stat.getStat(StatList.MAST_MAG_ITEM))/100);
@@ -142,7 +143,7 @@ public class Calculator {
 			CalculateElement elementCal = new CalculateElement(object, stat, element);								// 각 속강별 데미지 계산
 			
 			int strength = (int) (stat.getStat(StatList.INT)*(100.0+stat.getStat(StatList.INT_INC))/100.0);
-			double inc_strength=1+strength/250;																// 1+지능/250
+			double inc_strength=1+strength/250.0;																// 1+지능/250
 			int inc_indep=(int)(stat.getStat(StatList.WEP_IND)*(100+stat.getStat(StatList.MAST_IND))/100*(100+stat.getStat(StatList.MAST_INDEP_ITEM))/100);
 			//inc_indep+= (int)(stat.getStat(StatList.WEP_IND_REFORGE)*(100+stat.getStat(StatList.MAST_REFORGE))/100);		// 독공*독공뻥+재련 *재련뻥
 			inc_indep+= (int)(stat.getStat(StatList.WEP_IND_REFORGE)*(100+stat.getStat(StatList.MAST_IND))/100);		// 독공*독공뻥+재련 *재련뻥 

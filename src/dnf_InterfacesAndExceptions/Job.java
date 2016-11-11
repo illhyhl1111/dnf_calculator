@@ -7,7 +7,7 @@ public enum Job implements java.io.Serializable
 	SPITFIRE_F(Character_type.GUNNER_F, "프레이야"),
 	MECHANIC_F(Character_type.GUNNER_F, "옵티머스"),
 	LAUNCHER_M(Character_type.GUNNER_M, "디스트로이어"), RANGER_M(Character_type.GUNNER_M, "레이븐"),
-	SPITFIRE_M(Character_type.GUNNER_M, "커맨더"), MECHANIC_M(Character_type.GUNNER_M, "프라임"),
+	SPITFIRE_M(Character_type.GUNNER_M, "커맨더", "바칼) 혈누"), MECHANIC_M(Character_type.GUNNER_M, "프라임"),
 	CRUSADER(Character_type.PRIEST, "세인트"), INFIGHTER(Character_type.PRIEST, "저스티스"),
 	AVENGER(Character_type.PRIEST, "이모탈"), EXORCIST(Character_type.PRIEST, "태을선인"),
 	NENMASTER_F(Character_type.FIGHTER_F, "염제 폐월수화"), GRAPPLER_F(Character_type.FIGHTER_F, "얼티밋 디바"),
@@ -20,7 +20,7 @@ public enum Job implements java.io.Serializable
 	VEGABOND(Character_type.SWORDMAN_F, "검제"), DEMONSLAYER(Character_type.SWORDMAN_F, "디어사이드", "카인) 검魔"),
 	ELEMENTALMASTER(Character_type.MAGE_F, "오버마인드"), SUMMONER(Character_type.MAGE_F, "이클립스"), 
 	WITCH(Character_type.MAGE_F, "지니위즈"), BATTLEMAGE(Character_type.MAGE_F, "아슈타르테"),
-	ELEMENTALBOMBER(Character_type.MAGE_M, "오블리비언"), GLACIALMASTER(Character_type.MAGE_M, "이터널"), 
+	ELEMENTALBOMBER(Character_type.MAGE_M, "오블리비언", "카시야스) 피디대정령"), GLACIALMASTER(Character_type.MAGE_M, "이터널"), 
 	SWIFTMASTER(Character_type.MAGE_M, "아이올로스"), BOOLDMAGE(Character_type.MAGE_M, "뱀파이어 로드"),
 	DIMENSIONWALKER(Character_type.MAGE_M, "어센션"), CREATOR(Character_type.MAGE_F, "크리에이터"),
 	DARKKNIGHT(Character_type.SWORDMAN_M, "다크나이트"),
@@ -70,7 +70,7 @@ public enum Job implements java.io.Serializable
 	public static String[] getImplementedList()
 	{
 		return new String[] {
-				LAUNCHER_F.getName(), RANGER_F.getName(), DEMONSLAYER.getName()
+				LAUNCHER_F.getName(), RANGER_F.getName(), DEMONSLAYER.getName(), SPITFIRE_M.getName(), ELEMENTALBOMBER.getName(),
 		};
 	}
 }

@@ -106,41 +106,38 @@ public class SetOptionInfo {
 		temp.vStat.addStatList("증뎀", 33);
 		setOptionList.add(temp);
 		//핀드
-		temp = new SetOption(SetName.FIENDVENATOR, 3, CalculatorVersion.VER_1_0_b);
+		temp = new SetOption(SetName.FIENDVENATOR, 3, CalculatorVersion.VER_1_0_c);
 		temp.vStat.addStatList("물공", 64);
 		temp.vStat.addStatList("마공", 64);
 		temp.vStat.addStatList("독공", 74);
 		temp.vStat.addStatList("모속강", 35);
 		setOptionList.add(temp);
-		temp = new SetOption(SetName.FIENDVENATOR, 5, CalculatorVersion.VER_1_0_b);
+		temp = new SetOption(SetName.FIENDVENATOR, 5, CalculatorVersion.VER_1_0_c);
 		temp.dStat.addStatList("물공뻥", 8);
 		temp.dStat.addStatList("마공뻥", 8);
 		temp.dStat.addStatList("독공뻥", 8);
 		temp.fStat.statList.add(new FunctionStat() {
 			private static final long serialVersionUID = 1L;
-
 			@Override
-			public StatusList function(Characters character, Monster monster, Object item) {
-				SetOption set =(SetOption)item;
+			public StatusList function(Characters character, Monster monster, Object item) 
+			{
 				StatusList statList = new StatusList();
-				if(!set.dStat.statList.get(0).enabled){
-					Element_type type = CalculateElement.getLargestType(character.dungeonStatus);
-					switch(type){
-					case FIRE:
-						statList.addStatList("화추뎀", 25);
-						break;
-					case WATER:
-						statList.addStatList("수추뎀", 25);
-						break;
-					case LIGHT:
-						statList.addStatList("명추뎀", 25);
-						break;
-					case DARKNESS:
-						statList.addStatList("암추뎀", 25);
-						break;
-					default:
-						statList.addStatList("화추뎀", 25);
-					}
+				Element_type type = CalculateElement.getLargestType(character.dungeonStatus);
+				switch(type){
+				case FIRE:
+					statList.addStatList("화추뎀", 25);
+					break;
+				case WATER:
+					statList.addStatList("수추뎀", 25);
+					break;
+				case LIGHT:
+					statList.addStatList("명추뎀", 25);
+					break;
+				case DARKNESS:
+					statList.addStatList("암추뎀", 25);
+					break;
+				default:
+					statList.addStatList("화추뎀", 25);
 				}
 				return statList;
 			}
@@ -479,11 +476,11 @@ public class SetOptionInfo {
 		
 		/////////////퀘전더리
 		//위영
-		temp = new SetOption(SetName.GREATGLORY, 3, CalculatorVersion.VER_1_0_d);
+		temp = new SetOption(SetName.GREATGLORY, 3, CalculatorVersion.VER_1_0_a);
 		temp.dStat.addStatList("힘", 100, false, true);
 		temp.dStat.addStatList("지능", 100, false, true);
 		setOptionList.add(temp);
-		temp = new SetOption(SetName.GREATGLORY, 5, CalculatorVersion.VER_1_0_d);
+		temp = new SetOption(SetName.GREATGLORY, 5, CalculatorVersion.VER_1_0_a);
 		temp.dStat.addStatList("힘뻥", 5);
 		temp.dStat.addStatList("지능뻥", 5);
 		setOptionList.add(temp);

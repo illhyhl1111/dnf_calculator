@@ -443,6 +443,12 @@ public class Setting implements java.io.Serializable, Cloneable{
 		case DEMONSLAYER:
 			magicalSealedSetting.weapon=magicalSealedWeapon.get(Weapon_detailType.SWORD_LONGSWORD);
 			break;
+		case SPITFIRE_M:
+			magicalSealedSetting.weapon=magicalSealedWeapon.get(Weapon_detailType.GUN_MUSKET);
+			break;
+		case ELEMENTALBOMBER:
+			magicalSealedSetting.weapon=magicalSealedWeapon.get(Weapon_detailType.MAGE_STAFF);
+			break;
 		default:
 			break;
 		}

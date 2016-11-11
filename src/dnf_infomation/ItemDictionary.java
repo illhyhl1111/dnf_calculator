@@ -340,10 +340,10 @@ public class ItemDictionary implements java.io.Serializable
 		return replicate;
 	}
 	
-	public void updateVersion(ItemDictionary supremeDictionary)
+	public void updateVersion(ItemDictionary supremeDictionary, Job job)
 	{
 		if(supremeDictionary.getVERSION().compareTo(VERSION)>0){
-			updateList(equipList, supremeDictionary.equipList);
+			updateList(equipList, supremeDictionary.equipList, job);
 			updateList(cardList, supremeDictionary.cardList);
 			updateList(avatarList, supremeDictionary.avatarList);
 			updateList(creatureList, supremeDictionary.creatureList);
@@ -381,9 +381,16 @@ public class ItemDictionary implements java.io.Serializable
 	
 	private <T extends Item> void updateList(LinkedList<T> list, LinkedList<T> supremeList)
 	{
+		updateList(list, supremeList, Job.NONE);
+	}
+	private <T extends Item> void updateList(LinkedList<T> list, LinkedList<T> supremeList, Job job)
+	{
 		HashMap<String, T> updateList = new HashMap<String, T>();
 		for(T item : supremeList)
-			if(item.Version.compareTo(VERSION)>0) updateList.put(item.getName(), item);
+			if(item.Version.compareTo(VERSION)>0){
+				if(item instanceof Weapon && !((Weapon)item).enabled(job));
+				else updateList.put(item.getName(), item);
+			}
 		
 		for(T item : list){
 			T update = updateList.remove(item.getName());

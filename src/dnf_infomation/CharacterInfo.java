@@ -48,5 +48,26 @@ public class CharacterInfo {
 		temp.statList.addStatList("물크", 8);
 		temp.statList.addStatList("마크", 8);
 		basicStatList.add(temp);
+		
+		/////남스핏
+		temp = new CharInfoBox(Job.SPITFIRE_M, 90, new StatusList());
+		temp.statList.addStatList("힘", 697);
+		temp.statList.addStatList("지능", 696);
+		temp.statList.addStatList("독공", 960);
+		temp.statList.addStatList("모속강", 13);
+		temp.statList.addStatList("물크", 8);
+		temp.statList.addStatList("마크", 8);
+		basicStatList.add(temp);
+		
+		/////우럭
+		temp = new CharInfoBox(Job.ELEMENTALBOMBER, 90, new StatusList());
+		temp.statList.addStatList("힘", 600);
+		temp.statList.addStatList("지능", 780);
+		temp.statList.addStatList("독공", 960);
+		temp.statList.addStatList("모속강", 13);
+		temp.statList.addStatList("물크", 8);
+		temp.statList.addStatList("마크", 8);
+		basicStatList.add(temp);
+		
 	}
 }

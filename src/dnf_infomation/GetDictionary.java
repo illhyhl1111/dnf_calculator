@@ -28,6 +28,7 @@ import dnf_class.MonsterOption;
 import dnf_class.PartyCharacter;
 import dnf_class.SetOption;
 import dnf_class.Skill;
+import dnf_class.SubSkill;
 import dnf_class.Weapon;
 import dnf_InterfacesAndExceptions.CalculatorVersion;
 import dnf_InterfacesAndExceptions.Character_type;
@@ -470,6 +471,12 @@ public class GetDictionary
 			if(!charDictionary.skillList.get(i).isSkillOfChar(job))
 				charDictionary.skillList.remove(i--);
 			else charDictionary.skillList.get(i).masterSkill(level, true);
+		}
+		
+		for(Skill skill : charDictionary.skillList){
+			if(skill.isSubSkill()){
+				((SubSkill)skill).setSuperSkill(charDictionary.skillList);
+			}
 		}
 		
 		Collections.sort(charDictionary.skillList);

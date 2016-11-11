@@ -31,6 +31,7 @@ import dnf_calculator.SkillStatusInfo;
 import dnf_calculator.StatusAndName;
 import dnf_class.Characters;
 import dnf_class.Skill;
+import dnf_class.SwitchingSkill;
 
 public class SkillTree extends Dialog{
 
@@ -86,7 +87,7 @@ public class SkillTree extends Dialog{
 		while(true){
 			if(charSkillIter.hasNext()){
 				tempSkill = charSkillIter.next();
-				if(!tempSkill.isTPSkill() && !tempSkill.isOptionSkill()) break;
+				if(!tempSkill.isTPSkill() && !tempSkill.isOptionSkill() && !tempSkill.isSubSkill()) break;
 			}
 			else break;
 		}
@@ -103,7 +104,7 @@ public class SkillTree extends Dialog{
 					while(true){
 						if(charSkillIter.hasNext()){
 							tempSkill = charSkillIter.next();
-							if(!tempSkill.isTPSkill() && !tempSkill.isOptionSkill()) break;
+							if(!tempSkill.isTPSkill() && !tempSkill.isOptionSkill() && !tempSkill.isSubSkill()) break;
 						}
 						else break;
 					}
@@ -130,18 +131,30 @@ public class SkillTree extends Dialog{
 				buttonData.top = new FormAttachment(0, 3);
 			}
 			else buttonData.top = new FormAttachment(upButton, 3);
-			if(index>=9) buttonData.left = new FormAttachment(0, bSize*8+10);
+			if(index>=9) buttonData.left = new FormAttachment(0, bSize*8+20);
 			else buttonData.left = new FormAttachment(0, 3);
 			leftButton.setLayoutData(buttonData);
 			
 			if(list.isEmpty()){
 				index++;
-				if(index<skillLevel.length) leftButton.setText("\n"+skillLevel[index]);
-				else leftButton.dispose();
+				leftButton.dispose();
 				continue;
 			}
 			
+			int num=0;
 			for(ItemButton<Skill> button : list){
+				if(num!=0 && num%5==0){
+					upButton=leftButton;
+					leftButton = new Button(skillGroup, SWT.BORDER);
+					leftButton.setEnabled(false);
+					leftButton.setText("\n"+skillLevel[index]);
+					buttonData = new FormData(20, bSize+5);
+					buttonData.top = new FormAttachment(upButton, 3);
+					if(index>=9) buttonData.left = new FormAttachment(0, bSize*8+20);
+					else buttonData.left = new FormAttachment(0, 3);
+					leftButton.setLayoutData(buttonData);
+				}
+				
 				buttonData = new FormData();
 				if(upButton == null) buttonData.top = new FormAttachment(0, 3);
 				else buttonData.top = new FormAttachment(upButton, 3);
@@ -157,9 +170,14 @@ public class SkillTree extends Dialog{
 				button.getButton().addListener(SWT.MouseMove, listenerGroup.moveItemInfoListener());			// add MouseMove Event - move composite
 				button.getButton().addListener(SWT.MouseDown, listenerGroup.skillLevelModifyListener(this.getShell(), false));
 				if(button.getItem().type==Skill_type.SWITCHING) {
-					LinkedList<StatusAndName> statlist = button.getItem().getSkillLevelInfo(true, false).stat.statList;
-					String[] statList = new String[statlist.size()];
+					SwitchingSkill skill = (SwitchingSkill) button.getItem();
+					LinkedList<StatusAndName> statlist = skill.getSkillLevelInfo(true, false).stat.statList;
+					String[] statList = new String[skill.getModifyableNum()];
 					int j=0;
+					if(skill.skillInfo.getLast().hasPhy_per()) statList[j++] = "물리 % 데미지";
+					if(skill.skillInfo.getLast().hasPhy_fix()) statList[j++] = "물리 고정 데미지";
+					if(skill.skillInfo.getLast().hasMag_per()) statList[j++] = "마법 % 데미지";
+					if(skill.skillInfo.getLast().hasMag_fix()) statList[j++] = "마법 고정 데미지";
 					for(StatusAndName s : statlist){
 						if(s.stat instanceof SkillStatusInfo)
 							try {
@@ -171,6 +189,7 @@ public class SkillTree extends Dialog{
 					}
 					button.getButton().addListener(SWT.MouseDoubleClick, listenerGroup.skillModifyListener(statList));
 				}
+				num++;
 			}
 			index++;
 			upButton = leftButton;

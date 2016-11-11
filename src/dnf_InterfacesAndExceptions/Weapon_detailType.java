@@ -11,7 +11,7 @@ public enum Weapon_detailType {
 	GUN_BOWGUN(Weapon_type.GUN, "보우건"), GUN_AUTOPISTOL(Weapon_type.GUN, "자동권총"),
 	
 	MAGE_STAFF(Weapon_type.MAGE, "스태프"), MAGE_ROD(Weapon_type.MAGE, "로드"), MAGE_POLE(Weapon_type.MAGE, "봉"),
-	MAGE_SPEAR(Weapon_type.MAGE, "창"), MAGE_BROOM(Weapon_type.MAGE, "빗자루"),
+	MAGE_SPEAR(Weapon_type.MAGE, "창"), MAGE_BROOM(Weapon_type.MAGE, new Job[]{Job.WITCH, Job.DIMENSIONWALKER, Job.CREATOR}, "빗자루"),
 	
 	PRIEST_CROSS(Weapon_type.PRIEST, "십자가"), PRIEST_BATTLEAXE(Weapon_type.PRIEST, "배틀엑스"), PRIEST_ROSARY(Weapon_type.PRIEST, "염주"),
 	PRIEST_TOTEM(Weapon_type.PRIEST, "토템"), PRIEST_SCYTHE(Weapon_type.PRIEST, "낫"),
