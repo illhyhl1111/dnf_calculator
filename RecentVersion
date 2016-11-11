@@ -1,12 +1,13 @@
-ver_1.0.c
-https://drive.google.com/open?id=0B7uxPfMn4bFHaFRQRGdQNldKZkU
-1. Title error modified
-2. Fiend Venartor setoption modified
+ver_1.0.d
+https://drive.google.com/open?id=0B7uxPfMn4bFHT2pfOWRKU0NzNkU
+1. Calculator error - under decimal point of (strength/250) was rounded down! Fixed.
+2. Job implement - Commander / Oblivion
+3. Bug fix - Demonslayer
+4. Korean update notice implemented.
+5. etc etc etc
 
 - How to apply
 1. Download files, Extract
 2. Copy->Paste the contents to original calculator folder
   (Change dnf_calculator files to new version, copy->paste image folder)
 3. Done
-
-I will update Korean explanation in next version. sorry
