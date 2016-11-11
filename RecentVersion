@@ -1,4 +1,4 @@
-ver_1.0.d
+ver_1.0.c
 https://drive.google.com/open?id=0B7uxPfMn4bFHanZ3NXhNYkFTTE0
 1. Calculator error - under decimal point of (strength/250) was rounded down! Fixed.
 2. Job implement - Commander / Oblivion
