@@ -85,6 +85,22 @@ public class Parser {
 			});
 			return Double.valueOf(data[1]);
 		}
+		else if(data[0].equals("무기마스터리_방무")){
+			fList.statList.add(new FunctionStat(){
+				private static final long serialVersionUID = -7647925551477189386L;
+
+				@Override
+				public StatusList function(Characters character, Monster monster, Object item) {
+					StatusList statList = new StatusList();
+					if(character.getItemSetting().weapon.weaponType.getName().equals(data[2])){
+						statList.addStatList("물리방무뻥", Double.valueOf(data[1]));
+						statList.addStatList("마법방무뻥", Double.valueOf(data[1]));
+					}
+					return statList;
+				};
+			});
+			return Double.valueOf(data[1]);
+		}
 		
 		else if(data[0].contains("스킬") && !data[0].contains("방깍_스킬"))
 		{

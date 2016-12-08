@@ -22,7 +22,7 @@ public class Calculator {
 		if(skillInfo.hasPhy_per()) deal += Calculator.percentDamage_physical(skillInfo.phy_atk, skill.element, object, character, skillInfo.indep_level, mode);
 		if(skillInfo.hasPhy_fix()) deal += Calculator.fixedDamage_physical(skillInfo.phy_fix, skill.element, object, character, skillInfo.indep_level, mode);
 		if(skillInfo.hasMag_per()) deal += Calculator.percentDamage_magical(skillInfo.mag_atk, skill.element, object, character, skillInfo.indep_level, mode);
-		if(skillInfo.hasMag_fix()) deal += Calculator.fixedDamage_magical(skillInfo.phy_atk, skill.element, object, character, skillInfo.indep_level, mode);
+		if(skillInfo.hasMag_fix()) deal += Calculator.fixedDamage_magical(skillInfo.mag_fix, skill.element, object, character, skillInfo.indep_level, mode);
 		
 		for(Entry<String, Integer> entry : skillInfo.percentList.entrySet()){
 			if((!skill.hasBuff() && skill.getActiveEnabled()) || skill.buffEnabled(true))
@@ -52,7 +52,7 @@ public class Calculator {
 			defIgnore=(int) (defIgnore*(100+stat.getStat(StatList.WEP_NODEF_PHY_INC))/100);										// 방어무시데미지
 			double frontATK=inc_strength*inc_weapon2*dec_defence*elementCal.get_inc_elem()+defIgnore;							// (힘*물공)*방어력*속강+방무뎀
 			
-			double inc_critical = getIncCrt(object, stat);
+			double inc_critical = getIncCrt_phy(object, stat);
 			
 			if(mode==1)//average damage mode
 				return (long)(skillPercent/100.0*frontATK*inc_critical*damage_enhancing_avg(stat, object, character, elementCal));
@@ -84,7 +84,7 @@ public class Calculator {
 			inc_indep+= (int)(stat.getStat(StatList.WEP_IND_REFORGE)*(100+stat.getStat(StatList.MAST_IND))/100);		// 독공*독공뻥+재련 *재련뻥												
 			double frontATK=inc_strength*inc_indep*dec_defence*elementCal.get_inc_elem();					// 힘*독공*방어력*속강
 			
-			double inc_critical = getIncCrt(object, stat);
+			double inc_critical = getIncCrt_phy(object, stat);
 			
 			
 			if(mode==1)//average damage mode
@@ -118,7 +118,7 @@ public class Calculator {
 			defIgnore=(int) (defIgnore*(100+stat.getStat(StatList.WEP_NODEF_MAG_INC))/100);											// 방어무시데미지
 			double frontATK=inc_strength*inc_weapon2*dec_defence*elementCal.get_inc_elem()+defIgnore;								// (지능*마공)*방어력*속강+방무뎀
 			
-			double inc_critical = getIncCrt(object, stat);
+			double inc_critical = getIncCrt_mag(object, stat);
 			
 			if(mode==1)//average damage mode
 				return (long)(skillPercent/100.0*frontATK*inc_critical*damage_enhancing_avg(stat, object, character, elementCal));
@@ -149,8 +149,8 @@ public class Calculator {
 			inc_indep+= (int)(stat.getStat(StatList.WEP_IND_REFORGE)*(100+stat.getStat(StatList.MAST_IND))/100);		// 독공*독공뻥+재련 *재련뻥 
 			double frontATK=inc_strength*inc_indep*dec_defence*elementCal.get_inc_elem();					// 지능*독공*방어력*속강
 			
-			double inc_critical = getIncCrt(object, stat);
-			
+			double inc_critical = getIncCrt_mag(object, stat);
+
 			if(mode==1)//average damage mode
 				return (long)((double)skillValue*frontATK*inc_critical*damage_enhancing_avg(stat, object, character, elementCal));
 			else // I DONT KNOW, SOMEWHAT ELSE
@@ -165,10 +165,26 @@ public class Calculator {
 	{ return fixedDamage_magical(skillValue, element, object, character, indepLevel, 1); } 
 	
 
-	private static double getIncCrt(Monster object, Status stat) throws StatusTypeMismatch
+	private static double getIncCrt_phy(Monster object, Status stat) throws StatusTypeMismatch
 	{
 		double avgCritical=stat.getStat(StatList.CRT_PHY)+stat.getStat(StatList.CRT_LOW)+3;			// 3+크리+크리저항
 		if(object.getBool(Monster_StatList.BACKATK)) avgCritical+=stat.getStat(StatList.CRT_BACK_PHY);
+		if(avgCritical>100.0) avgCritical=100.0;
+		else if(avgCritical<0) avgCritical=0;
+		double inc_critical;																				// 크증뎀항
+		if(object.getBool(Monster_StatList.BACKATK) && stat.getStat(StatList.DAM_CRT_BACK)>stat.getStat(StatList.DAM_CRT))
+			inc_critical=((100-avgCritical)+avgCritical*1.5*(100.0+stat.getStat(StatList.DAM_CRT_BACK)+stat.getStat(StatList.DAM_CRT_ADD))/100.0
+					*(100.0+stat.getStat(StatList.BUF_CRT))/100.0)/100.0;											// ((100-크리확률)+크리확률*1.5*(100+백크증뎀+크추증)/100*(100+크증버프)/100)/100
+		else inc_critical=((100-avgCritical)+avgCritical*1.5*(100.0+stat.getStat(StatList.DAM_CRT)+stat.getStat(StatList.DAM_CRT_ADD))/100.0
+					*(100+stat.getStat(StatList.BUF_CRT))/100.0)/100.0;												// ((100-크리확률)+크리확률*1.5*(100+크증뎀+크추증)/100*(100+크증버프)/100)/100
+		
+		return inc_critical;
+	}
+	
+	private static double getIncCrt_mag(Monster object, Status stat) throws StatusTypeMismatch
+	{
+		double avgCritical=stat.getStat(StatList.CRT_MAG)+stat.getStat(StatList.CRT_LOW)+3;			// 3+크리+크리저항
+		if(object.getBool(Monster_StatList.BACKATK)) avgCritical+=stat.getStat(StatList.CRT_BACK_MAG);
 		if(avgCritical>100.0) avgCritical=100.0;
 		else if(avgCritical<0) avgCritical=0;
 		double inc_critical;																				// 크증뎀항
@@ -233,8 +249,8 @@ public class Calculator {
 		double fixedDef=object.getStat(Monster_StatList.DEFENSIVE_PHY);												// 기본방어력
 		fixedDef-=stat.getStat(StatList.DEF_DEC_FIXED_PHY);															// 기본방어력-고정방깍
 		if(fixedDef<0) fixedDef=0;
-		fixedDef=fixedDef*(100.0-stat.getStat(StatList.DEF_DEC_PERCENT_PHY_SKILL))/100;								// (기본방어력-고정방깍)*(100-%방깍)/100
-		fixedDef=fixedDef*(100.0-stat.getStat(StatList.DEF_DEC_PERCENT_PHY_ITEM)*(double)object.getStat(Monster_StatList.TYPE)/100.0)/100.0;		//(위)*(100-템%방깍*패널티(100~50)/100)/100
+		fixedDef=(int)fixedDef*(100.0-stat.getStat(StatList.DEF_DEC_PERCENT_PHY_SKILL))/100;								// (기본방어력-고정방깍)*(100-%방깍)/100
+		fixedDef=(int)fixedDef*(100.0-stat.getStat(StatList.DEF_DEC_PERCENT_PHY_ITEM)*(double)object.getStat(Monster_StatList.TYPE)/100.0)/100.0;		//(위)*(100-템%방깍*패널티(100~50)/100)/100
 		fixedDef=(int)(fixedDef*(100.0-stat.getStat(StatList.DEF_DEC_IGN))/100);											// (위)*(100-적 방어력 무시)/100
 		
 		if(fixedDef<0) return 0;
@@ -263,7 +279,7 @@ public class Calculator {
 		double result;
 		if(indepLevel>0) result= ((double)(fixedDef))/((double)(fixedDef+indepLevel*200));										// %방어력=고정방어력/(고정방어력+독오레벨*200)
 		else result= ((double)(fixedDef))/((double)(fixedDef+character.getLevel()*200));										// %방어력=고정방어력/(고정방어력+레벨*200)
-		return result/100 >object.getDoubleStat(Monster_StatList.DEFENCE_LIMIT) ? result/100 : object.getDoubleStat(Monster_StatList.DEFENCE_LIMIT);
+		return result >object.getDoubleStat(Monster_StatList.DEFENCE_LIMIT)/100 ? result : object.getDoubleStat(Monster_StatList.DEFENCE_LIMIT)/100;
 	}
 	public static double getMagicalPercentDefence(Characters character, Monster object) throws StatusTypeMismatch			// 몹의 마법퍼센트 방어력 구하기
 	{

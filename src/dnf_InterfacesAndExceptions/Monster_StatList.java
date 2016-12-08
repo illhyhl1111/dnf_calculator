@@ -6,7 +6,7 @@ public interface Monster_StatList
 	int FIRE_RESIST=1002; int WATER_RESIST=1003; int LIGHT_RESIST=1004; int DARKNESS_RESIST=1005;			// 화속저, 수속저, 명속저, 암속저
 	int DIFFICULTY=1006;  																					// 난이도, 
 	int DEFENSIVE_PHY=1007; int DEFENSIVE_MAG=1008;															// 물방, 마방
-	int LEVEL=1008;	int TYPE=1010;																			// 몹 레벨, 등급
+	int LEVEL=1009;	int TYPE=1010;																			// 몹 레벨, 등급
 	
 	int DEFENCE_LIMIT=1011;																					// 방깍하한선
 	int HP=1012;																							// 체력

@@ -3,10 +3,10 @@ package dnf_InterfacesAndExceptions;
 public enum Job implements java.io.Serializable
 {
 	LAUNCHER_F(Character_type.GUNNER_F, "스톰트루퍼", "카시야스) 명속은거들뿐"),
-	RANGER_F(Character_type.GUNNER_F, "크림슨 로제", "카인) 공변"),
-	SPITFIRE_F(Character_type.GUNNER_F, "프레이야"),
+	RANGER_F(Character_type.GUNNER_F, "크림슨 로제", "던조닉) 프사암릿내놔"),
+	SPITFIRE_F(Character_type.GUNNER_F, "프레이야", "프레이) 미녀총잡이, 바칼) 트롤프레기야"),
 	MECHANIC_F(Character_type.GUNNER_F, "옵티머스"),
-	LAUNCHER_M(Character_type.GUNNER_M, "디스트로이어"), RANGER_M(Character_type.GUNNER_M, "레이븐"),
+	LAUNCHER_M(Character_type.GUNNER_M, "디스트로이어", "카시야스) Nodata"), RANGER_M(Character_type.GUNNER_M, "레이븐", "안톤) 속사포탄환"),
 	SPITFIRE_M(Character_type.GUNNER_M, "커맨더", "바칼) 혈누"), MECHANIC_M(Character_type.GUNNER_M, "프라임"),
 	CRUSADER(Character_type.PRIEST, "세인트"), INFIGHTER(Character_type.PRIEST, "저스티스"),
 	AVENGER(Character_type.PRIEST, "이모탈"), EXORCIST(Character_type.PRIEST, "태을선인"),
@@ -17,7 +17,7 @@ public enum Job implements java.io.Serializable
 	WEAPONMASTER(Character_type.SWORDMAN_M, "검신"), BUSERKER(Character_type.SWORDMAN_M, "블러드 이블"),
 	ASURA(Character_type.SWORDMAN_M, "인다라천"), SOULMASTER(Character_type.SWORDMAN_M, "다크로드"),
 	DARKTEMPELAR(Character_type.SWORDMAN_F, "네메시스"), SWORDMASTER(Character_type.SWORDMAN_F, "마제스티"),
-	VEGABOND(Character_type.SWORDMAN_F, "검제"), DEMONSLAYER(Character_type.SWORDMAN_F, "디어사이드", "카인) 검魔"),
+	VEGABOND(Character_type.SWORDMAN_F, "검제"), DEMONSLAYER(Character_type.SWORDMAN_F, "디어사이드", "던조닉) 프사암릿내놔"),
 	ELEMENTALMASTER(Character_type.MAGE_F, "오버마인드"), SUMMONER(Character_type.MAGE_F, "이클립스"), 
 	WITCH(Character_type.MAGE_F, "지니위즈"), BATTLEMAGE(Character_type.MAGE_F, "아슈타르테"),
 	ELEMENTALBOMBER(Character_type.MAGE_M, "오블리비언", "카시야스) 피디대정령"), GLACIALMASTER(Character_type.MAGE_M, "이터널"), 
@@ -71,6 +71,7 @@ public enum Job implements java.io.Serializable
 	{
 		return new String[] {
 				LAUNCHER_F.getName(), RANGER_F.getName(), DEMONSLAYER.getName(), SPITFIRE_M.getName(), ELEMENTALBOMBER.getName(),
+				LAUNCHER_M.getName(), RANGER_M.getName(), SPITFIRE_F.getName()
 		};
 	}
 }

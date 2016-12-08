@@ -256,6 +256,7 @@ public class Status implements Cloneable, java.io.Serializable {
 						
 					case StatList.DAM_SKILL: case StatList.BUF_INC: case StatList.BUF_CRT:				//복리중첩항
 					case StatList.MAST_PHY: case StatList.MAST_MAG: case StatList.MAST_IND: 
+					case StatList.WEP_NODEF_MAG_INC: case StatList.WEP_NODEF_PHY_INC:
 						double temp1=100.0+stat1.getStatToDouble();
 						double temp2=100.0+stat2.getStatToDouble();
 						stat1.setInfo(temp1*temp2/100-100);

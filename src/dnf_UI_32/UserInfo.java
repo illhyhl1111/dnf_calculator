@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Listener;
 
 import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.InterfaceSize;
+import dnf_InterfacesAndExceptions.Job;
 import dnf_InterfacesAndExceptions.Location;
 import dnf_class.Characters;
 import dnf_class.Item;
@@ -49,7 +50,9 @@ class UserItemInfo extends DnFComposite
 		rightItemInfoComposite = new Composite(mainComposite, SWT.NONE);
 		
 		characterImageComposite.setLayoutData(new RowData(150, 180));
-		characterImageComposite.setImage(GetDictionary.iconDictionary.get(character.getJob().charType.name()));		//가운데 이미지 ->캐릭터 이미지
+		if(character.getJob()==Job.LAUNCHER_M)
+			characterImageComposite.setImage(GetDictionary.iconDictionary.get(character.getJob().name()));
+		else characterImageComposite.setImage(GetDictionary.iconDictionary.get(character.getJob().charType.name()));		//가운데 이미지 ->캐릭터 이미지
 		
 		GridLayout itemInfoLayout = new GridLayout(2, true);
 		itemInfoLayout.horizontalSpacing=3;
@@ -190,7 +193,9 @@ class UserAvatarInfo extends DnFComposite
 		imageData.left = new FormAttachment(avatarInfoComposite, 50);
 		imageData.bottom = new FormAttachment(avatarInfoComposite, -10, SWT.BOTTOM);
 		characterImageComposite.setLayoutData(imageData);
-		characterImageComposite.setImage(GetDictionary.iconDictionary.get(character.getJob().charType.name()));		//가운데 이미지 ->캐릭터 이미지
+		if(character.getJob()==Job.LAUNCHER_M)
+			characterImageComposite.setImage(GetDictionary.iconDictionary.get(character.getJob().name()));
+		else characterImageComposite.setImage(GetDictionary.iconDictionary.get(character.getJob().charType.name()));		//가운데 이미지 ->캐릭터 이미지
 		
 		
 		for(int i=0; i<AVATARNUM; i++)

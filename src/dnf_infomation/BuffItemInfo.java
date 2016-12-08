@@ -124,7 +124,7 @@ public class BuffItemInfo {
 		selectionBuff.setSelection(new String[]{"무제한 스탯", "기간 제한 스탯"}, new boolean[]{true, true});
 		buffList.add(selectionBuff);
 		
-		selectionBuff = new SelectionBuff("모험단", Item_rarity.NONE, true, CalculatorVersion.VER_1_0_a);
+		selectionBuff = new SelectionBuff("모험단", Item_rarity.NONE, true, CalculatorVersion.VER_1_0_e);
 		statList = new StatusList();
 		statList.addStatList("힘", 10);
 		statList.addStatList("지능", 10);

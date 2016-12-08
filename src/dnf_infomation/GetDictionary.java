@@ -195,6 +195,8 @@ public class GetDictionary
 				iconDictionary.put(type.name()+" - filp", filp(image, false));
 			}
 		}
+		image = new Image(Display.getCurrent(), "image\\Character\\"+Job.LAUNCHER_M.name()+".png");
+		iconDictionary.put(Job.LAUNCHER_M.name(), image);
 		
 		//파티
 		for(PartyCharacter party : charDictionary.partyList)

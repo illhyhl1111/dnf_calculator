@@ -215,7 +215,7 @@ public class Skill extends IconObject implements Comparable<Skill>{
 				StatusAndName s2 = iter2.next();
 				
 				try {
-					s.stat.setInfo((s1.stat.getStatToDouble()-s2.stat.getStatToDouble())*levelDifference/diff);
+					s.stat.setInfo(s1.stat.getStatToDouble()+(s1.stat.getStatToDouble()-s2.stat.getStatToDouble())*levelDifference/diff);
 				} catch (StatusTypeMismatch e) {
 					e.printStackTrace();
 				}
