@@ -68,11 +68,11 @@ public class TPSkill extends Skill implements java.io.Serializable{
 			}
 		}
 	}
-	/*@Override
-	public Object clone()
-	{
-		Skill temp=null;
-		temp = (TPSkill) super.clone();
-		return temp;
-	}*/
+	
+	@Override
+	public int compareTo(Skill arg0) {
+		if(!(arg0 instanceof TPSkill)) return -1;
+		if(arg0.firstLevel!=firstLevel) return firstLevel-arg0.firstLevel;
+		else return getName().compareTo(arg0.getName());
+	}
 }

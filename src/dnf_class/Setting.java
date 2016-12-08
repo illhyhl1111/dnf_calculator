@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.Map.Entry;
 
 import dnf_InterfacesAndExceptions.CalculatorVersion;
+import dnf_InterfacesAndExceptions.Element_type;
 import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.Equip_type;
 import dnf_InterfacesAndExceptions.Item_rarity;
@@ -104,6 +105,7 @@ public class Setting implements java.io.Serializable, Cloneable{
 		temp = new Equipment("마봉마법석", rare, Equip_part.MAGICSTONE, Equip_type.SPECIALEQUIP, 90, false, version);
 		temp.vStat.addStatList("힘", 56);
 		temp.vStat.addStatList("지능", 56);
+		temp.vStat.addStatList(Element_type.FIRE, 0, true, false, false);
 		magicalSealedEquip.put(Equip_part.MAGICSTONE, temp);
 		temp = new Equipment("마봉귀걸이", rare, Equip_part.EARRING, Equip_type.SPECIALEQUIP, 90, false, version);
 		temp.vStat.addStatList("힘", 56);
@@ -434,14 +436,20 @@ public class Setting implements java.io.Serializable, Cloneable{
 		
 		switch(job)
 		{
-		case LAUNCHER_F:
+		case LAUNCHER_F: case LAUNCHER_M:
 			magicalSealedSetting.weapon=magicalSealedWeapon.get(Weapon_detailType.GUN_HCANON);
 			break;
-		case RANGER_F:
+		case RANGER_F: case RANGER_M:
 			magicalSealedSetting.weapon=magicalSealedWeapon.get(Weapon_detailType.GUN_REVOLVER);
 			break;
 		case DEMONSLAYER:
 			magicalSealedSetting.weapon=magicalSealedWeapon.get(Weapon_detailType.SWORD_LONGSWORD);
+			break;
+		case SPITFIRE_M: case SPITFIRE_F:
+			magicalSealedSetting.weapon=magicalSealedWeapon.get(Weapon_detailType.GUN_MUSKET);
+			break;
+		case ELEMENTALBOMBER:
+			magicalSealedSetting.weapon=magicalSealedWeapon.get(Weapon_detailType.MAGE_STAFF);
 			break;
 		default:
 			break;

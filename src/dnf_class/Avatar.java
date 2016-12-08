@@ -54,7 +54,7 @@ public class Avatar extends Item
 		coatSkillList = new LinkedList<String>();
 		
 		for(Skill skill : GetDictionary.getSkillList(job, 90)){
-			if(skill.type!=Skill_type.TP && skill.maxLevel!=1)
+			if(skill.type!=Skill_type.TP && skill.maxLevel!=1 && skill.firstLevel!=1 && !skill.isOptionSkill() && !skill.isSubSkill())
 				coatSkillList.add(skill.getItemName());
 		}
 		coatSkill = coatSkillList.getLast();

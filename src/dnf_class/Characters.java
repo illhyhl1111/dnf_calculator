@@ -17,6 +17,7 @@ import dnf_InterfacesAndExceptions.UndefinedStatusKey;
 import dnf_UI_32.Options;
 import dnf_calculator.AbstractStatusInfo;
 import dnf_calculator.Calculator;
+import dnf_calculator.FunctionStat;
 import dnf_calculator.SkillRangeStatusInfo;
 import dnf_calculator.SkillStatusInfo;
 import dnf_calculator.Status;
@@ -373,53 +374,51 @@ public class Characters implements java.io.Serializable
 			if(skill.buffEnabled(false)){
 				SkillLevelInfo skillInfo = skill.getSkillLevelInfo(false, isBurning);
 				skillInfo.stat.addListToStat(villageStatus);
-				if(!skillInfo.fStat.statList.isEmpty()) skillInfo.fStat.addListToStat(villageStatus, this, target, skill);
+				//if(!skillInfo.fStat.statList.isEmpty()) skillInfo.fStat.addListToStat(villageStatus, this, target, skill);
 			}
 			if(skill.buffEnabled(true)){
 				SkillLevelInfo skillInfo = skill.getSkillLevelInfo(true, isBurning);
 				skillInfo.stat.addListToStat(dungeonStatus);
-				if(!skillInfo.fStat.statList.isEmpty())
-					skillInfo.fStat.addListToStat(dungeonStatus, this, target, skill);
+				//if(!skillInfo.fStat.statList.isEmpty()) skillInfo.fStat.addListToStat(dungeonStatus, this, target, skill);
 			}
+			else if(skill.isOptionSkill()) skill.getSkillLevelInfo(true, isBurning).fStat.addListToStat(dungeonStatus, this, target, skill);
 		}
 	}
 	
 	//1. 아이템으로부터 스킬 레벨을 구한다.
 	//2. 버프 스킬로부터 최종 스킬수치를 구한다.
 	//3. 최종 수치를 스탯에 더한다.
+	//fStat을 포함한 스킬 A는, 스킬 A를 변경시키는 스킬 B의 영향을 제대로 받지 않는다.  
 	private void setSkillLevel() 
 	{
 		getSkillLevel(false, villageStatus.getSkillStatList());
 		getSkillLevel(true, dungeonStatus.getSkillStatList());
 		
-		LinkedList<AbstractStatusInfo> list = new LinkedList<AbstractStatusInfo>();
+		LinkedList<AbstractStatusInfo> list;
 		for(Skill skill : characterInfoList.skillList){
 			if(skill.buffEnabled(false)){
-				for(StatusAndName s : skill.getSkillLevelInfo(false, isBurning).stat.statList){
+				list = new LinkedList<AbstractStatusInfo>();
+				SkillLevelInfo skillInfo = skill.getSkillLevelInfo(false, isBurning);
+				for(StatusAndName s : skillInfo.stat.statList)
 					list.add(s.stat);
-					/*if(Double.compare(skill.villageIncrease, 1.0)==0) 
-					else{
-						try {
-							AbstractStatusInfo temp = (AbstractStatusInfo) s.stat.clone();
-							temp.increaseStat(skill.villageIncrease);
-							list.add(temp);
-						} catch (StatusTypeMismatch | CloneNotSupportedException e) {
-							e.printStackTrace();
-						}
-					}*/
-				}
+				getSkillLevel(false, list);
 			}
 		}
-		getSkillLevel(false, list);
 		
-		list = new LinkedList<AbstractStatusInfo>();
 		for(Skill skill : characterInfoList.skillList){
 			if(skill.buffEnabled(true)){
-				for(StatusAndName s : skill.getSkillLevelInfo(true, isBurning).stat.statList)
+				list = new LinkedList<AbstractStatusInfo>();
+				SkillLevelInfo skillInfo = skill.getSkillLevelInfo(true, isBurning);
+				for(StatusAndName s : skillInfo.stat.statList)
 					list.add(s.stat);
+				for(FunctionStat fStat : skillInfo.fStat.statList)
+					for(StatusAndName s : fStat.function(this, target, skill).statList){
+						list.add(s.stat);
+						dungeonStatus.addStat(s.name, s.stat);
+					}
+				getSkillLevel(true, list);
 			}
 		}
-		getSkillLevel(true, list);
 	}
 	
 	private void getSkillLevel(boolean isDungeon, LinkedList<AbstractStatusInfo> list)
@@ -509,7 +508,7 @@ public class Characters implements java.io.Serializable
 		LinkedList<Skill> list = new LinkedList<Skill>();
 		for(Skill skill : characterInfoList.skillList)
 		{
-			if(skill.hasDamage() && skill.getActiveEnabled()){
+			if(skill.hasDamage() && skill.getActiveEnabled() && !skill.isOptionSkill() && !skill.isSubSkill()){
 				list.add(skill);
 			}
 		}
@@ -682,7 +681,7 @@ public class Characters implements java.io.Serializable
 	
 	public void updateDictionary(){
 		if(!GetDictionary.itemDictionary.getVERSION().equals(userItemList.getVERSION())){
-			userItemList.updateVersion(GetDictionary.itemDictionary);
+			userItemList.updateVersion(GetDictionary.itemDictionary, job);
 			setStatus();
 		}
 		

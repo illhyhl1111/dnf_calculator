@@ -1,7 +1,6 @@
 package dnf_calculator;
 
 import dnf_class.Characters;
-import dnf_class.Equipment;
 import dnf_class.Monster;
 
 public abstract class FunctionStat implements java.io.Serializable, Cloneable {

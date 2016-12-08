@@ -193,44 +193,44 @@ public class CardInfo {
 		temp.vStat.addStatList("모속", 18, true);
 		cardList.add(temp);
 		//하부브
-		temp = new Card("파탄의 하부브 보주", rarity, CalculatorVersion.VER_1_0_a);
+		temp = new Card("파탄의 하부브 보주", rarity, CalculatorVersion.VER_1_0_d);
 		temp.addPart(Equip_part.BRACELET);
 		temp.addPart(Equip_part.NECKLACE);
 		temp.addPart(Equip_part.RING);
-		temp.vStat.addStatList("화속", 18, true);
-		temp.vStat.addStatList("암속", 18, true);
+		temp.vStat.addStatList("화속", 20, true);
+		temp.vStat.addStatList("암속", 20, true);
 		cardList.add(temp);
 		//그라골
-		temp = new Card("그라골 보주", rarity, CalculatorVersion.VER_1_0_a);
+		temp = new Card("그라골 보주", rarity, CalculatorVersion.VER_1_0_d);
 		temp.addPart(Equip_part.BRACELET);
 		temp.addPart(Equip_part.NECKLACE);
 		temp.addPart(Equip_part.RING);
-		temp.vStat.addStatList("수속", 18, true);
-		temp.vStat.addStatList("명속", 18, true);
+		temp.vStat.addStatList("수속", 20, true);
+		temp.vStat.addStatList("명속", 20, true);
 		cardList.add(temp);
 		//야신
-		temp = new Card("달빛을 걷는자 야신 보주", rarity, CalculatorVersion.VER_1_0_a);
+		temp = new Card("달빛을 걷는자 야신 보주", rarity, CalculatorVersion.VER_1_0_d);
 		temp.addPart(Equip_part.BRACELET);
 		temp.addPart(Equip_part.NECKLACE);
 		temp.addPart(Equip_part.RING);
-		temp.vStat.addStatList("수속", 18, true);
-		temp.vStat.addStatList("암속", 18, true);
+		temp.vStat.addStatList("수속", 20, true);
+		temp.vStat.addStatList("암속", 20, true);
 		cardList.add(temp);
 		//악몽의 네르베
-		temp = new Card("악몽의 네르베 보주", rarity, CalculatorVersion.VER_1_0_a);
+		temp = new Card("악몽의 네르베 보주", rarity, CalculatorVersion.VER_1_0_d);
 		temp.addPart(Equip_part.BRACELET);
 		temp.addPart(Equip_part.NECKLACE);
 		temp.addPart(Equip_part.RING);
-		temp.vStat.addStatList("명속", 18, true);
-		temp.vStat.addStatList("암속", 18, true);
+		temp.vStat.addStatList("명속", 20, true);
+		temp.vStat.addStatList("암속", 20, true);
 		cardList.add(temp);
 		//아이언 비스트
-		temp = new Card("아이언 비스트 보주", rarity, CalculatorVersion.VER_1_0_a);
+		temp = new Card("아이언 비스트 보주", rarity, CalculatorVersion.VER_1_0_d);
 		temp.addPart(Equip_part.BRACELET);
 		temp.addPart(Equip_part.NECKLACE);
 		temp.addPart(Equip_part.RING);
-		temp.vStat.addStatList("화속", 18, true);
-		temp.vStat.addStatList("명속", 18, true);
+		temp.vStat.addStatList("화속", 20, true);
+		temp.vStat.addStatList("명속", 20, true);
 		cardList.add(temp);
 		//크레이브
 		temp = new Card("염화의 크레이브 보주", rarity, CalculatorVersion.VER_1_0_a);

@@ -26,12 +26,18 @@ public class SwitchingSkill extends Skill{
 	@Override
 	public SkillLevelInfo getSkillLevelInfo(boolean isDungeon, boolean isBurning)
 	{
+		if(getCharSkillLevel()==0) return skillInfo.getFirst();
 		return skillInfo.getLast();
 	}
 	
 	public int getModifyableNum()
 	{
-		return skillInfo.getLast().stat.statList.size();
+		int num = skillInfo.getLast().stat.statList.size();
+		if(skillInfo.getLast().hasPhy_per()) num++;
+		if(skillInfo.getLast().hasPhy_fix()) num++;
+		if(skillInfo.getLast().hasMag_per()) num++;
+		if(skillInfo.getLast().hasMag_fix()) num++;
+		return num;
 	}
 	
 	public boolean setSkillPercent(double[] num)
@@ -39,6 +45,10 @@ public class SwitchingSkill extends Skill{
 		if(num.length!=getModifyableNum()) return false;
 		
 		int index=0;
+		if(skillInfo.getLast().hasPhy_per()) skillInfo.getLast().phy_atk=(int) Math.round(num[index++]);
+		if(skillInfo.getLast().hasPhy_fix()) skillInfo.getLast().phy_fix=num[index++];
+		if(skillInfo.getLast().hasMag_per()) skillInfo.getLast().mag_atk=(int) Math.round(num[index++]);
+		if(skillInfo.getLast().hasMag_fix()) skillInfo.getLast().mag_fix=num[index++];
 		for(StatusAndName s : skillInfo.getLast().stat.statList)
 			try {
 				if(s.stat instanceof SkillStatusInfo)

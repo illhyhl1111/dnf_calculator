@@ -1,6 +1,7 @@
 package dnf_UI_32;
 
 import java.util.LinkedList;
+import java.util.Map.Entry;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -425,7 +426,7 @@ public class MakeComposite {
 			if(skillInfo.phy_fix!=0) fix = String.valueOf((int)(skillInfo.phy_fix*Calculator.getInfoIndependentATK(stat)));
 			String add = "";
 			if(skillInfo.phy_atk!=0 && skillInfo.phy_fix!=0) add = " + ";
-			label.setText("물리공격력(총합) : "+atk+add+fix);
+			label.setText("물리공격력 : "+atk+add+fix);
 			label.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 			label.setForeground(DnFColor.infoStat);
 		}
@@ -441,7 +442,7 @@ public class MakeComposite {
 			if(skillInfo.mag_fix!=0) fix = String.valueOf((int)(skillInfo.mag_fix*Calculator.getInfoIndependentATK(stat)));
 			String add = "";
 			if(skillInfo.mag_atk!=0 && skillInfo.mag_fix!=0) add = " + ";
-			label.setText("마법공격력(총합) : "+atk+add+fix);
+			label.setText("마법공격력 : "+atk+add+fix);
 			label.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 			label.setForeground(DnFColor.infoStat);
 		}
@@ -468,6 +469,17 @@ public class MakeComposite {
 					e.printStackTrace();
 				}
 		}
+		
+		for(Entry<String, Integer> entry : skillInfo.percentList.entrySet()){
+			label = new Label(composite, SWT.WRAP);
+			leftData = new GridData(SWT.FILL, SWT.TOP, true, false);
+			leftData.widthHint=InterfaceSize.SKILL_INFO_SIZE-10;
+			label.setLayoutData(leftData);
+			label.setText(entry.getKey()+" 데미지의 "+entry.getValue()+"%");
+			label.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+			label.setForeground(DnFColor.infoStat);
+		}
+			
 		
 		if(!skillInfo.fromDictionary)
 		{

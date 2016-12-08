@@ -103,6 +103,13 @@ public class ReinforceInfo {
 		weaponTypeInfo_phy.put(Weapon_detailType.SWORD_KATANA, 0.95); weaponTypeInfo_mag.put(Weapon_detailType.SWORD_KATANA, 0.9);
 		weaponTypeInfo_phy.put(Weapon_detailType.SWORD_LIGHTSWORD, 1.03); weaponTypeInfo_mag.put(Weapon_detailType.SWORD_LIGHTSWORD, 1.0);
 		
+		weaponTypeInfo_phy.put(Weapon_detailType.MAGE_BROOM, 1.0); weaponTypeInfo_mag.put(Weapon_detailType.MAGE_BROOM, 1.1);
+		weaponTypeInfo_phy.put(Weapon_detailType.MAGE_POLE, 1.1); weaponTypeInfo_mag.put(Weapon_detailType.MAGE_POLE, 0.9);
+		weaponTypeInfo_phy.put(Weapon_detailType.MAGE_ROD, 0.9); weaponTypeInfo_mag.put(Weapon_detailType.MAGE_ROD, 1.1);
+		weaponTypeInfo_phy.put(Weapon_detailType.MAGE_SPEAR, 1.2); weaponTypeInfo_mag.put(Weapon_detailType.MAGE_SPEAR, 0.95);
+		weaponTypeInfo_phy.put(Weapon_detailType.MAGE_STAFF, 0.95); weaponTypeInfo_mag.put(Weapon_detailType.MAGE_STAFF, 1.2);
+		
+		
 		readed=true;
 	}
 	

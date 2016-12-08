@@ -35,7 +35,8 @@ public class Emblem extends Item
 		platinumSkillList = new LinkedList<String>();
 		
 		for(Skill skill : GetDictionary.getSkillList(job, 90)){
-			if(skill.type!=Skill_type.TP && skill.maxLevel!=1 && (skill.firstLevel<48 || skill.firstLevel==60 || skill.firstLevel==70)
+			if(skill.type!=Skill_type.TP && skill.maxLevel!=1 && skill.firstLevel!=1 && !skill.isOptionSkill() && !skill.isSubSkill() 
+					&& (skill.firstLevel<48 || skill.firstLevel==60 || skill.firstLevel==70)
 					&& !skill.getName().equals("광검 사용 가능") && !skill.getName().equals("권투 글러브 사용 가능") && !skill.getName().equals("원소폭격")
 					&& !skill.getName().equals("유탄 마스터리") && !skill.getName().equals("강인한 신념")) 
 				platinumSkillList.add(skill.getItemName());

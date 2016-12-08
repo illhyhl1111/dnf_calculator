@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import dnf_class.Characters;
 import dnf_class.Monster;
 
-
 public class FunctionStatusList implements java.io.Serializable, Cloneable {
 	/**
 	 * 

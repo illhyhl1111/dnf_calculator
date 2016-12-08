@@ -838,7 +838,7 @@ public class ChangeItemStatus extends Dialog{
 			}
 			stat2.setEnabled(s.enabled);
 			if(enable == null && s.enableable){
-				stat2.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 3, 1));
+				stat2.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 3, 1));
 				enable2 = new Button(itemInfo, SWT.CHECK);
 				enable2.setText("옵션 켜기");
 				enable2.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, true, false));
@@ -854,7 +854,7 @@ public class ChangeItemStatus extends Dialog{
 				});
 			}
 			else{
-				stat2.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 4, 1));
+				stat2.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 4, 1));
 				if(enable!=null){
 					enable2=null;
 					enable.addSelectionListener(new SelectionAdapter()
@@ -867,7 +867,7 @@ public class ChangeItemStatus extends Dialog{
 					});
 				}
 				else{
-					stat2.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 3, 1));
+					stat2.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 3, 1));
 					enable2 = new Button(itemInfo, SWT.CHECK);
 					enable2.setSelection(true);
 					enable2.setVisible(false);
@@ -880,7 +880,7 @@ public class ChangeItemStatus extends Dialog{
 			stat2.setEnabled(s.enabled);
 			stat2.setText(s.stat.getStatToString()+" 데미지 증가 + "+ String.format("%.1f", ((SkillStatusInfo)s.stat).getIncrease()));
 			if(enable == null && s.enableable){
-				stat2.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 3, 1));
+				stat2.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 3, 1));
 				enable2 = new Button(itemInfo, SWT.CHECK);
 				enable2.setText("옵션 켜기");
 				enable2.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, true, false));
@@ -896,7 +896,7 @@ public class ChangeItemStatus extends Dialog{
 				});
 			}
 			else{
-				stat2.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 4, 1));
+				stat2.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 4, 1));
 				if(enable!=null){
 					enable2=null;
 					enable.addSelectionListener(new SelectionAdapter()
@@ -909,7 +909,7 @@ public class ChangeItemStatus extends Dialog{
 					});
 				}
 				else{
-					stat2.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 3, 1));
+					stat2.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 3, 1));
 					enable2 = new Button(itemInfo, SWT.CHECK);
 					enable2.setSelection(true);
 					enable2.setVisible(false);

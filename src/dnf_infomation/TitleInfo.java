@@ -75,12 +75,12 @@ public class TitleInfo {
 		temp.dStat.addStatList("힘", new StatusInfo(25), false, true);
 		temp.dStat.addStatList("지능", new StatusInfo(25), false, true);
 		
-		temp2 = new Title("스위티", rarity, CalculatorVersion.VER_1_0_a);
+		temp2 = new Title("스위티", rarity, CalculatorVersion.VER_1_0_c);
 		temp2.vStat.addStatList("힘", new StatusInfo(40), true);
 		temp2.vStat.addStatList("지능", new StatusInfo(40), true);
 		temp.vStat.addStatList("물크", new DoubleStatusInfo(3));
 		temp.vStat.addStatList("마크", new DoubleStatusInfo(3));
-		temp2.vStat.addStatList("모속강", new StatusInfo(16));
+		temp2.vStat.addStatList("모속강", new ElementInfo(16));
 		temp2.dStat.addStatList("힘", new StatusInfo(25), false, true);
 		temp2.dStat.addStatList("지능", new StatusInfo(25), false, true);
 		
@@ -231,61 +231,61 @@ public class TitleInfo {
 		titleList.add(temp);
 		
 		//시계태엽
-		temp = new Title("황금의 시계 태엽", rarity, CalculatorVersion.VER_1_0_a);
+		temp = new Title("황금의 시계 태엽", rarity, CalculatorVersion.VER_1_0_c);
 		temp.vStat.addStatList("힘", new StatusInfo(30), true);
 		temp.vStat.addStatList("지능", new StatusInfo(30), true);
 		temp.vStat.addStatList("물공", new StatusInfo(50), true);
 		temp.vStat.addStatList("마공", new StatusInfo(50), true);
 		temp.vStat.addStatList("독공", new StatusInfo(75), true);
-		temp.vStat.addStatList("모속강", new StatusInfo(10), true);
+		temp.vStat.addStatList("모속강", new ElementInfo(10), true);
 		titleList.add(temp);
-		temp = new Title("강철의 시계 태엽", rarity, CalculatorVersion.VER_1_0_a);
+		temp = new Title("강철의 시계 태엽", rarity, CalculatorVersion.VER_1_0_c);
 		temp.vStat.addStatList("물공", new StatusInfo(70), true);
 		temp.vStat.addStatList("마공", new StatusInfo(70), true);
 		temp.vStat.addStatList("독공", new StatusInfo(75), true);
-		temp.vStat.addStatList("모속강", new StatusInfo(10), true);
+		temp.vStat.addStatList("모속강", new ElementInfo(10), true);
 		titleList.add(temp);
-		temp = new Title("백은의 시계 태엽", rarity, CalculatorVersion.VER_1_0_a);
+		temp = new Title("백은의 시계 태엽", rarity, CalculatorVersion.VER_1_0_c);
 		temp.vStat.addStatList("힘", new StatusInfo(70), true);
 		temp.vStat.addStatList("지능", new StatusInfo(70), true);
 		temp.vStat.addStatList("독공", new StatusInfo(75), true);
-		temp.vStat.addStatList("모속강", new StatusInfo(10), true);
+		temp.vStat.addStatList("모속강", new ElementInfo(10), true);
 		titleList.add(temp);
 		
 		//2014 대박기원
-		temp = new Title("2014 대박기원 [화]", rarity, CalculatorVersion.VER_1_0_a);
+		temp = new Title("2014 대박기원 [화]", rarity, CalculatorVersion.VER_1_0_c);
 		temp.vStat.addStatList("힘", new StatusInfo(33), true);
 		temp.vStat.addStatList("지능", new StatusInfo(33), true);
 		temp.vStat.addStatList("물크", new DoubleStatusInfo(3));
 		temp.vStat.addStatList("마크", new DoubleStatusInfo(3));
-		temp.vStat.addStatList("화속강", new StatusInfo(22), true);
+		temp.vStat.addStatList("화속강", new ElementInfo(22), true);
 		temp.dStat.addStatList("힘", new StatusInfo(25), false, true);
 		temp.dStat.addStatList("지능", new StatusInfo(25), false, true);
 		titleList.add(temp);
-		temp = new Title("2014 대박기원 [수]", rarity, CalculatorVersion.VER_1_0_a);
+		temp = new Title("2014 대박기원 [수]", rarity, CalculatorVersion.VER_1_0_c);
 		temp.vStat.addStatList("힘", new StatusInfo(33), true);
 		temp.vStat.addStatList("지능", new StatusInfo(33), true);
 		temp.vStat.addStatList("물크", new DoubleStatusInfo(3));
 		temp.vStat.addStatList("마크", new DoubleStatusInfo(3));
-		temp.vStat.addStatList("수속강", new StatusInfo(22), true);
+		temp.vStat.addStatList("수속강", new ElementInfo(22), true);
 		temp.dStat.addStatList("힘", new StatusInfo(25), false, true);
 		temp.dStat.addStatList("지능", new StatusInfo(25), false, true);
 		titleList.add(temp);
-		temp = new Title("2014 대박기원 [명]", rarity, CalculatorVersion.VER_1_0_a);
+		temp = new Title("2014 대박기원 [명]", rarity, CalculatorVersion.VER_1_0_c);
 		temp.vStat.addStatList("힘", new StatusInfo(33), true);
 		temp.vStat.addStatList("지능", new StatusInfo(33), true);
 		temp.vStat.addStatList("물크", new DoubleStatusInfo(3));
 		temp.vStat.addStatList("마크", new DoubleStatusInfo(3));
-		temp.vStat.addStatList("명속강", new StatusInfo(22), true);
+		temp.vStat.addStatList("명속강", new ElementInfo(22), true);
 		temp.dStat.addStatList("힘", new StatusInfo(25), false, true);
 		temp.dStat.addStatList("지능", new StatusInfo(25), false, true);
 		titleList.add(temp);
-		temp = new Title("2014 대박기원 [암]", rarity, CalculatorVersion.VER_1_0_a);
+		temp = new Title("2014 대박기원 [암]", rarity, CalculatorVersion.VER_1_0_c);
 		temp.vStat.addStatList("힘", new StatusInfo(33), true);
 		temp.vStat.addStatList("지능", new StatusInfo(33), true);
 		temp.vStat.addStatList("물크", new DoubleStatusInfo(3));
 		temp.vStat.addStatList("마크", new DoubleStatusInfo(3));
-		temp.vStat.addStatList("암속강", new StatusInfo(22), true);
+		temp.vStat.addStatList("암속강", new ElementInfo(22), true);
 		temp.dStat.addStatList("힘", new StatusInfo(25), false, true);
 		temp.dStat.addStatList("지능", new StatusInfo(25), false, true);
 		titleList.add(temp);
@@ -307,8 +307,8 @@ public class TitleInfo {
 		temp.vStat.addStatList("지능", new StatusInfo(22));
 		titleList.add(temp);
 		//퍼만
-		temp = new Title("육식주의자", rarity, CalculatorVersion.VER_1_0_a);
-		temp.vStat.addStatList("모속강", new StatusInfo(12));
+		temp = new Title("육식주의자", rarity, CalculatorVersion.VER_1_0_c);
+		temp.vStat.addStatList("모속강", new ElementInfo(12));
 		titleList.add(temp);
 		
 	}

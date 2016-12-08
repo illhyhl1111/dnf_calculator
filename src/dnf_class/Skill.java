@@ -3,6 +3,7 @@ package dnf_class;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map.Entry;
 
 import dnf_InterfacesAndExceptions.CalculatorVersion;
 import dnf_InterfacesAndExceptions.Character_type;
@@ -129,7 +130,14 @@ public class Skill extends IconObject implements Comparable<Skill>{
 	}
 	public boolean hasDamage()
 	{
-		if(type==Skill_type.ACTIVE || type==Skill_type.DAMAGE_BUF) return true;
+		if(type==Skill_type.ACTIVE || type==Skill_type.DAMAGE_BUF || type==Skill_type.OPTION || type==Skill_type.SUBSKILL) return true;
+		else if(type==Skill_type.SWITCHING){
+			if(skillInfo.getLast().hasPhy_per()) return true;
+			if(skillInfo.getLast().hasPhy_fix()) return true;
+			if(skillInfo.getLast().hasMag_per()) return true;
+			if(skillInfo.getLast().hasMag_fix()) return true;
+			return false;
+		}
 		else return false;
 	}
 	public boolean isTPSkill()
@@ -140,6 +148,11 @@ public class Skill extends IconObject implements Comparable<Skill>{
 	public boolean isOptionSkill()
 	{
 		if(type==Skill_type.OPTION) return true;
+		else return false;
+	}
+	public boolean isSubSkill()
+	{
+		if(type==Skill_type.SUBSKILL) return true;
 		else return false;
 	}
 	public boolean isEnableable()
@@ -177,6 +190,14 @@ public class Skill extends IconObject implements Comparable<Skill>{
 		temp.phy_fix=hSkill.phy_fix+(hSkill.phy_fix-h2Skill.phy_fix)*levelDifference/diff;
 		temp.mag_atk=hSkill.mag_atk+(hSkill.mag_atk-h2Skill.mag_atk)*levelDifference/diff;
 		temp.mag_fix=hSkill.mag_fix+(hSkill.mag_fix-h2Skill.mag_fix)*levelDifference/diff;
+		temp.indep_level=hSkill.indep_level+(hSkill.indep_level-h2Skill.indep_level)*levelDifference/diff;
+		
+		for(Entry<String, Integer> entry : hSkill.percentList.entrySet()){
+			int v1 = entry.getValue();
+			int v2 = h2Skill.percentList.get(entry.getKey());
+			temp.percentList.put(entry.getKey(), v1+(v1-v2)*levelDifference/diff);
+		}
+		
 		
 		try {
 			temp.stat = (StatusList) hSkill.stat.clone();
@@ -194,7 +215,7 @@ public class Skill extends IconObject implements Comparable<Skill>{
 				StatusAndName s2 = iter2.next();
 				
 				try {
-					s.stat.setInfo((s1.stat.getStatToDouble()-s2.stat.getStatToDouble())*levelDifference/diff);
+					s.stat.setInfo(s1.stat.getStatToDouble()+(s1.stat.getStatToDouble()-s2.stat.getStatToDouble())*levelDifference/diff);
 				} catch (StatusTypeMismatch e) {
 					e.printStackTrace();
 				}
@@ -276,6 +297,7 @@ public class Skill extends IconObject implements Comparable<Skill>{
 
 	@Override
 	public int compareTo(Skill arg0) {
+		if(arg0 instanceof TPSkill) return 1;
 		if(arg0.firstLevel!=firstLevel) return firstLevel-arg0.firstLevel;
 		else return getName().compareTo(arg0.getName());
 	}

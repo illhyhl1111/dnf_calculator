@@ -13,6 +13,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
@@ -272,6 +273,11 @@ class NewVersion extends TitleAreaDialog {
     		explLabel.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 2, 1));
     	}
     }
+    
+    @Override
+	protected void createButtonsForButtonBar(Composite parent) {
+	    createButton(parent, IDialogConstants.CANCEL_ID, "안해요 안해", false);
+	}
 }
 
 class CalculatorUILoad
@@ -290,9 +296,8 @@ class CalculatorUILoad
 			URLConnection conn = url.openConnection();
 
 			// open the stream and put it into BufferedReader
-			BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF8"));
 			String recentVersion = br.readLine();
-			System.out.println(recentVersion);
 			if(!recentVersion.equals(CalculatorVersion.MAIN_VERSION)){
 				String URL = br.readLine();
 				ArrayList<String> explain = new ArrayList<String>();
