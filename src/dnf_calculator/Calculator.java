@@ -19,10 +19,19 @@ public class Calculator {
 		long deal=0;
 		if(skill.isOptionSkill() && !skill.getBuffEnabled()) return 0;
 		SkillLevelInfo skillInfo = skill.getSkillLevelInfo(true, character.isBurning());
-		if(skillInfo.hasPhy_per()) deal += Calculator.percentDamage_physical(skillInfo.phy_atk, skill.element, object, character, skillInfo.indep_level, mode);
-		if(skillInfo.hasPhy_fix()) deal += Calculator.fixedDamage_physical(skillInfo.phy_fix, skill.element, object, character, skillInfo.indep_level, mode);
-		if(skillInfo.hasMag_per()) deal += Calculator.percentDamage_magical(skillInfo.mag_atk, skill.element, object, character, skillInfo.indep_level, mode);
-		if(skillInfo.hasMag_fix()) deal += Calculator.fixedDamage_magical(skillInfo.mag_fix, skill.element, object, character, skillInfo.indep_level, mode);
+		Status stat=character.dungeonStatus;
+		try {
+			if(skillInfo.hasPhy_per() && !((skillInfo.hasMag_per() || skillInfo.hasMag_fix()) && stat.getEnabled(StatList.CONVERSION_NOPHY))) 
+				deal += Calculator.percentDamage_physical(skillInfo.phy_atk, skill.element, object, character, skillInfo.indep_level, mode);
+			if(skillInfo.hasPhy_fix() && !((skillInfo.hasMag_per() || skillInfo.hasMag_fix()) && stat.getEnabled(StatList.CONVERSION_NOPHY)))
+				deal += Calculator.fixedDamage_physical(skillInfo.phy_fix, skill.element, object, character, skillInfo.indep_level, mode);
+			if(skillInfo.hasMag_per() && !((skillInfo.hasPhy_per() || skillInfo.hasPhy_fix()) && stat.getEnabled(StatList.CONVERSION_NOMAG)))
+				deal += Calculator.percentDamage_magical(skillInfo.mag_atk, skill.element, object, character, skillInfo.indep_level, mode);
+			if(skillInfo.hasMag_fix() && !((skillInfo.hasPhy_per() || skillInfo.hasPhy_fix()) && stat.getEnabled(StatList.CONVERSION_NOMAG)))
+				deal += Calculator.fixedDamage_magical(skillInfo.mag_fix, skill.element, object, character, skillInfo.indep_level, mode);
+		} catch (StatusTypeMismatch e) {
+			e.printStackTrace();
+		}
 		
 		for(Entry<String, Integer> entry : skillInfo.percentList.entrySet()){
 			if((!skill.hasBuff() && skill.getActiveEnabled()) || skill.buffEnabled(true))
@@ -328,7 +337,7 @@ public class Calculator {
 			int inc_weapon1=(int)((stat.getStat(StatList.WEP_MAG)*(100+stat.getStat(StatList.MAST_MAG_2)))/100);				// [무기마공*(100+마스터리2)/100]
 			int inc_weapon2=(int)( (inc_weapon1*(stat.getStat(StatList.MAST_MAG)+100))/100 + 0.9999);							// [[무기마공*(100+마스터리2)/100]*(100+마스터리1)/100] - 소숫점포함
 			inc_weapon2=(int) (inc_weapon2*(100+stat.getStat(StatList.MAST_MAG_ITEM))/100);
-			return (int)(inc_weapon2*(1+getInfoStrength(stat)/250.0)+ stat.getStat("마법방무")*(100+stat.getStat(StatList.WEP_NODEF_MAG_INC))/100 );
+			return (int)(inc_weapon2*(1+getInfoIntellegence(stat)/250.0)+ stat.getStat("마법방무")*(100+stat.getStat(StatList.WEP_NODEF_MAG_INC))/100 );
 		}
 		catch(StatusTypeMismatch | UndefinedStatusKey e)
 		{

@@ -195,7 +195,7 @@ public class SelectCharacter extends DnFComposite{
 		deleteCharacterCombo.setLayoutData(delComboData);
 		
 		
-		deleteCharacterText.setText("삭제하려면 지금삭제를 입력하세오");
+		deleteCharacterText.setText("삭제하려면 '지금삭제'를 입력하세요");
 		FormData delTextData = new FormData(SWT.DEFAULT, 20);
 		delTextData.top = new FormAttachment(scrollComposite, 20);
 		delTextData.right = new FormAttachment(deleteCharacterButton, -5);
@@ -203,7 +203,7 @@ public class SelectCharacter extends DnFComposite{
 		deleteCharacterText.addListener(SWT.MouseUp, new Listener() {
 	        @Override
 	        public void handleEvent(Event event) {
-	        	if(deleteCharacterText.getText().equals("삭제하려면 지금삭제를 입력하세오"))
+	        	if(deleteCharacterText.getText().equals("삭제하려면 '지금삭제'를 입력하세요"))
 	        		deleteCharacterText.setText("");
 	        }
 		});
@@ -335,7 +335,11 @@ class SaveCharacterDialog extends TitleAreaDialog {
     // as soon as the Dialog closes
     private boolean saveInput() {
     	name = text.getText();
-    	if(name.length()>6) return false;
+    	int length=name.length();
+    	for(char c : name.toCharArray()){
+    		if(!Character.isUpperCase(c) && !Character.isLowerCase(c)) length++;
+    	}
+    	if(length>12) return false;
     	
     	for(BriefCharacterInfo info : characterList)
     		if(info.name.equals(name)) return false;

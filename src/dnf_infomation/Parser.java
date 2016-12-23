@@ -4,6 +4,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
+import dnf_calculator.BooleanInfo;
 import dnf_calculator.ElementInfo;
 import dnf_calculator.FunctionStat;
 import dnf_calculator.FunctionStatusList;
@@ -66,6 +67,21 @@ public class Parser {
 				break;
 			}
 			
+			return -1;
+		}
+		
+		else if(data[0].contains("컨버전"))
+		{
+			if(data.length>1 && data[1].equals("선택")) enableable = true; 
+			switch(data[0])
+			{
+			case "물리컨버전":
+				list.addStatList("물리컨버전", new BooleanInfo(true), changeable, enableable);
+				break;
+			case "마법컨버전":
+				list.addStatList("마법컨버전", new BooleanInfo(true), changeable, enableable);
+				break;
+			}
 			return -1;
 		}
 		

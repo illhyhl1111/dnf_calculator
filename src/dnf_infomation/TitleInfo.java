@@ -67,7 +67,7 @@ public class TitleInfo {
 		titleList.add(temp);
 		
 		//로맨틱
-		temp = new Title("러블리", rarity, CalculatorVersion.VER_1_0_a);
+		temp = new Title("러블리", rarity, CalculatorVersion.VER_1_0_f);
 		temp.vStat.addStatList("힘", new StatusInfo(40), true);
 		temp.vStat.addStatList("지능", new StatusInfo(40), true);
 		temp.vStat.addStatList("물크", 12);
@@ -75,20 +75,20 @@ public class TitleInfo {
 		temp.dStat.addStatList("힘", new StatusInfo(25), false, true);
 		temp.dStat.addStatList("지능", new StatusInfo(25), false, true);
 		
-		temp2 = new Title("스위티", rarity, CalculatorVersion.VER_1_0_c);
+		temp2 = new Title("스위티", rarity, CalculatorVersion.VER_1_0_f);
 		temp2.vStat.addStatList("힘", new StatusInfo(40), true);
 		temp2.vStat.addStatList("지능", new StatusInfo(40), true);
-		temp.vStat.addStatList("물크", new DoubleStatusInfo(3));
-		temp.vStat.addStatList("마크", new DoubleStatusInfo(3));
+		temp2.vStat.addStatList("물크", new DoubleStatusInfo(3));
+		temp2.vStat.addStatList("마크", new DoubleStatusInfo(3));
 		temp2.vStat.addStatList("모속강", new ElementInfo(16));
 		temp2.dStat.addStatList("힘", new StatusInfo(25), false, true);
 		temp2.dStat.addStatList("지능", new StatusInfo(25), false, true);
 		
-		temp3 = new Title("로맨틱", rarity, CalculatorVersion.VER_1_0_a);
+		temp3 = new Title("로맨틱", rarity, CalculatorVersion.VER_1_0_f);
 		temp3.vStat.addStatList("힘", new StatusInfo(40), true);
 		temp3.vStat.addStatList("지능", new StatusInfo(40), true);
-		temp.vStat.addStatList("물크", new DoubleStatusInfo(3));
-		temp.vStat.addStatList("마크", new DoubleStatusInfo(3));
+		temp3.vStat.addStatList("물크", new DoubleStatusInfo(3));
+		temp3.vStat.addStatList("마크", new DoubleStatusInfo(3));
 		temp3.vStat.addStatList("증뎀", new StatusInfo(10));
 		temp3.dStat.addStatList("힘", new StatusInfo(25), false, true);
 		temp3.dStat.addStatList("지능", new StatusInfo(25), false, true);

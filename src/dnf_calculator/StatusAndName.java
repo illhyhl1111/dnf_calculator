@@ -62,7 +62,7 @@ public class StatusAndName implements java.io.Serializable, Cloneable
 		
 		if(this.name<=StatList.ELEMENTNUM_END) this.stat=new ElementInfo(stat);
 		else if(this.name<=StatList.INTNUM_END) this.stat=new StatusInfo(stat);
-		else if(this.name<=StatList.DOUBLENUM_END) this.stat=new DoubleStatusInfo(stat);
+		else if(this.name<=StatList.DOUBLENUM_END || this.name==StatList.INPUTNUM) this.stat=new DoubleStatusInfo(stat);
 		else throw new StatusTypeMismatch("int");
 	}
 	public StatusAndName(String name, double stat, boolean changeable, boolean enableable) throws UndefinedStatusKey, StatusTypeMismatch
@@ -75,7 +75,7 @@ public class StatusAndName implements java.io.Serializable, Cloneable
 		else throw new UndefinedStatusKey(name);
 		
 		if(this.name<=StatList.ELEMENTNUM_END) this.stat=new ElementInfo((int)Math.round(stat));
-		else if(StatList.DOUBLENUM_START<=this.name && this.name<=StatList.DOUBLENUM_END) this.stat=new DoubleStatusInfo(stat);
+		else if((StatList.DOUBLENUM_START<=this.name && this.name<=StatList.DOUBLENUM_END) || this.name==StatList.INPUTNUM) this.stat=new DoubleStatusInfo(stat);
 		else if(StatList.INTNUM_START<=this.name && this.name<=StatList.INTNUM_END) this.stat=new StatusInfo((int)Math.round(stat));
 		else throw new StatusTypeMismatch("double");
 	}
@@ -144,6 +144,9 @@ public class StatusAndName implements java.io.Serializable, Cloneable
 		reverseHash.put(StatList.DEF_DEC_IGN, "적 방어력 무시(%) -");
 		reverseHash.put(StatList.WEP_NODEF_PHY_INC, "방어무시 물리 공격력 증가(%) +"); reverseHash.put(StatList.WEP_NODEF_MAG_INC, "방어무시 마법 공격력 증가(%) +");
 		//reverseHash.put(StatList.MAST_REFORGE, "재련 독립 공격력 %증가 +");
+		
+		reverseHash.put(StatList.CONVERSION_NOPHY, "컨버전(마법)"); reverseHash.put(StatList.CONVERSION_NOMAG, "컨버전(물리)");
+		reverseHash.put(StatList.INPUTNUM, "스킬 사용 횟수(재료 갯수) : ");
 		
 		reverseHashsetted=true;
 	}

@@ -93,6 +93,21 @@ public class CalculateElement
 				inc_elem=dmg_water;
 			}
 			break;
+		case FIRE_DARKNESS:
+			type = getDualElement(element);
+			if(type==Element_type.NONE) type=Element_type.FIRE;
+			switch(type)
+			{
+			case FIRE:
+				inc_elem=dmg_fire;
+				break;
+			case DARKNESS:
+				inc_elem=dmg_darkness;
+				break;
+			default:		
+				inc_elem=dmg_fire;
+			}
+			break;
 		case ALL:
 			type = getDualElement(element);
 			if(type==Element_type.NONE) type=Element_type.FIRE;
@@ -168,7 +183,7 @@ public class CalculateElement
 	{
 		Element_type type = Element_type.NONE;
 		double temp = -0.5;
-		if(temp<dmg_fire && (element==Element_type.ALL || element==Element_type.FIRE_LIGHT)){
+		if(temp<dmg_fire && (element==Element_type.ALL || element==Element_type.FIRE_LIGHT || element==Element_type.FIRE_DARKNESS)){
 			temp=dmg_fire;
 			type = Element_type.FIRE;
 		}
@@ -180,7 +195,7 @@ public class CalculateElement
 			temp=dmg_light;
 			type = Element_type.LIGHT;
 		}
-		if(temp<dmg_darkness && element==Element_type.ALL){
+		if(temp<dmg_darkness && (element==Element_type.ALL || element==Element_type.FIRE_DARKNESS)){
 			temp=dmg_darkness;
 			type = Element_type.DARKNESS;
 		}

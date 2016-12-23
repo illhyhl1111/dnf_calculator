@@ -35,6 +35,8 @@ public class SkillRangeStatusInfo extends AbstractStatusInfo			// 범위형 스�
 		if(startRange==endRange) return ""+startRange;
 		return ""+startRange+" ~ "+endRange;
 	}
+	public int getStartRange() {return startRange;}
+	public int getEndRange() {return endRange;}
 	public void setInfo(String name) throws StatusTypeMismatch { throw new StatusTypeMismatch("Skill->SkillRange");}
 	public void setInfo(int start, int end)
 	{

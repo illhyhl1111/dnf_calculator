@@ -26,6 +26,7 @@ import dnf_class.Characters;
 import dnf_class.IconObject;
 import dnf_class.SelectionBuff;
 import dnf_class.Skill;
+import dnf_class.SwitchingSkill;
 
 public class BuffInventory extends DnFComposite{
 	LinkedList<Buff> itemSet;
@@ -121,8 +122,13 @@ public class BuffInventory extends DnFComposite{
 					else if(i.getName().contains("수련의 방 버프"))
 						inventoryList[index].getButton().addListener(SWT.MouseDoubleClick, listenerGroup.modifyListener(null));
 				}
-				else if(i instanceof Skill)
+				else if(i instanceof Skill){
 					inventoryList[index].getButton().addListener(SWT.MouseEnter, listenerGroup.makeSkillInfoListener(background));	// add MouseEnter Event - make composite
+					if(i instanceof SwitchingSkill)
+						inventoryList[index].getButton().addListener(
+								SWT.MouseDoubleClick, listenerGroup.skillModifyListener(((SwitchingSkill)inventoryList[index].getItem()).getStatList())); 
+							
+				}
 				inventoryList[index].getButton().addListener(SWT.MouseExit, listenerGroup.disposeItemInfoListener()); 			// add MouseExit Event - dispose composite
 				inventoryList[index].getButton().addListener(SWT.MouseMove, listenerGroup.moveItemInfoListener());				// add MouseMove Event - move composite
 				inventoryList[index].getButton().addListener(SWT.MouseDown, listenerGroup.buffInventoryClickListener());		// add MouseMove Event - move composite

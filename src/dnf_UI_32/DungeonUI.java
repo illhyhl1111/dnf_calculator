@@ -379,6 +379,7 @@ public class DungeonUI extends DnFComposite{
 		dealChart.setMonster(trainingRoom.getMonster());
 		dealChart.renew();
 		trainingRoom.renew();
+		buffInventory.renew();		//이미지 재설정
 	}
 	
 	public void disposeContent()

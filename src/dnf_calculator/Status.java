@@ -21,7 +21,7 @@ public class Status implements Cloneable, java.io.Serializable {
 	private static boolean statHashsetted = false;
 	
 	public static final String[] infoStatOrder = new String[] {
-		"힘", "지능", "마을물공", "마을마공", "독립공격", "물리크리티컬", "마법크리티컬",
+		"힘(최종)", "지능(최종)", "마을물공", "마을마공", "독립공격", "물리크리티컬", "마법크리티컬",
 		"화속성강화", "수속성강화", "명속성강화", "암속성강화"};
 	public static final int infoStatNum=11;
 	
@@ -68,6 +68,11 @@ public class Status implements Cloneable, java.io.Serializable {
 		
 		for(; i<=StatList.DOUBLENUM_END; i++)
 			statInfo[i] = new DoubleStatusInfo(0);
+		
+		for(i=StatList.BOOLNUM_START; i<=StatList.BOOLNUM_END; i++)
+			statInfo[i] = new BooleanInfo(false);
+		
+		statInfo[StatList.INPUTNUM] = new DoubleStatusInfo(1);
 	
 		skillInfo = new LinkedList<AbstractStatusInfo>();
 	}
@@ -145,6 +150,10 @@ public class Status implements Cloneable, java.io.Serializable {
 		statHash.put("물리방무뻥", StatList.WEP_NODEF_PHY_INC); statHash.put("마법방무뻥", StatList.WEP_NODEF_MAG_INC);
 		//statHash.put("재련 %증가", StatList.MAST_REFORGE); statHash.put("재련뻥", StatList.MAST_REFORGE);
 		
+		statHash.put("물리삭제", StatList.CONVERSION_NOPHY); statHash.put("마법삭제", StatList.CONVERSION_NOMAG);
+		statHash.put("마법컨버전", StatList.CONVERSION_NOPHY); statHash.put("물리컨버전", StatList.CONVERSION_NOMAG);
+		statHash.put("횟수(재료수)", StatList.INPUTNUM);
+		
 		statHashsetted=true;
 	}
 	
@@ -205,6 +214,16 @@ public class Status implements Cloneable, java.io.Serializable {
 	{
 		skillInfo.add(new SkillRangeStatusInfo(skillNum, start, end, TP));
 	}
+	public void setBooleanStat(int stat, boolean bool) throws StatusTypeMismatch
+	{
+		statInfo[stat].setInfo(bool);
+	}
+	public void setBooleanStat(String stat, boolean bool) throws StatusTypeMismatch, UndefinedStatusKey
+	{
+		if(!statHashsetted) setStatHash();
+		if(statHash.containsKey(stat)) setBooleanStat(statHash.get(stat), bool);
+		else throw new UndefinedStatusKey(stat);
+	}
 	
 	public double getStat(int stat) throws StatusTypeMismatch
 	{
@@ -225,6 +244,10 @@ public class Status implements Cloneable, java.io.Serializable {
 			ElementInfo temp = (ElementInfo)statInfo[stat];
 			return temp.getElementEnabled();
 		}
+		else if(statInfo[stat] instanceof BooleanInfo){
+			BooleanInfo temp = (BooleanInfo)statInfo[stat];
+			return temp.getBooleanStat();
+		}
 		else throw new StatusTypeMismatch("Element");
 	}
 	public boolean getEnabled(String stat) throws StatusTypeMismatch, UndefinedStatusKey
@@ -236,9 +259,10 @@ public class Status implements Cloneable, java.io.Serializable {
 	
 	public void addStat(int statNum, AbstractStatusInfo stat2)
 	{
-		try{
+		if(statNum==StatList.SKILL || statNum==StatList.SKILL_RANGE)
+			skillInfo.add(stat2);
+		else{
 			AbstractStatusInfo stat1 = statInfo[statNum];
-			
 			try{
 				switch(statNum)
 				{
@@ -251,7 +275,9 @@ public class Status implements Cloneable, java.io.Serializable {
 					case StatList.DAM_INC: case StatList.DAM_CRT:										//중첩불가항
 					case StatList.DAM_INC_BACK: case StatList.DAM_CRT_BACK:
 					case StatList.DEF_DEC_IGN:
-						if(stat2.getStatToDouble()>stat1.getStatToDouble()) stat1.setInfo(stat2.getStatToDouble()); 
+						if(Double.compare(stat2.getStatToDouble(), 0)<0)
+							stat1.setInfo(stat1.getStatToDouble()+stat2.getStatToDouble());				//음수증뎀은 단리적용
+						else if(stat2.getStatToDouble()>stat1.getStatToDouble()) stat1.setInfo(stat2.getStatToDouble()); 
 						break;
 						
 					case StatList.DAM_SKILL: case StatList.BUF_INC: case StatList.BUF_CRT:				//복리중첩항
@@ -262,6 +288,10 @@ public class Status implements Cloneable, java.io.Serializable {
 						stat1.setInfo(temp1*temp2/100-100);
 						break;
 						
+					case StatList.CONVERSION_NOPHY: case StatList.CONVERSION_NOMAG:						//부울스탯
+						stat1.setInfo(((BooleanInfo)stat1).getBooleanStat() || ((BooleanInfo)stat2).getBooleanStat());
+						break;
+						
 					default:																			//단리중첩항
 						stat1.setInfo(stat1.getStatToDouble()+stat2.getStatToDouble());
 				}
@@ -269,11 +299,6 @@ public class Status implements Cloneable, java.io.Serializable {
 			catch(StatusTypeMismatch e){
 				e.printStackTrace();
 			}
-		}
-		
-		catch(ArrayIndexOutOfBoundsException e)											//스킬레벨항
-		{
-			skillInfo.add(stat2);
 		}
 	}
 	

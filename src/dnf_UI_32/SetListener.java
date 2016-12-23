@@ -495,6 +495,7 @@ public class SetListener {
 		return new Listener() {
 			@Override
 			public void handleEvent(Event e) {
+				if(e.button==3) return;
 				ChangeSkillDialog modifyDialog = new ChangeSkillDialog(parent.getShell(), statList);
 				modifyDialog.create();
 				

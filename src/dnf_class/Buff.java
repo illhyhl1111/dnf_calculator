@@ -1,6 +1,7 @@
 package dnf_class;
 
 import dnf_InterfacesAndExceptions.Item_rarity;
+import dnf_InterfacesAndExceptions.Job;
 
 public class Buff extends Item 
 {
@@ -13,6 +14,8 @@ public class Buff extends Item
 		enabled=false;
 	}
 	public Buff(){ super();}
+	
+	public boolean isTarget(Job job) {return true;}
 	
 	@Override
 	public boolean equals(Object other)

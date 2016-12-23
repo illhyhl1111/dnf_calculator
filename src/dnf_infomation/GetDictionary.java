@@ -438,6 +438,10 @@ public class GetDictionary
 			}
 		}
 		
+		for(int i=0; i<itemDictionary.buffList.size(); i++){
+			if(!itemDictionary.buffList.get(i).isTarget(job)) itemDictionary.buffList.remove(i--);
+		}
+		
 		for(Avatar avatar : itemDictionary.avatarList){
 			avatar.setCoatOptionList(job);
 		}
