@@ -109,6 +109,11 @@ public class ReinforceInfo {
 		weaponTypeInfo_phy.put(Weapon_detailType.MAGE_SPEAR, 1.2); weaponTypeInfo_mag.put(Weapon_detailType.MAGE_SPEAR, 0.95);
 		weaponTypeInfo_phy.put(Weapon_detailType.MAGE_STAFF, 0.95); weaponTypeInfo_mag.put(Weapon_detailType.MAGE_STAFF, 1.2);
 		
+		weaponTypeInfo_phy.put(Weapon_detailType.PRIEST_CROSS, 1.0); weaponTypeInfo_mag.put(Weapon_detailType.PRIEST_CROSS, 0.95);
+		weaponTypeInfo_phy.put(Weapon_detailType.PRIEST_ROSARY, 0.9); weaponTypeInfo_mag.put(Weapon_detailType.PRIEST_ROSARY, 1.15);
+		weaponTypeInfo_phy.put(Weapon_detailType.PRIEST_TOTEM, 1.05); weaponTypeInfo_mag.put(Weapon_detailType.PRIEST_TOTEM, 0.9);
+		weaponTypeInfo_phy.put(Weapon_detailType.PRIEST_SCYTHE, 1.05); weaponTypeInfo_mag.put(Weapon_detailType.PRIEST_SCYTHE, 1.0);
+		weaponTypeInfo_phy.put(Weapon_detailType.PRIEST_BATTLEAXE, 1.2); weaponTypeInfo_mag.put(Weapon_detailType.PRIEST_BATTLEAXE, 0.85);
 		
 		readed=true;
 	}

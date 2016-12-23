@@ -9,7 +9,7 @@ public enum Job implements java.io.Serializable
 	LAUNCHER_M(Character_type.GUNNER_M, "디스트로이어", "카시야스) Nodata"), RANGER_M(Character_type.GUNNER_M, "레이븐", "안톤) 속사포탄환"),
 	SPITFIRE_M(Character_type.GUNNER_M, "커맨더", "바칼) 혈누"), MECHANIC_M(Character_type.GUNNER_M, "프라임"),
 	CRUSADER(Character_type.PRIEST, "세인트"), INFIGHTER(Character_type.PRIEST, "저스티스"),
-	AVENGER(Character_type.PRIEST, "이모탈"), EXORCIST(Character_type.PRIEST, "태을선인"),
+	AVENGER(Character_type.PRIEST, "이모탈"), EXORCIST(Character_type.PRIEST, "태을선인", "??) 종교, 디레지에) 성불왕"),
 	NENMASTER_F(Character_type.FIGHTER_F, "염제 폐월수화"), GRAPPLER_F(Character_type.FIGHTER_F, "얼티밋 디바"),
 	STRIKER_F(Character_type.FIGHTER_F, "카이저"), STREETFIGHTER_F(Character_type.FIGHTER_F, "용독문주"),
 	NENMASTER_M(Character_type.FIGHTER_M, "염황 광풍제월"), GRAPPLER_M(Character_type.FIGHTER_M, "그랜드 마스터"),
@@ -18,8 +18,8 @@ public enum Job implements java.io.Serializable
 	ASURA(Character_type.SWORDMAN_M, "인다라천"), SOULMASTER(Character_type.SWORDMAN_M, "다크로드"),
 	DARKTEMPELAR(Character_type.SWORDMAN_F, "네메시스"), SWORDMASTER(Character_type.SWORDMAN_F, "마제스티"),
 	VEGABOND(Character_type.SWORDMAN_F, "검제"), DEMONSLAYER(Character_type.SWORDMAN_F, "디어사이드", "던조닉) 프사암릿내놔"),
-	ELEMENTALMASTER(Character_type.MAGE_F, "오버마인드"), SUMMONER(Character_type.MAGE_F, "이클립스"), 
-	WITCH(Character_type.MAGE_F, "지니위즈"), BATTLEMAGE(Character_type.MAGE_F, "아슈타르테"),
+	ELEMENTALMASTER(Character_type.MAGE_F, "오버마인드", "프레이) 별마리, 카인) 롤이짱"), SUMMONER(Character_type.MAGE_F, "이클립스"), 
+	WITCH(Character_type.MAGE_F, "지니위즈"), BATTLEMAGE(Character_type.MAGE_F, "아슈타르테", "프레이) 무가차"),
 	ELEMENTALBOMBER(Character_type.MAGE_M, "오블리비언", "카시야스) 피디대정령"), GLACIALMASTER(Character_type.MAGE_M, "이터널"), 
 	SWIFTMASTER(Character_type.MAGE_M, "아이올로스"), BOOLDMAGE(Character_type.MAGE_M, "뱀파이어 로드"),
 	DIMENSIONWALKER(Character_type.MAGE_M, "어센션"), CREATOR(Character_type.MAGE_F, "크리에이터"),
@@ -71,7 +71,7 @@ public enum Job implements java.io.Serializable
 	{
 		return new String[] {
 				LAUNCHER_F.getName(), RANGER_F.getName(), DEMONSLAYER.getName(), SPITFIRE_M.getName(), ELEMENTALBOMBER.getName(),
-				LAUNCHER_M.getName(), RANGER_M.getName(), SPITFIRE_F.getName()
+				LAUNCHER_M.getName(), RANGER_M.getName(), SPITFIRE_F.getName(), EXORCIST.getName(), BATTLEMAGE.getName(), ELEMENTALMASTER.getName()
 		};
 	}
 }

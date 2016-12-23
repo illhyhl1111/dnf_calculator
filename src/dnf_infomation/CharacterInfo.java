@@ -98,5 +98,45 @@ public class CharacterInfo {
 		temp.statList.addStatList("물크", 8);
 		temp.statList.addStatList("마크", 8);
 		basicStatList.add(temp);
+		
+		/////퇴마
+		temp = new CharInfoBox(Job.EXORCIST, 90, new StatusList());
+		temp.statList.addStatList("힘", 722);
+		temp.statList.addStatList("지능", 648);
+		temp.statList.addStatList("독공", 960);
+		temp.statList.addStatList("모속강", 13);
+		temp.statList.addStatList("물크", 8);
+		temp.statList.addStatList("마크", 8);
+		basicStatList.add(temp);
+		
+		/////인파
+		temp = new CharInfoBox(Job.EXORCIST, 90, new StatusList());
+		temp.statList.addStatList("힘", 755);
+		temp.statList.addStatList("지능", 646);
+		temp.statList.addStatList("독공", 960);
+		temp.statList.addStatList("모속강", 13);
+		temp.statList.addStatList("물크", 8);
+		temp.statList.addStatList("마크", 8);
+		basicStatList.add(temp);
+		
+		/////배메
+		temp = new CharInfoBox(Job.BATTLEMAGE, 90, new StatusList());
+		temp.statList.addStatList("힘", 695);
+		temp.statList.addStatList("지능", 712);
+		temp.statList.addStatList("독공", 960);
+		temp.statList.addStatList("모속강", 13);
+		temp.statList.addStatList("물크", 8);
+		temp.statList.addStatList("마크", 8);
+		basicStatList.add(temp);
+		
+		/////엘마
+		temp = new CharInfoBox(Job.ELEMENTALMASTER, 90, new StatusList());
+		temp.statList.addStatList("힘", 598);
+		temp.statList.addStatList("지능", 765);
+		temp.statList.addStatList("독공", 960);
+		temp.statList.addStatList("모속강", 13);
+		temp.statList.addStatList("물크", 8);
+		temp.statList.addStatList("마크", 8);
+		basicStatList.add(temp);
 	}
 }

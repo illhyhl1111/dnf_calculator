@@ -19,7 +19,7 @@ public class SelectionBuff extends Buff{
 		selectionList = new HashMap<String, Entry<StatusList, Boolean>>();
 		this.selectOneOption=selectOneOptionMode;
 		
-		explanation.add("더블클릭하여 설정을 변경하세오");
+		explanation.add("더블클릭하여 설정을 변경하세요");
 	}
 	
 	public void makeSelectionOption(String name, StatusList statList){

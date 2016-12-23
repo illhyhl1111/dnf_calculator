@@ -23,5 +23,5 @@ public class LongStatusInfo extends AbstractStatusInfo			// int형 스탯정보 
 	public String getStatToString() throws StatusTypeMismatch { throw new StatusTypeMismatch("Skill->Long");}
 	public void setInfo(String name) throws StatusTypeMismatch { throw new StatusTypeMismatch("Skill->Long");}
 	public void setInfo(int start, int end) throws StatusTypeMismatch { throw new StatusTypeMismatch("SkillRange->Long");}
-	public void increaseStat(double strength) {str=(int) (str*(strength+100.0)/100.0);}
+	public void increaseStat(double strength) {str=(int) (str*strength);}
 }

@@ -11,6 +11,7 @@ import java.io.ObjectOutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -312,6 +313,8 @@ class CalculatorUILoad
 				
 				if(updateShell.readed) selectionShell.dispose();
 			}
+			
+		} catch (UnknownHostException e) {
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

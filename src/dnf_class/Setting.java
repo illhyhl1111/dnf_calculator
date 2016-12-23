@@ -256,7 +256,7 @@ public class Setting implements java.io.Serializable, Cloneable{
 		magicalSealedWeapon.put(temp2.weaponType, temp2);
 		temp2 = new Weapon("마봉배액", rare, Weapon_detailType.PRIEST_BATTLEAXE, 90, false, version);
 		temp2.vStat.addStatList("물공", 1114);
-		temp2.vStat.addStatList("마공", 789);
+		temp2.vStat.addStatList("마공", 1068);			//염주의 마공 적용 (원래 마공 : 789)
 		temp2.vStat.addStatList("독공", 452);
 		temp2.vStat.addStatList("힘", 63);
 		temp2.vStat.addSkillRange(40, 45, 2, false);
@@ -449,6 +449,15 @@ public class Setting implements java.io.Serializable, Cloneable{
 			magicalSealedSetting.weapon=magicalSealedWeapon.get(Weapon_detailType.GUN_MUSKET);
 			break;
 		case ELEMENTALBOMBER:
+			magicalSealedSetting.weapon=magicalSealedWeapon.get(Weapon_detailType.MAGE_STAFF);
+			break;
+		case EXORCIST:
+			magicalSealedSetting.weapon=magicalSealedWeapon.get(Weapon_detailType.PRIEST_BATTLEAXE);
+			break;
+		case BATTLEMAGE:
+			magicalSealedSetting.weapon=magicalSealedWeapon.get(Weapon_detailType.MAGE_SPEAR);
+			break;
+		case ELEMENTALMASTER:
 			magicalSealedSetting.weapon=magicalSealedWeapon.get(Weapon_detailType.MAGE_STAFF);
 			break;
 		default:

@@ -25,5 +25,6 @@ public class DoubleStatusInfo extends AbstractStatusInfo
 	public String getStatToString() throws StatusTypeMismatch { throw new StatusTypeMismatch("Skill->Double");}
 	public void setInfo(String name) throws StatusTypeMismatch { throw new StatusTypeMismatch("Skill->Double");}
 	public void setInfo(int start, int end) throws StatusTypeMismatch { throw new StatusTypeMismatch("SkillRange->Double");}
-	public void increaseStat(double strength) { str=str*(strength+100.0)/100.0;}
+	public void increaseStat(double strength) { str=str*strength;}
+	
 }

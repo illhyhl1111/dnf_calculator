@@ -23,6 +23,7 @@ import dnf_class.Creature;
 import dnf_class.Drape;
 import dnf_class.Emblem;
 import dnf_class.Equipment;
+import dnf_class.ExclusiveBuff;
 import dnf_class.Item;
 import dnf_class.ItemConstraint;
 import dnf_class.Jam;
@@ -389,6 +390,7 @@ public class ItemDictionary implements java.io.Serializable
 		for(T item : supremeList)
 			if(item.Version.compareTo(VERSION)>0){
 				if(item instanceof Weapon && !((Weapon)item).enabled(job));
+				else if(item instanceof ExclusiveBuff && !((ExclusiveBuff)item).isTarget(job));
 				else updateList.put(item.getName(), item);
 			}
 		

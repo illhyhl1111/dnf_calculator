@@ -101,6 +101,7 @@ public class StatusList implements java.io.Serializable, Cloneable {
 			statList.add(new StatusAndName(name, stat, changeable, enableable));
 		} catch (UndefinedStatusKey | StatusTypeMismatch e) {
 			e.printStackTrace();
+			System.out.println(name+" : "+stat);
 		}
 	}
 	public void addStatList(String name, double stat, boolean changeable, boolean enableable)

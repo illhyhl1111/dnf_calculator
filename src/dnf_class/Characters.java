@@ -22,6 +22,7 @@ import dnf_calculator.SkillRangeStatusInfo;
 import dnf_calculator.SkillStatusInfo;
 import dnf_calculator.Status;
 import dnf_calculator.StatusAndName;
+import dnf_calculator.StatusInfo;
 import dnf_infomation.BriefCharacterInfo;
 import dnf_infomation.CharacterDictionary;
 import dnf_infomation.GetDictionary;
@@ -113,6 +114,10 @@ public class Characters implements java.io.Serializable
 			dungeonStatus = new Status(job, level);
 		} catch (ItemNotFoundedException e) {
 			e.printStackTrace();
+		}
+		if(isBurning()){
+			dungeonStatus.addStat(StatList.STR, new StatusInfo(200));
+			dungeonStatus.addStat(StatList.INT, new StatusInfo(200));
 		}
 		for(Skill s : characterInfoList.skillList)
 		{
@@ -381,7 +386,7 @@ public class Characters implements java.io.Serializable
 				skillInfo.stat.addListToStat(dungeonStatus);
 				//if(!skillInfo.fStat.statList.isEmpty()) skillInfo.fStat.addListToStat(dungeonStatus, this, target, skill);
 			}
-			else if(skill.isOptionSkill()) skill.getSkillLevelInfo(true, isBurning).fStat.addListToStat(dungeonStatus, this, target, skill);
+			//else if(skill.isOptionSkill()) skill.getSkillLevelInfo(true, isBurning).fStat.addListToStat(dungeonStatus, this, target, skill);
 		}
 	}
 	
@@ -411,6 +416,16 @@ public class Characters implements java.io.Serializable
 				SkillLevelInfo skillInfo = skill.getSkillLevelInfo(true, isBurning);
 				for(StatusAndName s : skillInfo.stat.statList)
 					list.add(s.stat);
+				for(FunctionStat fStat : skillInfo.fStat.statList)
+					for(StatusAndName s : fStat.function(this, target, skill).statList){
+						list.add(s.stat);
+						dungeonStatus.addStat(s.name, s.stat);
+					}
+				getSkillLevel(true, list);
+			}
+			else if(skill.isOptionSkill()){
+				list = new LinkedList<AbstractStatusInfo>();
+				SkillLevelInfo skillInfo = skill.getSkillLevelInfo(true, isBurning);
 				for(FunctionStat fStat : skillInfo.fStat.statList)
 					for(StatusAndName s : fStat.function(this, target, skill).statList){
 						list.add(s.stat);

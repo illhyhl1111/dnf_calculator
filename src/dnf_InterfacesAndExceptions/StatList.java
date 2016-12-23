@@ -41,9 +41,18 @@ public interface StatList									// 스탯 종류에 붙는 고유한 식별번
 	int MAST_PHY_ITEM=DOUBLENUM_START+15; int MAST_MAG_ITEM=DOUBLENUM_START+16; int MAST_INDEP_ITEM=DOUBLENUM_START+17;		// 물리,마법,독공뻥
 	int DOUBLENUM = 18;														// 총 double형 스탯 개수
 	int DOUBLENUM_END = DOUBLENUM_START+DOUBLENUM-1;
-	///////////////////////////////////////	
-	int STATNUM = ELEMENTNUM+INTNUM+DOUBLENUM;								// 총 스탯 개수
-	////////////////////////////////////	
+	///////////////////////////////////////
 	int SKILL = DOUBLENUM_END+1;
 	int SKILL_RANGE = DOUBLENUM_END+2;
+	int SKILLNUM = 2; int SKILLNUM_END=DOUBLENUM_END+SKILLNUM;
+	//////////////////////////////////////
+	int INPUTNUM=SKILLNUM_END+1;																				//스킬 횟수 사용자 입력 정보
+	int BOOLNUM_START = SKILLNUM_END+2;	
+	int CONVERSION_NOPHY=BOOLNUM_START+0; int CONVERSION_NOMAG=BOOLNUM_START+1;
+	int BOOLNUM=2;
+	int BOOLNUM_END = BOOLNUM_START+BOOLNUM-1;
+	/////////////////////////////////////
+	int STATNUM = ELEMENTNUM+INTNUM+DOUBLENUM+BOOLNUM+SKILLNUM+1;								// 총 스탯 개수
+	////////////////////////////////////	
+	
 }

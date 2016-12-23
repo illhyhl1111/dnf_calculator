@@ -130,13 +130,15 @@ public class Skill extends IconObject implements Comparable<Skill>{
 	}
 	public boolean hasDamage()
 	{
-		if(type==Skill_type.ACTIVE || type==Skill_type.DAMAGE_BUF || type==Skill_type.OPTION || type==Skill_type.SUBSKILL) return true;
+		if(type==Skill_type.ACTIVE || type==Skill_type.DAMAGE_BUF || type==Skill_type.OPTION
+				|| type==Skill_type.SUBSKILL || type==Skill_type.DAMAGE_PASSIVE) return true;
 		else if(type==Skill_type.SWITCHING){
 			if(skillInfo.getLast().hasPhy_per()) return true;
 			if(skillInfo.getLast().hasPhy_fix()) return true;
 			if(skillInfo.getLast().hasMag_per()) return true;
 			if(skillInfo.getLast().hasMag_fix()) return true;
-			return false;
+			if(skillInfo.getLast().percentList.isEmpty()) return false;
+			else return true;
 		}
 		else return false;
 	}
@@ -163,19 +165,17 @@ public class Skill extends IconObject implements Comparable<Skill>{
 	
 	public boolean buffEnabled(boolean isDungeon)
 	{
-		if((type==Skill_type.PASSIVE || type==Skill_type.TP) && active_enabled) return true;
-		else if(isEnableable() && buff_enabled && isDungeon) return true;
+		if((type==Skill_type.PASSIVE || type==Skill_type.DAMAGE_PASSIVE || type==Skill_type.TP) && active_enabled) return true;
+		else if(isEnableable() && buff_enabled && isDungeon && active_enabled) return true;
 		return false;
 	}
 
 	private SkillLevelInfo getSkillInfo(int level)
 	{	
 		for(SkillLevelInfo info : skillInfo)
-		{
-			if(info.skillLevel==level){
+			if(info.skillLevel==level)
 				return info;
-			}
-		}
+			
 		System.out.println(getName()+" Lv "+ level+" 스킬정보 없음");
 		
 		SkillLevelInfo temp = new SkillLevelInfo(level);
@@ -243,7 +243,8 @@ public class Skill extends IconObject implements Comparable<Skill>{
 	
 	public int getCharSkillLevel() { return skillLevel;}
 	public void setSkillLevel(int skillLevel){
-		this.skillLevel=skillLevel;
+		if(skillLevel>masterLevel) this.skillLevel=masterLevel;
+		else this.skillLevel=skillLevel;
 		if(skillLevel==0) active_enabled=false;
 		else active_enabled=true;
 	}
@@ -325,7 +326,7 @@ public class Skill extends IconObject implements Comparable<Skill>{
 			{
 				try {
 					for(StatusAndName s : returnValue.stat.statList)
-						s.stat.increaseStat(villageIncrease);
+						s.stat.increaseStat(increase);
 				} catch (StatusTypeMismatch e) {
 					e.printStackTrace();
 				}

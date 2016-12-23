@@ -31,6 +31,7 @@ public abstract class IconObject implements Cloneable, java.io.Serializable
 		else{
 			iconAddress = icon.replace(':', '-');
 			iconAddress = iconAddress.replace('/', '&');
+			iconAddress = iconAddress.replace('>', '-');
 		}
 	}
 	

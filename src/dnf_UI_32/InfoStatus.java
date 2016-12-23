@@ -92,10 +92,10 @@ public class InfoStatus extends StatusUI
 				else if(Status.infoStatOrder[i].equals("마을마공")){
 					infoStatusText[i].setTextString(String.valueOf(Calculator.getInfoMagicalATK(stat)));
 				}
-				else if(Status.infoStatOrder[i].equals("힘")){
+				else if(Status.infoStatOrder[i].equals("힘(최종)")){
 					infoStatusText[i].setTextString(String.valueOf(Calculator.getInfoStrength(stat)));
 				}
-				else if(Status.infoStatOrder[i].equals("지능")){
+				else if(Status.infoStatOrder[i].equals("지능(최종)")){
 					infoStatusText[i].setTextString(String.valueOf(Calculator.getInfoIntellegence(stat)));
 				}
 				else if(Status.infoStatOrder[i].equals("독립공격")){

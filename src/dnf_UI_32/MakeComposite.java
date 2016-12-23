@@ -711,7 +711,7 @@ public class MakeComposite {
 				stat.setText(stat.getText()+"(옵션 꺼짐)");
 		}
 		
-		else if(s.stat instanceof SkillStatusInfo && ((SkillStatusInfo)s.stat).getIncrease()>1.0005)
+		else if(s.stat instanceof SkillStatusInfo && Double.compare(((SkillStatusInfo)s.stat).getIncrease(), 0)!=0)
 		{
 			stat = new Label(itemInfo, SWT.WRAP);
 			GridData gridData = new GridData();
