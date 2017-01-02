@@ -38,6 +38,9 @@ import dnf_infomation.GetDictionary;
 public class DungeonUI extends DnFComposite{
 	Button toVillageButton;
 	Button calculateSettings;
+	Button processViewerButton;
+	Button evaluateStatusButton;
+	Button bugReportButton;
 	Characters character;
 	UserInfo itemInfo;
 	UserInfo avatarInfo;
@@ -45,6 +48,9 @@ public class DungeonUI extends DnFComposite{
 	TrainingRoom trainingRoom;
 	BuffInventory buffInventory;
 	BestSettingFinder bestSettingFinder;
+	CalculateProcessViewer processViewer;
+	EvaluateStatusViewer evaluateViewer;
+	BugReportViewer bugReportViewer;
 	Inventory inventory;
 	
 	Combo settingsCombo;
@@ -163,6 +169,36 @@ public class DungeonUI extends DnFComposite{
 			}
 		});
 		
+		processViewerButton = new Button(mainComposite, SWT.PUSH);
+		processViewerButton.setText("계산과정 보기");
+		processViewer = new CalculateProcessViewer(shell, character);
+		processViewerButton.addSelectionListener(new SelectionAdapter(){
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				processViewer.open();
+			}
+		});
+		
+		evaluateStatusButton = new Button(mainComposite, SWT.PUSH);
+		evaluateStatusButton.setText("스탯 효율 계산");
+		evaluateViewer = new EvaluateStatusViewer(shell, character);
+		evaluateStatusButton.addSelectionListener(new SelectionAdapter(){
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				evaluateViewer.open();
+			}
+		});
+		
+		bugReportButton = new Button(mainComposite, SWT.PUSH);
+		bugReportButton.setText("버그 제보");
+		bugReportViewer = new BugReportViewer(shell);
+		bugReportButton.addSelectionListener(new SelectionAdapter(){
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				bugReportViewer.open();
+			}
+		});
+		
 		toVillageButton.setParent(mainComposite);
 		FormData buttonData = new FormData(100, 100);
 		buttonData.bottom = new FormAttachment(100, -10);
@@ -173,6 +209,22 @@ public class DungeonUI extends DnFComposite{
 		buttonData.bottom = new FormAttachment(toVillageButton, -10);
 		buttonData.right = new FormAttachment(100, -10);
 		calculateSettings.setLayoutData(buttonData);
+	
+		buttonData = new FormData(100, 100);
+		buttonData.bottom = new FormAttachment(toVillageButton, -10);
+		buttonData.right = new FormAttachment(toVillageButton, -10);
+		processViewerButton.setLayoutData(buttonData);
+		
+		buttonData = new FormData(100, 100);
+		buttonData.bottom = new FormAttachment(toVillageButton, -10);
+		buttonData.right = new FormAttachment(processViewerButton, -10);
+		evaluateStatusButton.setLayoutData(buttonData);
+		
+		buttonData = new FormData(210, 60);
+		buttonData.top = new FormAttachment(evaluateStatusButton, 10);
+		buttonData.right = new FormAttachment(toVillageButton, -10);
+		bugReportButton.setLayoutData(buttonData);
+		
 		
 		Canvas version = new Canvas(mainComposite, SWT.NO_REDRAW_RESIZE | SWT.TRANSPARENT);
 		formData = new FormData(200, 40);
@@ -469,3 +521,4 @@ public class DungeonUI extends DnFComposite{
 
 	}
 }
+

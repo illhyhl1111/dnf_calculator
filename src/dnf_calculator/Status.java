@@ -21,7 +21,7 @@ public class Status implements Cloneable, java.io.Serializable {
 	private static boolean statHashsetted = false;
 	
 	public static final String[] infoStatOrder = new String[] {
-		"힘(최종)", "지능(최종)", "마을물공", "마을마공", "독립공격", "물리크리티컬", "마법크리티컬",
+		"힘(최종)", "지능(최종)", "인포물공", "인포마공", "독립공격", "물리크리티컬", "마법크리티컬",
 		"화속성강화", "수속성강화", "명속성강화", "암속성강화"};
 	public static final int infoStatNum=11;
 	
@@ -32,8 +32,7 @@ public class Status implements Cloneable, java.io.Serializable {
 		"무기마공합", "마법방무뎀", 
 		"독공", "재련독공수치",
 		"독공마스터리", "독공 %증가", 
-		"물리마스터리", "물리마스터리2",
-		"마법마스터리", "마법마스터리2",
+		"물리마스터리", "마법마스터리",
 		"물공 %증가", "물리방무증가",
 		"마공 %증가", "마법방무증가", 
 		"증뎀", "증뎀 추가증가",
@@ -80,7 +79,7 @@ public class Status implements Cloneable, java.io.Serializable {
 	public Status(Job job, int level) throws ItemNotFoundedException
 	{
 		this();
-		GetDictionary.charDictionary.getBasicStat(job, level).addListToStat(this);
+		GetDictionary.charDictionary.getBasicStat(job, level).addListToStat(this, "기본 스탯");
 	}
 	
 	public static HashMap<String, Integer> getStatHash()
@@ -135,7 +134,7 @@ public class Status implements Cloneable, java.io.Serializable {
 		statHash.put("물공뻥", StatList.MAST_PHY_ITEM); statHash.put("마공뻥", StatList.MAST_MAG_ITEM);
 		statHash.put("물공 %증가", StatList.MAST_PHY_ITEM); statHash.put("마공 %증가", StatList.MAST_MAG_ITEM);
 		statHash.put("독공뻥", StatList.MAST_INDEP_ITEM); statHash.put("독공 %증가", StatList.MAST_INDEP_ITEM);
-		statHash.put("물리마스터리2", StatList.MAST_PHY_2); statHash.put("마법마스터리2", StatList.MAST_MAG_2);
+		
 		
 		statHash.put("모속강", StatList.ELEM_ALL); statHash.put("모속", StatList.ELEM_ALL);
 		
@@ -300,6 +299,10 @@ public class Status implements Cloneable, java.io.Serializable {
 				e.printStackTrace();
 			}
 		}
+	}
+	public void trackStat(int statNum, AbstractStatusInfo stat2, String description)
+	{
+		addStat(statNum, stat2);
 	}
 	
 	@Override

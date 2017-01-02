@@ -76,13 +76,12 @@ public class BuffItemInfo {
 		buff.explanation.add("더블클릭하여 옵션을 변경하세요");
 		buffList.add(buff);
 		
-		buff = new Buff("수련의 방 버프 2", Item_rarity.NONE, CalculatorVersion.VER_1_0_f);
+		buff = new Buff("수련의 방 버프 2", Item_rarity.NONE, CalculatorVersion.VER_1_1_a);
 		buff.dStat.addStatList("투함포항", 100, true, true); buff.dStat.addStatList("모공증", 100, true, true);
 		buff.dStat.addStatList("적방무", 30, true, true); buff.dStat.addStatList("추증뎀", 100, true, true);
 		buff.dStat.addStatList("추크증", 100, true, true); buff.dStat.addStatList("스증뎀", 100, true, true); buff.dStat.addStatList("스증뎀", 100, true, true);
 		buff.dStat.addStatList("물크", 200, true, true); buff.dStat.addStatList("마크", 200, true, true); buff.dStat.addStatList("크리저항감소", 100, true, true);
 		buff.dStat.addStatList("물리마스터리", 100, true, true); buff.dStat.addStatList("마법마스터리", 100, true, true); buff.dStat.addStatList("독공마스터리", 100, true, true);
-		buff.dStat.addStatList("물리마스터리2", 100, true, true); buff.dStat.addStatList("마법마스터리2", 100, true, true);
 		buff.dStat.addStatList("증뎀버프", 100, true, true); buff.dStat.addStatList("증뎀버프", 100, true, true);
 		buff.dStat.addStatList("크증뎀버프", 100, true, true); buff.dStat.addStatList("크증뎀버프", 100, true, true);
 		buff.dStat.addStatList("고정물방깍", 100000, true, true); buff.dStat.addStatList("고정마방깍", 100000, true, true);

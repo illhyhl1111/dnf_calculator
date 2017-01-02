@@ -387,7 +387,7 @@ public class SetOptionInfo {
 		temp.vStat.addStatList("크증뎀", 20);
 		setOptionList.add(temp);
 		//군주
-		temp = new SetOption(SetName.MONARCHOFHEVELON, 3, CalculatorVersion.VER_1_0_b);
+		temp = new SetOption(SetName.MONARCHOFHEVELON, 3, CalculatorVersion.VER_1_1_a);
 		temp.vStat.addStatList("힘", 200);
 		temp.vStat.addStatList("지능", 200);
 		temp.dStat.addStatList("스증뎀", 20, false, true);
@@ -419,8 +419,8 @@ public class SetOptionInfo {
 				return statList;
 			}
 		});
-		temp.explanation.add("속추뎀 옵션 선택시 속추뎀 옵션 적용");
-		temp.explanation.add("속추뎀 옵션 선택 해제시 가장 높은 속성 추가 데미지 15% 옵션 적용");
+		temp.explanation.add("스증뎀 옵션 선택시 스증뎀 옵션 적용");
+		temp.explanation.add("스증뎀 옵션 선택 해제시 가장 높은 속성 추가 데미지 15% 옵션 적용");
 		setOptionList.add(temp);
 		
 		//////////////레전더리
@@ -526,46 +526,41 @@ public class SetOptionInfo {
 		temp.dStat.addStatList("고정마방깍", 12000, false, true);
 		setOptionList.add(temp);
 		//해신
-		temp = new SetOption(SetName.CURSEOFSEAGOD, 3, CalculatorVersion.VER_1_0_a);
-		temp.vStat.addStatList("힘", 70);
-		temp.vStat.addStatList("지능", 70);
+		temp = new SetOption(SetName.CURSEOFSEAGOD, 3, CalculatorVersion.VER_1_1_a);
+		temp.vStat.addStatList("수속강", 12);
+		temp.vStat.addStatList("추뎀", 3);
 		temp.dStat.addStatList(Element_type.WATER, 0, true, false, true);
 		setOptionList.add(temp);
-		temp = new SetOption(SetName.CURSEOFSEAGOD, 5, CalculatorVersion.VER_1_0_a);
-		temp.dStat.addStatList("추뎀", 20, false, true);
+		temp = new SetOption(SetName.CURSEOFSEAGOD, 5, CalculatorVersion.VER_1_1_a);
+		temp.vStat.addStatList("추뎀", 17);
 		setOptionList.add(temp);
-		temp = new SetOption(SetName.CURSEOFSEAGOD, 6, CalculatorVersion.VER_1_0_a);
-		temp.explanation.add("저주쳐가 됩니다");
+		temp = new SetOption(SetName.CURSEOFSEAGOD, 6, CalculatorVersion.VER_1_1_a);
+		temp.explanation.add("공격 시 5% 확률로 저주받은 해신의 격노 발생");
 		setOptionList.add(temp);
 		//질병
-		temp = new SetOption(SetName.ROOTOFDISEASE, 3, CalculatorVersion.VER_1_0_a);
-		temp.dStat.addStatList("%물방깍_템", 10, false, true);
-		temp.dStat.addStatList("%마방깍_템", 10, false, true);
+		temp = new SetOption(SetName.ROOTOFDISEASE, 3, CalculatorVersion.VER_1_1_a);
+		temp.explanation.add("500px 범위 내의 모든 적 상태이상 내성 50 감소");
 		setOptionList.add(temp);
-		temp = new SetOption(SetName.ROOTOFDISEASE, 5, CalculatorVersion.VER_1_0_a);
-		temp.dStat.addStatList("힘", 30*12, true);
-		temp.dStat.addStatList("지능", 30*12, true);
-		temp.dStat.addStatList("물크", 2*12, true);
-		temp.dStat.addStatList("마크", 2*12, true);
-		temp.explanation.add("상태이상을 건 종류 1개당 힘/지능 30, 물/마크 2% 증가");
+		temp = new SetOption(SetName.ROOTOFDISEASE, 5, CalculatorVersion.VER_1_1_a);
+		temp.vStat.addStatList("모속강", 12);
+		temp.dStat.addStatList("%물방깍_템", 10, true);
+		temp.dStat.addStatList("%마방깍_템", 10, true);
 		setOptionList.add(temp);
-		temp = new SetOption(SetName.ROOTOFDISEASE, 6, CalculatorVersion.VER_1_0_a);
-		temp.explanation.add("절레");
+		temp = new SetOption(SetName.ROOTOFDISEASE, 6, CalculatorVersion.VER_1_1_a);
+		temp.dStat.addStatList("추뎀", 5, true);
 		setOptionList.add(temp);
 		//로맨티스트
-		temp = new SetOption(SetName.ROMANTICE, 3, CalculatorVersion.VER_1_0_a);
-		temp.dStat.addStatList("추뎀", 8, false, true);
-		temp.explanation.add("추뎀 조건 : 인간형");
+		temp = new SetOption(SetName.ROMANTICE, 3, CalculatorVersion.VER_1_1_a);
+		temp.vStat.addStatList("추뎀", 5);
 		setOptionList.add(temp);
-		temp = new SetOption(SetName.ROMANTICE, 5, CalculatorVersion.VER_1_0_a);
-		temp.vStat.addStatList("힘", 180);
-		temp.vStat.addStatList("지능", 180);
+		temp = new SetOption(SetName.ROMANTICE, 5, CalculatorVersion.VER_1_1_a);
+		temp.vStat.addStatList("힘", 100);
+		temp.vStat.addStatList("지능", 100);
 		temp.vStat.addSkillRange(48, 48, 1, false);
 		temp.vStat.addSkillRange(50, 50, 2, false);
 		setOptionList.add(temp);
-		temp = new SetOption(SetName.ROMANTICE, 6, CalculatorVersion.VER_1_0_a);
-		temp.dStat.addStatList("추뎀", 12, false, true);
-		temp.explanation.add("추뎀 조건 : 인간형");
+		temp = new SetOption(SetName.ROMANTICE, 6, CalculatorVersion.VER_1_1_a);
+		temp.vStat.addStatList("추뎀", 12);
 		setOptionList.add(temp);
 		//거형
 		temp = new SetOption(SetName.HUGEFORM, 3, CalculatorVersion.VER_1_0_a);

@@ -20,7 +20,7 @@ public class MonsterInfo {
 		try {
 			//누골
 			monster = new Monster("진 : 거대 누골 100Lv(수련의 방)");
-			monster.setStat("백어택", false); monster.setStat("카운터", true);
+			monster.setStat("백어택", false); monster.setStat("카운터", false);
 			monster.setStat("난이도", DefenceIgnorePenalty.TRAININGROOM);
 			monster.setStat("화속저", -20); monster.setStat("수속저", -20);
 			monster.setStat("물리방어력", 168882); monster.setStat("마법방어력", 168882);

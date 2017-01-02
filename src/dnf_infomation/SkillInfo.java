@@ -340,6 +340,7 @@ public class SkillInfo {
 						break;
 					}
 				}
+				//statList.addSkill_damage(skill.getName(), 100.0/(100+skillEnhance)*100-100);
 				skill.dungeonIncrease *= 100.0/(100+skillEnhance);
 				return statList;
 			}
@@ -516,16 +517,17 @@ public class SkillInfo {
 			public StatusList function(Characters character, Monster monster, Object item) {
 				Skill skill = (Skill)item;
 				StatusList statList = new StatusList();
+				int level = skill.getSkillLevel(true, character.isBurning());
 				if(character.characterInfoList.getSkill("강화탄(무)").buffEnabled(true)){
-					statList.addStatList("%물방깍_스킬", skill.getSkillLevel(true, character.isBurning()));
-					statList.addStatList("%마방깍_스킬", skill.getSkillLevel(true, character.isBurning()));
+					statList.addStatList("%물방깍_스킬", level);
+					statList.addStatList("%마방깍_스킬", level);
 				}
 				else if(character.characterInfoList.getSkill("강화탄(화)").buffEnabled(true))
-					statList.addStatList("화속깍", skill.getSkillLevel(true, character.isBurning())*2+2);
+					statList.addStatList("화속깍", level*2+2);
 				else if(character.characterInfoList.getSkill("강화탄(수)").buffEnabled(true))
-					statList.addStatList("수속깍", skill.getSkillLevel(true, character.isBurning())*2+2);
+					statList.addStatList("수속깍", level*2+2);
 				else if(character.characterInfoList.getSkill("강화탄(명)").buffEnabled(true))
-					statList.addStatList("명속깍", skill.getSkillLevel(true, character.isBurning())*2+2);
+					statList.addStatList("명속깍", level*2+2);
 					
 				if(character.characterInfoList.getSkill("강화탄(컨버전)").buffEnabled(true)){
 					statList.addStatList("마법컨버전", new BooleanInfo(true));
@@ -755,7 +757,7 @@ public class SkillInfo {
 				/////패시브
 				"베일드 컷", Skill_type.DAMAGE_BUF, Job.RANGER_F, 48, 60, 50, 3, Element_type.NONE, 
 				"15 2240 0 0 0", "증뎀버프 33","+ 2330", "증뎀버프 35","+ 2419", "증뎀버프 37","+ 2509", "증뎀버프 39","+ 2598", "증뎀버프 41","+ 2688", "증뎀버프 43", null,
-				"킬 포인트", Skill_type.DAMAGE_BUF, Job.RANGER_F, 75, 40, 30, 3, Element_type.NONE, "설명 만크리를 가정한 공격력입니다",
+				"킬 포인트", Skill_type.DAMAGE_BUF, Job.RANGER_F, 75, 40, 30, 3, Element_type.NONE, CalculatorVersion.VER_1_0_g, "설명 만크리를 가정한 공격력입니다",
 				"6 6105*3*1.14+18317 0 0 0", "크증버프 14 & 스킬 킬 포인트 % -14/1.14","+ 6647*3*1.16+19942", "크증버프 16 & 스킬 킬 포인트 % -16/1.16","+ 7198*3*1.18+21567", "크증버프 18 & 스킬 킬 포인트 % -18/1.18",
 				"+ 7730*3*1.2+23192", "크증버프 20 & 스킬 킬 포인트 % -20/1.20","+ 8272*3*1.22+24817", "크증버프 22 & 스킬 킬 포인트 % -22/1.22","+ 8813*3*1.24+26441", "크증버프 24 & 스킬 킬 포인트 % -24/1.24", null,
 				"쏘우 블레이드", Skill_type.BUF_ACTIVE, "", 75, 20, 10, 3,
@@ -818,7 +820,7 @@ public class SkillInfo {
 				"5 0 542.5792 0 542.5792", "+ 581.7292 581.7292", "+ 620.8896 620.8896", "+ 660.0396 660.0396", null,
 				"디-데이", Skill_type.ACTIVE, "", 85, 40, 30, 5, Element_type.NONE, CalculatorVersion.VER_1_0_e,
 				"2 0 31.4594*40 0 31.4594*40", "3 37.3792*40 37.3792*40", "4 43.3*40 43.3*40", "5 49.22*40 49.22*40", null,
-				"G-35L 섬광류탄", Skill_type.DAMAGE_BUF, "", 25, 60, 50, 2, Element_type.NONE, CalculatorVersion.VER_1_0_e,
+				"G-35L 섬광류탄", Skill_type.DAMAGE_BUF, "", 25, 60, 50, 2, Element_type.NONE, CalculatorVersion.VER_1_0_g,
 				"33 0 25.26 0 25.26", "크증버프 15 & 크리저항감소 10", "34 25.86 25.86", "크증버프 16 & 크리저항감소 10", "35 26.46 26.46", "크증버프 17 & 크리저항감소 10", "36 27.07 27.07", "크증버프 18 & 크리저항감소 10",
 				"37 27.67 27.67", "크증버프 19 & 크리저항감소 10", "38 28.27 28.27", "크증버프 20 & 크리저항감소 10", null, 
 				"G-18C 빙결류탄", Skill_type.ACTIVE, "", 30, 60, 50, 2, Element_type.WATER, CalculatorVersion.VER_1_0_e,
@@ -905,7 +907,7 @@ public class SkillInfo {
 				"9 4930*10+21128 4930*10+21128", "10 5206*10+22311 5206*10+22311", "11 5482*10+23495 5482*10+23495", null, 
 				"슈퍼 노바", Skill_type.ACTIVE, "", 85, 40, 30, 5, Element_type.NONE, CalculatorVersion.VER_1_0_d,
 				"2 69827+1994*15 0 69827+1994*15 0", "3 82971+2370*15 82971+2370*15", "4 96115+2746*15 96115+2746*15", "5 109259+3121*15 109259+3121*15", "6 122403+3497*15 122403+3497*15", null,
-				"G-35L 섬광류탄", Skill_type.DAMAGE_BUF, "", 25, 60, 50, 2, Element_type.NONE, CalculatorVersion.VER_1_0_e,
+				"G-35L 섬광류탄", Skill_type.DAMAGE_BUF, "", 25, 60, 50, 2, Element_type.NONE, CalculatorVersion.VER_1_0_g,
 				"33 2526 0 2526 0", "크증버프 15 & 크리저항감소 10", "34 2586 2586", "크증버프 16 & 크리저항감소 10", "35 2646 2646", "크증버프 17 & 크리저항감소 10", "36 2707 2707", "크증버프 18 & 크리저항감소 10",
 				"37 2767 2767", "크증버프 19 & 크리저항감소 10", "38 2827 2827", "크증버프 20 & 크리저항감소 10", null, 
 				"G-18C 빙결류탄", Skill_type.ACTIVE, "", 30, 60, 50, 2, Element_type.WATER, CalculatorVersion.VER_1_0_d,
@@ -1312,8 +1314,10 @@ public class SkillInfo {
 				} catch (StatusTypeMismatch e) {
 					e.printStackTrace();
 				}
-				skill.dungeonIncrease*=num;
-				return new StatusList();
+				StatusList statList = new StatusList();
+				statList.addSkill_damage(skill.getName(), num*100-100);
+				//skill.dungeonIncrease*=num;
+				return statList;
 			}
 		};
 		
@@ -1495,7 +1499,7 @@ public class SkillInfo {
 				/////패시브
 				"원소 폭격", Skill_type.BUF_ACTIVE, "", 30, 5, 5, 5, CalculatorVersion.VER_1_0_d, "설명 검은 눈의 효과 적용",
 				"5", fStat[0], "스킬 체인 라이트닝 % 10", null, 
-				"페이탈 엘레멘트", Skill_type.PASSIVE, "", 48, 40, 30, 3, CalculatorVersion.VER_1_0_d,
+				"페이탈 엘레멘트", Skill_type.PASSIVE, "", 48, 40, 30, 3, CalculatorVersion.VER_1_0_g,
 				"15", "크증버프 24 & 마크 10.0", "+", "크증버프 +1.5 & 마크 +0.5", "반복 1",
 				"검은 눈", "", "", 75, 40, 30, 3, CalculatorVersion.VER_1_0_d, "설명 원소폭격 사용 시 스킬 데미지 증가",
 				"6", "", "+", "", null,
@@ -1614,7 +1618,7 @@ public class SkillInfo {
 				+ "스킬 황룡천공 % +1.5 & 스킬 진 뇌연격 % +1.5 & 스킬 일반 체이서 % +0.5 & 스킬 테아나 체이서 % +0.5 & 스킬 사도화 체이서 % +0.5", "반복 1",
 				"체이서 에볼루션", Skill_type.BUF_ACTIVE, "", 75, 40, 30, 3, CalculatorVersion.VER_1_0_f,
 				"6", "스킬 일반 체이서 % 26", "+", "스킬 일반 체이서 % +3", "반복 1",
-				"문무겸비", Skill_type.PASSIVE, "", 75, 40, 30, 3, CalculatorVersion.VER_1_0_f,
+				"문무겸비", Skill_type.PASSIVE, "", 75, 40, 30, 3, CalculatorVersion.VER_1_0_g,
 				"6", fStat[3], "크증버프 34", "+", fStat[3], "크증버프 +2", "반복 1",
 				"테아나 변신~!!", Skill_type.BUF_ACTIVE, "", 50, 40, 30, 5, CalculatorVersion.VER_1_0_f,
 				"9", "스킬 일반 체이서 % -100 & 스킬 천격 % -100 & 스킬 용아 % -100 & 스킬 낙화장 % -100 & 스킬 더블 스윙 % -100 & 스킬 쇄패 % -100 & 스킬 진 뇌연격 % -100 & 스킬 원무곤 % -100 & 스킬 타이머 밤 % -100 & "

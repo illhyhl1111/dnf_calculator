@@ -6,8 +6,15 @@ import java.util.LinkedList;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -28,6 +35,7 @@ public class DealChart extends DnFComposite {
 	private Monster monster;
 	private Setting compareSetting;
 	private Composite explain;
+	private Composite settings;
 	private Label dealLabel;
 	public final static int LISTSIZE=14;
 	
@@ -35,12 +43,17 @@ public class DealChart extends DnFComposite {
 	private Label evaluateLabel;
 	private long representDamage;
 	private long compareDamage;
+	private int mode=1;
+	private int pageNumber=1;
+	private int totalPageNumber=1; 
 	
 	public DealChart(Composite parent, Characters character)
 	{
 		this.character=character;
 		mainComposite = new Composite(parent, SWT.BORDER);
-		mainComposite.setLayout(new RowLayout(SWT.VERTICAL));
+		RowLayout layout = new RowLayout(SWT.VERTICAL);
+		layout.fill=true;
+		mainComposite.setLayout(layout);
 		mainComposite.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 		mainComposite.setBackgroundMode(SWT.INHERIT_FORCE);
 		
@@ -58,7 +71,59 @@ public class DealChart extends DnFComposite {
 	{
 		for(Control composite : mainComposite.getChildren())
 			composite.dispose();
-				explain = new Composite(mainComposite, SWT.NONE);
+		
+		settings = new Composite(mainComposite, SWT.NONE);
+		settings.setLayout(new FormLayout());
+		Combo modeSelectionCombo = new Combo(settings, SWT.READ_ONLY);
+		modeSelectionCombo.setItems(new String[] { "일반", "추뎀 노크리", "추뎀 크리" });
+		modeSelectionCombo.setText("일반");
+		mode=1;
+		pageNumber=1;
+		FormData formData = new FormData();
+		formData.left = new FormAttachment(50, -50);
+		formData.right = new FormAttachment(50, 50);
+		modeSelectionCombo.setLayoutData(formData);
+		
+		final Button leftButton = new Button(settings, SWT.ARROW | SWT.LEFT);
+		formData = new FormData();
+		formData.left = new FormAttachment(0, 10);
+		leftButton.setLayoutData(formData);
+		final Button rightButton = new Button(settings, SWT.ARROW | SWT.RIGHT);
+		formData = new FormData();
+		formData.right = new FormAttachment(100, -10);
+		rightButton.setLayoutData(formData);
+		
+		modeSelectionCombo.addSelectionListener(new SelectionAdapter(){
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				switch(modeSelectionCombo.getText()){
+				case "일반": mode=1; break;
+				case "추뎀 노크리": mode=2; break;
+				case "추뎀 크리": mode=3; break;
+				}
+				renew();
+			}
+		});
+		
+		leftButton.addSelectionListener(new SelectionAdapter(){
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				pageNumber--;
+				if(pageNumber<=0) pageNumber=1;
+				else renew();
+			}
+		});
+		
+		rightButton.addSelectionListener(new SelectionAdapter(){
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				pageNumber++;
+				if(pageNumber>totalPageNumber) pageNumber=totalPageNumber;
+				else renew();
+			}
+		});
+		
+		explain = new Composite(mainComposite, SWT.NONE);
 		RowLayout layout = new RowLayout(SWT.HORIZONTAL);
 		layout.marginBottom=0;
 		layout.marginTop=0;
@@ -92,26 +157,27 @@ public class DealChart extends DnFComposite {
 			
 			for(Skill skill : character.getDamageSkillList())
 				skillList.add(new DealInfo(mainComposite, skill, character, monster,
-						Calculator.getDamage(skill, monster, character)));
+						Calculator.getDamage(skill, monster, character, mode), mode));
 		}
 		else
 		{			
 			for(Skill skill : character.getDamageSkillList())
-				skillList.add(new DealInfo(mainComposite, skill, character, monster));
+				skillList.add(new DealInfo(mainComposite, skill, character, monster, mode));
 		}		
 		
 		character.setItemSettings(Setting.getMagicalSealedSetting(character.getJob()), false);
-		compareDamage = Calculator.getDamage(character.getRepresentSkill(), monster, character);
+		compareDamage = Calculator.getDamage(character.getRepresentSkill(), monster, character, mode);
 		character.setItemSettings(tempSetting, false);
 		
 		representDamage=0;
 		for(DealInfo dInfo : skillList){
-			dInfo.renew();
+			dInfo.renew(mode);
 			if(dInfo.icon.getItem().getName().equals(character.getRepresentSkill().getName()))
 				representDamage=dInfo.deal;
 		}
 		
 		Collections.sort(skillList);
+		totalPageNumber=(skillList.size()-1)/LISTSIZE+1;
 		while(skillList.size()>LISTSIZE){
 			skillList.getFirst().getComposite().dispose();
 			skillList.removeFirst();
@@ -189,13 +255,13 @@ public class DealChart extends DnFComposite {
 					if(dInfo.icon.getItem().getName().equals(skill.getName())){
 						prevInfo=dInfo;
 						prevInfo.setMonster(monster);
-						prevInfo.setCompare(Calculator.getDamage(skill, monster, character));	
+						prevInfo.setCompare(Calculator.getDamage(skill, monster, character, mode));	
 						break;
 					}
 				}
 				if(prevInfo!=null) newList.add(prevInfo);
 				else newList.add(new DealInfo(mainComposite, skill, character, monster,
-						Calculator.getDamage(skill, monster, character)));
+						Calculator.getDamage(skill, monster, character, mode), mode));
 			}
 		}
 		else
@@ -212,12 +278,12 @@ public class DealChart extends DnFComposite {
 					}
 				}
 				if(prevInfo!=null) newList.add(prevInfo);
-				else newList.add(new DealInfo(mainComposite, skill, character, monster));
+				else newList.add(new DealInfo(mainComposite, skill, character, monster, mode));
 			}
 		}
 		
 		character.setItemSettings(Setting.getMagicalSealedSetting(character.getJob()), false);
-		compareDamage = Calculator.getDamage(character.getRepresentSkill(), monster, character);
+		compareDamage = Calculator.getDamage(character.getRepresentSkill(), monster, character, mode);
 		character.setItemSettings(tempSetting, false);
 		
 		for(int i=0; i<skillList.size(); i++)
@@ -231,12 +297,18 @@ public class DealChart extends DnFComposite {
 		
 		representDamage=0;
 		for(DealInfo dInfo : skillList){
-			dInfo.renew();
+			dInfo.renew(mode);
 			if(dInfo.icon.getItem().getName().equals(character.getRepresentSkill().getName()))
 				representDamage=dInfo.deal;
 		}
 		
 		Collections.sort(skillList);
+		totalPageNumber=(skillList.size()-1)/LISTSIZE+1;
+		for(int i=0; i<(pageNumber-1)*LISTSIZE; i++){
+			skillList.getLast().getComposite().dispose();
+			skillList.removeLast();
+		}
+		
 		while(skillList.size()>LISTSIZE){
 			skillList.getFirst().getComposite().dispose();
 			skillList.removeFirst();
@@ -245,6 +317,7 @@ public class DealChart extends DnFComposite {
 		if(!skillList.isEmpty()){
 			skillList.getFirst().getComposite().moveAbove(null);
 			explain.moveAbove(null);
+			settings.moveAbove(null);
 		}
 		
 		if(skillList.size()>1){
@@ -271,10 +344,12 @@ class DealInfo extends DnFComposite implements Comparable<DealInfo>{
 	CLabel hpLabel;
 	long deal;
 	private long deal_compare;
+	private int mode;
 	
-	public DealInfo(Composite parent, Skill skill, Characters character, Monster monster, long deal_compare)
+	public DealInfo(Composite parent, Skill skill, Characters character, Monster monster, long deal_compare, int mode)
 	{
 		deal=0;
+		this.mode=mode;
 		this.deal_compare=deal_compare;
 		this.character=character;
 		
@@ -307,9 +382,9 @@ class DealInfo extends DnFComposite implements Comparable<DealInfo>{
 		setMonster(monster);
 		mainComposite.layout();
 	}
-	public DealInfo(Composite parent, Skill skill, Characters character, Monster monster)
+	public DealInfo(Composite parent, Skill skill, Characters character, Monster monster, int mode)
 	{
-		this(parent, skill, character, monster, -1);
+		this(parent, skill, character, monster, -1, mode);
 	}
 
 	public void setMonster(Monster monster) {
@@ -317,11 +392,11 @@ class DealInfo extends DnFComposite implements Comparable<DealInfo>{
 		this.monster=monster;
 	}
 
-	@Override
-	public void renew(){
+	public void renew(int mode){
+		this.mode=mode;
 		icon.renewImage();
 		
-		deal = Calculator.getDamage(icon.getItem(), monster, character);
+		deal = Calculator.getDamage(icon.getItem(), monster, character, mode);
 		
 		String compareStr;
 		if(deal_compare==-1){
@@ -379,5 +454,9 @@ class DealInfo extends DnFComposite implements Comparable<DealInfo>{
 		if(deal>o.deal) return 1;
 		else if(deal==o.deal) return 0;
 		else return -1;
+	}
+	@Override
+	public void renew() {
+		renew(mode);	
 	}
 }

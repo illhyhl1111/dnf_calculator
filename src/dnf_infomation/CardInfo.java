@@ -14,6 +14,21 @@ public class CardInfo {
 		Card temp;
 		Item_rarity rarity;
 		
+		temp = new Card("보주 제거", Item_rarity.NONE, CalculatorVersion.VER_1_1_a);
+		temp.addPart(Equip_part.WEAPON);
+		temp.addPart(Equip_part.ROBE);
+		temp.addPart(Equip_part.TROUSER);
+		temp.addPart(Equip_part.SHOULDER);
+		temp.addPart(Equip_part.BELT);
+		temp.addPart(Equip_part.SHOES);
+		temp.addPart(Equip_part.BRACELET);
+		temp.addPart(Equip_part.NECKLACE);
+		temp.addPart(Equip_part.RING);
+		temp.addPart(Equip_part.AIDEQUIPMENT);
+		temp.addPart(Equip_part.MAGICSTONE);
+		temp.addPart(Equip_part.EARRING);
+		cardList.add(temp);
+		
 		////////// 무기, 상의, 하의
 		/////유니크
 		rarity = Item_rarity.UNIQUE;

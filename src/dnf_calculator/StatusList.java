@@ -204,6 +204,13 @@ public class StatusList implements java.io.Serializable, Cloneable {
 		for(StatusAndName s : statList)
 			if(s.enabled) stat.addStat(s.name, s.stat);
 	}
+	public void addListToStat(Status stat, String description) {
+		if(stat instanceof TrackableStatus){
+			for(StatusAndName s : statList)
+				if(s.enabled) stat.trackStat(s.name, s.stat, description);
+		}
+		else addListToStat(stat);
+	}
 	
 	public double getStatSum(int name)
 	{

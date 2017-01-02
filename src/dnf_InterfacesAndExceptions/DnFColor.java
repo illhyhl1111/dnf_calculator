@@ -2,6 +2,7 @@ package dnf_InterfacesAndExceptions;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Display;
 
 public interface DnFColor {
@@ -20,4 +21,8 @@ public interface DnFColor {
 	Color DARK = Display.getCurrent().getSystemColor(SWT.COLOR_BLACK);
 	Color DARK_YELLOW = new Color(Display.getDefault(), 212, 214, 94);
 	Color DISABLED = Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GRAY);
+	
+	Font TEMP = new Font(Display.getDefault(), "Arial", 15, SWT.NONE); 
+	Font TEMP2 = new Font(Display.getDefault(), "Arial", 12, SWT.NONE);
+	Font TEMP3 = new Font(Display.getDefault(), "Arial", 18, SWT.NONE);
 }

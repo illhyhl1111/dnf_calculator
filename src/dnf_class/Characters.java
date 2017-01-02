@@ -23,6 +23,7 @@ import dnf_calculator.SkillStatusInfo;
 import dnf_calculator.Status;
 import dnf_calculator.StatusAndName;
 import dnf_calculator.StatusInfo;
+import dnf_calculator.TrackableStatus;
 import dnf_infomation.BriefCharacterInfo;
 import dnf_infomation.CharacterDictionary;
 import dnf_infomation.GetDictionary;
@@ -107,11 +108,12 @@ public class Characters implements java.io.Serializable
 		setStatus();
 	}
 	
-	private void initStatus()
+	private void initStatus(boolean trackStat, Skill representSkill)
 	{
 		try {
 			villageStatus = new Status(job, level);
-			dungeonStatus = new Status(job, level);
+			if(trackStat) dungeonStatus = new TrackableStatus(job, level, representSkill);
+			else dungeonStatus = new Status(job, level);
 		} catch (ItemNotFoundedException e) {
 			e.printStackTrace();
 		}
@@ -296,8 +298,8 @@ public class Characters implements java.io.Serializable
 	{
 		item.vStat.addListToStat(villageStatus);
 		
-		item.vStat.addListToStat(dungeonStatus);
-		item.dStat.addListToStat(dungeonStatus);
+		item.vStat.addListToStat(dungeonStatus, item.getName());
+		item.dStat.addListToStat(dungeonStatus, item.getName());
 		
 		if(item.getCard()!=null)
 			itemStatUpdate(item.getCard());
@@ -313,13 +315,15 @@ public class Characters implements java.io.Serializable
 	{
 		setOpion.vStat.addListToStat(villageStatus);
 		
-		setOpion.vStat.addListToStat(dungeonStatus);
-		setOpion.dStat.addListToStat(dungeonStatus);
+		setOpion.vStat.addListToStat(dungeonStatus, setOpion.getSetName().getName());
+		setOpion.dStat.addListToStat(dungeonStatus, setOpion.getSetName().getName());
 	}
 	
-	public void setStatus()													// 순서 - 아이템장착 ->버프스킬->스탯
+	public void setStatus(){ trackStatus(false, representSkill); }
+	
+	public void trackStatus(boolean trackStat, Skill trackingSkill)					// 순서 - 아이템장착 ->버프스킬->스탯
 	{
-		initStatus();
+		initStatus(trackStat, trackingSkill);
 		
 		itemStatUpdate(itemSetting.weapon);
 		
@@ -348,7 +352,7 @@ public class Characters implements java.io.Serializable
 		for(Buff buff : buffList)
 			if(buff.enabled) itemStatUpdate(buff);
 		
-		target.getAdditionalStatList().addListToStat(dungeonStatus);
+		target.getAdditionalStatList().addListToStat(dungeonStatus, target.getName());
 		
 		itemSetting.weapon.fStat.addListToStat(dungeonStatus, this, target, itemSetting.weapon);
 		for(Equipment e : itemSetting.equipmentList.values())
@@ -372,10 +376,9 @@ public class Characters implements java.io.Serializable
 		}
 		//TODO 휘장
 		
-		setSkillLevel();
+		setSkillLevel(trackingSkill);
 		
 		for(Skill skill : characterInfoList.skillList){
-			//if(!skill.getSkillLevelInfo(true).fStat.statList.isEmpty()) System.out.println("HI");
 			if(skill.buffEnabled(false)){
 				SkillLevelInfo skillInfo = skill.getSkillLevelInfo(false, isBurning);
 				skillInfo.stat.addListToStat(villageStatus);
@@ -383,7 +386,7 @@ public class Characters implements java.io.Serializable
 			}
 			if(skill.buffEnabled(true)){
 				SkillLevelInfo skillInfo = skill.getSkillLevelInfo(true, isBurning);
-				skillInfo.stat.addListToStat(dungeonStatus);
+				skillInfo.stat.addListToStat(dungeonStatus, skill.getName());
 				//if(!skillInfo.fStat.statList.isEmpty()) skillInfo.fStat.addListToStat(dungeonStatus, this, target, skill);
 			}
 			//else if(skill.isOptionSkill()) skill.getSkillLevelInfo(true, isBurning).fStat.addListToStat(dungeonStatus, this, target, skill);
@@ -394,7 +397,7 @@ public class Characters implements java.io.Serializable
 	//2. 버프 스킬로부터 최종 스킬수치를 구한다.
 	//3. 최종 수치를 스탯에 더한다.
 	//fStat을 포함한 스킬 A는, 스킬 A를 변경시키는 스킬 B의 영향을 제대로 받지 않는다.  
-	private void setSkillLevel() 
+	private void setSkillLevel(Skill trackingSkill) 
 	{
 		getSkillLevel(false, villageStatus.getSkillStatList());
 		getSkillLevel(true, dungeonStatus.getSkillStatList());
@@ -419,7 +422,7 @@ public class Characters implements java.io.Serializable
 				for(FunctionStat fStat : skillInfo.fStat.statList)
 					for(StatusAndName s : fStat.function(this, target, skill).statList){
 						list.add(s.stat);
-						dungeonStatus.addStat(s.name, s.stat);
+						dungeonStatus.trackStat(s.name, s.stat, skill.getName());
 					}
 				getSkillLevel(true, list);
 			}
@@ -429,7 +432,7 @@ public class Characters implements java.io.Serializable
 				for(FunctionStat fStat : skillInfo.fStat.statList)
 					for(StatusAndName s : fStat.function(this, target, skill).statList){
 						list.add(s.stat);
-						dungeonStatus.addStat(s.name, s.stat);
+						dungeonStatus.trackStat(s.name, s.stat, skill.getName());
 					}
 				getSkillLevel(true, list);
 			}
@@ -527,6 +530,16 @@ public class Characters implements java.io.Serializable
 				list.add(skill);
 			}
 		}
+		return list;
+	}
+	
+	public LinkedList<Skill> getTrackingSkillList()
+	{
+		LinkedList<Skill> list = new LinkedList<Skill>();
+		for(Skill skill : characterInfoList.skillList)
+			if(skill.hasDamage()){
+				list.add(skill);
+			}
 		return list;
 	}
 	
@@ -704,6 +717,7 @@ public class Characters implements java.io.Serializable
 			characterInfoList=GetDictionary.getNewCharDictionary(job, level);
 			trainingRoomSeletion = new String[] { "몬스터 설정", "부가조건 설정", "파티원 설정", "부가조건 설정", "부가조건 설정", 
 					"파티원 설정", "부가조건 설정", "부가조건 설정", "파티원 설정", "부가조건 설정", "부가조건 설정"};
+			setStatus();
 		}
 	}
 	

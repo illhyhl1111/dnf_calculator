@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Text;
 import dnf_InterfacesAndExceptions.InterfaceSize;
 import dnf_InterfacesAndExceptions.Location;
 import dnf_InterfacesAndExceptions.SetName;
+import dnf_calculator.TrackRecord;
 import dnf_class.Buff;
 import dnf_class.Card;
 import dnf_class.Characters;
@@ -43,6 +44,7 @@ import dnf_class.SwitchingSkill;
 @SuppressWarnings("unchecked")
 public class SetListener {
 	ItemButton<? extends IconObject> itemButton_wildCard;
+	Label trackingLabel;
 	Characters character;
 	DnFComposite superInfo;
 	Composite itemInfo;
@@ -60,6 +62,18 @@ public class SetListener {
 		this.itemButton_wildCard=itemButton;
 		this.character=character;
 		this.superInfo=superInfo;
+		this.itemInfo=null;
+		this.setInfo=null;
+		this.parent=parent;
+		
+		hasSetOption=false;
+	}
+	
+	public SetListener(Label trackingLabel, Characters character, Composite parent)
+	{
+		this.trackingLabel=trackingLabel;
+		this.character=character;
+		this.superInfo=null;
 		this.itemInfo=null;
 		this.setInfo=null;
 		this.parent=parent;
@@ -508,6 +522,24 @@ public class SetListener {
 		};
 	}
 	
+	public Listener makeTrackingInfoListener(Composite background, TrackRecord record){
+		return new Listener() {
+			@Override
+			public void handleEvent(Event e) {
+				itemInfo = new Composite(background, SWT.BORDER);
+        		GridLayout layout = new GridLayout(2, false);
+        		layout.verticalSpacing=3;
+        		itemInfo.setLayout(layout);
+        		MakeComposite.setTrackingInfoComposite(itemInfo, record, character.option.transparentBackground);
+        		Point itemInfoSize = itemInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+        		itemInfo.moveAbove(null);
+        		 
+        		setMousePoint(e, background, itemInfoSize, null);
+        		itemInfo.setBounds((e.x+x0), (e.y+y0), InterfaceSize.MONSTER_INFO_SIZE, itemInfoSize.y);
+			}
+		};
+	}
+	
 	class AutoMouseScroll extends Thread
 	{
 		boolean end = false;
@@ -603,6 +635,7 @@ public class SetListener {
 			AutoMouseScroll autoScroll;
 			public void dragStart(DragSourceEvent event) {
 				event.doit = (itemButton.getItem().getIcon() != null);
+				if(!event.doit) return;
 				event.image = itemButton.getButton().getImage();
 				if(itemInfo!=null) itemInfo.dispose();
 				if(setInfo!=null) setInfo.dispose();
