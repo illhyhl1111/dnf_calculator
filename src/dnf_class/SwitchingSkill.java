@@ -33,6 +33,13 @@ public class SwitchingSkill extends Skill{
 		return skillInfo.getLast();
 	}
 	
+	@Override
+	public SkillLevelInfo getCanonicalSkillLevelInfo(boolean isDungeon, boolean isBurning)
+	{
+		if(getCharSkillLevel()==0) return skillInfo.getFirst();
+		return skillInfo.getLast();
+	}
+	
 	public int getModifyableNum()
 	{
 		int num = skillInfo.getLast().stat.statList.size();

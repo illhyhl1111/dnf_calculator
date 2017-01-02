@@ -26,6 +26,8 @@ import dnf_InterfacesAndExceptions.Character_type;
 import dnf_InterfacesAndExceptions.InterfaceSize;
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_InterfacesAndExceptions.Job;
+import dnf_InterfacesAndExceptions.Monster_StatList;
+import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 import dnf_calculator.StatusList;
 import dnf_class.Buff;
 import dnf_class.Characters;
@@ -147,6 +149,8 @@ class SettingComposite extends DnFComposite
 	final Combo[] partyCombo;
 	final Combo[] partyOptionCombo1;
 	final Combo[] partyOptionCombo2;
+	final Button setCounterButton;
+	final Button setBackAttackButton;
 	
 	
 	public SettingComposite(TrainingRoom trainingRoom, Characters character, LinkedList<Buff>[] buffList)
@@ -183,7 +187,30 @@ class SettingComposite extends DnFComposite
 		monsterCombo.setText(character.trainingRoomSeletion[0]);
 		monsterComboSelected();
 		monsterOptionCombo.setText(character.trainingRoomSeletion[1]);
-		monsterSelectButtonPushed(false);
+		boolean counter=false, backatk=false;
+		try {
+			counter=character.target.getBool(Monster_StatList.COUNTER);
+			backatk=character.target.getBool(Monster_StatList.BACKATK);
+		} catch (StatusTypeMismatch e1) {
+			e1.printStackTrace();
+		}
+		monsterSelectButtonPushed(false, counter, backatk);
+		
+		setCounterButton = new Button(monsterSettings, SWT.CHECK);
+		setCounterButton.setText("카운터 설정");
+		formData = new FormData(100, 20);
+		formData.top = new FormAttachment(monsterCombo, 5);
+		formData.left = new FormAttachment(0, 10);
+		setCounterButton.setSelection(counter);
+		setCounterButton.setLayoutData(formData);
+		
+		setBackAttackButton = new Button(monsterSettings, SWT.CHECK);
+		setBackAttackButton.setText("백어택 설정");
+		formData = new FormData(100, 20);
+		formData.top = new FormAttachment(monsterCombo, 5);
+		formData.left = new FormAttachment(setCounterButton, 10);
+		setBackAttackButton.setSelection(backatk);
+		setBackAttackButton.setLayoutData(formData);
 		
 		final Button setMonsterButton = new Button(monsterSettings, SWT.PUSH);
 		setMonsterButton.setText("소환");
@@ -204,7 +231,7 @@ class SettingComposite extends DnFComposite
 		setMonsterButton.addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				monsterSelectButtonPushed(true);
+				monsterSelectButtonPushed(true, setCounterButton.getSelection(), setBackAttackButton.getSelection());
 			}
 		});
 		
@@ -284,18 +311,20 @@ class SettingComposite extends DnFComposite
 		}
 	}
 	
-	private void monsterSelectButtonPushed(boolean renew){
+	private void monsterSelectButtonPushed(boolean renew, boolean counter, boolean backATK){
 		if(monsterCombo.getText().equals(monsterDefaultSelection)) return;
 		
 		try {
 			Monster selectedMonster = GetDictionary.charDictionary.getMonsterInfo(monsterCombo.getText());
+			selectedMonster.setBooleanStat(Monster_StatList.COUNTER, counter);
+			selectedMonster.setBooleanStat(Monster_StatList.BACKATK, backATK);
 			selectedMonster.setSubMonster(monsterOptionCombo.getText());
 			
 			trainingRoom.setMonster(selectedMonster);
 			character.trainingRoomSeletion[0]=monsterCombo.getText();
 			character.trainingRoomSeletion[1]=monsterOptionCombo.getText();
 			if(renew) trainingRoom.superInfo.renew();
-		} catch (ItemNotFoundedException e1) {
+		} catch (ItemNotFoundedException | StatusTypeMismatch e1) {
 			e1.printStackTrace();
 		}
 	}

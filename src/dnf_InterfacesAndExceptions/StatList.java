@@ -36,7 +36,7 @@ public interface StatList									// 스탯 종류에 붙는 고유한 식별번
 	int CRT_PHY=DOUBLENUM_START+3; int CRT_MAG=DOUBLENUM_START+4; int CRT_LOW=DOUBLENUM_START+5;
 	int CRT_BACK_PHY=DOUBLENUM_START+6; int CRT_BACK_MAG=DOUBLENUM_START+7;											// 물크, 마크, 크리저항감소, 백물크, 백마크
 	int MAST_IND=DOUBLENUM_START+8; int MAST_PHY=DOUBLENUM_START+9; int MAST_MAG=DOUBLENUM_START+10;				// 물공마스터리, 마공마스터리, 독공%증가
-	int MAST_PHY_2=DOUBLENUM_START+11; int MAST_MAG_2=DOUBLENUM_START+12;											//물공마스터리(종류 2), 마공마스터리(종류 2)
+	int MAST_PHY_2=DOUBLENUM_START+11; int MAST_MAG_2=DOUBLENUM_START+12;											// (비워둠)
 	int BUF_INC=DOUBLENUM_START+13; int BUF_CRT=DOUBLENUM_START+14;													//(스킬) 증뎀버프, 크증뎀버프
 	int MAST_PHY_ITEM=DOUBLENUM_START+15; int MAST_MAG_ITEM=DOUBLENUM_START+16; int MAST_INDEP_ITEM=DOUBLENUM_START+17;		// 물리,마법,독공뻥
 	int DOUBLENUM = 18;														// 총 double형 스탯 개수

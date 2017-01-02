@@ -27,7 +27,7 @@ public enum Job implements java.io.Serializable
 	VANGUARD(Character_type.DEMONICLANCER, "워로드"), DUALIST(Character_type.DEMONICLANCER, "듀란달"),
 	ROUGE(Character_type.THIEF, "알키오네"), KUNOICH(Character_type.THIEF, "시라누이"),
 	SHODOWDANCER(Character_type.THIEF, "그림리퍼"), NECROMENCER(Character_type.THIEF, "타나토스"),
-	CHAOS(Character_type.KNIGHT, "마신"), ELVENKNIGHT(Character_type.THIEF, "가이아"),
+	CHAOS(Character_type.KNIGHT, "마신"), ELVENKNIGHT(Character_type.KNIGHT, "가이아"),
 	
 	//UNIMPLEMENTED(Character_type.NONE, "미구현"),
 	//UNIMPLEMENTED_SWORDMAN(Character_type.SWORDMAN_M, "미구현-귀검사"),

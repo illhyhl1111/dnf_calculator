@@ -130,9 +130,9 @@ public class Skill extends IconObject implements Comparable<Skill>{
 	}
 	public boolean hasDamage()
 	{
-		if(type==Skill_type.ACTIVE || type==Skill_type.DAMAGE_BUF || type==Skill_type.OPTION
+		if(type==Skill_type.ACTIVE || type==Skill_type.DAMAGE_BUF
 				|| type==Skill_type.SUBSKILL || type==Skill_type.DAMAGE_PASSIVE) return true;
-		else if(type==Skill_type.SWITCHING){
+		else if(type==Skill_type.SWITCHING || type==Skill_type.OPTION){
 			if(skillInfo.getLast().hasPhy_per()) return true;
 			if(skillInfo.getLast().hasPhy_fix()) return true;
 			if(skillInfo.getLast().hasMag_per()) return true;
@@ -303,16 +303,14 @@ public class Skill extends IconObject implements Comparable<Skill>{
 		else return getName().compareTo(arg0.getName());
 	}
 	
-	@SuppressWarnings("unchecked")
-	public SkillLevelInfo getSkillLevelInfo(boolean isDungeon, boolean isBurning)
+	public SkillLevelInfo getCanonicalSkillLevelInfo(boolean isDungeon, boolean isBurning)
 	{
 		int level = getSkillLevel(isDungeon, isBurning);
-		double increase;
-		if(isOptionSkill()) increase=1.0;
-		else if(isDungeon)
-			increase=dungeonIncrease;
-		else
-			increase=villageIncrease;
+		return getSkillInfo(level);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private SkillLevelInfo setIncreaseToSkillInfo(int level, double increase){
 		SkillLevelInfo temp = getSkillInfo(level);
 		
 		SkillLevelInfo returnValue = new SkillLevelInfo(level, (int)(temp.phy_atk*increase), temp.phy_fix*increase, (int)(temp.mag_atk*increase), temp.mag_fix*increase);
@@ -334,14 +332,26 @@ public class Skill extends IconObject implements Comparable<Skill>{
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
 		}
+		
 		return returnValue;
+	}
+	
+	public SkillLevelInfo getSkillLevelInfo(boolean isDungeon, boolean isBurning)
+	{
+		int level = getSkillLevel(isDungeon, isBurning);
+		double increase;
+		if(isOptionSkill()) increase=1.0;
+		else if(isDungeon)
+			increase=dungeonIncrease;
+		else
+			increase=villageIncrease;
+		
+		return setIncreaseToSkillInfo(level, increase);
 	}
 	
 	public SkillLevelInfo getSkillLevelInfo(int skillLevel)
 	{
-		for(SkillLevelInfo info : skillInfo)
-			if(info.skillLevel==skillLevel) return info;
-		return null;
+		return setIncreaseToSkillInfo(skillLevel, dungeonIncrease);
 	}
 	
 	@Override

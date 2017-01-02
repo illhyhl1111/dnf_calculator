@@ -5,6 +5,7 @@ import java.util.Map.Entry;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -25,10 +26,12 @@ import dnf_calculator.SkillRangeStatusInfo;
 import dnf_calculator.SkillStatusInfo;
 import dnf_calculator.Status;
 import dnf_calculator.StatusAndName;
+import dnf_calculator.TrackRecord;
 import dnf_class.Card;
 import dnf_class.Characters;
 import dnf_class.Emblem;
 import dnf_class.Equipment;
+import dnf_class.IconObject;
 import dnf_class.Item;
 import dnf_class.Monster;
 import dnf_class.MonsterOption;
@@ -36,6 +39,7 @@ import dnf_class.SetOption;
 import dnf_class.Skill;
 import dnf_class.SkillLevelInfo;
 import dnf_class.Weapon;
+import dnf_infomation.GetDictionary;
 import dnf_infomation.ItemDictionary;
 
 public class MakeComposite {
@@ -616,6 +620,37 @@ public class MakeComposite {
 		else label.setText(name+" : "+strength);
 
 		label.setForeground(textColor);
+	}
+	
+	public static void setTrackingInfoComposite(Composite itemInfo, TrackRecord record, boolean transparentBackground)
+	{
+		if(transparentBackground) itemInfo.setBackground(DnFColor.infoBackground);
+		else itemInfo.setBackground(DnFColor.infoBackground);
+		itemInfo.setBackgroundMode(SWT.INHERIT_FORCE);
+		
+		if(record.source!=null){
+			Label icon = new Label(itemInfo, SWT.NONE);
+			Image image = GetDictionary.iconDictionary.get(IconObject.getItemName(record.source));
+			if(image==null) image = GetDictionary.skillIconDictionary.get(IconObject.getItemName(record.source));
+			if(image!=null){
+				icon.setImage(image);
+			}
+				
+			Label name = new Label(itemInfo, SWT.WRAP);
+			name.setText(record.source);
+			if(image==null) name.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, true, false, 2, 1));
+			else name.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false));
+			name.setForeground(DnFColor.EPIC);
+		}
+		
+		if(record.description!=null){
+			Label description = new Label(itemInfo, SWT.WRAP);
+			String temp = record.description;
+			if(!temp.endsWith("+")) temp+=" :";
+			description.setText(temp+" "+record.toString());
+			description.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, true, false, 2, 1));
+			description.setForeground(DnFColor.EPIC);
+		}
 	}
 	
 	

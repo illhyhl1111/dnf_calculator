@@ -62,7 +62,7 @@ public class InfoStatus extends StatusUI
 			else stat = character.villageStatus;
 			for(int i=0; i<Status.infoStatNum; i++)
 			{
-				if(Status.infoStatOrder[i].equals("마을물공") || Status.infoStatOrder[i].equals("마을마공")) continue;
+				if(Status.infoStatOrder[i].equals("인포물공") || Status.infoStatOrder[i].equals("인포마공")) continue;
 				String temp = ((Text) infoStatusText[i].input).getText();
 				if(temp.isEmpty() || temp.equals("-")) stat.setDoubleStat(Status.infoStatOrder[i], 0);
 				else stat.setDoubleStat(Status.infoStatOrder[i], Double.parseDouble(temp));
@@ -86,10 +86,10 @@ public class InfoStatus extends StatusUI
 			if(isDungeon) stat = character.dungeonStatus;
 			else stat = character.villageStatus;
 			for(int i=0; i<Status.infoStatNum; i++){
-				if(Status.infoStatOrder[i].equals("마을물공")){
+				if(Status.infoStatOrder[i].equals("인포물공")){
 					infoStatusText[i].setTextString(String.valueOf(Calculator.getInfoPhysicalATK(stat)));
 				}
-				else if(Status.infoStatOrder[i].equals("마을마공")){
+				else if(Status.infoStatOrder[i].equals("인포마공")){
 					infoStatusText[i].setTextString(String.valueOf(Calculator.getInfoMagicalATK(stat)));
 				}
 				else if(Status.infoStatOrder[i].equals("힘(최종)")){
