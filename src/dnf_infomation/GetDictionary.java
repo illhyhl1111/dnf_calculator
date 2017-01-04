@@ -448,6 +448,10 @@ public class GetDictionary
 		for(Emblem emblem : itemDictionary.emblemList){
 			emblem.setPlatinumOptionList(job);
 		}
+		
+		for(Card card : itemDictionary.cardList){
+			card.setSkillList(job);
+		}
 
 		return itemDictionary;
 	}

@@ -57,7 +57,8 @@ public class Title extends Item
 	
 	@Override
 	public int compareTo(Item arg) {
-		if(!(arg instanceof Title)){
+		if(arg instanceof SkillTitle) return 1;
+		else if(!(arg instanceof Title)){
 			if(arg instanceof Equipment) return -1;
 			else return 1;
 		}

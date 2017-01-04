@@ -6,8 +6,8 @@ import org.eclipse.swt.widgets.Text;
 
 public class TextInputOnlyNumbers implements VerifyListener
 {
-	int max;
-	TextInputOnlyNumbers(int max)
+	double max;
+	TextInputOnlyNumbers(double max)
 	{
 		this.max=max;
 	}

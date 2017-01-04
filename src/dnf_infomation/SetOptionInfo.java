@@ -564,9 +564,9 @@ public class SetOptionInfo {
 		setOptionList.add(temp);
 		//거형
 		temp = new SetOption(SetName.HUGEFORM, 3, CalculatorVersion.VER_1_0_a);
-		temp.vStat.addStatList("스증뎀", 10);
-		temp.vStat.addStatList("힘뻥", 10, false, true);
-		temp.vStat.addStatList("지능뻥", 10, false, true);
+		temp.dStat.addStatList("스증뎀", 10);
+		temp.dStat.addStatList("힘뻥", 10, false, true);
+		temp.dStat.addStatList("지능뻥", 10, false, true);
 		setOptionList.add(temp);
 		//루크
 		temp = new SetOption(SetName.TACITCONSTRUCTOR, 3, CalculatorVersion.VER_1_0_a);

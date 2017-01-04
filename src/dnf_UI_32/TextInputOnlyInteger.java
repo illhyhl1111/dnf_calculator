@@ -23,6 +23,10 @@ public class TextInputOnlyInteger implements VerifyListener
 
         // get old text and create new text by using the VerifyEvent.text
         final String oldS = text.getText();
+        if(e.start<0 || e.end<0){
+        	e.doit=false;
+        	return;
+        }
         String newS = oldS.substring(0, e.start) + e.text + oldS.substring(e.end);
 
         boolean isInteger = true;

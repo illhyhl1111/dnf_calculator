@@ -207,6 +207,10 @@ public class Characters implements java.io.Serializable
 			previous = itemSetting.title;
 			itemSetting.title = (Title)item;
 		}
+		else if(item instanceof Drape){
+			previous = itemSetting.drape;
+			itemSetting.drape = (Drape)item;
+		}
 		
 		if(updateStat){
 			setStatus();
@@ -280,6 +284,12 @@ public class Characters implements java.io.Serializable
 				success = true;
 			}
 		}
+		else if(item instanceof Drape){
+			if(item.getName().equals(itemSetting.drape.getName())){
+				itemSetting.drape = new Drape();
+				success = true;
+			}
+		}
 		
 		setStatus();
 		
@@ -349,6 +359,7 @@ public class Characters implements java.io.Serializable
 		
 		itemStatUpdate(itemSetting.title);
 		itemStatUpdate(itemSetting.creature);
+		itemStatUpdate(itemSetting.drape);
 		for(Buff buff : buffList)
 			if(buff.enabled) itemStatUpdate(buff);
 		
@@ -374,7 +385,7 @@ public class Characters implements java.io.Serializable
 			}
 			
 		}
-		//TODO 휘장
+		itemSetting.drape.fStat.addListToStat(dungeonStatus, this, target, itemSetting.drape);
 		
 		setSkillLevel(trackingSkill);
 		
@@ -691,7 +702,7 @@ public class Characters implements java.io.Serializable
 		long damage_now = Calculator.getDamage(representSkill, target, this);
 		
 		Item previous = equip(item);
-		if(previous==null) return "착용불가";
+		if(previous==null) return " (착용불가)";
 		else if(previous.getName().equals(item.getName())) return "";
 		
 		long damage_comp = Calculator.getDamage(representSkill, target, this);

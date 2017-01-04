@@ -68,12 +68,12 @@ public class Vault extends Dialog
 		ItemConstraint[] constraintList = setConstraintList(tabNameList.length-1-2, character);
 		LinkedList<Item>[] equipList = character.userItemList.separateList(constraintList);
 		
-		LinkedList<?>[] itemList = new LinkedList<?>[equipList.length+2];
+		LinkedList<Item>[] itemList = (LinkedList<Item>[]) new LinkedList<?>[equipList.length+2];
 		for(int i=0; i<equipList.length; i++)
 			itemList[i]=equipList[i];
 		itemList[equipList.length] = character.userItemList.getSortedList(character.userItemList.avatarList);
 		itemList[equipList.length+1] = character.userItemList.getSortedList(character.userItemList.creatureList);
-		//itemList[equipList.length+2] = character.userItemList.getSortedList(character.userItemList.drapeList); 
+		itemList[equipList.length+1].addAll((LinkedList<? extends Item>) character.userItemList.getSortedList(character.userItemList.drapeList)); 
 		
 		RowLayout packLayout = new RowLayout(SWT.VERTICAL);
 		packLayout.spacing=10;

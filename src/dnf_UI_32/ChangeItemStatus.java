@@ -43,9 +43,11 @@ import dnf_class.Avatar;
 import dnf_class.Buff;
 import dnf_class.Card;
 import dnf_class.Creature;
+import dnf_class.Drape;
 import dnf_class.Emblem;
 import dnf_class.Equipment;
 import dnf_class.Item;
+import dnf_class.SkillCard;
 import dnf_class.Title;
 import dnf_class.Weapon;
 import dnf_infomation.GetDictionary;
@@ -88,6 +90,9 @@ public class ChangeItemStatus extends Dialog{
 	private int currentReforge;
 	private boolean replicateEnabled;
 	private Combo skillListCombo;
+	private Text skillLevelText;
+	
+	private boolean isEmptyItem = false;
 	
 	public ChangeItemStatus(Shell parent, Item item, boolean hasSet, boolean replicateEnabled)
 	{
@@ -95,6 +100,11 @@ public class ChangeItemStatus extends Dialog{
 		this.item=item;		
 		this.hasSet=hasSet;
 		this.replicateEnabled=replicateEnabled;
+		if(item.getItemName().contains("없음")){
+			isEmptyItem=true;
+			return;
+		}
+		
 		try {
 			if(item instanceof Equipment) originalItem=GetDictionary.getEquipment(item.getItemName());
 			else if(item instanceof Title) originalItem=GetDictionary.getTitle(item.getItemName());
@@ -111,12 +121,24 @@ public class ChangeItemStatus extends Dialog{
 						break;
 					}
 			}
+			else if(item instanceof Drape)
+				for(Drape d : GetDictionary.itemDictionary.drapeList)
+					if(d.getName().equals(item.getItemName())){
+						originalItem=d;
+						break;
+					}
 			else originalItem=null;
 		} catch (ItemFileNotReaded | ItemNotFoundedException e) {
 			e.printStackTrace();
 		}
 		vStatEntry = new LinkedList<Entry<Integer, Wrapper>>();
 		dStatEntry = new LinkedList<Entry<Integer, Wrapper>>();
+	}
+	
+	@Override
+	public int open(){
+		if(isEmptyItem) return -1;
+		else return super.open();
 	}
 	
 	@Override
@@ -495,7 +517,7 @@ public class ChangeItemStatus extends Dialog{
 			
 			int index = item.getItemStatIndex();
 			Iterator<StatusAndName> maxS;
-			if(originalItem!=null && !originalItem.getName().contains("아바타 상의"))
+			if(originalItem!=null && !originalItem.getName().contains("아바타 상의") && !(originalItem instanceof SkillCard))
 			{
 				maxS = originalItem.vStat.statList.subList(index, item.vStat.statList.size()).iterator();
 				List<StatusAndName> itemStatList = item.vStat.statList.subList(index, item.vStat.statList.size());
@@ -558,6 +580,26 @@ public class ChangeItemStatus extends Dialog{
 				skillListCombo.setItems(emblem.platinumSkillList.toArray(new String[0]));
 				skillListCombo.setText(emblem.getPlatinumSkill());
 				skillListCombo.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, true, false, 3, 1));
+			}
+			
+			else if(item instanceof SkillCard){
+				label = new Label(composite, SWT.NONE);
+				label.setText("스킬칭호 보주 스킬설정");
+				label.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
+				
+				SkillCard card = (SkillCard)item;
+				skillListCombo = new Combo(composite, SWT.READ_ONLY);
+				skillListCombo.setItems(card.skillList.toArray(new String[0]));
+				skillListCombo.setText(card.getSkill());
+				skillListCombo.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, true, false, 3, 1));
+				
+				label = new Label(composite, SWT.NONE);
+				label.setText("스킬칭호 보주 레벨설정");
+				label.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
+				skillLevelText = new Text(composite, SWT.NONE);
+				skillLevelText.setText(Integer.toString(card.getSkillLevel()));
+				skillLevelText.addVerifyListener(new TextInputOnlyInteger());
+				skillLevelText.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, true, false, 3, 1));
 			}
 			
 			else if(item instanceof Equipment)
@@ -793,7 +835,7 @@ public class ChangeItemStatus extends Dialog{
 			maxStatNum.setEnabled(s.enabled);
 			
 			if(s.changeable){
-				statNum.addVerifyListener(new TextInputOnlyNumbers(Integer.valueOf(maxStrength)));
+				statNum.addVerifyListener(new TextInputOnlyNumbers(Double.valueOf(maxStrength)));
 			}
 			else{
 				statNum.setEditable(false);
@@ -999,6 +1041,14 @@ public class ChangeItemStatus extends Dialog{
 		}
 		else if(item instanceof Emblem && ((Emblem)item).type==Emblem_type.PLATINUM && item.getName().contains("스킬")){
 			((Emblem)item).setPlatinumSkill(skillListCombo.getText());
+			super.okPressed();
+			return;
+		}
+		else if(item instanceof SkillCard){
+			int level = Integer.parseInt(skillLevelText.getText());
+			if(level<0) level=0;
+			else if(level>2) level=2;
+			((SkillCard)item).setSkill(skillListCombo.getText(), level);
 			super.okPressed();
 			return;
 		}

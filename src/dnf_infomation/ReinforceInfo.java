@@ -2,14 +2,18 @@ package dnf_infomation;
 
 import java.util.HashMap;
 
+import dnf_InterfacesAndExceptions.Equip_part;
+import dnf_InterfacesAndExceptions.Equip_type;
 import dnf_InterfacesAndExceptions.Item_rarity;
+import dnf_InterfacesAndExceptions.Job;
 import dnf_InterfacesAndExceptions.UnknownInformationException;
 import dnf_InterfacesAndExceptions.Weapon_detailType;
+import dnf_class.Equipment;
 
 public class ReinforceInfo {
 	
 	private static int[] Epic90Dim = 
-		{ 7,8,10,12,15,19,23,27,31,33,41,74,108,-1,-1,-1,-1,-1 };
+		{ 7,9,11,13,15,19,23,27,31,33,41,74,108,-1,-1,312,-1,-1 };
 	private static int[] Epic85Dim = 
 		{ 7,8,10,12,14,18,22,26,30,32,40,71,105,138,219,301,384,531 };
 	private static int[] Epic80Dim = 
@@ -30,15 +34,15 @@ public class ReinforceInfo {
 		{ -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, -1 };	//걍모름
 	
 	private static int[] Epic90Aid = 
-		{ 0,4,6,8,10,12,14,17,19,22,26,48,73,96,-1,-1,-1,-1};
+		{ 0,4,6,8,10,13,15,17,20,23,26,48,74,97,-1,-1,-1,-1};
 	private static int[] Epic85Aid = 
 		{ 0,4,6,8,10,12,14,17,19,22,25,46,70,93,140,195,250,-1};
 	private static int[] Epic80Aid = 
-		{ 0,3,5,7,9,11,13,16,18,21,23,44,67,-1,-1,-1,-1,-1 };
+		{ 0,3,5,7,9,11,13,16,18,21,23,44,67,85,-1,-1,-1,-1 };
 	private static int[] Epic75Aid =
 		{ 0,3,5,7,9,11,13,15,18,20,22,42,64,85,128,-1,-1,-1 };
 	private static int[] Legendary90Aid =
-		{ 0,3,5,7,9,11,13,16,19,21,24,45,67,-1,-1,-1,-1,-1 };
+		{ 0,3,5,7,9,11,13,16,19,21,24,45,67,85,128,-1,-1,-1 };
 	private static int[] Legendary85Aid =
 		{ 0,3,5,7,9,11,13,15,18,20,23,43,64,86,-1,-1,-1,-1 };
 	private static int[] Chronicle70Aid =
@@ -47,21 +51,21 @@ public class ReinforceInfo {
 		{ 0,3,4,6,7,9,10,12,14,16,18,34,51,69,103,144,-1,-1 };
 	
 	private static int[] Epic90Earring_atk = 
-		{ 0, 5, 7, -1, 13, 15, -1, 23, -1, -1, 39, 61, 91, -1, -1, -1, -1, -1 };
+		{ 0, 5, 7, 10, 13, 15, 19, 23, 26, 30, 39, 61, 91, -1, -1, 254, -1, -1 };
 	private static int[] Epic90Earring_fix = 
-		{ 0, 6, 9, -1, 15, 18, -1, 26, -1, -1, 45, 70, 105, -1, -1, -1, -1, -1 };
+		{ 0, 6, 9, 12, 15, 18, 22, 26, 30, 34, 45, 70, 105, -1, -1, -1, -1, -1 };
 	private static int[] Legendary90Earring_atk = 
-		{ 0, -1, -1, 9, -1, -1, -1, -1, -1, -1, 36, 56, 84, -1, -1, -1, -1, -1 };
+		{ 0, 4, 6, 9, -1, -1, -1, 21, 24, 29, 36, 56, 84, 112, -1, -1, -1, -1 };
 	private static int[] Legendary90Earring_fix = 
-		{ 0, -1, -1, 11, -1, -1, -1, -1, -1, -1, 41, 64, 97, -1, -1, -1, -1, -1 };
+		{ 0, 5, 8, 11, -1, -1, -1, 24, 28, 34, 41, 64, 97, 129, -1, -1, -1, -1 };
 	private static int[] Unique90Earring_atk = 
-		{ 0, -1, -1, -1, -1, 13, -1, 19, -1, -1, 33, 51, 77, -1, -1, -1, -1, -1 };
+		{ 0, 4, 6, 8, 10, 13, 16, 19, -1, -1, 33, 51, 77, -1, -1, -1, -1, -1 };
 	private static int[] Unique90Earring_fix = 
-		{ 0, -1, -1, -1, -1, 15, -1, 22, -1, -1, 38, 59, 89, -1, -1, -1, -1, -1 };
+		{ 0, 5, 7, 10, 12, 15, 18, 22, -1, -1, 38, 59, 89, -1, -1, -1, -1, -1 };
 	private static int[] Rare90Earring_atk = 
-		{ 0, 3, 4, 6, 8, 10, 13, 15, -1, -1, 26, 40, 61, 81, -1, -1, -1, -1 };
+		{ 0, 3, 4, 6, 8, 10, 13, 15, 17, 20, 26, 40, 61, 81, -1, -1, -1, -1 };
 	private static int[] Rare90Earring_fix = 
-		{ 0, 4, 6, 8, 10, 12, 15, 17, -1, -1, 30, 46, 70, 93, -1, -1, -1, -1 };
+		{ 0, 4, 6, 8, 10, 12, 15, 17, 20, 23, 30, 46, 70, 93, -1, -1, -1, -1 };
 	
 	private static int[] Epic90Reforge=
 		{ 0, 38, 57, 75, 113, 151, 245, 339, 471 };
@@ -82,6 +86,11 @@ public class ReinforceInfo {
 	private static HashMap<Item_rarity, Integer> rarityInfo2 = new HashMap<Item_rarity, Integer>();
 	private static HashMap<Weapon_detailType, Double> weaponTypeInfo_phy = new HashMap<Weapon_detailType, Double>();
 	private static HashMap<Weapon_detailType, Double> weaponTypeInfo_mag = new HashMap<Weapon_detailType, Double>();
+	private static HashMap<Item_rarity, Integer> mastery_rarity = new HashMap<Item_rarity, Integer>();
+	private static HashMap<Equip_part, Double> mastery_part = new HashMap<Equip_part, Double>();
+	
+	private static HashMap<Job, MasteryInfo> masteryMap = new HashMap<Job, MasteryInfo>();
+	
 	private static boolean readed=false;
 	
 	private static void readInfo(){
@@ -115,6 +124,51 @@ public class ReinforceInfo {
 		weaponTypeInfo_phy.put(Weapon_detailType.PRIEST_SCYTHE, 1.05); weaponTypeInfo_mag.put(Weapon_detailType.PRIEST_SCYTHE, 1.0);
 		weaponTypeInfo_phy.put(Weapon_detailType.PRIEST_BATTLEAXE, 1.2); weaponTypeInfo_mag.put(Weapon_detailType.PRIEST_BATTLEAXE, 0.85);
 		
+		mastery_rarity.put(Item_rarity.EPIC, 17);
+		mastery_rarity.put(Item_rarity.LEGENDARY, 14);
+		mastery_rarity.put(Item_rarity.UNIQUE, 11);
+		mastery_rarity.put(Item_rarity.CHRONICLE, 7);
+		mastery_rarity.put(Item_rarity.RARE, 5);
+		mastery_rarity.put(Item_rarity.UNCOMMON, 0);
+		mastery_rarity.put(Item_rarity.COMMON, -3);
+		
+		mastery_part.put(Equip_part.ROBE, 0.3);
+		mastery_part.put(Equip_part.TROUSER, 0.25);
+		mastery_part.put(Equip_part.SHOULDER, 0.2);
+		mastery_part.put(Equip_part.BELT, 0.1);
+		mastery_part.put(Equip_part.SHOES, 0.15);
+		
+		masteryMap.put(Job.WEAPONMASTER, new MasteryInfo(Equip_type.MAIL, 36, 0, 1.8, 0, 0, 0));
+		masteryMap.put(Job.SOULMASTER, new MasteryInfo(Equip_type.FABRIC, 0, 24, 0, 1.2, 0, 0));
+		masteryMap.put(Job.BUSERKER, new MasteryInfo(Equip_type.HEAVY, 30, 0, 1.5, 0, 0, 0));
+		masteryMap.put(Job.ASURA, new MasteryInfo(Equip_type.PLATE, 0, 20, 0, 1, 0, 0));
+		masteryMap.put(Job.NENMASTER_F, new MasteryInfo(Equip_type.FABRIC, 0, 24, 0, 1.2, 0, 0));
+		masteryMap.put(Job.NENMASTER_M, new MasteryInfo(Equip_type.FABRIC, 0, 24, 0, 1.2, 0, 0));
+		masteryMap.put(Job.STRIKER_F, new MasteryInfo(Equip_type.MAIL, 40, 0, 2, 0, 5, 0));
+		masteryMap.put(Job.STRIKER_M, new MasteryInfo(Equip_type.MAIL, 40, 0, 2, 0, 5, 0));
+		masteryMap.put(Job.STREETFIGHTER_F, new MasteryInfo(Equip_type.HEAVY, 24, 24, 1.2, 1.2, 0, 0));
+		masteryMap.put(Job.STREETFIGHTER_M, new MasteryInfo(Equip_type.HEAVY, 24, 24, 1.2, 1.2, 0, 0));
+		masteryMap.put(Job.GRAPPLER_F, new MasteryInfo(Equip_type.MAIL, 30, 0, 1.5, 0, 0, 0));
+		masteryMap.put(Job.GRAPPLER_M, new MasteryInfo(Equip_type.MAIL, 30, 0, 1.5, 0, 0, 0));
+		masteryMap.put(Job.RANGER_F, new MasteryInfo(Equip_type.LEATHER, 24, 0, 1.2, 0, 15, 0));
+		masteryMap.put(Job.RANGER_M, new MasteryInfo(Equip_type.LEATHER, 24, 0, 1.2, 0, 15, 0));
+		masteryMap.put(Job.LAUNCHER_F, new MasteryInfo(Equip_type.HEAVY, 30, 0, 1.5, 0, 0, 0));
+		masteryMap.put(Job.LAUNCHER_M, new MasteryInfo(Equip_type.HEAVY, 30, 0, 1.5, 0, 0, 0));
+		masteryMap.put(Job.MECHANIC_F, new MasteryInfo(Equip_type.FABRIC, 0, 24, 0, 1.2, 0, 0));
+		masteryMap.put(Job.MECHANIC_M, new MasteryInfo(Equip_type.FABRIC, 0, 24, 0, 1.2, 0, 0));
+		masteryMap.put(Job.SPITFIRE_F, new MasteryInfo(Equip_type.LEATHER, 24, 24, 1.2, 1.2, 10, 10));
+		masteryMap.put(Job.SPITFIRE_M, new MasteryInfo(Equip_type.LEATHER, 24, 24, 1.2, 1.2, 10, 10));
+		masteryMap.put(Job.ELEMENTALMASTER, new MasteryInfo(Equip_type.FABRIC, 0, 30, 0, 1.5, 0, 3));
+		masteryMap.put(Job.ELEMENTALBOMBER, new MasteryInfo(Equip_type.FABRIC, 0, 33, 0, 1.5, 0, 3));
+		masteryMap.put(Job.SUMMONER, new MasteryInfo(Equip_type.FABRIC, 0, 24, 0, 1.2, 0, 0));
+		masteryMap.put(Job.BATTLEMAGE, new MasteryInfo(Equip_type.LEATHER, 20, 20, 1, 1, 5, 0));
+		masteryMap.put(Job.WITCH, new MasteryInfo(Equip_type.LEATHER, 0, 30, 0, 1.5, 0, 5));
+		masteryMap.put(Job.CRUSADER, new MasteryInfo(Equip_type.PLATE, 0, 2, 0, 0.5, 0, 0));
+		masteryMap.put(Job.INFIGHTER, new MasteryInfo(Equip_type.MAIL, 40, 0, 2, 0, 0, 0));
+		masteryMap.put(Job.EXORCIST, new MasteryInfo(Equip_type.PLATE, 30, 0, 1.5, 0, 0, 0));
+		masteryMap.put(Job.ROUGE, new MasteryInfo(Equip_type.LEATHER, 30, 0, 1.5, 0, 10, 0));
+		masteryMap.put(Job.NECROMENCER, new MasteryInfo(Equip_type.MAIL, 0, 30, 0, 1.5, 0, 0));
+		masteryMap.put(Job.DEMONSLAYER, new MasteryInfo(Equip_type.HEAVY, 30, 0, 1.5, 0, 10, 0));
 		readed=true;
 	}
 	
@@ -263,4 +317,59 @@ public class ReinforceInfo {
 		return temp;
 	}
 
+	public static int getMastery_strInfo(Job job, Equipment equipment)
+	{
+		if(!readed) readInfo();
+		MasteryInfo info = masteryMap.get(job);
+		if(info==null || (info.type!=equipment.getEquipType() && equipment.getEquipType()!=Equip_type.ALL)) return 0;
+		return (int)( (info.basic_str+info.inc_str*(mastery_rarity.get(equipment.getRarity())+equipment.getReinforce()/3+equipment.level))*mastery_part.get(equipment.getPart()) );
+	}
+	public static int getMastery_intInfo(Job job, Equipment equipment)
+	{
+		if(!readed) readInfo();
+		MasteryInfo info = masteryMap.get(job);
+		if(info==null || (info.type!=equipment.getEquipType() && equipment.getEquipType()!=Equip_type.ALL)){
+			if(job==Job.EXORCIST && equipment.getEquipType()==Equip_type.FABRIC) info = new MasteryInfo(Equip_type.FABRIC, 0, 24, 0, 1.2, 0, 0);
+			else return 0;
+		}
+		return (int)( (info.basic_int+info.inc_int*(mastery_rarity.get(equipment.getRarity())+equipment.getReinforce()/3+equipment.level))*mastery_part.get(equipment.getPart()) );
+	}
+	public static double getMastery_phyCrtInfo(Job job, Equipment equipment)
+	{
+		if(!readed) readInfo();
+		MasteryInfo info = masteryMap.get(job);
+		if(info==null || (info.type!=equipment.getEquipType() && equipment.getEquipType()!=Equip_type.ALL)) return 0;
+		double result = info.phy_crt*mastery_part.get(equipment.getPart());
+		int result2 = (int)(result*10+0.5);
+		return result2/10;
+	}
+	public static double getMastery_magCrtInfo(Job job, Equipment equipment)
+	{
+		if(!readed) readInfo();
+		MasteryInfo info = masteryMap.get(job);
+		if(info==null || (info.type!=equipment.getEquipType() && equipment.getEquipType()!=Equip_type.ALL)) return 0;
+		double result = info.mag_crt*mastery_part.get(equipment.getPart());
+		int result2 = (int)(result*10+0.5);
+		return result2/10;
+	}
+}
+
+class MasteryInfo{
+	Equip_type type;
+	int basic_str;
+	int basic_int;
+	int phy_crt;
+	int mag_crt;
+	double inc_str;
+	double inc_int;
+	
+	public MasteryInfo(Equip_type type, int basic_str, int basic_int, double inc_str, double inc_int, int phy_crt, int mag_crt){
+		this.type=type;
+		this.basic_str=basic_str;
+		this.basic_int=basic_int;
+		this.inc_str=inc_str;
+		this.inc_int=inc_int;
+		this.phy_crt=phy_crt;
+		this.mag_crt=mag_crt;
+	}
 }

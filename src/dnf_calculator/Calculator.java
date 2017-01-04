@@ -310,8 +310,8 @@ public class Calculator {
 		try{
 			int inc_weapon1=(int)(stat.getStat(StatList.WEP_PHY));						// [무기물공*(100+마스터리2)/100]
 			int inc_weapon2=(int)( (inc_weapon1*(stat.getStat(StatList.MAST_PHY)+100))/100 + 0.9999);							// [[무기물공*(100+마스터리2)/100]*(100+마스터리1)/100] - 소숫점포함
-			inc_weapon2=(int) (inc_weapon2*(100+stat.getStat(StatList.MAST_PHY_ITEM))/100);
-			return (int)((inc_weapon2*(1+getInfoStrength(stat)/250.0)+ stat.getStat("물리방무")*(100+stat.getStat(StatList.WEP_NODEF_PHY_INC))/100)*(100+stat.getStat("투함포항"))/100);
+			inc_weapon2=(int) ((inc_weapon2*(100+stat.getStat(StatList.MAST_PHY_ITEM))/100)*(100+stat.getStat("투함포항"))/100);
+			return (int)((inc_weapon2*(1+getInfoStrength(stat)/250.0)+ stat.getStat("물리방무")*(100+stat.getStat(StatList.WEP_NODEF_PHY_INC))/100));
 		}
 		catch(StatusTypeMismatch | UndefinedStatusKey e)
 		{
@@ -324,8 +324,8 @@ public class Calculator {
 		try{
 			int inc_weapon1=(int)(stat.getStat(StatList.WEP_MAG));						// [무기마공*(100+마스터리2)/100]
 			int inc_weapon2=(int)( (inc_weapon1*(stat.getStat(StatList.MAST_MAG)+100))/100 + 0.9999);							// [[무기마공*(100+마스터리2)/100]*(100+마스터리1)/100] - 소숫점포함
-			inc_weapon2=(int) (inc_weapon2*(100+stat.getStat(StatList.MAST_MAG_ITEM))/100);
-			return (int)((inc_weapon2*(1+getInfoIntellegence(stat)/250.0)+ stat.getStat("마법방무")*(100+stat.getStat(StatList.WEP_NODEF_MAG_INC))/100)*(100+stat.getStat("투함포항"))/100);
+			inc_weapon2=(int) (inc_weapon2*(100+stat.getStat(StatList.MAST_MAG_ITEM))/100*(100+stat.getStat("투함포항"))/100);
+			return (int)((inc_weapon2*(1+getInfoIntellegence(stat)/250.0)+ stat.getStat("마법방무")*(100+stat.getStat(StatList.WEP_NODEF_MAG_INC))/100));
 		}
 		catch(StatusTypeMismatch | UndefinedStatusKey e)
 		{
@@ -338,9 +338,9 @@ public class Calculator {
 		try{
 			int inc_indep=(int)(stat.getStat(StatList.WEP_IND)*(100+stat.getStat(StatList.MAST_IND))/100*(100+stat.getStat(StatList.MAST_INDEP_ITEM))/100);
 			inc_indep+= (int)(stat.getStat(StatList.WEP_IND_REFORGE)*(100+stat.getStat(StatList.MAST_IND))/100);		// 독공*독공뻥+재련 *재련뻥
-			return (int) (inc_indep*(100+stat.getStat("투함포항"))/100);
+			return inc_indep;
 		}
-		catch(StatusTypeMismatch | UndefinedStatusKey e)
+		catch(StatusTypeMismatch e)
 		{
 			e.printStackTrace();
 			return -1;

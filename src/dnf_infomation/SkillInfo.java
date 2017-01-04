@@ -1,11 +1,15 @@
 package dnf_infomation;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import dnf_InterfacesAndExceptions.CalculatorVersion;
 import dnf_InterfacesAndExceptions.Character_type;
 import dnf_InterfacesAndExceptions.Element_type;
+import dnf_InterfacesAndExceptions.Equip_part;
+import dnf_InterfacesAndExceptions.Equip_type;
+import dnf_InterfacesAndExceptions.Item_rarity;
 import dnf_InterfacesAndExceptions.Job;
 import dnf_InterfacesAndExceptions.ParsingException;
 import dnf_InterfacesAndExceptions.Skill_type;
@@ -21,6 +25,7 @@ import dnf_calculator.StatusAndName;
 import dnf_calculator.StatusInfo;
 import dnf_calculator.StatusList;
 import dnf_class.Characters;
+import dnf_class.Equipment;
 import dnf_class.Monster;
 import dnf_class.Skill;
 import dnf_class.SkillLevelInfo;
@@ -300,6 +305,32 @@ public class SkillInfo {
 			throw new ParsingException(i-1, temp);
 		}
 	}
+	
+	static FunctionStat armorMastery = new FunctionStat(){
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public StatusList function(Characters character, Monster monster, Object item) {
+			StatusList statList = new StatusList();
+			
+			HashMap<Equip_part, Equipment> map = character.getItemSetting().equipmentList;
+			LinkedList<Equipment> equipList = new LinkedList<Equipment>();
+			equipList.add(map.get(Equip_part.ROBE));
+			equipList.add(map.get(Equip_part.TROUSER));
+			equipList.add(map.get(Equip_part.SHOES));
+			equipList.add(map.get(Equip_part.SHOULDER));
+			equipList.add(map.get(Equip_part.BELT));
+			
+			for(Equipment e : equipList){
+				statList.addStatList("힘", ReinforceInfo.getMastery_strInfo(character.getJob(), e));
+				statList.addStatList("지능", ReinforceInfo.getMastery_intInfo(character.getJob(), e));
+				statList.addStatList("물크", ReinforceInfo.getMastery_phyCrtInfo(character.getJob(), e));
+				statList.addStatList("마크", ReinforceInfo.getMastery_magCrtInfo(character.getJob(), e));
+			}
+			
+			return statList;
+		}
+	};
 	
 	public static Object[] skillInfo_swordman()
 	{
@@ -899,9 +930,8 @@ public class SkillInfo {
 				"피스톨 카빈", Skill_type.ACTIVE, "", 70, 40, 30, 2, Element_type.NONE, CalculatorVersion.VER_1_0_d,
 				"11", "귀속/오버 차지/665*17", "+", "귀속/오버 차지/699*17",  "+", "귀속/오버 차지/721*17",  "+", "귀속/오버 차지/766*17",  
 				"+", "귀속/오버 차지/799*17",  "+", "귀속/오버 차지/833*17",  "+", "귀속/오버 차지/866*17",  "+", "귀속/오버 차지/900*17", null,
-				"데인저 클로즈", Skill_type.ACTIVE, "", 75, 40, 30, 2, Element_type.NONE, CalculatorVersion.VER_1_0_e,
-				"8", "귀속/오버 차지/9436", "+", "귀속/오버 차지/9996", "+", "귀속/오버 차지/10557", "+", "귀속/오버 차지/11116",    
-				"+", "귀속/오버 차지/11675", "+", "귀속/오버 차지/12236", "+", "귀속/오버 차지/12795", null,   
+				"데인저 클로즈", Skill_type.ACTIVE, "", 75, 40, 30, 2, Element_type.NONE, CalculatorVersion.VER_1_1_b,
+				"8 66810 0 66810 0", "+ 70770 70770", "+ 74740 74740", "+ 78700 78700", "+ 82660 82660", "+ 86630 86630", "+ 90590 90590", null,   
 				"G-38ARG 반응류탄", Skill_type.ACTIVE, "", 80, 40, 30, 2, Element_type.NONE, CalculatorVersion.VER_1_0_d,
 				"6 4101*10+17579 0 4101*10+17579 0", "7 4377*10+18762 4377*10+18762", "8 4653*10+19945 4653*10+19945",
 				"9 4930*10+21128 4930*10+21128", "10 5206*10+22311 5206*10+22311", "11 5482*10+23495 5482*10+23495", null, 
@@ -1128,9 +1158,9 @@ public class SkillInfo {
 				"헤드샷 강화", "헤드샷", Job.RANGER_M, 60, 7, 5, 10, CalculatorVersion.VER_1_0_f, null,
 				"에어레이드 강화", "에어레이드", Job.RANGER_M, 50, 7, 5, 10, CalculatorVersion.VER_1_0_f, null,
 				"트리플 탭 강화", "트리플 탭", Job.RANGER_M, 55, 7, 5, 10, CalculatorVersion.VER_1_0_f, null,
-				"이동사격 강화", "이동사격", Job.RANGER_M, 50, 7, 5, -1, CalculatorVersion.VER_1_0_f,
-				"1", "스킬 이동사격 % 16.6", "+", "스킬 이동사격 % 34.4", "+", "스킬 이동사격 % 53.4", "+", "스킬 이동사격 % 73.6", "+", "스킬 이동사격 % 95.0",
-				"+", "스킬 이동사격 % 117.6", "+", "스킬 이동사격 % 141.4", null,
+				"이동사격 강화", "이동사격", Job.RANGER_M, 50, 7, 5, 10, CalculatorVersion.VER_1_1_b, null,
+				//"1", "스킬 이동사격 % 16.6", "+", "스킬 이동사격 % 34.4", "+", "스킬 이동사격 % 53.4", "+", "스킬 이동사격 % 73.6", "+", "스킬 이동사격 % 95.0",
+				//"+", "스킬 이동사격 % 117.6", "+", "스킬 이동사격 % 141.4", null,
 				"난사 강화", "난사", Job.RANGER_M, 65, 7, 5, 10, CalculatorVersion.VER_1_0_f, null,
 				"멀티 헤드샷 강화", "멀티 헤드샷", Job.RANGER_M, 65, 7, 5, 10, CalculatorVersion.VER_1_0_f, null,
 				"더블 건호크 강화", "더블 건호크", Job.RANGER_M, 65, 7, 5, -1, CalculatorVersion.VER_1_0_f,
@@ -1139,12 +1169,13 @@ public class SkillInfo {
 				
 				///공용스킬
 				"고대의 기억", Skill_type.BUF_ACTIVE, Character_type.ALL, 15, 20, 10, 3,
-				"1", "지능 15", "+", "지능 +15", "반복 1",
+				"10", "지능 150", "+", "지능 +15", "반복 1",
 				"물리 크리티컬 히트", Skill_type.PASSIVE, "", 20, 20, 10, 3,
-				"1", "물크 1", "+", "물크 +1", "반복 1",
+				"10", "물크 10", "+", "물크 +1", "반복 1",
 				"마법 크리티컬 히트", Skill_type.PASSIVE, "", 20, 20, 10, 3,
-				"1", "마크 1", "+", "마크 +1", "반복 1",
-			
+				"10", "마크 10", "+", "마크 +1", "반복 1",
+				"방어구 마스터리", Skill_type.PASSIVE, "", 15, 1, 1, 1, CalculatorVersion.VER_1_1_b,
+				"1", armorMastery, null, 
 		};
 		
 		return data;
