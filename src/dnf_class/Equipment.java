@@ -20,7 +20,7 @@ public class Equipment extends Item
 	private int reinforce;									//강화수치
 	private Card card;										//보주
 	public final SetName setName;							//셋옵이름
-	public final Equip_type type;							//재질
+	public Equip_type type;									//재질
 	public final int level;									//레벨
 	public boolean isRareItem;
 	

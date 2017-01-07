@@ -411,6 +411,7 @@ public class ItemDictionary implements java.io.Serializable
 					if(item instanceof Equipment){
 						Equipment equip = (Equipment)item;
 						equip.isRareItem = ((Equipment)update).isRareItem;
+						equip.type = ((Equipment)update).getEquipType();
 					}
 					
 					/*if(duplicateList!=null){

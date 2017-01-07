@@ -332,6 +332,8 @@ public class ReinforceInfo {
 			if(job==Job.EXORCIST && equipment.getEquipType()==Equip_type.FABRIC) info = new MasteryInfo(Equip_type.FABRIC, 0, 24, 0, 1.2, 0, 0);
 			else return 0;
 		}
+		if(equipment.getEquipType()==Equip_type.ALL && job==Job.EXORCIST)
+			info = new MasteryInfo(Equip_type.FABRIC, 0, 24, 0, 1.2, 0, 0);
 		return (int)( (info.basic_int+info.inc_int*(mastery_rarity.get(equipment.getRarity())+equipment.getReinforce()/3+equipment.level))*mastery_part.get(equipment.getPart()) );
 	}
 	public static double getMastery_phyCrtInfo(Job job, Equipment equipment)

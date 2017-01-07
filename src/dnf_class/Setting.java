@@ -39,7 +39,7 @@ public class Setting implements java.io.Serializable, Cloneable{
 		avatarList = new HashMap<Equip_part, Avatar>();
 		
 		for(Equip_part v : Equip_part.equipValues())									//장비목록과 장착장비 초기화
-			if(v!=Equip_part.TITLE && v!=Equip_part.WEAPON) equipmentList.put(v, new Equipment(v));
+			if(v!=Equip_part.TITLE && v!=Equip_part.SKILLTITLE && v!=Equip_part.WEAPON) equipmentList.put(v, new Equipment(v));
 		for(Equip_part v : Equip_part.avatarValues())
 			avatarList.put(v,  new Avatar(v));
 		

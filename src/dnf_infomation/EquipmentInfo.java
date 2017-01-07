@@ -149,6 +149,11 @@ public class EquipmentInfo {
 			}
 			catch(Exception e)
 			{
+				e.printStackTrace();
+				System.out.println("앞1 : "+data[i-2]);
+				System.out.println("앞2 : "+data[i-3]);
+				System.out.println("뒤1 : "+data[i]);
+				System.out.println("뒤2 : "+data[i+1]);
 				throw new ParsingException(i-1, temp);
 			}
 			equipList.add(equipment);
@@ -1093,7 +1098,7 @@ public class EquipmentInfo {
 				"애끓는 비탄의 스케일 사바톤", "", "--", "", "", "", "", CalculatorVersion.VER_1_1_b,
 				"힘 28 가변", "지능 20 가변", "ㄷ 물크 8", "ㄷ 마크 8", null,
 				
-				"위대한 영광의 중갑 상의", "", Equip_part.ROBE, "", SetName.GREATGLORY, 85, false, CalculatorVersion.VER_1_1_a, CalculatorVersion.VER_1_1_b,
+				"위대한 영광의 중갑 상의", "", Equip_part.ROBE, "", SetName.GREATGLORY, 85, false, CalculatorVersion.VER_1_1_b,
 				"힘 199 가변", "지능 187 가변", "물크 5", "마크 5", null,
 				"위대한 영광의 중갑 하의", "", "--", "", "", "", "", CalculatorVersion.VER_1_1_b, 
 				"힘 199 가변", "지능 187 가변", "물크 5", "마크 5", null,

@@ -44,7 +44,7 @@ public class Title extends Item
 	@Override
 	public boolean setCard(Card card) {
 		if(card.available(this)){
-			this.card=card;
+			this.card=(Card)card.clone();
 			return true;
 		}
 		return false;

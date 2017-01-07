@@ -723,8 +723,10 @@ public class BestSettingFinder extends Dialog {
 					equipList.put(part, new ArrayList<Item>());
 			}
 			
-			else if(character.getItemSetting().equipmentList.get(part).getName().contains("없음"))
-				equipList.put(part, new ArrayList<Item>());
+			else if(part!=Equip_part.SKILLTITLE){
+				if(character.getItemSetting().equipmentList.get(part).getName().contains("없음"))
+					equipList.put(part, new ArrayList<Item>());
+			}
 		}
 		
 		if(armorSetOnly){

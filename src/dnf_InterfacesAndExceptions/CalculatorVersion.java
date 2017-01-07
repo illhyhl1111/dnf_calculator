@@ -12,6 +12,7 @@ public interface CalculatorVersion {
 	String VER_1_0_g="ver_1.0.g";
 	String VER_1_1_a="ver_1.1.a";
 	String VER_1_1_b="ver_1.1.b";
+	String VER_1_1_c="ver_1.1.c";
 	
 	String ITEM_VERSION=VER_1_1_b;
 	String CHARACTER_VERSION=VER_1_1_b;
