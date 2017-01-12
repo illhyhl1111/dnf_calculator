@@ -437,6 +437,13 @@ public class Calculator {
 			else if(crt<0) crt=0;
 			else crt/=100;
 			
+			while(!skillInfo.hasMag_fix() && !skillInfo.hasMag_per() && !skillInfo.hasPhy_fix() && !skillInfo.hasPhy_per()){
+				for(Entry<String, Integer> entry : skillInfo.percentList.entrySet()){
+					skillInfo = character.characterInfoList.getSkill(entry.getKey()).getSkillLevelInfo(true, character.isBurning());
+					break;
+				}
+			}
+				
 			phy_per_ign = Calculator.percentDamage_physical_ign(skillInfo.phy_atk, skill.element, object, character, skillInfo.indep_level, 1);
 			mag_per_ign = Calculator.percentDamage_magical_ign(skillInfo.mag_atk, skill.element, object, character, skillInfo.indep_level, 1);
 			phy_per = Calculator.percentDamage_physical(skillInfo.phy_atk, skill.element, object, character, skillInfo.indep_level, 1)-phy_per_ign;
@@ -526,7 +533,8 @@ public class Calculator {
 				if(noMagicalDamage(stat, skillInfo)){
 					mag_per=0; mag_fix=0;
 				}
-				result.add(new AbstractMap.SimpleEntry<String, Double>("스킬 레벨", skillInc/((phy_per+mag_per+phy_fix+mag_fix)/deal-1)));
+				if(phy_per+mag_per+phy_fix+mag_fix!=0)
+					result.add(new AbstractMap.SimpleEntry<String, Double>("스킬 레벨", skillInc/((phy_per+mag_per+phy_fix+mag_fix)/deal-1)));
 			}
 			
 		} catch(StatusTypeMismatch e){

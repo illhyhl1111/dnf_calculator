@@ -9,6 +9,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.LinkedList;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.window.Window;
@@ -36,6 +37,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import dnf_InterfacesAndExceptions.Character_type;
 import dnf_InterfacesAndExceptions.Job;
 import dnf_infomation.BriefCharacterInfo;
 import dnf_infomation.GetDictionary;
@@ -109,7 +111,7 @@ public class SelectCharacter extends DnFComposite{
 		}
 	}
 	
-	public BriefCharacterInfo getSelected() {return selectedName;}
+	public BriefCharacterInfo getSelected() { return selectedName; }
 
 	@Override
 	public void renew() {
@@ -230,7 +232,7 @@ public class SelectCharacter extends DnFComposite{
 				saveCharacterList();
 				setDeleteComboItems(deleteCharacterCombo);
 				
-				File charFile = new File("data\\character_"+deleteChar+".dfd");
+				File charFile = new File("data\\character_"+BriefCharacterInfo.getFileName(deleteChar)+".dfd");
 				if(charFile.exists()) charFile.delete();
 				renew();
 			}
@@ -256,6 +258,7 @@ class SaveCharacterDialog extends TitleAreaDialog {
     private Text text;
     private String name;
     private Combo jobCombo;
+    private Combo jobCombo2;
     private Job job;
     private Combo levelCombo;
     private int level;
@@ -305,16 +308,38 @@ class SaveCharacterDialog extends TitleAreaDialog {
             text.setLayoutData(dataInput);
             
             Label lbtJob = new Label(container, SWT.NONE);
-            lbtJob.setText("직업");
+            lbtJob.setText("캐릭터");
             jobCombo = new Combo(container, SWT.READ_ONLY);
             jobCombo.setLayoutData(dataInput);
-            jobCombo.setItems(Job.getImplementedList());
-            jobCombo.select(0);
+            jobCombo.setItems(Character_type.getCharacterTypeList());
+            jobCombo.select(5);
+            
+            Label lbtJob2 = new Label(container, SWT.NONE);
+            lbtJob2.setText("직업");
+            jobCombo2 = new Combo(container, SWT.READ_ONLY);
+            jobCombo2.setLayoutData(dataInput);
+            jobCombo2.setItems(Job.getImplementedList(Character_type.characterStringToEnum(jobCombo.getText())));
+            jobCombo2.select(0);
             
             jobCombo.addSelectionListener(new SelectionAdapter(){
+            	@Override
+				public void widgetSelected(SelectionEvent e) {
+            		jobCombo2.setItems(Job.getImplementedList(Character_type.characterStringToEnum(jobCombo.getText())));
+            		jobCombo2.select(0);
+            		contributor_name.setText(Job.getJob(jobCombo2.getText()).getContributor());
+            		if(contributor_name.getText().equals("미구현") || contributor_name.getText().equals("구현 예정"))
+						getButton(IDialogConstants.OK_ID).setEnabled(false);
+            		else getButton(IDialogConstants.OK_ID).setEnabled(true);
+            	}
+            });
+            
+            jobCombo2.addSelectionListener(new SelectionAdapter(){
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					contributor_name.setText(Job.getJob(jobCombo.getText()).getContributor());
+					contributor_name.setText(Job.getJob(jobCombo2.getText()).getContributor());
+					if(contributor_name.getText().equals("미구현") || contributor_name.getText().equals("구현 예정"))
+						getButton(IDialogConstants.OK_ID).setEnabled(false);
+					else getButton(IDialogConstants.OK_ID).setEnabled(true);
 				}
             });
             
@@ -350,7 +375,7 @@ class SaveCharacterDialog extends TitleAreaDialog {
     @Override
     protected void okPressed() {
     	if(saveInput()){
-    		job = Job.getJob(jobCombo.getText());
+    		job = Job.getJob(jobCombo2.getText());
     		level = Integer.valueOf(levelCombo.getText());
     		super.okPressed();
     	}

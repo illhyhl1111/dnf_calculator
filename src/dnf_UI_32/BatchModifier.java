@@ -241,7 +241,7 @@ public class BatchModifier extends Dialog {
 					partList.add(Equip_part.ROBE);
 				else if(partSelection.equals("하의"))
 					partList.add(Equip_part.TROUSER);
-				else if(partSelection.equals("어깨"))
+				else if(partSelection.equals("머리어깨"))
 					partList.add(Equip_part.SHOULDER);
 				else if(partSelection.equals("벨트"))
 					partList.add(Equip_part.BELT);

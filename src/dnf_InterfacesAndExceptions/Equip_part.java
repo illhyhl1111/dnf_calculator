@@ -39,7 +39,7 @@ public enum Equip_part implements Serializable
 	public static Equip_part[] equipValues(){
 		ArrayList<Equip_part> part = new ArrayList<Equip_part>();
 		for(Equip_part p : Equip_part.values())
-			if(p.order>=0) part.add(p);
+			if(p.order>0) part.add(p);
 		return part.toArray(new Equip_part[0]);
 	}
 	public static Equip_part[] avatarValues(){

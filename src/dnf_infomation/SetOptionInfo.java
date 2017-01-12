@@ -87,10 +87,10 @@ public class SetOptionInfo {
 		temp.explanation.add(".....");
 		setOptionList.add(temp);
 		//택틱
-		temp = new SetOption(SetName.TACTICAL, 5, CalculatorVersion.VER_1_0_a);
+		temp = new SetOption(SetName.TACTICAL, 5, CalculatorVersion.VER_1_1_d);
 		temp.dStat.addStatList("힘", 500);
 		temp.dStat.addStatList("지능", 500);
-		temp.dStat.addStatList("추뎀", 55);
+		temp.dStat.addStatList("추뎀", 55, true);
 		setOptionList.add(temp);
 		//신사
 		temp = new SetOption(SetName.BLACKFORMAL, 3, CalculatorVersion.VER_1_0_a);

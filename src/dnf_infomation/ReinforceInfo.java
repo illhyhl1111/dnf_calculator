@@ -124,6 +124,15 @@ public class ReinforceInfo {
 		weaponTypeInfo_phy.put(Weapon_detailType.PRIEST_SCYTHE, 1.05); weaponTypeInfo_mag.put(Weapon_detailType.PRIEST_SCYTHE, 1.0);
 		weaponTypeInfo_phy.put(Weapon_detailType.PRIEST_BATTLEAXE, 1.2); weaponTypeInfo_mag.put(Weapon_detailType.PRIEST_BATTLEAXE, 0.85);
 		
+		weaponTypeInfo_phy.put(Weapon_detailType.FIGHTER_CLAW, 1.0); weaponTypeInfo_mag.put(Weapon_detailType.FIGHTER_CLAW, 1.0);
+		weaponTypeInfo_phy.put(Weapon_detailType.FIGHTER_GAUNTLET, 1.2); weaponTypeInfo_mag.put(Weapon_detailType.FIGHTER_GAUNTLET, 0.9);
+		weaponTypeInfo_phy.put(Weapon_detailType.FIGHTER_KNUCKLE, 0.95); weaponTypeInfo_mag.put(Weapon_detailType.FIGHTER_KNUCKLE, 1.15);
+		weaponTypeInfo_phy.put(Weapon_detailType.FIGHTER_TONFA, 0.95); weaponTypeInfo_mag.put(Weapon_detailType.FIGHTER_TONFA, 1.0);
+		weaponTypeInfo_phy.put(Weapon_detailType.FITGHTER_BOXGLOVE, 1.05); weaponTypeInfo_mag.put(Weapon_detailType.FITGHTER_BOXGLOVE, 0.95);
+		
+		weaponTypeInfo_phy.put(Weapon_detailType.LANCE_HALBERD, 1.2); weaponTypeInfo_mag.put(Weapon_detailType.LANCE_HALBERD, 0.9);
+		weaponTypeInfo_phy.put(Weapon_detailType.LANCE_PIKE, 1.05); weaponTypeInfo_mag.put(Weapon_detailType.LANCE_PIKE, 0.95);
+		
 		mastery_rarity.put(Item_rarity.EPIC, 17);
 		mastery_rarity.put(Item_rarity.LEGENDARY, 14);
 		mastery_rarity.put(Item_rarity.UNIQUE, 11);
@@ -169,6 +178,8 @@ public class ReinforceInfo {
 		masteryMap.put(Job.ROUGE, new MasteryInfo(Equip_type.LEATHER, 30, 0, 1.5, 0, 10, 0));
 		masteryMap.put(Job.NECROMENCER, new MasteryInfo(Equip_type.MAIL, 0, 30, 0, 1.5, 0, 0));
 		masteryMap.put(Job.DEMONSLAYER, new MasteryInfo(Equip_type.HEAVY, 30, 0, 1.5, 0, 10, 0));
+		masteryMap.put(Job.VANGUARD, new MasteryInfo(Equip_type.HEAVY, 32, 0, 1.6, 0, 10, 0));
+		masteryMap.put(Job.ELVENKNIGHT, new MasteryInfo(Equip_type.PLATE, 30, 0, 1.5, 0, 10, 0));
 		readed=true;
 	}
 	
@@ -321,7 +332,10 @@ public class ReinforceInfo {
 	{
 		if(!readed) readInfo();
 		MasteryInfo info = masteryMap.get(job);
-		if(info==null || (info.type!=equipment.getEquipType() && equipment.getEquipType()!=Equip_type.ALL)) return 0;
+		if(info==null || (info.type!=equipment.getEquipType() && equipment.getEquipType()!=Equip_type.ALL)){
+			if(job==Job.EXORCIST && equipment.getEquipType()==Equip_type.HEAVY) info = new MasteryInfo(Equip_type.HEAVY, 20, 0, 1, 0, 0, 0);
+			else return 0;
+		}
 		return (int)( (info.basic_str+info.inc_str*(mastery_rarity.get(equipment.getRarity())+equipment.getReinforce()/3+equipment.level))*mastery_part.get(equipment.getPart()) );
 	}
 	public static int getMastery_intInfo(Job job, Equipment equipment)

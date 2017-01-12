@@ -11,6 +11,7 @@ import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_InterfacesAndExceptions.Item_rarity;
 import dnf_InterfacesAndExceptions.Job;
 import dnf_InterfacesAndExceptions.SetName;
+import dnf_InterfacesAndExceptions.Skill_type;
 import dnf_InterfacesAndExceptions.StatList;
 import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 import dnf_InterfacesAndExceptions.UndefinedStatusKey;
@@ -537,7 +538,8 @@ public class Characters implements java.io.Serializable
 		LinkedList<Skill> list = new LinkedList<Skill>();
 		for(Skill skill : characterInfoList.skillList)
 		{
-			if(skill.hasDamage() && skill.getActiveEnabled() && !skill.isOptionSkill() && !skill.isSubSkill()){
+			if(skill.hasDamage() && skill.getActiveEnabled() && !skill.isOptionSkill()
+					&& !skill.isSubSkill() && skill.type!=Skill_type.ACTIVE_NOMARK){
 				list.add(skill);
 			}
 		}

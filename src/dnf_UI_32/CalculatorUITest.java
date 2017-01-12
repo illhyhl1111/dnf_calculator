@@ -43,6 +43,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import dnf_InterfacesAndExceptions.CalculatorVersion;
 import dnf_class.Characters;
+import dnf_infomation.BriefCharacterInfo;
 import dnf_infomation.GetDictionary;
 
 public class CalculatorUITest {
@@ -334,7 +335,7 @@ class CalculatorUILoad
 		
 		Characters character;
 		try{
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream("data\\character_"+selectionSet.getSelected().name+".dfd"));
+			ObjectInputStream in = new ObjectInputStream(new FileInputStream("data\\character_"+BriefCharacterInfo.getFileName(selectionSet.getSelected().name)+".dfd"));
 			Object temp = in.readObject();
 			character = (Characters)temp;
 			character.updateDictionary();
@@ -434,7 +435,7 @@ class CalculatorUILoad
 				terminateSignal.selectionShellterminated=true;
 				Characters newCharacter;
 				try{
-					ObjectInputStream in = new ObjectInputStream(new FileInputStream("data\\character_"+selectionSet.getSelected().name+".dfd"));
+					ObjectInputStream in = new ObjectInputStream(new FileInputStream("data\\character_"+BriefCharacterInfo.getFileName(selectionSet.getSelected().name)+".dfd"));
 					Object temp = in.readObject();
 					newCharacter = (Characters)temp;
 					newCharacter.updateDictionary();
@@ -480,7 +481,7 @@ class CalculatorUILoad
 			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				try{
-					ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("data\\character_"+character.name+".dfd"));
+					ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("data\\character_"+BriefCharacterInfo.getFileName(character.name)+".dfd"));
 					out.writeObject(character);
 					out.close();
 				}

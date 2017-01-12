@@ -125,12 +125,12 @@ public class Skill extends IconObject implements Comparable<Skill>{
 	
 	public boolean hasBuff()
 	{
-		if(type==Skill_type.ACTIVE) return false;
+		if(type==Skill_type.ACTIVE || type==Skill_type.ACTIVE_NOMARK || type==Skill_type.SUBSKILL) return false;
 		else return true;
 	}
 	public boolean hasDamage()
 	{
-		if(type==Skill_type.ACTIVE || type==Skill_type.DAMAGE_BUF
+		if(type==Skill_type.ACTIVE || type==Skill_type.ACTIVE_NOMARK || type==Skill_type.DAMAGE_BUF
 				|| type==Skill_type.SUBSKILL || type==Skill_type.DAMAGE_PASSIVE) return true;
 		else if(type==Skill_type.SWITCHING || type==Skill_type.OPTION){
 			if(skillInfo.getLast().hasPhy_per()) return true;

@@ -40,6 +40,9 @@ public class CharacterDictionary implements java.io.Serializable, Cloneable
 			SkillInfo.getInfo(skillList, SkillInfo.skillInfo_swordman());
 			SkillInfo.getInfo(skillList, SkillInfo.skillInfo_mage());
 			SkillInfo.getInfo(skillList, SkillInfo.skillInfo_priest());
+			SkillInfo.getInfo(skillList, SkillInfo.skillInfo_fighter());
+			SkillInfo.getInfo(skillList, SkillInfo.skillInfo_demonicLancer());
+			SkillInfo.getInfo(skillList, SkillInfo.skillInfo_knight());
 		} catch (ParsingException e) {
 			e.printStackTrace();
 		}

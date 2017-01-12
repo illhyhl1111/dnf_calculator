@@ -5,7 +5,7 @@ public enum Weapon_detailType {
 	SWORD_KATANA(Weapon_type.SWORD, "도"), SWORD_LIGHTSWORD(Weapon_type.SWORD, new Job[]{Job.WEAPONMASTER, Job.VEGABOND, Job.DARKKNIGHT}, "광검"),
 	
 	FIGHTER_TONFA(Weapon_type.FIGHTER, "통파"), FIGHTER_CLAW(Weapon_type.FIGHTER, "클로"), FIGHTER_GAUNTLET(Weapon_type.FIGHTER, "건틀릿"),
-	FITGHTER_BOXGLOVE(Weapon_type.FIGHTER, "권투글러브"), FIGHTER_KNUCKLE(Weapon_type.FIGHTER, "너클"),
+	FITGHTER_BOXGLOVE(Weapon_type.FIGHTER, new Job[]{Job.STRIKER_F, Job.STRIKER_M}, "권투글러브"), FIGHTER_KNUCKLE(Weapon_type.FIGHTER, "너클"),
 	
 	GUN_HCANON(Weapon_type.GUN, "핸드캐넌"), GUN_MUSKET(Weapon_type.GUN, "머스켓"), GUN_REVOLVER(Weapon_type.GUN, "리볼버"),
 	GUN_BOWGUN(Weapon_type.GUN, "보우건"), GUN_AUTOPISTOL(Weapon_type.GUN, "자동권총"),
@@ -17,7 +17,7 @@ public enum Weapon_detailType {
 	PRIEST_TOTEM(Weapon_type.PRIEST, "토템"), PRIEST_SCYTHE(Weapon_type.PRIEST, "낫"),
 	
 	THIEF_WAND(Weapon_type.THIEF, "완드"), THIEF_DAGGER(Weapon_type.THIEF, "단검"),
-	THIEF_TWINSWORD(Weapon_type.THIEF, "쌍검"), THIEF_CHAKRAWEAPON(Weapon_type.THIEF, "차크라웨펀"),
+	THIEF_TWINSWORD(Weapon_type.THIEF, "쌍검"), THIEF_CHAKRAWEAPON(Weapon_type.THIEF, new Job[]{Job.KUNOICH}, "차크라웨펀"),
 	
 	LANCE_PIKE(Weapon_type.LANCE, "장창"), LANCE_HALBERD(Weapon_type.LANCE, "미늘창"),
 	

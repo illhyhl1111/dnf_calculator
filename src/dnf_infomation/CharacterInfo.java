@@ -138,5 +138,35 @@ public class CharacterInfo {
 		temp.statList.addStatList("물크", 8);
 		temp.statList.addStatList("마크", 8);
 		basicStatList.add(temp);
+		
+		/////패황
+		temp = new CharInfoBox(Job.STRIKER_M, 90, new StatusList());
+		temp.statList.addStatList("힘", 745);
+		temp.statList.addStatList("지능", 688);
+		temp.statList.addStatList("독공", 960);
+		temp.statList.addStatList("모속강", 13);
+		temp.statList.addStatList("물크", 8);
+		temp.statList.addStatList("마크", 8);
+		basicStatList.add(temp);
+		
+		/////워로드
+		temp = new CharInfoBox(Job.VANGUARD, 90, new StatusList());
+		temp.statList.addStatList("힘", 758);
+		temp.statList.addStatList("지능", 604);
+		temp.statList.addStatList("독공", 960);
+		temp.statList.addStatList("모속강", 13);
+		temp.statList.addStatList("물크", 8);
+		temp.statList.addStatList("마크", 8);
+		basicStatList.add(temp);
+		
+		/////엘븐
+		temp = new CharInfoBox(Job.ELVENKNIGHT, 90, new StatusList());
+		temp.statList.addStatList("힘", 744);
+		temp.statList.addStatList("지능", 658);
+		temp.statList.addStatList("독공", 960);
+		temp.statList.addStatList("모속강", 13);
+		temp.statList.addStatList("물크", 8);
+		temp.statList.addStatList("마크", 8);
+		basicStatList.add(temp);
 	}
 }
