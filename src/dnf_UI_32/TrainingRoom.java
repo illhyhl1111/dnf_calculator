@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.Map.Entry;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -31,6 +32,7 @@ import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 import dnf_calculator.StatusList;
 import dnf_class.Buff;
 import dnf_class.Characters;
+import dnf_class.Equipment;
 import dnf_class.Monster;
 import dnf_class.MonsterOption;
 import dnf_class.PartyCharacter;
@@ -323,6 +325,23 @@ class SettingComposite extends DnFComposite
 			trainingRoom.setMonster(selectedMonster);
 			character.trainingRoomSeletion[0]=monsterCombo.getText();
 			character.trainingRoomSeletion[1]=monsterOptionCombo.getText();
+			
+			if(selectedMonster.getName().equals("진 : 거대 누골 100Lv(수련의 방)") && counter){
+				MessageDialog dialog = new MessageDialog(mainComposite.getShell(), "경고", null,
+					    "슈퍼홀딩 스킬의 경우 카운터 진누골 딜이 실제와 다를 수 있습니다."
+					    + "\n\nex) 실버스트림의 경우 누골에서 첫타와 막타는 카운터적용이 되지만"
+					    + "\n     실전에선 홀딩으로 인해 몹의 카운터가 끊긴 상황에서"
+					    + "\n     막타 홀딩이 빠지는 순간 카운터가 들어갈 일은 에게느 제외 잘 없음"
+					    + "\n\n계산기에선 슈퍼홀딩이 들어간 스킬은 일괄적으로 카운터 미적용으로 계산되며"
+					    + "\n이는 누골도 마찬가지기 때문에 수련방 딜표와 오차가 생깁니다"
+					    + "\n\n그냥 애초에 카운터로 누골 좀 안팼으면 좋겠습니다."
+					    + "\n2년전 수련방에서 120초(자버프 꺼지기 전)안에 죽이는게 가능했던 몹이"
+					    + "\n누골밖에 없던시절 만들어진 관습인데"
+					    + "\n\n아무튼 개떡같은 측정방법이니 자제",
+					    MessageDialog.WARNING, new String[] { "알았어영" }, 0);
+				dialog.open();
+			}
+			
 			if(renew) trainingRoom.superInfo.renew();
 		} catch (ItemNotFoundedException | StatusTypeMismatch e1) {
 			e1.printStackTrace();

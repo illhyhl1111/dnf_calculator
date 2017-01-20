@@ -599,7 +599,9 @@ public class ChangeItemStatus extends Dialog{
 				skillLevelText = new Text(composite, SWT.NONE);
 				skillLevelText.setText(Integer.toString(card.getSkillLevel()));
 				skillLevelText.addVerifyListener(new TextInputOnlyInteger());
-				skillLevelText.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, true, false, 3, 1));
+				GridData gridData = new GridData(SWT.LEFT, SWT.TOP, true, false, 3, 1);
+				gridData.widthHint = 30;
+				skillLevelText.setLayoutData(gridData);
 			}
 			
 			else if(item instanceof Equipment)

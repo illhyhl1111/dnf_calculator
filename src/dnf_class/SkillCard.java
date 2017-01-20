@@ -35,7 +35,7 @@ public class SkillCard extends Card{
 		
 		for(Skill skill : GetDictionary.getSkillList(job, 90)){
 			if(skill.type!=Skill_type.TP && skill.maxLevel!=1 && skill.firstLevel!=1 && !skill.isOptionSkill() && !skill.isSubSkill()
-					&& skill.firstLevel<=70 && skill.firstLevel!=50 && skill.firstLevel!=48 && skill.job==job)
+					&& skill.firstLevel<=70 && skill.firstLevel!=48 && skill.job==job)
 				skillList.add(skill.getItemName());
 		}
 		skill = skillList.getFirst();

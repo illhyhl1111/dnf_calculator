@@ -216,7 +216,7 @@ public class StatusList implements java.io.Serializable, Cloneable {
 	{
 		double temp=0;
 		for(StatusAndName s : statList)
-			if(s.name==name)
+			if(s.name==name && s.enabled)
 				try {
 					temp+=s.stat.getStatToDouble();
 				} catch (StatusTypeMismatch e) {

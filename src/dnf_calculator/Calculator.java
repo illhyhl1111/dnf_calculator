@@ -24,13 +24,13 @@ public class Calculator {
 		SkillLevelInfo skillInfo = skill.getSkillLevelInfo(true, character.isBurning());
 		Status stat=character.dungeonStatus;
 		if(skillInfo.hasPhy_per() && !noPhysicalDamage(stat, skillInfo)) 
-			deal += Calculator.percentDamage_physical(skillInfo.phy_atk, skill.element, object, character, skillInfo.indep_level, mode);
+			deal += Calculator.percentDamage_physical(skillInfo.phy_atk, skill.element, object, character, skillInfo.indep_level, skill.isHoldingSkill, mode);
 		if(skillInfo.hasPhy_fix() && !noPhysicalDamage(stat, skillInfo))
-			deal += Calculator.fixedDamage_physical(skillInfo.phy_fix, skill.element, object, character, skillInfo.indep_level, mode);
+			deal += Calculator.fixedDamage_physical(skillInfo.phy_fix, skill.element, object, character, skillInfo.indep_level, skill.isHoldingSkill, mode);
 		if(skillInfo.hasMag_per() && !noMagicalDamage(stat, skillInfo))
-			deal += Calculator.percentDamage_magical(skillInfo.mag_atk, skill.element, object, character, skillInfo.indep_level, mode);
+			deal += Calculator.percentDamage_magical(skillInfo.mag_atk, skill.element, object, character, skillInfo.indep_level, skill.isHoldingSkill, mode);
 		if(skillInfo.hasMag_fix() && !noMagicalDamage(stat, skillInfo))
-			deal += Calculator.fixedDamage_magical(skillInfo.mag_fix, skill.element, object, character, skillInfo.indep_level, mode);
+			deal += Calculator.fixedDamage_magical(skillInfo.mag_fix, skill.element, object, character, skillInfo.indep_level, skill.isHoldingSkill, mode);
 		
 		for(Entry<String, Integer> entry : skillInfo.percentList.entrySet()){
 			if((!skill.hasBuff() && skill.getActiveEnabled()) || skill.buffEnabled(true))
@@ -43,7 +43,7 @@ public class Calculator {
 	{ return getDamage(skill, object, character, 1); }
 	
 	
-	public static long percentDamage_physical(int skillPercent, Element_type element, Monster object, Characters character, int indepLevel, int mode)
+	public static long percentDamage_physical(int skillPercent, Element_type element, Monster object, Characters character, int indepLevel, boolean isHoldingSkill, int mode)
 	{
 		//calculate with status
 		try{
@@ -61,7 +61,7 @@ public class Calculator {
 			
 			double inc_critical = getIncCrt_phy(object, stat);
 			
-			return (long)(skillPercent/100.0*frontATK*inc_critical*damage_enhancing_avg(stat, object, character, elementCal, mode));
+			return (long)(skillPercent/100.0*frontATK*inc_critical*damage_enhancing_avg(stat, object, character, elementCal, mode, isHoldingSkill));
 		}
 		catch(StatusTypeMismatch e)
 		{
@@ -69,11 +69,11 @@ public class Calculator {
 			return -1;
 		}
 	}
-	public static long percentDamage_physical(int skillPercent, Element_type element, Monster object, Characters character, int indepLevel)
-	{ return percentDamage_physical(skillPercent, element, object, character, indepLevel, 1); }
+	public static long percentDamage_physical(int skillPercent, Element_type element, Monster object, Characters character, int indepLevel, boolean isHoldingSkill)
+	{ return percentDamage_physical(skillPercent, element, object, character, indepLevel, isHoldingSkill, 1); }
 	
 	
-	public static long fixedDamage_physical(double skillValue, Element_type element, Monster object, Characters character, int indepLevel, int mode)
+	public static long fixedDamage_physical(double skillValue, Element_type element, Monster object, Characters character, int indepLevel, boolean isHoldingSkill, int mode)
 	{
 		//calculate with status
 		try{
@@ -90,18 +90,18 @@ public class Calculator {
 			
 			double inc_critical = getIncCrt_phy(object, stat);
 			
-			return (long)((double)skillValue*frontATK*inc_critical*damage_enhancing_avg(stat, object, character, elementCal, mode));
+			return (long)((double)skillValue*frontATK*inc_critical*damage_enhancing_avg(stat, object, character, elementCal, mode, isHoldingSkill));
 		} 
 		catch (StatusTypeMismatch e) {
 			e.printStackTrace();
 			return -1;
 		}
 	}
-	public static long fixedDamage_physical(double skillValue, Element_type element , Monster object, Characters character, int indepLevel)
-	{ return fixedDamage_physical(skillValue, element, object, character, indepLevel, 1); }
+	public static long fixedDamage_physical(double skillValue, Element_type element , Monster object, Characters character, int indepLevel, boolean isHoldingSkill)
+	{ return fixedDamage_physical(skillValue, element, object, character, indepLevel, isHoldingSkill, 1); }
 	
 	
-	public static long percentDamage_magical(int skillPercent, Element_type element, Monster object, Characters character, int indepLevel, int mode)
+	public static long percentDamage_magical(int skillPercent, Element_type element, Monster object, Characters character, int indepLevel, boolean isHoldingSkill, int mode)
 	{
 		//calculate with status
 		try{
@@ -119,18 +119,18 @@ public class Calculator {
 			
 			double inc_critical = getIncCrt_mag(object, stat);
 			
-			return (long)(skillPercent/100.0*frontATK*inc_critical*damage_enhancing_avg(stat, object, character, elementCal, mode));
+			return (long)(skillPercent/100.0*frontATK*inc_critical*damage_enhancing_avg(stat, object, character, elementCal, mode, isHoldingSkill));
 		}
 		catch (StatusTypeMismatch e) {
 			e.printStackTrace();
 			return -1;
 		}
 	}
-	public static long percentDamage_magical(int skillPercent, Element_type element, Monster object, Characters character, int indepLevel)
-	{ return percentDamage_magical(skillPercent, element, object, character, indepLevel, 1); } 
+	public static long percentDamage_magical(int skillPercent, Element_type element, Monster object, Characters character, int indepLevel, boolean isHoldingSkill)
+	{ return percentDamage_magical(skillPercent, element, object, character, indepLevel, isHoldingSkill, 1); } 
 	
 	
-	public static long fixedDamage_magical(double skillValue, Element_type element, Monster object, Characters character, int indepLevel, int mode)
+	public static long fixedDamage_magical(double skillValue, Element_type element, Monster object, Characters character, int indepLevel, boolean isHoldingSkill, int mode)
 	{
 		//calculate with status
 		try{
@@ -147,15 +147,15 @@ public class Calculator {
 			
 			double inc_critical = getIncCrt_mag(object, stat);
 
-			return (long)((double)skillValue*frontATK*inc_critical*damage_enhancing_avg(stat, object, character, elementCal, mode));
+			return (long)((double)skillValue*frontATK*inc_critical*damage_enhancing_avg(stat, object, character, elementCal, mode, isHoldingSkill));
 		}
 		catch (StatusTypeMismatch e) {
 			e.printStackTrace();
 			return -1;
 		}
 	}
-	public static long fixedDamage_magical(double skillValue, Element_type element, Monster object, Characters character, int indepLevel)
-	{ return fixedDamage_magical(skillValue, element, object, character, indepLevel, 1); } 
+	public static long fixedDamage_magical(double skillValue, Element_type element, Monster object, Characters character, int indepLevel, boolean isHoldingSkill)
+	{ return fixedDamage_magical(skillValue, element, object, character, indepLevel, isHoldingSkill, 1); } 
 	
 
 	private static double getIncCrt_phy(Monster object, Status stat) throws StatusTypeMismatch
@@ -213,7 +213,8 @@ public class Calculator {
 		return inc_add;
 	}
 	
-	public static double damage_enhancing_avg(Status stat, Monster object, Characters character, CalculateElement elementCal, int mode) throws StatusTypeMismatch  	// 속강증크증스증추뎀카운터투함포기타등등
+	public static double damage_enhancing_avg(Status stat, Monster object, Characters character, CalculateElement elementCal, int mode, boolean isHoldingSkill)
+			throws StatusTypeMismatch  	// 속강증크증스증추뎀카운터투함포기타등등
 	{
 		double inc_damage=(100.0+stat.getStat(StatList.BUF_INC))/100.0;										// 증뎀버프
 		if(object.getBool(Monster_StatList.BACKATK) && stat.getStat(StatList.DAM_INC_BACK)>stat.getStat(StatList.DAM_INC))
@@ -224,7 +225,7 @@ public class Calculator {
 		/////////////////////////////
 		
 		double inc_counter=1;
-		if(object.getBool(Monster_StatList.COUNTER)) inc_counter=1.25;																// 카운터
+		if(object.getCounter(isHoldingSkill)) inc_counter=1.25;																// 카운터
 	
 		//main variable :: inc_counter
 		//////////////////////////////
@@ -364,7 +365,7 @@ public class Calculator {
 	}
 	
 	
-	public static long percentDamage_physical_ign(int skillPercent, Element_type element, Monster object, Characters character, int indepLevel, int mode)
+	public static long percentDamage_physical_ign(int skillPercent, Element_type element, Monster object, Characters character, int indepLevel, boolean isHoldingSkill, int mode)
 	{
 		//calculate with status
 		try{
@@ -376,7 +377,7 @@ public class Calculator {
 			double frontATK=defIgnore;
 			double inc_critical = getIncCrt_phy(object, stat);
 			
-			return (long)(skillPercent/100.0*frontATK*inc_critical*damage_enhancing_avg(stat, object, character, elementCal, mode));
+			return (long)(skillPercent/100.0*frontATK*inc_critical*damage_enhancing_avg(stat, object, character, elementCal, mode, isHoldingSkill));
 		}
 		catch(StatusTypeMismatch e)
 		{
@@ -385,7 +386,7 @@ public class Calculator {
 		}
 	}
 	
-	public static long percentDamage_magical_ign(int skillPercent, Element_type element, Monster object, Characters character, int indepLevel, int mode)
+	public static long percentDamage_magical_ign(int skillPercent, Element_type element, Monster object, Characters character, int indepLevel, boolean isHoldingSkill, int mode)
 	{
 		//calculate with status
 		try{
@@ -397,7 +398,7 @@ public class Calculator {
 			double frontATK=defIgnore;
 			double inc_critical = getIncCrt_mag(object, stat);
 			
-			return (long)(skillPercent/100.0*frontATK*inc_critical*damage_enhancing_avg(stat, object, character, elementCal, mode));
+			return (long)(skillPercent/100.0*frontATK*inc_critical*damage_enhancing_avg(stat, object, character, elementCal, mode, isHoldingSkill));
 		}
 		catch(StatusTypeMismatch e)
 		{
@@ -438,18 +439,19 @@ public class Calculator {
 			else crt/=100;
 			
 			while(!skillInfo.hasMag_fix() && !skillInfo.hasMag_per() && !skillInfo.hasPhy_fix() && !skillInfo.hasPhy_per()){
+				if(skillInfo.percentList.isEmpty()) break;
 				for(Entry<String, Integer> entry : skillInfo.percentList.entrySet()){
 					skillInfo = character.characterInfoList.getSkill(entry.getKey()).getSkillLevelInfo(true, character.isBurning());
 					break;
 				}
 			}
 				
-			phy_per_ign = Calculator.percentDamage_physical_ign(skillInfo.phy_atk, skill.element, object, character, skillInfo.indep_level, 1);
-			mag_per_ign = Calculator.percentDamage_magical_ign(skillInfo.mag_atk, skill.element, object, character, skillInfo.indep_level, 1);
-			phy_per = Calculator.percentDamage_physical(skillInfo.phy_atk, skill.element, object, character, skillInfo.indep_level, 1)-phy_per_ign;
-			mag_per = Calculator.percentDamage_magical(skillInfo.mag_atk, skill.element, object, character, skillInfo.indep_level, 1)-mag_per_ign;
-			phy_fix = Calculator.fixedDamage_physical(skillInfo.phy_fix, skill.element, object, character, skillInfo.indep_level, 1);
-			mag_fix = Calculator.fixedDamage_magical(skillInfo.mag_fix, skill.element, object, character, skillInfo.indep_level, 1);
+			phy_per_ign = Calculator.percentDamage_physical_ign(skillInfo.phy_atk, skill.element, object, character, skillInfo.indep_level, skill.isHoldingSkill, 1);
+			mag_per_ign = Calculator.percentDamage_magical_ign(skillInfo.mag_atk, skill.element, object, character, skillInfo.indep_level, skill.isHoldingSkill, 1);
+			phy_per = Calculator.percentDamage_physical(skillInfo.phy_atk, skill.element, object, character, skillInfo.indep_level, skill.isHoldingSkill, 1)-phy_per_ign;
+			mag_per = Calculator.percentDamage_magical(skillInfo.mag_atk, skill.element, object, character, skillInfo.indep_level, skill.isHoldingSkill, 1)-mag_per_ign;
+			phy_fix = Calculator.fixedDamage_physical(skillInfo.phy_fix, skill.element, object, character, skillInfo.indep_level, skill.isHoldingSkill, 1);
+			mag_fix = Calculator.fixedDamage_magical(skillInfo.mag_fix, skill.element, object, character, skillInfo.indep_level, skill.isHoldingSkill, 1);
 			if(noPhysicalDamage(stat, skillInfo)){
 				phy_per=0; phy_per_ign=0; phy_fix=0;
 			}
@@ -488,7 +490,7 @@ public class Calculator {
 			
 			p = phy_per+mag_per+phy_fix+mag_fix;
 			c = 1;
-			if(object.getBool(Monster_StatList.COUNTER)) c=1.25;
+			if(object.getCounter(skill.isHoldingSkill)) c=1.25;
 			c*=(1+0.5*(3+stat.getStat(StatList.CRT_LOW))/100);
 			
 			a = (stat.getStat(StatList.DAM_ADD)+stat.getStat(StatList.DAM_ADD_FIRE)*elementCal.get_inc_fire()
@@ -523,10 +525,10 @@ public class Calculator {
 			
 			skillInfo = skill.getSkillLevelInfo(skill.getSkillLevel(true, character.isBurning())+1);
 			if(skillInfo!=null){
-				phy_per = Calculator.percentDamage_physical(skillInfo.phy_atk, skill.element, object, character, skillInfo.indep_level, 1);
-				mag_per = Calculator.percentDamage_magical(skillInfo.mag_atk, skill.element, object, character, skillInfo.indep_level, 1);
-				phy_fix = Calculator.fixedDamage_physical(skillInfo.phy_fix, skill.element, object, character, skillInfo.indep_level, 1);
-				mag_fix = Calculator.fixedDamage_magical(skillInfo.mag_fix, skill.element, object, character, skillInfo.indep_level, 1);
+				phy_per = Calculator.percentDamage_physical(skillInfo.phy_atk, skill.element, object, character, skillInfo.indep_level, skill.isHoldingSkill, 1);
+				mag_per = Calculator.percentDamage_magical(skillInfo.mag_atk, skill.element, object, character, skillInfo.indep_level, skill.isHoldingSkill, 1);
+				phy_fix = Calculator.fixedDamage_physical(skillInfo.phy_fix, skill.element, object, character, skillInfo.indep_level, skill.isHoldingSkill, 1);
+				mag_fix = Calculator.fixedDamage_magical(skillInfo.mag_fix, skill.element, object, character, skillInfo.indep_level, skill.isHoldingSkill, 1);
 				if(noPhysicalDamage(stat, skillInfo)){
 					phy_per=0; phy_fix=0;
 				}

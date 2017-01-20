@@ -155,6 +155,16 @@ public class Characters implements java.io.Serializable
 		}
 	}
 	
+	public boolean changeSkillEnable(Skill skill)
+	{
+		skill.setBuffEnabled(!skill.getBuffEnabled());
+		if(skill.skillInfo.getLast().stat.findStat(StatList.CRT_PHY)!=null || skill.skillInfo.getLast().stat.findStat(StatList.CRT_MAG)!=null){
+			optimizeEmblem(autoOptimizeMode, autoOptimizeRarity);
+			return true;
+		}
+		return false;
+	}
+	
 	public Item equip(Item item, boolean updateStat)
 	{
 		Item previous=null;
@@ -461,13 +471,13 @@ public class Characters implements java.io.Serializable
 						if(group.isEqualTo(name)){
 							if(isDungeon){
 								group.dungeonLevel += (int)statInfo.getStatToDouble();
-								if(!group.isOptionSkill())
-									group.dungeonIncrease *=(100+((SkillStatusInfo)statInfo).getIncrease())/100.0;
+								//if(!group.isOptionSkill())
+								group.dungeonIncrease *=(100+((SkillStatusInfo)statInfo).getIncrease())/100.0;
 							}
 							else{
 								group.villageLevel += (int)statInfo.getStatToDouble();
-								if(!group.isOptionSkill())
-									group.villageIncrease *=(100+((SkillStatusInfo)statInfo).getIncrease())/100.0;
+								//if(!group.isOptionSkill())
+								group.villageIncrease *=(100+((SkillStatusInfo)statInfo).getIncrease())/100.0;
 							}
 							break;
 						}
@@ -538,8 +548,20 @@ public class Characters implements java.io.Serializable
 		LinkedList<Skill> list = new LinkedList<Skill>();
 		for(Skill skill : characterInfoList.skillList)
 		{
-			if(skill.hasDamage() && skill.getActiveEnabled() && !skill.isOptionSkill()
+			if(skill.hasDamage() && skill.getActiveEnabled() && skill.type!=Skill_type.OPTION
 					&& !skill.isSubSkill() && skill.type!=Skill_type.ACTIVE_NOMARK){
+				list.add(skill);
+			}
+		}
+		return list;
+	}
+	
+	public LinkedList<Skill> getRepresentableSkillList()
+	{
+		LinkedList<Skill> list = new LinkedList<Skill>();
+		for(Skill skill : characterInfoList.skillList)
+		{
+			if(skill.hasDamage() && !skill.isOptionSkill() && !skill.isSubSkill() && skill.type!=Skill_type.ACTIVE_NOMARK){
 				list.add(skill);
 			}
 		}
@@ -589,12 +611,22 @@ public class Characters implements java.io.Serializable
 		try{
 			if(mode==0){
 				crt = dungeonStatus.getStat("물크");
+				for(Buff buff : buffList){
+					if(!buff.enabled) continue;
+					crt-=buff.vStat.getStatSum(StatList.CRT_PHY);
+					crt-=buff.dStat.getStatSum(StatList.CRT_PHY);
+				}
 				stat=userItemList.getEmblem(name+"붉은빛 엠블렘[힘]");
 				critical=userItemList.getEmblem(name+"녹색빛 엠블렘[물리크리티컬]");
 				if(rarity!=Item_rarity.UNCOMMON) dual=userItemList.getEmblem(name+"듀얼 엠블렘[힘 + 물리크리티컬]");
 			}
 			else{
 				crt = dungeonStatus.getStat("마크");
+				for(Buff buff : buffList){
+					if(!buff.enabled) continue;
+					crt-=buff.vStat.getStatSum(StatList.CRT_MAG);
+					crt-=buff.dStat.getStatSum(StatList.CRT_MAG);
+				}
 				stat=userItemList.getEmblem(name+"붉은빛 엠블렘[지능]");
 				critical=userItemList.getEmblem(name+"녹색빛 엠블렘[마법크리티컬]");
 				if(rarity!=Item_rarity.UNCOMMON) dual=userItemList.getEmblem(name+"듀얼 엠블렘[지능 + 마법크리티컬]");

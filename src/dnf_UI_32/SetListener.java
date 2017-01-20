@@ -466,6 +466,8 @@ public class SetListener {
 		};
 	}
 	
+	//버프는 엠블렘 최적화 미포함
+	//스킬은 엠블렘 최적화 포함
 	public Listener buffInventoryClickListener()
 	{
 		ItemButton<Buff> itemButton;
@@ -490,7 +492,7 @@ public class SetListener {
 		         @Override
 		         public void handleEvent(Event e) {
 		        	 if(e.button==3){
-		        		 skillButton.getItem().setBuffEnabled(!skillButton.getItem().getBuffEnabled());
+		        		 character.changeSkillEnable(skillButton.getItem());
 		        		 if(skillButton.getItem().getBuffEnabled()) skillButton.setOnOffImage(false);
 		        		 else skillButton.setOnOffImage(true);
 		        		 superInfo.renew();

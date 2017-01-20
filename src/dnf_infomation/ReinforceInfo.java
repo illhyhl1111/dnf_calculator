@@ -133,10 +133,15 @@ public class ReinforceInfo {
 		weaponTypeInfo_phy.put(Weapon_detailType.LANCE_HALBERD, 1.2); weaponTypeInfo_mag.put(Weapon_detailType.LANCE_HALBERD, 0.9);
 		weaponTypeInfo_phy.put(Weapon_detailType.LANCE_PIKE, 1.05); weaponTypeInfo_mag.put(Weapon_detailType.LANCE_PIKE, 0.95);
 		
+		weaponTypeInfo_phy.put(Weapon_detailType.THIEF_CHAKRAWEAPON, 0.8); weaponTypeInfo_mag.put(Weapon_detailType.THIEF_CHAKRAWEAPON, 1.1);
+		weaponTypeInfo_phy.put(Weapon_detailType.THIEF_DAGGER, 0.9); weaponTypeInfo_mag.put(Weapon_detailType.THIEF_DAGGER, 0.9);
+		weaponTypeInfo_phy.put(Weapon_detailType.THIEF_TWINSWORD, 1.1); weaponTypeInfo_mag.put(Weapon_detailType.THIEF_TWINSWORD, 0.8);
+		weaponTypeInfo_phy.put(Weapon_detailType.THIEF_WAND, 0.8); weaponTypeInfo_mag.put(Weapon_detailType.THIEF_WAND, 1.15);
+		
 		mastery_rarity.put(Item_rarity.EPIC, 17);
 		mastery_rarity.put(Item_rarity.LEGENDARY, 14);
 		mastery_rarity.put(Item_rarity.UNIQUE, 11);
-		mastery_rarity.put(Item_rarity.CHRONICLE, 7);
+		mastery_rarity.put(Item_rarity.CHRONICLE, 8);
 		mastery_rarity.put(Item_rarity.RARE, 5);
 		mastery_rarity.put(Item_rarity.UNCOMMON, 0);
 		mastery_rarity.put(Item_rarity.COMMON, -3);
@@ -149,7 +154,7 @@ public class ReinforceInfo {
 		
 		masteryMap.put(Job.WEAPONMASTER, new MasteryInfo(Equip_type.MAIL, 36, 0, 1.8, 0, 0, 0));
 		masteryMap.put(Job.SOULMASTER, new MasteryInfo(Equip_type.FABRIC, 0, 24, 0, 1.2, 0, 0));
-		masteryMap.put(Job.BUSERKER, new MasteryInfo(Equip_type.HEAVY, 30, 0, 1.5, 0, 0, 0));
+		masteryMap.put(Job.BUSERKER, new MasteryInfo(Equip_type.HEAVY, 32, 0, 1.6, 0, 0, 0));
 		masteryMap.put(Job.ASURA, new MasteryInfo(Equip_type.PLATE, 0, 20, 0, 1, 0, 0));
 		masteryMap.put(Job.NENMASTER_F, new MasteryInfo(Equip_type.FABRIC, 0, 24, 0, 1.2, 0, 0));
 		masteryMap.put(Job.NENMASTER_M, new MasteryInfo(Equip_type.FABRIC, 0, 24, 0, 1.2, 0, 0));
@@ -176,10 +181,12 @@ public class ReinforceInfo {
 		masteryMap.put(Job.INFIGHTER, new MasteryInfo(Equip_type.MAIL, 40, 0, 2, 0, 0, 0));
 		masteryMap.put(Job.EXORCIST, new MasteryInfo(Equip_type.PLATE, 30, 0, 1.5, 0, 0, 0));
 		masteryMap.put(Job.ROUGE, new MasteryInfo(Equip_type.LEATHER, 30, 0, 1.5, 0, 10, 0));
+		masteryMap.put(Job.SHADOWDANCER, new MasteryInfo(Equip_type.LEATHER, 30, 0, 1.5, 0, 10, 0));
 		masteryMap.put(Job.NECROMENCER, new MasteryInfo(Equip_type.MAIL, 0, 30, 0, 1.5, 0, 0));
 		masteryMap.put(Job.DEMONSLAYER, new MasteryInfo(Equip_type.HEAVY, 30, 0, 1.5, 0, 10, 0));
 		masteryMap.put(Job.VANGUARD, new MasteryInfo(Equip_type.HEAVY, 32, 0, 1.6, 0, 10, 0));
 		masteryMap.put(Job.ELVENKNIGHT, new MasteryInfo(Equip_type.PLATE, 30, 0, 1.5, 0, 10, 0));
+		masteryMap.put(Job.CREATOR, new MasteryInfo(Equip_type.PLATE, 0, 20, 0, 1, 0, 0));
 		readed=true;
 	}
 	

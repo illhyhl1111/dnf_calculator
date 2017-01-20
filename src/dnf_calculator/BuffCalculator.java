@@ -67,7 +67,7 @@ public class BuffCalculator {
 		StatusList statList = new StatusList();
 		int fix;
 		try{
-			fix=(int) (dawnIncrease(character)*(HolyInfo.getDawnblessInfo(character.level_dawnbless))*1.5);
+			fix=(int) (dawnIncrease(character)*(HolyInfo.getDawnblessInfo(character.level_dawnbless)));
 			statList.addStatList("독공", fix);
 		} catch(UnknownInformationException e){
 			e.printStackTrace();

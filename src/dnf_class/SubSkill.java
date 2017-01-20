@@ -12,14 +12,14 @@ public class SubSkill extends Skill{
 	public String superSkillName;
 	public Skill superSkill=null;
 
-	public SubSkill(String name, String superSkill, Job job, int firstLevel, int maxLevel, int masterLevel, int levelInterval, String version)
+	public SubSkill(String name, String superSkill, Job job, int firstLevel, int maxLevel, int masterLevel, int levelInterval, Element_type type, boolean isHoldingSkill, String version)
 	{
-		super(name, Skill_type.SUBSKILL, job, firstLevel, maxLevel, masterLevel, levelInterval, Element_type.NONE, version);
+		super(name, Skill_type.SUBSKILL, job, firstLevel, maxLevel, masterLevel, levelInterval, type, isHoldingSkill, version);
 		this.superSkillName=superSkill;
 	}
-	public SubSkill(String name, String superSkill, Character_type charType, int firstLevel, int maxLevel, int masterLevel, int levelInterval, String version)
+	public SubSkill(String name, String superSkill, Character_type charType, int firstLevel, int maxLevel, int masterLevel, int levelInterval, Element_type type, boolean isHoldingSkill, String version)
 	{
-		super(name, Skill_type.SUBSKILL, charType, firstLevel, maxLevel, masterLevel, levelInterval, Element_type.NONE, version);
+		super(name, Skill_type.SUBSKILL, charType, firstLevel, maxLevel, masterLevel, levelInterval, type, isHoldingSkill, version);
 		this.superSkillName=superSkill;
 	}
 	

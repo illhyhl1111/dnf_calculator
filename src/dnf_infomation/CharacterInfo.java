@@ -141,7 +141,7 @@ public class CharacterInfo {
 		
 		/////패황
 		temp = new CharInfoBox(Job.STRIKER_M, 90, new StatusList());
-		temp.statList.addStatList("힘", 745);
+		temp.statList.addStatList("힘", 780);
 		temp.statList.addStatList("지능", 688);
 		temp.statList.addStatList("독공", 960);
 		temp.statList.addStatList("모속강", 13);
@@ -163,6 +163,46 @@ public class CharacterInfo {
 		temp = new CharInfoBox(Job.ELVENKNIGHT, 90, new StatusList());
 		temp.statList.addStatList("힘", 744);
 		temp.statList.addStatList("지능", 658);
+		temp.statList.addStatList("독공", 960);
+		temp.statList.addStatList("모속강", 13);
+		temp.statList.addStatList("물크", 8);
+		temp.statList.addStatList("마크", 8);
+		basicStatList.add(temp);
+		
+		/////로그
+		temp = new CharInfoBox(Job.ROUGE, 90, new StatusList());
+		temp.statList.addStatList("힘", 750);
+		temp.statList.addStatList("지능", 666);
+		temp.statList.addStatList("독공", 960);
+		temp.statList.addStatList("모속강", 13);
+		temp.statList.addStatList("물크", 8);
+		temp.statList.addStatList("마크", 8);
+		basicStatList.add(temp);
+		
+		/////버서커
+		temp = new CharInfoBox(Job.BUSERKER, 90, new StatusList());
+		temp.statList.addStatList("힘", 762);
+		temp.statList.addStatList("지능", 600);
+		temp.statList.addStatList("독공", 960);
+		temp.statList.addStatList("모속강", 13);
+		temp.statList.addStatList("물크", 8);
+		temp.statList.addStatList("마크", 8);
+		basicStatList.add(temp);
+		
+		/////섀댄
+		temp = new CharInfoBox(Job.SHADOWDANCER, 90, new StatusList());
+		temp.statList.addStatList("힘", 765);
+		temp.statList.addStatList("지능", 651);
+		temp.statList.addStatList("독공", 960);
+		temp.statList.addStatList("모속강", 13);
+		temp.statList.addStatList("물크", 8);
+		temp.statList.addStatList("마크", 8);
+		basicStatList.add(temp);
+
+		/////크리
+		temp = new CharInfoBox(Job.CREATOR, 90, new StatusList());
+		temp.statList.addStatList("힘", 960);
+		temp.statList.addStatList("지능", 1052);
 		temp.statList.addStatList("독공", 960);
 		temp.statList.addStatList("모속강", 13);
 		temp.statList.addStatList("물크", 8);

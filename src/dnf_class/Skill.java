@@ -29,6 +29,7 @@ public class Skill extends IconObject implements Comparable<Skill>{
 	public final Job job;
 	public final Character_type char_type;
 	public final Element_type element;
+	public final boolean isHoldingSkill;
 	public LinkedList<String> explanation;						//설명
 	
 	public LinkedList<SkillLevelInfo> skillInfo;
@@ -43,7 +44,7 @@ public class Skill extends IconObject implements Comparable<Skill>{
 	
 	public String Version;
 	
-	public Skill(String name, Skill_type type, Job job, int firstLevel, int maxLevel, int masterLevel, int levelInterval, Element_type element, String version)
+	public Skill(String name, Skill_type type, Job job, int firstLevel, int maxLevel, int masterLevel, int levelInterval, Element_type element, boolean isHoldingSkill, String version)
 	{
 		super();
 		this.setName(name);
@@ -55,6 +56,7 @@ public class Skill extends IconObject implements Comparable<Skill>{
 		this.levelInterval=levelInterval;
 		this.job=job;
 		this.element=element;
+		this.isHoldingSkill=isHoldingSkill;
 		char_type=null;
 	
 		skillInfo = new LinkedList<SkillLevelInfo>();
@@ -72,7 +74,7 @@ public class Skill extends IconObject implements Comparable<Skill>{
 		Version=version;
 	}
 	
-	public Skill(String name, Skill_type type, Character_type charType, int firstLevel, int maxLevel, int masterLevel, int levelInterval, Element_type element, String version)
+	public Skill(String name, Skill_type type, Character_type charType, int firstLevel, int maxLevel, int masterLevel, int levelInterval, Element_type element, boolean isHoldingSkill, String version)
 	{
 		super();
 		this.setName(name);
@@ -83,6 +85,7 @@ public class Skill extends IconObject implements Comparable<Skill>{
 		this.masterLevel=masterLevel;
 		this.levelInterval=levelInterval;
 		this.element=element;
+		this.isHoldingSkill=isHoldingSkill;
 		job=null;
 		char_type=charType;
 		
@@ -109,6 +112,7 @@ public class Skill extends IconObject implements Comparable<Skill>{
 		job = null;
 		char_type=Character_type.ALL;
 		element=Element_type.NONE;
+		isHoldingSkill=false;
 		
 		explanation = new LinkedList<String>();
 		Version = CalculatorVersion.DEFAULT;
@@ -132,7 +136,7 @@ public class Skill extends IconObject implements Comparable<Skill>{
 	{
 		if(type==Skill_type.ACTIVE || type==Skill_type.ACTIVE_NOMARK || type==Skill_type.DAMAGE_BUF
 				|| type==Skill_type.SUBSKILL || type==Skill_type.DAMAGE_PASSIVE) return true;
-		else if(type==Skill_type.SWITCHING || type==Skill_type.OPTION){
+		else if(type==Skill_type.SWITCHING || type==Skill_type.OPTION || type==Skill_type.INPUT){
 			if(skillInfo.getLast().hasPhy_per()) return true;
 			if(skillInfo.getLast().hasPhy_fix()) return true;
 			if(skillInfo.getLast().hasMag_per()) return true;
@@ -149,7 +153,7 @@ public class Skill extends IconObject implements Comparable<Skill>{
 	}
 	public boolean isOptionSkill()
 	{
-		if(type==Skill_type.OPTION) return true;
+		if(type==Skill_type.OPTION || type==Skill_type.INPUT) return true;
 		else return false;
 	}
 	public boolean isSubSkill()
@@ -159,7 +163,7 @@ public class Skill extends IconObject implements Comparable<Skill>{
 	}
 	public boolean isEnableable()
 	{
-		if(type==Skill_type.BUF_ACTIVE || type==Skill_type.DAMAGE_BUF || type==Skill_type.SWITCHING || type==Skill_type.OPTION) return true;
+		if(type==Skill_type.BUF_ACTIVE || type==Skill_type.DAMAGE_BUF || type==Skill_type.SWITCHING || type==Skill_type.INPUT || type==Skill_type.OPTION) return true;
 		else return false;
 	}
 	
@@ -252,8 +256,8 @@ public class Skill extends IconObject implements Comparable<Skill>{
 	public int getSkillLevel(boolean isDungeon, boolean isBurning){
 		if(skillLevel==0) return 0;
 		int level = skillLevel;
-		if(isOptionSkill());
-		else if(isDungeon)
+		//if(isOptionSkill());
+		if(isDungeon)
 			level+=dungeonLevel;
 		else
 			level+=villageLevel;
@@ -340,8 +344,8 @@ public class Skill extends IconObject implements Comparable<Skill>{
 	{
 		int level = getSkillLevel(isDungeon, isBurning);
 		double increase;
-		if(isOptionSkill()) increase=1.0;
-		else if(isDungeon)
+		//if(isOptionSkill()) increase=1.0;
+		if(isDungeon)
 			increase=dungeonIncrease;
 		else
 			increase=villageIncrease;

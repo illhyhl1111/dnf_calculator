@@ -780,7 +780,7 @@ public class CalculateProcessViewer extends Dialog {
 			formula.add(new TrackRecord(')'));
 			formula.add(new TrackRecord("크리티컬 증뎀", add_crt_inc));
 			double counter_inc = 1;
-			if(character.target.getBool("카운터")) counter_inc=1.25;
+			if(character.target.getCounter(trackingSkill.isHoldingSkill)) counter_inc=1.25;
 			formula.add(new TrackRecord("카운터", counter_inc));
 			double add_inc = setNumberComposite(addCompostie, formula, "추뎀 증가량(%)", '*');
 			setFormData(addCompostie, light_addLabel, 10, addLabel, 5);
