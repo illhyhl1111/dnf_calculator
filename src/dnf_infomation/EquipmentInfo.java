@@ -40,7 +40,7 @@ public class EquipmentInfo {
 		SetName setName=null;
 		int level=0;
 		boolean isRare=false;
-		boolean optionDisable=false; 
+		boolean optionDisable=false; 	// Disable init option 
 		String version=null;
 		String[] stat=null;
 		
