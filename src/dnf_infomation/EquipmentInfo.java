@@ -40,6 +40,7 @@ public class EquipmentInfo {
 		SetName setName=null;
 		int level=0;
 		boolean isRare=false;
+		boolean optionDisable=false;
 		String version=null;
 		String[] stat=null;
 		
@@ -96,6 +97,10 @@ public class EquipmentInfo {
 				if(temp instanceof Boolean) isRare = (boolean) temp;
 				else if(temp.equals(""));	//이전 값 유지
 				else throw new ParsingException(i-1, temp);
+				
+				if(data[i] instanceof Boolean)
+					optionDisable = (Boolean) data[i++];
+				else optionDisable = false;
 				
 				if(data[i] instanceof String && ((String)data[i]).contains("ver_"))
 					version = (String) data[i++];
@@ -155,6 +160,12 @@ public class EquipmentInfo {
 				System.out.println("뒤1 : "+data[i]);
 				System.out.println("뒤2 : "+data[i+1]);
 				throw new ParsingException(i-1, temp);
+			}
+			if(optionDisable){
+				for(StatusAndName s : equipment.vStat.statList)
+					if(s.enableable) s.enabled = false;
+				for(StatusAndName s : equipment.dStat.statList)
+					if(s.enableable) s.enabled = false;
 			}
 			equipList.add(equipment);
 		}
