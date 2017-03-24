@@ -1983,6 +1983,27 @@ public class EquipmentInfo {
 			}
 		};
 		
+		//웨리
+		fStat[18]= new FunctionStat(){
+			private static final long serialVersionUID = 1L;
+			@Override
+			public StatusList function(Characters character, Monster monster, Object item) {
+				StatusList statList = new StatusList();
+				Weapon weapon = (Weapon)item;
+				try {
+					if(Double.compare(weapon.dStat.statList.getFirst().stat.getStatToDouble(), 64)==0
+							|| Double.compare(weapon.dStat.statList.getLast().stat.getStatToDouble(), 64)==0) {
+						if(character.getJob().equals(Job.CREATOR))
+							statList.addSkill("창조의 공간", 2);
+						else statList.addSkillRange(85, 85, 2, false);
+					}
+				} catch (StatusTypeMismatch e) {
+					e.printStackTrace();
+				}
+				return statList;
+			}
+		};
+		
 		/* Format
 		"", "", "", Weapon_detailType., "", 80, false,
 		"물공  가변", "마공  가변", "독공 611 가변", "힘  가변", "지능  가변",
@@ -2531,10 +2552,9 @@ public class EquipmentInfo {
 				"구원의 이기 - 스태프", "", "", "", "", "", true, CalculatorVersion.VER_1_0_d,
 				"물공 1003 가변", "마공 1267 가변", "독공 648 가변", "지능 72 가변",  
 				"ㄷ 스증뎀 35", "ㄷ 스증뎀 20 선택", enableElement, "설명 자신의 가장 높은 속성강화 수치의 속성을 무기에 부여한다.", null,
-				"웨리 : 리미트 브레이커", "", "", "", "", 90, false, CalculatorVersion.VER_1_0_d,
+				"웨리 : 리미트 브레이커", "", "", "", "", 90, false, CalculatorVersion.VER_1_1_g,
 				"물공 1058 가변", "마공 1337 가변", "독공 686 가변", "지능 75 가변", 
-				"ㄷ 마공뻥 8 선택", "ㄷ 독공뻥 8 선택", "ㄷ 마공뻥 8 선택", "ㄷ 독공뻥 8 선택", "ㄷ 마공뻥 8 선택", "ㄷ 독공뻥 8 선택", "ㄷ 마공뻥 8 선택", "ㄷ 독공뻥 8 선택", "ㄷ 마공뻥 8 선택", "ㄷ 독공뻥 8 선택", "ㄷ 마공뻥 8 선택", "ㄷ 독공뻥 8 선택",
-				"ㄷ 마공뻥 8 선택", "ㄷ 독공뻥 8 선택", "ㄷ 마공뻥 8 선택", "ㄷ 독공뻥 8 선택", "ㄷ 스킬 85 2 선택", null, 
+				"ㄷ 마공뻥 64 가변", "ㄷ 독공뻥 64 가변", fStat[18], "설명 마력 증폭 최대 중첩 상태(64%)일 때 2차각성 스킬 Lv +2", null, 
 				"창성의 구원자 - 스태프", "", "", "", "", 90, true, CalculatorVersion.VER_1_0_d,
 				"물공 1058 가변", "마공 1337 가변", "독공 686 가변", "지능 75 가변",
 				"ㄷ 스증뎀 40", "ㄷ 스증뎀 22 선택", enableElement, "설명 자신의 가장 높은 속성강화 수치의 속성을 무기에 부여한다.", null,

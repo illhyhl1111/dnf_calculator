@@ -159,7 +159,7 @@ public class Characters implements java.io.Serializable
 	{
 		skill.setBuffEnabled(!skill.getBuffEnabled());
 		if(skill.skillInfo.getLast().stat.findStat(StatList.CRT_PHY)!=null || skill.skillInfo.getLast().stat.findStat(StatList.CRT_MAG)!=null){
-			optimizeEmblem(autoOptimizeMode, autoOptimizeRarity);
+			if(autoOptimize) optimizeEmblem(autoOptimizeMode, autoOptimizeRarity);
 			return true;
 		}
 		return false;

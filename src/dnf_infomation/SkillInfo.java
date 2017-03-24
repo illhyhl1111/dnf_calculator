@@ -1140,9 +1140,9 @@ public class SkillInfo {
 					} 
 				
 					else{
-						statList.addSkill_damage("파이어 월", 3053.6);
-						statList.addSkill_damage("운석 낙하", 390);
-						statList.addSkill_damage("아이스 스톤", 1622);
+						statList.addSkill_damage("파이어 월", 3896);
+						statList.addSkill_damage("운석 낙하", 299);
+						statList.addSkill_damage("아이스 스톤", 330.5);
 						statList.addSkill_damage("윈드 프레스", 923);
 						statList.addSkill_damage("윈드 스톰", 575);
 						if(flameHurricane.buffEnabled(true))
@@ -1153,6 +1153,31 @@ public class SkillInfo {
 					e.printStackTrace();
 				}
 				return statList;
+			};
+		},
+		
+		//28, 실버스트림
+		new FunctionStat(){
+			private static final long serialVersionUID = 1L;
+			@Override
+			public StatusList function(Characters character, Monster monster, Object item) {
+				Skill skill = (Skill)item;
+				Skill target = character.characterInfoList.getSkill("실버스트림(버프)");
+				if(skill.buffEnabled(true)){
+					target.dungeonLevel = 0;
+					try {
+						target.setSkillLevel((int) (skill.getSkillLevelInfo(true, character.isBurning()).stat.statList.getFirst().stat.getStatToDouble()+0.0001));
+					} catch (StatusTypeMismatch e) {
+						e.printStackTrace();
+					}
+				}
+				else if(target.getActiveEnabled()){
+					Skill target2 = character.characterInfoList.getSkill("실버스트림");
+					target.setSkillLevel(target2.getCharSkillLevel());
+					target.dungeonLevel=target2.dungeonLevel;
+				}
+				
+				return new StatusList();
 			};
 		},
 	};
@@ -1294,8 +1319,8 @@ public class SkillInfo {
 				"프렌지", Skill_type.PASSIVE, "", 15, 30, 20, 3, CalculatorVersion.VER_1_1_f,
 				"20", "스킬 붕산격 % 22 & 스킬 블러드 러스트 % 22 & 스킬 레이징 퓨리 % 22 & 스킬 블러드 루인 % 22 & 스킬 버스트 퓨리 % 22",
 				"+",  "스킬 붕산격 % +1 & 스킬 블러드 러스트 % +1 & 스킬 레이징 퓨리 % +1 & 스킬 블러드 루인 % +1 & 스킬 버스트 퓨리 % +1", "반복 1",
-				"프렌지 - 캔슬", Skill_type.OPTION, "", 15, 1, 1, 3, CalculatorVersion.VER_1_1_f, "설명 프렌지의 광전사 이도류 캔슬 공격 증뎀 적용",
-				"1", "증뎀버프 20", null,
+				"프렌지 - 캔슬", Skill_type.OPTION, "", 15, 1, 1, 3, CalculatorVersion.VER_1_1_g, "설명 프렌지의 광전사 이도류 캔슬 공격 증뎀 적용",
+				"1", "스킬 블러드 러스트 % 20 & 스킬 블러드 루인 % 20 & 스킬 레이징 퓨리 % 20 & 스킬 버스트 퓨리 % 20 & 스킬 블러드 소드 % 20 & 스킬 붕산격 % 20", null,
 				"혈십자", Skill_type.PASSIVE, "", 15, 20, 10, 3, CalculatorVersion.VER_1_1_f,
 				"10", "", "+", "", null,
 				"혈십자 단계", Skill_type.INPUT, "", 15, 1, 1, 3, CalculatorVersion.VER_1_1_f, "설명 혈십자의 단계를 입력하세요",
@@ -2242,7 +2267,7 @@ public class SkillInfo {
 				"윈드 스톰 횟수입력", Skill_type.INPUT, "", 40, 1, 1, 1, CalculatorVersion.VER_1_1_f, "설명 딜표에 표기될 윈드 스톰의 사용횟수를 입력합니다",
 				"1", "횟수(재료수) 1", null,
 				"창조의 공간 - 게이지", Skill_type.INPUT, "", 85, 1, 1, 1, CalculatorVersion.VER_1_1_f, 
-				"설명 창조의 공간의 스킬 강화 상태로 변경", "설명 화염/냉기/바람스킬 딜표 표기는 게이지 수급상태에서의 최대 히트수 기준",
+				"설명 창조의 공간의 스킬 강화 상태로 변경", "설명 화염/냉기/바람스킬 딜표 표기는 강화상태에서의 최대 히트수 기준",
 				"1", fStat[27], null,
 				
 				/////TP
@@ -2580,8 +2605,11 @@ public class SkillInfo {
 				"+ 33097", "귀속/히트엔드(딜)/6619", "+ 34048", "귀속/히트엔드(딜)/6809", "+ 34996", "귀속/히트엔드(딜)/6999", null,
 				"실버스트림", Skill_type.ACTIVE, "", 50, 40, 30, 5, Element_type.NONE, true, CalculatorVersion.VER_1_1_f,
 				"9 88360 0 0 0", "+ 95535", "+ 102710", "+ 109885", "+ 117065", "+ 124240", null,
-				"실버스트림(스위칭)", Skill_type.SWITCHING, "", 50, 1, 1, 5, CalculatorVersion.VER_1_1_f, "설명 크증버프는 52.0875로 고정입니다",
-				"1", "힘 664 & 크증버프 52.0875", null,
+				"실버스트림(버프)", Skill_type.BUF_ACTIVE, "", 50, 40, 30, 5, CalculatorVersion.VER_1_1_f,
+				"9", "힘 510 & 크증버프 52.0875", "+", "힘 561 & 크증버프 52.0875", "+", "힘 612 & 크증버프 52.0875", "+", "힘 664 & 크증버프 52.0875",
+				"+", "힘 706 & 크증버프 52.0875", "+", "힘 748 & 크증버프 52.0875", null,
+				"실버스트림(스위칭)", Skill_type.INPUT, "", 50, 1, 1, 5, CalculatorVersion.VER_1_1_f, "설명 스위칭시의 스킬 레벨을 입력하세요", "설명 아이콘 비활성화시 실시간으로 적용",
+				"1", fStat[28], "횟수(재료수) 13", null,
 				"체인소 러시", Skill_type.ACTIVE, "", 60, 40, 30, 2, Element_type.NONE, CalculatorVersion.VER_1_1_f,
 				"16 25442 0 0 0", "귀속/히트엔드(딜)/5085", "+ 26466", "귀속/히트엔드(딜)/5290", "+ 27488", "귀속/히트엔드(딜)/5495", 
 				"+ 28513", "귀속/히트엔드(딜)/5700", "+ 29538", "귀속/히트엔드(딜)/5905", null,

@@ -15,13 +15,13 @@ public class CreatureInfo {
 		Item_rarity rarity= Item_rarity.RARE;
 		
 		//이그니스
-		temp = new Creature("강인한 이그니스", rarity, CalculatorVersion.VER_1_1_b);
-		temp.dStat.addStatList("힘", new StatusInfo(20));
+		temp = new Creature("강인한 이그니스", rarity, CalculatorVersion.VER_1_1_g);
+		temp.vStat.addStatList("힘", new StatusInfo(20));
 		temp.dStat.addStatList("투함포항", 15, false, true);
 		creatureList.add(temp);
 		//아쿠아젤로
-		temp = new Creature("명석한 아쿠아젤로", rarity, CalculatorVersion.VER_1_1_b);
-		temp.dStat.addStatList("지능", new StatusInfo(20));
+		temp = new Creature("명석한 아쿠아젤로", rarity, CalculatorVersion.VER_1_1_g);
+		temp.vStat.addStatList("지능", new StatusInfo(20));
 		temp.dStat.addStatList("투함포항", 15, false, true);
 		creatureList.add(temp);
 		//말밥
