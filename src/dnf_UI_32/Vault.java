@@ -181,7 +181,6 @@ public class Vault extends Dialog
 		constraintList[num].rarityList.add(Item_rarity.LEGENDARY);
 		constraintList[num].typeList.add(Equip_type.HEAVY);
 		constraintList[num].typeList.add(Equip_type.PLATE);
-		constraintList[num].rarityList.add(Item_rarity.LEGENDARY);
 		constraintList[num].setList.add(SetName.BURIEDSCREAM);
 		constraintList[num].setList.add(SetName.CURSEOFSEAGOD);
 		constraintList[num].setList.add(SetName.DEVASTEDGRIEF);
@@ -199,6 +198,7 @@ public class Vault extends Dialog
 		constraintList[num].setList.add(SetName.REAL_PROFIGHTER_LEATHER);
 		constraintList[num].setList.add(SetName.REAL_PROFIGHTER_MAIL);
 		constraintList[num].setList.add(SetName.REAL_PROFIGHTER_PLATE);
+		constraintList[num].setList.add(SetName.EKERN);
 		
 		//80~90 에픽 악세(단일)
 		num++;
