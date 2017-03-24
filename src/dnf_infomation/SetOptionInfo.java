@@ -581,6 +581,11 @@ public class SetOptionInfo {
 		temp = new SetOption(SetName.GUILDACCESSORY_WATER, 3, CalculatorVersion.VER_1_0_a);
 		temp.dStat.addStatList("수속강", 10);
 		setOptionList.add(temp);
+
+		///////에컨
+		temp = new SetOption(SetName.EKERN, 1, CalculatorVersion.VER_1_1_g);
+		temp.dStat.addStatList("힘뻥", 15, true, true);
+		setOptionList.add(temp);
 		
 		/////////////아바타
 		//레압

@@ -1488,6 +1488,20 @@ public class EquipmentInfo {
 				"무언의 건설자 수석", "", "", "", SetName.TACITCONSTRUCTOR, "", "",
 				"힘 62 가변", "지능 62 가변", "ㄷ 스증뎀 12 선택", null,
 				
+				///////////// 90 퀘전
+				////////방어구
+				"투기 상의", Item_rarity.LEGENDARY, Equip_part.ROBE, Equip_type.ALL, SetName.EKERN, 90, false, CalculatorVersion.VER_1_1_g,
+				"힘 52 가변", "지능 52 가변", 
+				"힘 36 가변 선택", "지능 36 가변 선택",
+				"물공 124 가변 선택", "마공 124 가변 선택", "독공 150 가변 선택", "물크 18 가변 선택", "마크 18 가변 선택",
+				"화속강 24 가변 선택", "수속강 24 가변 선택", "명속강 24 가변 선택", "암속강 24 가변 선택", "모속강 24 가변 선택", null,
+				"투기 하의", Item_rarity.LEGENDARY, "--", Equip_type.ALL, SetName.EKERN, 90, false, CalculatorVersion.VER_1_1_g,
+				"힘 52 가변", "지능 52 가변", 
+				"힘 36 가변 선택", "지능 36 가변 선택",
+				"물공 124 가변 선택", "마공 124 가변 선택", "독공 150 가변 선택", "물크 18 가변 선택", "마크 18 가변 선택",
+				"화속강 24 가변 선택", "수속강 24 가변 선택", "명속강 24 가변 선택", "암속강 24 가변 선택", "모속강 24 가변 선택", null,
+				
+				
 				/////////기타
 				"타오르는 정령의 반지", Item_rarity.EPIC, Equip_part.RING, Equip_type.ACCESSORY, SetName.NONE, 75, false,
 				"힘 77 가변", "지능 77 가변", "화속강 35 가변", null,
