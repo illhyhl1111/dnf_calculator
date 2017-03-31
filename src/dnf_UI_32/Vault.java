@@ -236,6 +236,7 @@ public class Vault extends Dialog
 		constraintList[num].setList.add(SetName.ROMANTICE);
 		constraintList[num].setList.add(SetName.ROOTOFDISEASE);
 		constraintList[num].rarityList.add(Item_rarity.LEGENDARY);
+		constraintList[num].setList.add(SetName.EKERN);
 		
 		//80~90 특수장비
 		num++;

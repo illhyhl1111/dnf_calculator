@@ -583,10 +583,42 @@ public class SetOptionInfo {
 		setOptionList.add(temp);
 
 		///////에컨
-		temp = new SetOption(SetName.EKERN, 1, CalculatorVersion.VER_1_1_g);
+		temp = new SetOption(SetName.EKERN, 3, CalculatorVersion.VER_1_1_g);
+		temp.dStat.addStatList("증뎀", 15, true, true);
+		temp.dStat.addStatList("크증뎀", 15, true, true);
+		temp.dStat.addStatList("추뎀", 13, true, true);
 		temp.dStat.addStatList("힘뻥", 15, true, true);
+		temp.dStat.addStatList("지능뻥", 15, true, true);
+		temp.vStat.addStatList("힘", 165, true, true);
+		temp.vStat.addStatList("지능", 165, true, true);
+		temp.dStat.addStatList("물공뻥", 15, true, true);
+		temp.dStat.addStatList("마공뻥", 15, true, true);
+		temp.dStat.addStatList("독공뻥", 15, true, true);
+		temp.dStat.addStatList("마공뻥", 15, true, true);
+		temp.vStat.addStatList("모속강", 44, true, true);
+		temp.vStat.addSkillRange(1, 30, 1, false, false, true);
+		temp.explanation.add("본인 옵션에 맞게 수정 필수");
 		setOptionList.add(temp);
-		
+		temp = new SetOption(SetName.EKERN, 9, CalculatorVersion.VER_1_1_g);
+		temp.dStat.addStatList("증뎀", 15, true, true);
+		temp.dStat.addStatList("크증뎀", 15, true, true);
+		temp.dStat.addStatList("추뎀", 13, true, true);
+		temp.dStat.addStatList("힘뻥", 15, true, true);
+		temp.dStat.addStatList("지능뻥", 15, true, true);
+		temp.vStat.addStatList("힘", 165, true, true);
+		temp.vStat.addStatList("지능", 165, true, true);
+		temp.dStat.addStatList("물공뻥", 15, true, true);
+		temp.dStat.addStatList("마공뻥", 15, true, true);
+		temp.dStat.addStatList("독공뻥", 15, true, true);
+		temp.dStat.addStatList("마공뻥", 15, true, true);
+		temp.vStat.addStatList("모속강", 44, true, true);
+		temp.explanation.add("9셋옵션은 에컨 세트 2개 입고싶은분들을 위해 준비해봤습니다.");
+		setOptionList.add(temp);
+		/////황혼의 가도
+		temp = new SetOption(SetName.TWIlIGHT, 3, CalculatorVersion.VER_1_1_g);
+		temp.vStat.addStatList("모속강", 40);
+		setOptionList.add(temp);
+
 		/////////////아바타
 		//레압
 		temp = new SetOption(SetName.RAREAVATAR, 3, CalculatorVersion.VER_1_0_a);

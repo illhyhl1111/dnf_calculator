@@ -28,7 +28,7 @@ public enum SetName implements Serializable
 	
 	TACITCONSTRUCTOR("무언의 건설자 세트"), MONARCHOFHEVELON("헤블론의 군주 세트"),
 	
-	EKERN("滅: 멸망의 투기 세트"),
+	EKERN("滅: 멸망의 투기 세트"), TWIlIGHT("황혼의 가도 세트"),
 	
 	RAREAVATAR("레어 아바타 세트"), AVATAR("상급 아바타 세트");
 	
