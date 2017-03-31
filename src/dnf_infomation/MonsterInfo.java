@@ -613,6 +613,7 @@ public class MonsterInfo {
 			monster.setStat("명속저", 100); monster.setStat("암속저", 30);
 			monster.setStat("물리방어력", 221307); monster.setStat("마법방어력", 221307);
 			monster.setStat("레벨", 120); monster.setStat("타입", MonsterType.BOSS);
+			monster.setStat("체력", 23000000000L); monster.setStat("방깍제한", 89.04);
 			monsterList.add(monster);
 			//어둠루크
 			monster = new Monster("건설자 루크(어둠)");

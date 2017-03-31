@@ -1,5 +1,5 @@
 #Fat Jar Configuration File
-#Sat Apr 01 03:55:17 KST 2017
+#Sat Apr 01 04:00:40 KST 2017
 onejar.license.required=true
 manifest.classpath=
 manifest.removesigners=true
@@ -10,5 +10,5 @@ manifest.mainclass=dnf_UI_32.CalculatorUILoad
 manifest.file=<createnew>
 jarname.isextern=false
 onejar.expand=
-excludes=<cl|C\:\\Users\\\uD604\uB3C4\\.p2\\pool>;<po|org.eclipse.swt_32>;<jar|rt.jar>
+excludes=<cl|C\:\\Users\\\uD604\uB3C4\\.p2\\pool>;<po|org.eclipse.swt_64>;<jar|rt.jar>
 includes=
