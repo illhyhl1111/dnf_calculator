@@ -364,7 +364,7 @@ public class ReinforceInfo {
 		if(info==null || (info.type!=equipment.getEquipType() && equipment.getEquipType()!=Equip_type.ALL)) return 0;
 		double result = info.phy_crt*mastery_part.get(equipment.getPart());
 		int result2 = (int)(result*10+0.5);
-		return result2/10;
+		return (double)result2/10;
 	}
 	public static double getMastery_magCrtInfo(Job job, Equipment equipment)
 	{
@@ -373,7 +373,7 @@ public class ReinforceInfo {
 		if(info==null || (info.type!=equipment.getEquipType() && equipment.getEquipType()!=Equip_type.ALL)) return 0;
 		double result = info.mag_crt*mastery_part.get(equipment.getPart());
 		int result2 = (int)(result*10+0.5);
-		return result2/10;
+		return (double)result2/10;
 	}
 }
 
