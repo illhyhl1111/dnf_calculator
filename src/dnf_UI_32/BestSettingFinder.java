@@ -84,7 +84,7 @@ public class BestSettingFinder extends Dialog {
 		content.setLayout(contentLayout);
 		
 		Label guideLabel = new Label(content, SWT.WRAP);
-		guideLabel.setText("\n ※인벤토리 내의 아이템과 재료를 조합하여 가장 강한 세팅 10개를 구합니다\n"
+		guideLabel.setText("\n ※인벤토리 내의 아이템과 재료를 조합하여 가장 강한 세팅 10개를 구합니다(대표스킬 기준!!)\n"
 				+ "   장착하고 있는 부위의 아이템은 세팅에 고정시키며, 장착하지 않은 부위만 조합합니다\n\n"
 				+ "   Tip) 가능한 장비 조합을 모두 계산해야하므로 시간이 오래 걸릴 수 있습니다\n"
 				+ "        쓸 일이 없는 자명한 하위호환 장비는 창고에 넣어주시고,\n"
@@ -688,8 +688,8 @@ public class BestSettingFinder extends Dialog {
 		armorList.add(Equip_part.ROBE); armorList.add(Equip_part.TROUSER); armorList.add(Equip_part.SHOULDER);
 		armorList.add(Equip_part.BELT); armorList.add(Equip_part.SHOES);
 		
-		Equipment[] anton = new Equipment[13];  
-		for(int i=0; i<13; i++) anton[i]=null;
+		Equipment[] anton = new Equipment[Equip_part.WEAPON.order+1];  
+		for(int i=0; i<anton.length; i++) anton[i]=null;
 		
 		HashMap<Equip_type, Equipment[]> luke = new HashMap<Equip_type, Equipment[]>();
 		luke.put(Equip_type.FABRIC, anton.clone());
@@ -723,8 +723,10 @@ public class BestSettingFinder extends Dialog {
 					equipList.put(part, new ArrayList<Item>());
 			}
 			
-			else if(character.getItemSetting().equipmentList.get(part).getName().contains("없음"))
-				equipList.put(part, new ArrayList<Item>());
+			else if(part!=Equip_part.SKILLTITLE){
+				if(character.getItemSetting().equipmentList.get(part).getName().contains("없음"))
+					equipList.put(part, new ArrayList<Item>());
+			}
 		}
 		
 		if(armorSetOnly){

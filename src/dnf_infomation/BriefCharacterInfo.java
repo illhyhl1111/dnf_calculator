@@ -22,4 +22,8 @@ public class BriefCharacterInfo implements java.io.Serializable{
 		else if(o instanceof String) return name.equals(o);
 		return false;
 	}
+	
+	public static String getFileName(String name){
+		return name.replaceAll("[\\\\/:*?\"<>|]", "~");
+	}
 }

@@ -63,8 +63,8 @@ public class PartyCharacterInfo {
 				new boolean[] {true, false, false, true}, "2800/43/16", CalculatorVersion.VER_1_0_a);
 		((Saint)temp).setStat(new int[] {2500, 2500, 9, 29, 26, 26, 41, 14, 2, 15, 60},
 				new boolean[] {true, false, false, true}, "2500/41/14", CalculatorVersion.VER_1_0_a);
-		((Saint)temp).setStat(new int[] {2200, 200, 9, 29, 26, 26, 39, 13, 2, 15, 0},
-				new boolean[] {true, false, false, true}, "2200/39/13/스택X", CalculatorVersion.VER_1_0_a);
+		((Saint)temp).setStat(new int[] {2200, 2200, 9, 29, 26, 26, 39, 13, 2, 15, 0},
+				new boolean[] {true, false, false, true}, "2200/39/13/스택X", CalculatorVersion.VER_1_1_g);
 		
 		((Saint)temp).setStat(new int[] {2000, 2000, 0, HolyInfo.firstLevel_striking, HolyInfo.firstLevel_wisebless, HolyInfo.firstLevel_dawnbless,
 				HolyInfo.firstLevel_glorybless, HolyInfo.firstLevel_aporkalypse, 1, HolyInfo.firstLevel_beliefAura, 0},
@@ -249,37 +249,43 @@ public class PartyCharacterInfo {
 		statList.addStatList("지능", 708);
 		statList.addStatList("암속깍", 68);
 		statList.addStatList("%마방깍_스킬", 22);
-		temp.setBuff("장판+암속깍", "달계마스터", statList, CalculatorVersion.VER_1_1_a);
+		statList.addStatList("%물방깍_스킬", 22);
+		temp.setBuff("장판+암속깍", "달계마스터", statList, CalculatorVersion.VER_1_1_g);
 		statList = new StatusList();
 		statList.addStatList("힘", 768);
 		statList.addStatList("지능", 768);
 		statList.addStatList("암속깍", 76);
 		statList.addStatList("%마방깍_스킬", 23);
-		temp.setBuff("장판+암속깍", "달계마스터+1", statList, CalculatorVersion.VER_1_1_a);
+		statList.addStatList("%물방깍_스킬", 23);
+		temp.setBuff("장판+암속깍", "달계마스터+1", statList, CalculatorVersion.VER_1_1_g);
 		statList = new StatusList();
 		statList.addStatList("힘", 828);
 		statList.addStatList("지능", 828);
 		statList.addStatList("암속깍", 83);
 		statList.addStatList("%마방깍_스킬", 24);
-		temp.setBuff("장판+암속깍", "달계마스터+2", statList, CalculatorVersion.VER_1_1_a);
+		statList.addStatList("%물방깍_스킬", 24);
+		temp.setBuff("장판+암속깍", "달계마스터+2", statList, CalculatorVersion.VER_1_1_g);
 		statList = new StatusList();
 		statList.addStatList("힘", 889);
 		statList.addStatList("지능", 889);
 		statList.addStatList("암속깍", 91);
 		statList.addStatList("%마방깍_스킬", 25);
-		temp.setBuff("장판+암속깍", "달계마스터+3", statList, CalculatorVersion.VER_1_1_a);
+		statList.addStatList("%물방깍_스킬", 25);
+		temp.setBuff("장판+암속깍", "달계마스터+3", statList, CalculatorVersion.VER_1_1_g);
 		statList = new StatusList();
 		statList.addStatList("힘", 708);
 		statList.addStatList("지능", 708);
 		statList.addStatList("암속깍", 68);
 		statList.addStatList("%마방깍_스킬", 38.75);
-		temp.setBuff("장판+암속깍", "달계마스터+29/영지", statList, CalculatorVersion.VER_1_1_a);
+		statList.addStatList("%물방깍_스킬", 30);
+		temp.setBuff("장판+암속깍", "달계마스터+29/영지", statList, CalculatorVersion.VER_1_1_g);
 		statList = new StatusList();
 		statList.addStatList("힘", 708);
 		statList.addStatList("지능", 708);
 		statList.addStatList("암속깍", 68);
 		statList.addStatList("%마방깍_스킬", 40);
-		temp.setBuff("장판+암속깍", "달계마스터+30/영지", statList, CalculatorVersion.VER_1_1_a);
+		statList.addStatList("%물방깍_스킬", 30);
+		temp.setBuff("장판+암속깍", "달계마스터+30/영지", statList, CalculatorVersion.VER_1_1_g);
 		statList = new StatusList();
 		statList.addStatList("암속깍", 70);
 		temp.setBuff("툼트앵", "13레벨(달계마스터)", statList, CalculatorVersion.VER_1_1_a);
@@ -303,13 +309,15 @@ public class PartyCharacterInfo {
 		/////마도
 		temp = new PartyCharacter("마도", Job.WITCH);
 		statList = new StatusList();
+		statList.addStatList("힘뻥", 10);
 		statList.addStatList("지능뻥", 10);
 		statList.addStatList("지능", 823);
-		temp.setBuff("대파+도서관", "17레벨+선구6", statList, CalculatorVersion.VER_1_1_a);
+		temp.setBuff("대파+도서관", "17레벨+선구6", statList, CalculatorVersion.VER_1_1_g);
 		statList = new StatusList();
+		statList.addStatList("힘뻥", 10);
 		statList.addStatList("지능뻥", 10);
 		statList.addStatList("지능", 939);
-		temp.setBuff("대파+도서관", "20레벨+선구6", statList, CalculatorVersion.VER_1_1_a);
+		temp.setBuff("대파+도서관", "20레벨+선구6", statList, CalculatorVersion.VER_1_1_g);
 		statList = new StatusList();
 		statList.addStatList("화속깍", 45);
 		statList.addStatList("수속깍", 45);
@@ -362,13 +370,16 @@ public class PartyCharacterInfo {
 		temp.setBuff("워크라이", "30레벨+균차", statList, CalculatorVersion.VER_1_1_a);
 		statList = new StatusList();
 		statList.addStatList("%물방깍_스킬", 7.6);
-		temp.setBuff("압도", "36레벨(달계마스터)", statList, CalculatorVersion.VER_1_1_a);
+		statList.addStatList("%마방깍_스킬", 7.6);
+		temp.setBuff("압도", "36레벨(달계마스터)", statList, CalculatorVersion.VER_1_1_g);
 		statList = new StatusList();
 		statList.addStatList("%물방깍_스킬", 7.8);
-		temp.setBuff("압도", "38레벨", statList, CalculatorVersion.VER_1_1_a);
+		statList.addStatList("%마방깍_스킬", 7.8);
+		temp.setBuff("압도", "38레벨", statList, CalculatorVersion.VER_1_1_g);
 		statList = new StatusList();
 		statList.addStatList("%물방깍_스킬", 8);
-		temp.setBuff("압도", "40레벨", statList, CalculatorVersion.VER_1_1_a);
+		statList.addStatList("%마방깍_스킬", 8);
+		temp.setBuff("압도", "40레벨", statList, CalculatorVersion.VER_1_1_g);
 		partyList.add(temp);		
 		
 		/////디트

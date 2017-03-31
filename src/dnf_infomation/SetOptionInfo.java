@@ -11,6 +11,7 @@ import dnf_calculator.CalculateElement;
 import dnf_calculator.DoubleStatusInfo;
 import dnf_calculator.ElementInfo;
 import dnf_calculator.FunctionStat;
+import dnf_calculator.StatusAndName;
 import dnf_calculator.StatusInfo;
 import dnf_calculator.StatusList;
 import dnf_class.Characters;
@@ -31,9 +32,9 @@ public class SetOptionInfo {
 		temp.dStat.addStatList("암속깍", 30, false, true);
 		setOptionList.add(temp);
 		//불마력
-		temp = new SetOption(SetName.BURNINGSPELL, 5, CalculatorVersion.VER_1_0_a);
+		temp = new SetOption(SetName.BURNINGSPELL, 5, CalculatorVersion.VER_1_1_c);
 		temp.vStat.addStatList("마공", 480);
-		temp.vStat.addStatList("물공", 550);
+		temp.vStat.addStatList("독공", 550);
 		temp.dStat.addStatList("지능뻥", 18, false, true);
 		setOptionList.add(temp);
 		//드로퍼
@@ -87,10 +88,10 @@ public class SetOptionInfo {
 		temp.explanation.add(".....");
 		setOptionList.add(temp);
 		//택틱
-		temp = new SetOption(SetName.TACTICAL, 5, CalculatorVersion.VER_1_0_a);
+		temp = new SetOption(SetName.TACTICAL, 5, CalculatorVersion.VER_1_1_d);
 		temp.dStat.addStatList("힘", 500);
 		temp.dStat.addStatList("지능", 500);
-		temp.dStat.addStatList("추뎀", 55);
+		temp.dStat.addStatList("추뎀", 55, true);
 		setOptionList.add(temp);
 		//신사
 		temp = new SetOption(SetName.BLACKFORMAL, 3, CalculatorVersion.VER_1_0_a);
@@ -564,9 +565,9 @@ public class SetOptionInfo {
 		setOptionList.add(temp);
 		//거형
 		temp = new SetOption(SetName.HUGEFORM, 3, CalculatorVersion.VER_1_0_a);
-		temp.vStat.addStatList("스증뎀", 10);
-		temp.vStat.addStatList("힘뻥", 10, false, true);
-		temp.vStat.addStatList("지능뻥", 10, false, true);
+		temp.dStat.addStatList("스증뎀", 10);
+		temp.dStat.addStatList("힘뻥", 10, false, true);
+		temp.dStat.addStatList("지능뻥", 10, false, true);
 		setOptionList.add(temp);
 		//루크
 		temp = new SetOption(SetName.TACITCONSTRUCTOR, 3, CalculatorVersion.VER_1_0_a);
@@ -581,7 +582,51 @@ public class SetOptionInfo {
 		temp = new SetOption(SetName.GUILDACCESSORY_WATER, 3, CalculatorVersion.VER_1_0_a);
 		temp.dStat.addStatList("수속강", 10);
 		setOptionList.add(temp);
-		
+
+		///////에컨
+		temp = new SetOption(SetName.EKERN, 3, CalculatorVersion.VER_1_1_g);
+		temp.dStat.addStatList("증뎀", 15, true, true);
+		temp.dStat.addStatList("크증뎀", 15, true, true);
+		temp.dStat.addStatList("추뎀", 13, true, true);
+		temp.dStat.addStatList("힘뻥", 15, true, true);
+		temp.dStat.addStatList("지능뻥", 15, true, true);
+		temp.vStat.addStatList("힘", 165, true, true);
+		temp.vStat.addStatList("지능", 165, true, true);
+		temp.dStat.addStatList("물공뻥", 15, true, true);
+		temp.dStat.addStatList("마공뻥", 15, true, true);
+		temp.dStat.addStatList("독공뻥", 15, true, true);
+		temp.vStat.addStatList("모속강", 44, true, true);
+		temp.vStat.addSkillRange(1, 30, 1, false, false, true);
+		temp.explanation.add("본인 옵션에 맞게 수정이 필요합니다");
+		temp.explanation.add("6셋 극옵 : 스탯뻥 15% + 물마공 15% + 추뎀 13%(혹은 증/크증 15%) + 모속강 11");
+		for(StatusAndName s : temp.vStat.statList)
+			s.enabled=false;
+		for(StatusAndName s : temp.dStat.statList)
+			s.enabled=false;
+		setOptionList.add(temp);
+		temp = new SetOption(SetName.EKERN, 9, CalculatorVersion.VER_1_1_g);
+		temp.dStat.addStatList("증뎀", 15, true, true);
+		temp.dStat.addStatList("크증뎀", 15, true, true);
+		temp.dStat.addStatList("추뎀", 13, true, true);
+		temp.dStat.addStatList("힘뻥", 15, true, true);
+		temp.dStat.addStatList("지능뻥", 15, true, true);
+		temp.vStat.addStatList("힘", 165, true, true);
+		temp.vStat.addStatList("지능", 165, true, true);
+		temp.dStat.addStatList("물공뻥", 15, true, true);
+		temp.dStat.addStatList("마공뻥", 15, true, true);
+		temp.dStat.addStatList("독공뻥", 15, true, true);
+		temp.vStat.addStatList("모속강", 44, true, true);
+		temp.explanation.add("9셋옵션은 에컨 세트 2개 입고싶은분들을 위해 준비해봤습니다.");
+		for(StatusAndName s : temp.vStat.statList)
+			s.enabled=false;
+		for(StatusAndName s : temp.dStat.statList)
+			s.enabled=false;
+		setOptionList.add(temp);
+		/////황혼의 가도
+		temp = new SetOption(SetName.TWIlIGHT, 3, CalculatorVersion.VER_1_1_g);
+		temp.vStat.addStatList("모속강", 40);
+		setOptionList.add(temp);
+
 		/////////////아바타
 		//레압
 		temp = new SetOption(SetName.RAREAVATAR, 3, CalculatorVersion.VER_1_0_a);

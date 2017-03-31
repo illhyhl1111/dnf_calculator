@@ -43,6 +43,7 @@ import dnf_class.Card;
 import dnf_class.Characters;
 import dnf_class.Equipment;
 import dnf_class.Item;
+import dnf_class.SkillTitle;
 import dnf_class.Title;
 import dnf_class.Weapon;
 import dnf_infomation.GetDictionary;
@@ -64,7 +65,7 @@ public class BatchModifier extends Dialog {
 		this.inventory=inventory;
 		
 		Equip_part[] partList = {
-				Equip_part.SHOULDER, Equip_part.ROBE, Equip_part.TROUSER, Equip_part.BELT, Equip_part.SHOES, Equip_part.WEAPON, Equip_part.TITLE,
+				Equip_part.SHOULDER, Equip_part.ROBE, Equip_part.TROUSER, Equip_part.BELT, Equip_part.SHOES, Equip_part.WEAPON, Equip_part.SKILLTITLE,
 				Equip_part.BRACELET, Equip_part.NECKLACE, Equip_part.AIDEQUIPMENT, Equip_part.RING, Equip_part.EARRING, Equip_part.MAGICSTONE
 		};
 		equipList = new Equipment[partList.length];
@@ -241,7 +242,7 @@ public class BatchModifier extends Dialog {
 					partList.add(Equip_part.ROBE);
 				else if(partSelection.equals("하의"))
 					partList.add(Equip_part.TROUSER);
-				else if(partSelection.equals("어깨"))
+				else if(partSelection.equals("머리어깨"))
 					partList.add(Equip_part.SHOULDER);
 				else if(partSelection.equals("벨트"))
 					partList.add(Equip_part.BELT);
@@ -359,7 +360,7 @@ public class BatchModifier extends Dialog {
 		for(i=0; i<5; i++)
 			itemButtonList_wildCard[i] = new ItemButton<Item>(leftItemInfoComposite, equipList[i], BUTTON_SIZE, BUTTON_SIZE);
 		for(; i<UserItemInfo.ITEMNUM; i++){
-			if(i==6) itemButtonList_wildCard[i] = new ItemButton<Item>(rightItemInfoComposite, new Title(), BUTTON_SIZE, BUTTON_SIZE);
+			if(i==6) itemButtonList_wildCard[i] = new ItemButton<Item>(rightItemInfoComposite, new SkillTitle(), BUTTON_SIZE, BUTTON_SIZE);
 			else itemButtonList_wildCard[i] = new ItemButton<Item>(rightItemInfoComposite, equipList[i], BUTTON_SIZE, BUTTON_SIZE);
 		}
 		
@@ -459,10 +460,18 @@ public class BatchModifier extends Dialog {
 							itemButton.getButton().setImage(GetDictionary.iconDictionary.getOrDefault(card.getItemName(),
 									GetDictionary.iconDictionary.get("디폴트")));
 							
-							MessageDialog dialog = new MessageDialog(shell, "성☆공", null,
-								    "마법부여 지정에 성공하였습니다!\n\n보주 : "+name+"\n부위 : "+((Equipment)itemButton.getItem()).part.getName(),
-								    MessageDialog.INFORMATION, new String[] { "ㅇㅋ" }, 0);
-							dialog.open();
+							if(itemButton.getItem() instanceof Title){
+								MessageDialog dialog = new MessageDialog(shell, "성☆공", null,
+									    "마법부여 지정에 성공하였습니다!\n\n보주 : "+name+"\n부위 : "+((Title)itemButton.getItem()).part.getName(),
+									    MessageDialog.INFORMATION, new String[] { "ㅇㅋ" }, 0);
+								dialog.open();
+							}
+							else{
+								MessageDialog dialog = new MessageDialog(shell, "성☆공", null,
+									    "마법부여 지정에 성공하였습니다!\n\n보주 : "+name+"\n부위 : "+((Equipment)itemButton.getItem()).part.getName(),
+									    MessageDialog.INFORMATION, new String[] { "ㅇㅋ" }, 0);
+								dialog.open();
+							}
 						}
 						else{
 							MessageDialog dialog = new MessageDialog(shell, "실★패", null,

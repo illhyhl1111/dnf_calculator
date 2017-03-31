@@ -332,13 +332,18 @@ public class ChangeSetOptionStatus extends Dialog{
 	protected void okPressed() {
 		for(SetOption s : setOption)													//각 세트옵션(3셋옵, 5셋옵)
 		{
-			for(Entry<Integer, Wrapper> e : vStatEntry.get(s.requireNum))				//for each - 해당 숫자에 해당되는 마을옵션리스트
-				if(e.getValue()!=null)
-					s.vStat.changeStat(e.getKey(), Double.valueOf(e.getValue().getText().getText()), e.getValue().getButton().getSelection());
+			if(!dStatEntry.isEmpty()){
+				for(Entry<Integer, Wrapper> e : vStatEntry.get(s.requireNum))				//for each - 해당 숫자에 해당되는 마을옵션리스트
+					if(e.getValue()!=null)
+						s.vStat.changeStat(e.getKey(), Double.valueOf(e.getValue().getText().getText()), e.getValue().getButton().getSelection());
+			}
 			
-			for(Entry<Integer, Wrapper> e : dStatEntry.get(s.requireNum))				//for each - 해당 숫자에 해당되는 던전옵션리스트
-				if(e.getValue()!=null)
-					s.dStat.changeStat(e.getKey(), Double.valueOf(e.getValue().getText().getText()), e.getValue().getButton().getSelection());
+			//ADDED
+			if(!dStatEntry.isEmpty()){
+				for(Entry<Integer, Wrapper> e : dStatEntry.get(s.requireNum))				//for each - 해당 숫자에 해당되는 던전옵션리스트
+					if(e.getValue()!=null)
+						s.dStat.changeStat(e.getKey(), Double.valueOf(e.getValue().getText().getText()), e.getValue().getButton().getSelection());
+			}
 		}
 		
 	    super.okPressed();

@@ -7,8 +7,11 @@ import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.Item_rarity;
 import dnf_calculator.DoubleStatusInfo;
 import dnf_calculator.ElementInfo;
+import dnf_calculator.SkillRangeStatusInfo;
+import dnf_calculator.StatusAndName;
 import dnf_calculator.StatusInfo;
 import dnf_class.Card;
+import dnf_class.SkillTitle;
 import dnf_class.Title;
 
 public class TitleInfo {
@@ -311,5 +314,19 @@ public class TitleInfo {
 		temp.vStat.addStatList("모속강", new ElementInfo(12));
 		titleList.add(temp);
 		
+		//스킬칭호
+		temp = new SkillTitle("스킬 칭호", rarity, CalculatorVersion.VER_1_1_b);
+		temp.vStat.addStatList("힘", new StatusInfo(54), true);
+		temp.vStat.addStatList("지능", new StatusInfo(54), true);
+		temp.vStat.addSkillRange(15, 15, 1, false, false, true);
+		temp.vStat.addSkillRange(20, 20, 1, false, false, true);
+		temp.vStat.addSkillRange(25, 25, 1, false, false, true);
+		temp.vStat.addSkillRange(30, 30, 1, false, false, true);
+		temp.vStat.addSkillRange(35, 35, 1, false, false, true);
+		temp.explanation.add("보주 인벤토리 최하단의 스킬 보주로 스킬 레벨 옵션을 부여할 수 있습니다");
+		for(StatusAndName s : temp.vStat.statList){
+			if(s.stat instanceof SkillRangeStatusInfo) s.enabled=false;
+		}
+		titleList.add(temp);	
 	}
 }

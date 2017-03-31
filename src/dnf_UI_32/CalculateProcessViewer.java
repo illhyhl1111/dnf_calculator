@@ -709,7 +709,7 @@ public class CalculateProcessViewer extends Dialog {
 			setFormData(dope_inc_sumLabel, all_inc_sumLabel, 10, 0, 10);
 			Composite dope_inc_sumCompostie = new Composite(increaseInfo, SWT.NONE);
 			dope_inc_sumCompostie.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
-			double dope_inc = setNumberComposite(dope_inc_sumCompostie, status.trackList[StatList.DAM_BUF], "투함포, 안톤공대버프, 이그니스, 영추(%)", '+');
+			double dope_inc = setNumberComposite(dope_inc_sumCompostie, status.trackList[StatList.DAM_BUF], "투함포, 안톤공대버프, 이그니스(%)", '+');
 			setFormData(dope_inc_sumCompostie, all_inc_sumLabel, 13, dope_inc_sumLabel, 10);
 			
 			Label fire_addLabel = new Label(increaseInfo, SWT.NONE);
@@ -780,7 +780,7 @@ public class CalculateProcessViewer extends Dialog {
 			formula.add(new TrackRecord(')'));
 			formula.add(new TrackRecord("크리티컬 증뎀", add_crt_inc));
 			double counter_inc = 1;
-			if(character.target.getBool("카운터")) counter_inc=1.25;
+			if(character.target.getCounter(trackingSkill.isHoldingSkill)) counter_inc=1.25;
 			formula.add(new TrackRecord("카운터", counter_inc));
 			double add_inc = setNumberComposite(addCompostie, formula, "추뎀 증가량(%)", '*');
 			setFormData(addCompostie, light_addLabel, 10, addLabel, 5);

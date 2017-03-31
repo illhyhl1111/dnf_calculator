@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import dnf_InterfacesAndExceptions.CalculatorVersion;
 import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.Item_rarity;
+import dnf_InterfacesAndExceptions.Job;
 
 public class Card extends Item implements java.io.Serializable
 {
@@ -44,6 +45,11 @@ public class Card extends Item implements java.io.Serializable
 			if(availableType.contains(((Equipment)item).part)) return true;
 			return false;
 		}
+		else if(item instanceof SkillTitle)
+		{
+			if(availableType.contains(Equip_part.TITLE) || availableType.contains(Equip_part.SKILLTITLE)) return true;
+			return false;
+		}
 		else if(item instanceof Title)
 		{
 			if(availableType.contains(Equip_part.TITLE)) return true;
@@ -65,6 +71,10 @@ public class Card extends Item implements java.io.Serializable
 		for(Equip_part part : availableType)
 			if(part.order>result) result=part.order;
 		return result;
+	}
+	
+	public boolean setSkillList(Job job){
+		return false;
 	}
 	
 	@Override

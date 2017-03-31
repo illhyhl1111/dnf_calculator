@@ -25,7 +25,6 @@ import org.eclipse.swt.widgets.Shell;
 
 import dnf_InterfacesAndExceptions.DnFColor;
 import dnf_InterfacesAndExceptions.InterfaceSize;
-import dnf_InterfacesAndExceptions.Skill_type;
 import dnf_class.Characters;
 import dnf_class.Skill;
 import dnf_class.SwitchingSkill;
@@ -166,7 +165,7 @@ public class SkillTree extends Dialog{
 				button.getButton().addListener(SWT.MouseExit, listenerGroup.disposeItemInfoListener()); 		// add MouseExit Event - dispose composite
 				button.getButton().addListener(SWT.MouseMove, listenerGroup.moveItemInfoListener());			// add MouseMove Event - move composite
 				button.getButton().addListener(SWT.MouseDown, listenerGroup.skillLevelModifyListener(this.getShell(), false));
-				if(button.getItem().type==Skill_type.SWITCHING) 
+				if(button.getItem() instanceof SwitchingSkill) 
 					button.getButton().addListener(SWT.MouseDoubleClick, listenerGroup.skillModifyListener(((SwitchingSkill)button.getItem()).getStatList()));
 				
 				num++;
@@ -224,9 +223,9 @@ public class SkillTree extends Dialog{
 		setRepresentative.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
 		
 		representSkillCombo = new Combo(contractSetGroup, SWT.READ_ONLY);
-		String[] items = new String[character.getDamageSkillList().size()];
+		String[] items = new String[character.getRepresentableSkillList().size()];
 		int i=0;
-		for(Skill skill : character.getDamageSkillList())
+		for(Skill skill : character.getRepresentableSkillList())
 			items[i++] = skill.getItemName();
 		representSkillCombo.setItems(items);
 		representSkillCombo.setText(character.getRepresentSkill().getName());

@@ -167,6 +167,12 @@ public class Monster extends IconObject implements java.io.Serializable{							/
 		else throw new UndefinedStatusKey(stat);
 	}
 	
+	public boolean getCounter(boolean isHoldingSkill) throws StatusTypeMismatch
+	{
+		if(isHoldingSkill) return false;
+		return ((BooleanInfo)monstInfo[Monster_StatList.COUNTER-Monster_StatList.STARTNUM]).getBooleanStat();
+	}
+	
 	public boolean getBool(int stat) throws StatusTypeMismatch
 	{
 		if(monstInfo[stat-Monster_StatList.STARTNUM] instanceof BooleanInfo)

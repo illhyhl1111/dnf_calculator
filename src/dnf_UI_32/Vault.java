@@ -68,12 +68,12 @@ public class Vault extends Dialog
 		ItemConstraint[] constraintList = setConstraintList(tabNameList.length-1-2, character);
 		LinkedList<Item>[] equipList = character.userItemList.separateList(constraintList);
 		
-		LinkedList<?>[] itemList = new LinkedList<?>[equipList.length+2];
+		LinkedList<Item>[] itemList = (LinkedList<Item>[]) new LinkedList<?>[equipList.length+2];
 		for(int i=0; i<equipList.length; i++)
 			itemList[i]=equipList[i];
 		itemList[equipList.length] = character.userItemList.getSortedList(character.userItemList.avatarList);
 		itemList[equipList.length+1] = character.userItemList.getSortedList(character.userItemList.creatureList);
-		//itemList[equipList.length+2] = character.userItemList.getSortedList(character.userItemList.drapeList); 
+		itemList[equipList.length+1].addAll((LinkedList<? extends Item>) character.userItemList.getSortedList(character.userItemList.drapeList)); 
 		
 		RowLayout packLayout = new RowLayout(SWT.VERTICAL);
 		packLayout.spacing=10;
@@ -181,7 +181,6 @@ public class Vault extends Dialog
 		constraintList[num].rarityList.add(Item_rarity.LEGENDARY);
 		constraintList[num].typeList.add(Equip_type.HEAVY);
 		constraintList[num].typeList.add(Equip_type.PLATE);
-		constraintList[num].rarityList.add(Item_rarity.LEGENDARY);
 		constraintList[num].setList.add(SetName.BURIEDSCREAM);
 		constraintList[num].setList.add(SetName.CURSEOFSEAGOD);
 		constraintList[num].setList.add(SetName.DEVASTEDGRIEF);
@@ -199,6 +198,7 @@ public class Vault extends Dialog
 		constraintList[num].setList.add(SetName.REAL_PROFIGHTER_LEATHER);
 		constraintList[num].setList.add(SetName.REAL_PROFIGHTER_MAIL);
 		constraintList[num].setList.add(SetName.REAL_PROFIGHTER_PLATE);
+		constraintList[num].setList.add(SetName.EKERN);
 		
 		//80~90 에픽 악세(단일)
 		num++;
@@ -236,6 +236,7 @@ public class Vault extends Dialog
 		constraintList[num].setList.add(SetName.ROMANTICE);
 		constraintList[num].setList.add(SetName.ROOTOFDISEASE);
 		constraintList[num].rarityList.add(Item_rarity.LEGENDARY);
+		constraintList[num].setList.add(SetName.EKERN);
 		
 		//80~90 특수장비
 		num++;

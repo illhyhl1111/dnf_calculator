@@ -15,7 +15,7 @@ public class TPSkill extends Skill implements java.io.Serializable{
 	
 	public TPSkill(String name, String target, Job job, int firstLevel, int maxLevel, int masterLevel, int levelIncrease, String version)
 	{
-		super(name, Skill_type.TP, job, firstLevel, maxLevel, masterLevel, 5, Element_type.NONE, version);
+		super(name, Skill_type.TP, job, firstLevel, maxLevel, masterLevel, 5, Element_type.NONE, false, version);
 		TPSkill_Target = new String[0];
 		TPSkill_Target[0]=target;
 		
@@ -29,7 +29,7 @@ public class TPSkill extends Skill implements java.io.Serializable{
 	}
 	public TPSkill(String name, String[] targets, Job job, int firstLevel, int maxLevel, int masterLevel, int levelIncrease, String version)
 	{
-		super(name, Skill_type.TP, job, firstLevel, maxLevel, masterLevel, 5, Element_type.NONE, version);
+		super(name, Skill_type.TP, job, firstLevel, maxLevel, masterLevel, 5, Element_type.NONE, false, version);
 		TPSkill_Target = targets;
 		
 		if(levelIncrease>=0){
@@ -43,7 +43,7 @@ public class TPSkill extends Skill implements java.io.Serializable{
 	
 	public TPSkill(String name, String target, Character_type type, int firstLevel, int maxLevel, int masterLevel, int levelIncrease, String version)
 	{
-		super(name, Skill_type.TP, type, firstLevel, maxLevel, masterLevel, 5, Element_type.NONE, version);
+		super(name, Skill_type.TP, type, firstLevel, maxLevel, masterLevel, 5, Element_type.NONE, false, version);
 		TPSkill_Target = new String[0];
 		TPSkill_Target[0]=target;
 		
@@ -57,7 +57,7 @@ public class TPSkill extends Skill implements java.io.Serializable{
 	}
 	public TPSkill(String name, String[] targets, Character_type type, int firstLevel, int maxLevel, int masterLevel, int levelIncrease, String version)
 	{
-		super(name, Skill_type.TP, type, firstLevel, maxLevel, masterLevel, 5, Element_type.NONE, version);
+		super(name, Skill_type.TP, type, firstLevel, maxLevel, masterLevel, 5, Element_type.NONE, false, version);
 		TPSkill_Target = targets;
 		
 		if(levelIncrease>=0){

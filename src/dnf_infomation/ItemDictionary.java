@@ -29,6 +29,7 @@ import dnf_class.ItemConstraint;
 import dnf_class.Jam;
 import dnf_class.SetOption;
 import dnf_class.Setting;
+import dnf_class.SkillCard;
 import dnf_class.Title;
 import dnf_class.Weapon;
 
@@ -83,6 +84,7 @@ public class ItemDictionary implements java.io.Serializable
 		CreatureInfo.getInfo(creatureList);
 		
 		drapeList = new LinkedList<Drape>();
+		DrapeInfo.getInfo(drapeList);
 		
 		emblemList = new LinkedList<Emblem>();
 		EmblemInfo.getInfo(emblemList);
@@ -345,7 +347,7 @@ public class ItemDictionary implements java.io.Serializable
 	{
 		if(supremeDictionary.getVERSION().compareTo(VERSION)>0){
 			updateList(equipList, supremeDictionary.equipList, job);
-			updateList(cardList, supremeDictionary.cardList);
+			updateList(cardList, supremeDictionary.cardList, job);
 			updateList(avatarList, supremeDictionary.avatarList);
 			updateList(creatureList, supremeDictionary.creatureList);
 			updateList(drapeList, supremeDictionary.drapeList);
@@ -409,6 +411,7 @@ public class ItemDictionary implements java.io.Serializable
 					if(item instanceof Equipment){
 						Equipment equip = (Equipment)item;
 						equip.isRareItem = ((Equipment)update).isRareItem;
+						equip.type = ((Equipment)update).getEquipType();
 					}
 					
 					/*if(duplicateList!=null){
@@ -435,8 +438,10 @@ public class ItemDictionary implements java.io.Serializable
 			}
 		}
 		
-		for(T item : updateList.values())
+		for(T item : updateList.values()){
 			list.add(item);
+			if(item instanceof SkillCard) ((Card) item).setSkillList(job);
+		}
 	}
 	
 	public String getVERSION() { return VERSION;}

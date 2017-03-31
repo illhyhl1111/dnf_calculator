@@ -205,15 +205,19 @@ public class CalculateElement
 	public static Element_type getLargestType(Status stat)
 	{
 		int[] type = new int[4];
-		int index=0;
+		int index=0, temp=0;
 		try {
 			type[0]=(int) stat.getStat("화속강");
+			temp=type[0];
 			type[1]=(int) stat.getStat("수속강");
 			type[2]=(int) stat.getStat("명속강");
 			type[3]=(int) stat.getStat("암속강");
 			
 			for(int i=0; i<3; i++)
-				if(type[i]<type[i+1]) index=i+1;
+				if(temp<type[i+1]) {
+					temp=type[i+1];
+					index=i+1;
+				}
 			
 			switch(index)
 			{

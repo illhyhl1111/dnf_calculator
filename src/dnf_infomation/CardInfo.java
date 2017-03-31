@@ -7,6 +7,7 @@ import dnf_InterfacesAndExceptions.Item_rarity;
 import dnf_calculator.DoubleStatusInfo;
 import dnf_calculator.StatusInfo;
 import dnf_class.Card;
+import dnf_class.SkillCard;
 
 public class CardInfo {
 	public static void getInfo(LinkedList<Card> cardList)
@@ -358,6 +359,10 @@ public class CardInfo {
 		temp.vStat.addStatList("힘", new StatusInfo(125), true);
 		temp.vStat.addStatList("지능", new StatusInfo(125), true);
 		temp.explanation.add("이걸 진짜 풀업하라고 진지하게 만든건가여?");
+		cardList.add(temp);
+		
+		temp = new SkillCard("스킬 보주", rarity, CalculatorVersion.VER_1_1_b);
+		temp.addPart(Equip_part.SKILLTITLE);
 		cardList.add(temp);
 	}
 }

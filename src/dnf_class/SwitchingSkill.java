@@ -17,13 +17,24 @@ public class SwitchingSkill extends Skill{
 	
 	public SwitchingSkill(String name, Job job, int firstLevel, int maxLevel, int masterLevel, int levelInterval, String version)
 	{
-		super(name, Skill_type.SWITCHING, job, firstLevel, maxLevel, masterLevel, levelInterval, Element_type.NONE, version);
+		super(name, Skill_type.SWITCHING, job, firstLevel, maxLevel, masterLevel, levelInterval, Element_type.NONE, false, version);
 		explanation.add("스킬트리 창에서 아이콘을 더블클릭하여 스위칭 수치를 설정하세요");
 	}
 	public SwitchingSkill(String name, Character_type charType, int firstLevel, int maxLevel, int masterLevel, int levelInterval, String version)
 	{
-		super(name, Skill_type.SWITCHING, charType, firstLevel, maxLevel, masterLevel, levelInterval, Element_type.NONE, version);
+		super(name, Skill_type.SWITCHING, charType, firstLevel, maxLevel, masterLevel, levelInterval, Element_type.NONE, false, version);
 		explanation.add("스킬트리 창에서 아이콘을 더블클릭하여 스위칭 수치를 설정하세요");
+	}
+	
+	public SwitchingSkill(String name, Skill_type type, Job job, int firstLevel, int maxLevel, int masterLevel, int levelInterval, String version)
+	{
+		super(name, type, job, firstLevel, maxLevel, masterLevel, levelInterval, Element_type.NONE, false, version);
+		explanation.add("스킬트리 창에서 아이콘을 더블클릭하여 사용자 지정 수치를 설정하세요");
+	}
+	public SwitchingSkill(String name, Skill_type type, Character_type charType, int firstLevel, int maxLevel, int masterLevel, int levelInterval, String version)
+	{
+		super(name, type, charType, firstLevel, maxLevel, masterLevel, levelInterval, Element_type.NONE, false, version);
+		explanation.add("스킬트리 창에서 아이콘을 더블클릭하여 사용자 지정 수치를 설정하세요");
 	}
 	
 	@Override
