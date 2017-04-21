@@ -27,12 +27,12 @@ import dnf_InterfacesAndExceptions.Character_type;
 import dnf_InterfacesAndExceptions.InterfaceSize;
 import dnf_InterfacesAndExceptions.ItemNotFoundedException;
 import dnf_InterfacesAndExceptions.Job;
+import dnf_InterfacesAndExceptions.MonsterType;
 import dnf_InterfacesAndExceptions.Monster_StatList;
 import dnf_InterfacesAndExceptions.StatusTypeMismatch;
 import dnf_calculator.StatusList;
 import dnf_class.Buff;
 import dnf_class.Characters;
-import dnf_class.Equipment;
 import dnf_class.Monster;
 import dnf_class.MonsterOption;
 import dnf_class.PartyCharacter;
@@ -152,7 +152,8 @@ class SettingComposite extends DnFComposite
 	final Combo[] partyOptionCombo1;
 	final Combo[] partyOptionCombo2;
 	final Button setCounterButton;
-	final Button setBackAttackButton;
+	final Button setNamedMonsterButton;
+	final Button setBossMonsterButton;
 	
 	
 	public SettingComposite(TrainingRoom trainingRoom, Characters character, LinkedList<Buff>[] buffList)
@@ -189,30 +190,29 @@ class SettingComposite extends DnFComposite
 		monsterCombo.setText(character.trainingRoomSeletion[0]);
 		monsterComboSelected();
 		monsterOptionCombo.setText(character.trainingRoomSeletion[1]);
-		boolean counter=false, backatk=false;
-		try {
-			counter=character.target.getBool(Monster_StatList.COUNTER);
-			backatk=character.target.getBool(Monster_StatList.BACKATK);
-		} catch (StatusTypeMismatch e1) {
-			e1.printStackTrace();
-		}
-		monsterSelectButtonPushed(false, counter, backatk);
 		
 		setCounterButton = new Button(monsterSettings, SWT.CHECK);
 		setCounterButton.setText("카운터 설정");
 		formData = new FormData(100, 20);
 		formData.top = new FormAttachment(monsterCombo, 5);
 		formData.left = new FormAttachment(0, 10);
-		setCounterButton.setSelection(counter);
 		setCounterButton.setLayoutData(formData);
 		
-		setBackAttackButton = new Button(monsterSettings, SWT.CHECK);
-		setBackAttackButton.setText("백어택 설정");
-		formData = new FormData(100, 20);
+		setNamedMonsterButton = new Button(monsterSettings, SWT.CHECK);
+		setNamedMonsterButton.setText("네임드 등급 설정");
+		formData = new FormData(120, 20);
 		formData.top = new FormAttachment(monsterCombo, 5);
 		formData.left = new FormAttachment(setCounterButton, 10);
-		setBackAttackButton.setSelection(backatk);
-		setBackAttackButton.setLayoutData(formData);
+		setNamedMonsterButton.setLayoutData(formData);
+		
+		setBossMonsterButton = new Button(monsterSettings, SWT.CHECK);
+		setBossMonsterButton.setText("보스 등급 설정");
+		formData = new FormData(120, 20);
+		formData.top = new FormAttachment(monsterCombo, 5);
+		formData.left = new FormAttachment(setNamedMonsterButton, 10);	
+		setBossMonsterButton.setLayoutData(formData);
+		
+		monsterSelectButtonPushed(false);
 		
 		final Button setMonsterButton = new Button(monsterSettings, SWT.PUSH);
 		setMonsterButton.setText("소환");
@@ -233,7 +233,7 @@ class SettingComposite extends DnFComposite
 		setMonsterButton.addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				monsterSelectButtonPushed(true, setCounterButton.getSelection(), setBackAttackButton.getSelection());
+				monsterSelectButtonPushed(true);
 			}
 		});
 		
@@ -312,21 +312,45 @@ class SettingComposite extends DnFComposite
 			partySelectButtonPushed(i, false);
 		}
 	}
+
 	
-	private void monsterSelectButtonPushed(boolean renew, boolean counter, boolean backATK){
+	private void monsterSelectButtonPushed(boolean renew){
+		
 		if(monsterCombo.getText().equals(monsterDefaultSelection)) return;
 		
 		try {
 			Monster selectedMonster = GetDictionary.charDictionary.getMonsterInfo(monsterCombo.getText());
-			selectedMonster.setBooleanStat(Monster_StatList.COUNTER, counter);
-			selectedMonster.setBooleanStat(Monster_StatList.BACKATK, backATK);
-			selectedMonster.setSubMonster(monsterOptionCombo.getText());
+			boolean counter=false;
+			int monsterType = MonsterType.NORMAL;
+			
+			if(!renew || !selectedMonster.getName().equals(character.target.getName())){
+				try {
+					counter=selectedMonster.getBool(Monster_StatList.COUNTER);
+					monsterType=selectedMonster.getStat(Monster_StatList.TYPE);
+				} catch (StatusTypeMismatch e1) {
+					e1.printStackTrace();
+				}
+				
+				setCounterButton.setSelection(counter);
+				setBossMonsterButton.setSelection(monsterType==MonsterType.BOSS);
+				setNamedMonsterButton.setSelection(monsterType==MonsterType.NAMED);
+			}
+			else{
+				counter = setCounterButton.getSelection();
+				if(setBossMonsterButton.getSelection()) monsterType = MonsterType.BOSS;
+				else if(setNamedMonsterButton.getSelection()) monsterType = MonsterType.NAMED;
+				
+				selectedMonster.setBooleanStat(Monster_StatList.COUNTER, counter);
+				selectedMonster.setStat(Monster_StatList.TYPE, monsterType);
+				selectedMonster.setSubMonster(monsterOptionCombo.getText());
+			}
 			
 			trainingRoom.setMonster(selectedMonster);
 			character.trainingRoomSeletion[0]=monsterCombo.getText();
 			character.trainingRoomSeletion[1]=monsterOptionCombo.getText();
 			
-			if(selectedMonster.getName().equals("진 : 거대 누골 100Lv(수련의 방)") && counter){
+			if((selectedMonster.getName().equals("진 : 거대 누골 100Lv(수련의 방)") ||  
+					selectedMonster.getName().equals("진 : 거대 누골 105Lv(수련의 방)")) && counter){
 				MessageDialog dialog = new MessageDialog(mainComposite.getShell(), "경고", null,
 					    "슈퍼홀딩 스킬의 경우 카운터 진누골 딜이 실제와 다를 수 있습니다."
 					    + "\n\nex) 실버스트림의 경우 누골에서 첫타와 막타는 카운터적용이 되지만"
@@ -370,6 +394,7 @@ class SettingComposite extends DnFComposite
 			}
 			monsterOptionCombo.setItems(optionList);
 			monsterOptionCombo.select(0);
+			
 		} catch (ItemNotFoundedException e1) {
 			e1.printStackTrace();
 		}
