@@ -396,7 +396,7 @@ public class MonsterInfo {
 			monster.setStat("화속저", 70); monster.setStat("수속저", 70);
 			monster.setStat("명속저", 70); monster.setStat("암속저", 70);
 			monster.setStat("물리방어력", 221307); monster.setStat("마법방어력", 221307);
-			monster.setStat("레벨", 120); monster.setStat("타입", MonsterType.NAMED);
+			monster.setStat("레벨", 120); monster.setStat("타입", MonsterType.BOSS);
 			monster.setStat("체력", 0); monster.setStat("방깍제한", 89.04);
 			monsterList.add(monster);
 			
@@ -538,7 +538,7 @@ public class MonsterInfo {
 			monster.setStat("화속저", 40); monster.setStat("수속저", 40);
 			monster.setStat("명속저", 50); monster.setStat("암속저", 30);
 			monster.setStat("물리방어력", 221307); monster.setStat("마법방어력", 221307);
-			monster.setStat("레벨", 120); monster.setStat("타입", MonsterType.NAMED);
+			monster.setStat("레벨", 120); monster.setStat("타입", MonsterType.BOSS);
 			monster.setStat("체력", 0); monster.setStat("방깍제한", 89.04);
 			monsterList.add(monster);
 			
@@ -581,7 +581,7 @@ public class MonsterInfo {
 			monster.setStat("화속저", 0); monster.setStat("수속저", 0);
 			monster.setStat("명속저", 100); monster.setStat("암속저", 100);
 			monster.setStat("물리방어력", 221307); monster.setStat("마법방어력", 221307);
-			monster.setStat("레벨", 120); monster.setStat("타입", MonsterType.NAMED);
+			monster.setStat("레벨", 120); monster.setStat("타입", MonsterType.BOSS);
 			monster.setStat("체력", 0); monster.setStat("방깍제한", 89.04);
 			monsterList.add(monster);
 			//아누비스

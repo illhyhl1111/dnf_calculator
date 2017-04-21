@@ -245,7 +245,6 @@ public class DealChart extends DnFComposite {
 		
 		character.setItemSettings(Setting.getMagicalSealedSetting(character.getJob()), false);
 		compareDamage = Calculator.getDamage(character.getRepresentSkill(), monster, character, mode);
-		character.setItemSettings(tempSetting, false);
 		
 		if(compareSetting!=null)
 		{
@@ -285,6 +284,8 @@ public class DealChart extends DnFComposite {
 				else newList.add(new DealInfo(mainComposite, skill, character, monster, mode));
 			}
 		}
+		
+		character.setItemSettings(tempSetting, false);
 		
 		for(int i=0; i<newList.size(); i++)
 		{

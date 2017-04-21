@@ -2,6 +2,7 @@ package dnf_class;
 
 import java.util.LinkedList;
 
+import dnf_InterfacesAndExceptions.Character_type;
 import dnf_InterfacesAndExceptions.Item_rarity;
 import dnf_InterfacesAndExceptions.Job;
 import dnf_InterfacesAndExceptions.Skill_type;
@@ -36,6 +37,8 @@ public class SkillCard extends Card{
 		for(Skill skill : GetDictionary.getSkillList(job, 90)){
 			if(skill.type!=Skill_type.TP && skill.maxLevel!=1 && skill.firstLevel!=1 && !skill.isOptionSkill() && !skill.isSubSkill()
 					&& skill.firstLevel<=70 && skill.firstLevel!=48 && skill.job==job)
+				skillList.add(skill.getItemName());
+			else if(job.charType == Character_type.SWORDMAN_M && skill.firstLevel==85)
 				skillList.add(skill.getItemName());
 		}
 		skill = skillList.getFirst();
