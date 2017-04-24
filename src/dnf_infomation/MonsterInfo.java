@@ -28,12 +28,21 @@ public class MonsterInfo {
 			monster.setStat("체력", 1150000000);
 			monsterList.add(monster);
 			
+			monster = new Monster("진 : 거대 누골 105Lv(수련의 방)");
+			monster.setStat("백어택", false); monster.setStat("카운터", false);
+			monster.setStat("난이도", DefenceIgnorePenalty.TRAININGROOM);
+			monster.setStat("화속저", -20); monster.setStat("수속저", -20);
+			monster.setStat("물리방어력", 185601); monster.setStat("마법방어력", 185601);
+			monster.setStat("레벨", 105); monster.setStat("타입", MonsterType.NORMAL);
+			monster.setStat("체력", 1150000000);
+			monsterList.add(monster);
+			
 			//퍼만
 			monster = new Monster("허무의 퍼만 105Lv(수련의 방)");
 			monster.setStat("백어택", false); monster.setStat("카운터", false);
 			monster.setStat("난이도", DefenceIgnorePenalty.TRAININGROOM);
-			monster.setStat("화속저", 20); monster.setStat("수속저", -10);
-			monster.setStat("명속저", -10); monster.setStat("암속저", 20);
+			monster.setStat("화속저", 20); monster.setStat("수속저", 0);
+			monster.setStat("명속저", 50); monster.setStat("암속저", 0);
 			monster.setStat("물리방어력", 160855); monster.setStat("마법방어력", 160855);
 			monster.setStat("레벨", 105); monster.setStat("타입", MonsterType.NORMAL);
 			monster.setStat("체력", 1700000000);
@@ -334,9 +343,9 @@ public class MonsterInfo {
 			monster.setStat("난이도", DefenceIgnorePenalty.LUKE_NOR);
 			monster.setStat("화속저", 60); monster.setStat("수속저", 40);
 			monster.setStat("명속저", 40); monster.setStat("암속저", 60);
-			monster.setStat("물리방어력", 189914); monster.setStat("마법방어력", 189914);
-			monster.setStat("레벨", 110); monster.setStat("타입", MonsterType.NAMED);
-			monster.setStat("체력", 1666350000); monster.setStat("방깍제한", 89.04);
+			monster.setStat("물리방어력", 221307); monster.setStat("마법방어력", 221307);
+			monster.setStat("레벨", 120); monster.setStat("타입", MonsterType.NAMED);
+			monster.setStat("체력", 0); monster.setStat("방깍제한", 89.04);
 			monsterList.add(monster);
 
 			//베키
@@ -345,9 +354,9 @@ public class MonsterInfo {
 			monster.setStat("난이도", DefenceIgnorePenalty.LUKE_NOR);
 			monster.setStat("화속저", 35); monster.setStat("수속저", 35);
 			monster.setStat("명속저", 35); monster.setStat("암속저", 35);
-			monster.setStat("물리방어력", 189914); monster.setStat("마법방어력", 189914);
-			monster.setStat("레벨", 110); monster.setStat("타입", MonsterType.NAMED);
-			monster.setStat("체력", 1191400000); monster.setStat("방깍제한", 89.04);
+			monster.setStat("물리방어력", 221307); monster.setStat("마법방어력", 221307);
+			monster.setStat("레벨", 120); monster.setStat("타입", MonsterType.NAMED);
+			monster.setStat("체력", 0); monster.setStat("방깍제한", 89.04);
 			
 			subMonster = new MonsterOption("속성 베키", monster);		
 			statList = new StatusList();
@@ -364,9 +373,9 @@ public class MonsterInfo {
 			monster.setStat("난이도", DefenceIgnorePenalty.LUKE_NOR);
 			monster.setStat("화속저", 50); monster.setStat("수속저", 50);
 			monster.setStat("명속저", 50); monster.setStat("암속저", 50);
-			monster.setStat("물리방어력", 189914); monster.setStat("마법방어력", 189914);
-			monster.setStat("레벨", 110); monster.setStat("타입", MonsterType.NAMED);
-			monster.setStat("체력", 1654560000); monster.setStat("방깍제한", 89.04);
+			monster.setStat("물리방어력", 221307); monster.setStat("마법방어력", 221307);
+			monster.setStat("레벨", 120); monster.setStat("타입", MonsterType.NAMED);
+			monster.setStat("체력", 0); monster.setStat("방깍제한", 89.04);
 			monsterList.add(monster);
 
 			//미스트랄
@@ -375,9 +384,9 @@ public class MonsterInfo {
 			monster.setStat("난이도", DefenceIgnorePenalty.LUKE_NOR);
 			monster.setStat("화속저", 30); monster.setStat("수속저", 100);
 			monster.setStat("명속저", 0); monster.setStat("암속저", 0);
-			monster.setStat("물리방어력", 189914); monster.setStat("마법방어력", 189914);
-			monster.setStat("레벨", 110); monster.setStat("타입", MonsterType.NAMED);
-			monster.setStat("체력", 1102680000); monster.setStat("방깍제한", 89.04);
+			monster.setStat("물리방어력", 221307); monster.setStat("마법방어력", 221307);
+			monster.setStat("레벨", 120); monster.setStat("타입", MonsterType.NAMED);
+			monster.setStat("체력", 0); monster.setStat("방깍제한", 89.04);
 			monsterList.add(monster);
 
 			//로사우라
@@ -386,9 +395,9 @@ public class MonsterInfo {
 			monster.setStat("난이도", DefenceIgnorePenalty.LUKE_NOR);
 			monster.setStat("화속저", 70); monster.setStat("수속저", 70);
 			monster.setStat("명속저", 70); monster.setStat("암속저", 70);
-			monster.setStat("물리방어력", 189914); monster.setStat("마법방어력", 189914);
-			monster.setStat("레벨", 110); monster.setStat("타입", MonsterType.NAMED);
-			monster.setStat("체력", 2757560000L); monster.setStat("방깍제한", 89.04);
+			monster.setStat("물리방어력", 221307); monster.setStat("마법방어력", 221307);
+			monster.setStat("레벨", 120); monster.setStat("타입", MonsterType.BOSS);
+			monster.setStat("체력", 0); monster.setStat("방깍제한", 89.04);
 			monsterList.add(monster);
 			
 
@@ -398,9 +407,9 @@ public class MonsterInfo {
 			monster.setStat("난이도", DefenceIgnorePenalty.LUKE_NOR);
 			monster.setStat("화속저", 100); monster.setStat("수속저", 30);
 			monster.setStat("명속저", 10); monster.setStat("암속저", 10);
-			monster.setStat("물리방어력", 189914); monster.setStat("마법방어력", 189914);
-			monster.setStat("레벨", 110); monster.setStat("타입", MonsterType.NAMED);
-			monster.setStat("체력", 1600000000); monster.setStat("방깍제한", 89.04);
+			monster.setStat("물리방어력", 221307); monster.setStat("마법방어력", 221307);
+			monster.setStat("레벨", 120); monster.setStat("타입", MonsterType.NAMED);
+			monster.setStat("체력", 0); monster.setStat("방깍제한", 89.04);
 			monsterList.add(monster);
 
 			//탄식의 램퍼드
@@ -410,7 +419,7 @@ public class MonsterInfo {
 			monster.setStat("화속저", 70); monster.setStat("수속저", 40);
 			monster.setStat("명속저", 0); monster.setStat("암속저", 0);
 			monster.setStat("물리방어력", 1); monster.setStat("마법방어력", 1);
-			monster.setStat("레벨", 110); monster.setStat("타입", MonsterType.NAMED);
+			monster.setStat("레벨", 120); monster.setStat("타입", MonsterType.NAMED);
 			monster.setStat("체력", 0); monster.setStat("방깍제한", 99.5);
 			monsterList.add(monster);
 
@@ -420,9 +429,9 @@ public class MonsterInfo {
 			monster.setStat("난이도", DefenceIgnorePenalty.LUKE_NOR);
 			monster.setStat("화속저", 30); monster.setStat("수속저", 30);
 			monster.setStat("명속저", 30); monster.setStat("암속저", 30);
-			monster.setStat("물리방어력", 189914); monster.setStat("마법방어력", 189914);
-			monster.setStat("레벨", 110); monster.setStat("타입", MonsterType.NAMED);
-			monster.setStat("체력", 1400000000); monster.setStat("방깍제한", 89.04);
+			monster.setStat("물리방어력", 221307); monster.setStat("마법방어력", 221307);
+			monster.setStat("레벨", 120); monster.setStat("타입", MonsterType.NAMED);
+			monster.setStat("체력", 0); monster.setStat("방깍제한", 89.04);
 			monsterList.add(monster);
 			
 
@@ -432,8 +441,8 @@ public class MonsterInfo {
 			monster.setStat("난이도", DefenceIgnorePenalty.LUKE_NOR);
 			monster.setStat("화속저", 100); monster.setStat("수속저", 30);
 			monster.setStat("명속저", 60); monster.setStat("암속저", 60);
-			monster.setStat("물리방어력", 189914); monster.setStat("마법방어력", 189914);
-			monster.setStat("레벨", 110); monster.setStat("타입", MonsterType.BOSS);
+			monster.setStat("물리방어력", 221307); monster.setStat("마법방어력", 221307);
+			monster.setStat("레벨", 120); monster.setStat("타입", MonsterType.BOSS);
 			monster.setStat("체력", 0); monster.setStat("방깍제한", 89.04);
 			monsterList.add(monster);
 			
@@ -444,9 +453,9 @@ public class MonsterInfo {
 			monster.setStat("난이도", DefenceIgnorePenalty.LUKE_NOR);
 			monster.setStat("화속저", 35); monster.setStat("수속저", 35);
 			monster.setStat("명속저", 45); monster.setStat("암속저", 30);
-			monster.setStat("물리방어력", 189914); monster.setStat("마법방어력", 189914);
-			monster.setStat("레벨", 110); monster.setStat("타입", MonsterType.NAMED);
-			monster.setStat("체력", 2362650000L); monster.setStat("방깍제한", 89.04);
+			monster.setStat("물리방어력", 221307); monster.setStat("마법방어력", 221307);
+			monster.setStat("레벨", 120); monster.setStat("타입", MonsterType.NAMED);
+			monster.setStat("체력", 0); monster.setStat("방깍제한", 89.04);
 			monsterList.add(monster);
 			
 
@@ -456,9 +465,9 @@ public class MonsterInfo {
 			monster.setStat("난이도", DefenceIgnorePenalty.LUKE_NOR);
 			monster.setStat("화속저", 30); monster.setStat("수속저", 30);
 			monster.setStat("명속저", 30); monster.setStat("암속저", 90);
-			monster.setStat("물리방어력", 189914); monster.setStat("마법방어력", 189914);
-			monster.setStat("레벨", 110); monster.setStat("타입", MonsterType.NAMED);
-			monster.setStat("체력", 2189810000L); monster.setStat("방깍제한", 89.04);
+			monster.setStat("물리방어력", 221307); monster.setStat("마법방어력", 221307);
+			monster.setStat("레벨", 120); monster.setStat("타입", MonsterType.NAMED);
+			monster.setStat("체력", 0); monster.setStat("방깍제한", 89.04);
 			monsterList.add(monster);
 
 			//아르고스
@@ -467,8 +476,8 @@ public class MonsterInfo {
 			monster.setStat("난이도", DefenceIgnorePenalty.LUKE_NOR);
 			monster.setStat("화속저", 35); monster.setStat("수속저", 35);
 			monster.setStat("명속저", 40); monster.setStat("암속저", 40);
-			monster.setStat("물리방어력", 189914); monster.setStat("마법방어력", 189914);
-			monster.setStat("레벨", 110); monster.setStat("타입", MonsterType.NAMED);
+			monster.setStat("물리방어력", 221307); monster.setStat("마법방어력", 221307);
+			monster.setStat("레벨", 120); monster.setStat("타입", MonsterType.NAMED);
 			monster.setStat("체력", 0); monster.setStat("방깍제한", 89.04);
 			monsterList.add(monster);
 
@@ -478,8 +487,8 @@ public class MonsterInfo {
 			monster.setStat("난이도", DefenceIgnorePenalty.LUKE_NOR);
 			monster.setStat("화속저", 0); monster.setStat("수속저", 0);
 			monster.setStat("명속저", 0); monster.setStat("암속저", 0);
-			monster.setStat("물리방어력", 189914); monster.setStat("마법방어력", 189914);
-			monster.setStat("레벨", 110); monster.setStat("타입", MonsterType.NAMED);
+			monster.setStat("물리방어력", 221307); monster.setStat("마법방어력", 221307);
+			monster.setStat("레벨", 120); monster.setStat("타입", MonsterType.NAMED);
 			monster.setStat("체력", 0); monster.setStat("방깍제한", 89.04);
 			monsterList.add(monster);
 
@@ -489,14 +498,14 @@ public class MonsterInfo {
 			monster.setStat("난이도", DefenceIgnorePenalty.LUKE_NOR);
 			monster.setStat("화속저", 60); monster.setStat("수속저", 40);
 			monster.setStat("명속저", 40); monster.setStat("암속저", 60);
-			monster.setStat("물리방어력", 189914); monster.setStat("마법방어력", 189914);
-			monster.setStat("레벨", 110); monster.setStat("타입", MonsterType.BOSS);
+			monster.setStat("물리방어력", 221307); monster.setStat("마법방어력", 221307);
+			monster.setStat("레벨", 120); monster.setStat("타입", MonsterType.BOSS);
 			monster.setStat("체력", 0); monster.setStat("방깍제한", 89.04);
 			
 			subMonster = new MonsterOption("배리어", monster);		
 			statList = new StatusList();
-			statList.addStatList("고정물방깍", -282521);
-			statList.addStatList("고정마방깍", -282521);
+			statList.addStatList("고정물방깍", -0);
+			statList.addStatList("고정마방깍", -0);
 			monster.monsterFeature.put(subMonster, statList);
 			monsterList.add(monster);
 
@@ -506,9 +515,9 @@ public class MonsterInfo {
 			monster.setStat("난이도", DefenceIgnorePenalty.LUKE_NOR);
 			monster.setStat("화속저", 35); monster.setStat("수속저", 35);
 			monster.setStat("명속저", 45); monster.setStat("암속저", 30);
-			monster.setStat("물리방어력", 189914); monster.setStat("마법방어력", 189914);
-			monster.setStat("레벨", 110); monster.setStat("타입", MonsterType.NAMED);
-			monster.setStat("체력", 1901200000); monster.setStat("방깍제한", 89.04);
+			monster.setStat("물리방어력", 221307); monster.setStat("마법방어력", 221307);
+			monster.setStat("레벨", 120); monster.setStat("타입", MonsterType.NAMED);
+			monster.setStat("체력", 0); monster.setStat("방깍제한", 89.04);
 			monsterList.add(monster);
 
 			//베일
@@ -517,9 +526,9 @@ public class MonsterInfo {
 			monster.setStat("난이도", DefenceIgnorePenalty.LUKE_NOR);
 			monster.setStat("화속저", 0); monster.setStat("수속저", 0);
 			monster.setStat("명속저", 0); monster.setStat("암속저", 0);
-			monster.setStat("물리방어력", 189914); monster.setStat("마법방어력", 189914);
-			monster.setStat("레벨", 110); monster.setStat("타입", MonsterType.NAMED);
-			monster.setStat("체력", 1115180000); monster.setStat("방깍제한", 89.04);
+			monster.setStat("물리방어력", 221307); monster.setStat("마법방어력", 221307);
+			monster.setStat("레벨", 120); monster.setStat("타입", MonsterType.NAMED);
+			monster.setStat("체력", 0); monster.setStat("방깍제한", 89.04);
 			monsterList.add(monster);
 
 			//호루스
@@ -528,9 +537,9 @@ public class MonsterInfo {
 			monster.setStat("난이도", DefenceIgnorePenalty.LUKE_NOR);
 			monster.setStat("화속저", 40); monster.setStat("수속저", 40);
 			monster.setStat("명속저", 50); monster.setStat("암속저", 30);
-			monster.setStat("물리방어력", 189914); monster.setStat("마법방어력", 189914);
-			monster.setStat("레벨", 110); monster.setStat("타입", MonsterType.NAMED);
-			monster.setStat("체력", 1670375000); monster.setStat("방깍제한", 89.04);
+			monster.setStat("물리방어력", 221307); monster.setStat("마법방어력", 221307);
+			monster.setStat("레벨", 120); monster.setStat("타입", MonsterType.BOSS);
+			monster.setStat("체력", 0); monster.setStat("방깍제한", 89.04);
 			monsterList.add(monster);
 			
 			//호구1
@@ -539,9 +548,9 @@ public class MonsterInfo {
 			monster.setStat("난이도", DefenceIgnorePenalty.LUKE_NOR);
 			monster.setStat("화속저", 0); monster.setStat("수속저", 0);
 			monster.setStat("명속저", 30); monster.setStat("암속저", 100);
-			monster.setStat("물리방어력", 189914); monster.setStat("마법방어력", 189914);
-			monster.setStat("레벨", 110); monster.setStat("타입", MonsterType.BOSS);
-			monster.setStat("체력", 1886430000); monster.setStat("방깍제한", 89.04);
+			monster.setStat("물리방어력", 221307); monster.setStat("마법방어력", 221307);
+			monster.setStat("레벨", 120); monster.setStat("타입", MonsterType.BOSS);
+			monster.setStat("체력", 0); monster.setStat("방깍제한", 89.04);
 			monsterList.add(monster);
 			//호구2
 			monster = new Monster("철완의 공주 칼바리(일반)");
@@ -549,9 +558,9 @@ public class MonsterInfo {
 			monster.setStat("난이도", DefenceIgnorePenalty.LUKE_NOR);
 			monster.setStat("화속저", 0); monster.setStat("수속저", 0);
 			monster.setStat("명속저", 100); monster.setStat("암속저", 30);
-			monster.setStat("물리방어력", 189914); monster.setStat("마법방어력", 189914);
-			monster.setStat("레벨", 110); monster.setStat("타입", MonsterType.BOSS);
-			monster.setStat("체력", 2193100000L); monster.setStat("방깍제한", 89.04);
+			monster.setStat("물리방어력", 221307); monster.setStat("마법방어력", 221307);
+			monster.setStat("레벨", 120); monster.setStat("타입", MonsterType.BOSS);
+			monster.setStat("체력", 0); monster.setStat("방깍제한", 89.04);
 			monsterList.add(monster);
 			
 			//조무래기
@@ -560,9 +569,9 @@ public class MonsterInfo {
 			monster.setStat("난이도", DefenceIgnorePenalty.LUKE_NOR);
 			monster.setStat("화속저", 100); monster.setStat("수속저", 30);
 			monster.setStat("명속저", 30); monster.setStat("암속저", 100);
-			monster.setStat("물리방어력", 189914); monster.setStat("마법방어력", 189914);
-			monster.setStat("레벨", 110); monster.setStat("타입", MonsterType.NAMED);
-			monster.setStat("체력", 1287300000); monster.setStat("방깍제한", 89.04);
+			monster.setStat("물리방어력", 221307); monster.setStat("마법방어력", 221307);
+			monster.setStat("레벨", 120); monster.setStat("타입", MonsterType.NAMED);
+			monster.setStat("체력", 0); monster.setStat("방깍제한", 89.04);
 			monster.explanation.add("조무래기쟝");
 			monsterList.add(monster);
 			//야신
@@ -571,9 +580,9 @@ public class MonsterInfo {
 			monster.setStat("난이도", DefenceIgnorePenalty.LUKE_NOR);
 			monster.setStat("화속저", 0); monster.setStat("수속저", 0);
 			monster.setStat("명속저", 100); monster.setStat("암속저", 100);
-			monster.setStat("물리방어력", 189914); monster.setStat("마법방어력", 189914);
-			monster.setStat("레벨", 110); monster.setStat("타입", MonsterType.NAMED);
-			monster.setStat("체력", 1166375000); monster.setStat("방깍제한", 89.04);
+			monster.setStat("물리방어력", 221307); monster.setStat("마법방어력", 221307);
+			monster.setStat("레벨", 120); monster.setStat("타입", MonsterType.BOSS);
+			monster.setStat("체력", 0); monster.setStat("방깍제한", 89.04);
 			monsterList.add(monster);
 			//아누비스
 			monster = new Monster("어둠의 우상 아누비스(일반)");
@@ -581,19 +590,19 @@ public class MonsterInfo {
 			monster.setStat("난이도", DefenceIgnorePenalty.LUKE_NOR);
 			monster.setStat("화속저", 30); monster.setStat("수속저", 30);
 			monster.setStat("명속저", 30); monster.setStat("암속저", 95);
-			monster.setStat("물리방어력", 189914); monster.setStat("마법방어력", 189914);
-			monster.setStat("레벨", 110); monster.setStat("타입", MonsterType.NAMED);
-			monster.setStat("체력", 1654250000); monster.setStat("방깍제한", 89.04);
+			monster.setStat("물리방어력", 221307); monster.setStat("마법방어력", 221307);
+			monster.setStat("레벨", 120); monster.setStat("타입", MonsterType.NAMED);
+			monster.setStat("체력", 0); monster.setStat("방깍제한", 89.04);
 			monsterList.add(monster);
 			//베아라
 			monster = new Monster("악검 베아라(일반)");
 			monster.setStat("백어택", false); monster.setStat("카운터", false);
 			monster.setStat("난이도", DefenceIgnorePenalty.LUKE_NOR);
-			monster.setStat("화속저", 60); monster.setStat("수속저", 40);
-			monster.setStat("명속저", 40); monster.setStat("암속저", 100);
-			monster.setStat("물리방어력", 189914); monster.setStat("마법방어력", 189914);
-			monster.setStat("레벨", 110); monster.setStat("타입", MonsterType.BOSS);
-			monster.setStat("체력", 3628170000L); monster.setStat("방깍제한", 89.04);
+			monster.setStat("화속저", 60); monster.setStat("수속저", 60);
+			monster.setStat("명속저", 60); monster.setStat("암속저", 60);
+			monster.setStat("물리방어력", 221307); monster.setStat("마법방어력", 221307);
+			monster.setStat("레벨", 120); monster.setStat("타입", MonsterType.BOSS);
+			monster.setStat("체력", 0); monster.setStat("방깍제한", 89.04);
 			monsterList.add(monster);
 			
 			//빛루크
@@ -602,9 +611,9 @@ public class MonsterInfo {
 			monster.setStat("난이도", DefenceIgnorePenalty.LUKE_NOR);
 			monster.setStat("화속저", 30); monster.setStat("수속저", 30);
 			monster.setStat("명속저", 100); monster.setStat("암속저", 30);
-			monster.setStat("물리방어력", 189914); monster.setStat("마법방어력", 189914);
-			monster.setStat("레벨", 110); monster.setStat("타입", MonsterType.BOSS);
-			monster.setStat("체력", 0); monster.setStat("방깍제한", 89.04);
+			monster.setStat("물리방어력", 221307); monster.setStat("마법방어력", 221307);
+			monster.setStat("레벨", 120); monster.setStat("타입", MonsterType.BOSS);
+			monster.setStat("체력", 23000000000L); monster.setStat("방깍제한", 89.04);
 			monsterList.add(monster);
 			//어둠루크
 			monster = new Monster("건설자 루크(어둠)");
@@ -612,9 +621,9 @@ public class MonsterInfo {
 			monster.setStat("난이도", DefenceIgnorePenalty.LUKE_NOR);
 			monster.setStat("화속저", 30); monster.setStat("수속저", 30);
 			monster.setStat("명속저", 30); monster.setStat("암속저", 100);
-			monster.setStat("물리방어력", 189914); monster.setStat("마법방어력", 189914);
-			monster.setStat("레벨", 110); monster.setStat("타입", MonsterType.BOSS);
-			monster.setStat("체력", 0); monster.setStat("방깍제한", 89.04);
+			monster.setStat("물리방어력", 221307); monster.setStat("마법방어력", 221307);
+			monster.setStat("레벨", 120); monster.setStat("타입", MonsterType.BOSS);
+			monster.setStat("체력", 27000000000L); monster.setStat("방깍제한", 89.04);
 			monsterList.add(monster);
 		
 			//오브젝트

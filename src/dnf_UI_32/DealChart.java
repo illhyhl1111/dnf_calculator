@@ -151,6 +151,10 @@ public class DealChart extends DnFComposite {
 		skillList = new LinkedList<DealInfo>();
 		
 		Setting tempSetting = (Setting) character.getItemSetting().clone();
+		character.setItemSettings(Setting.getMagicalSealedSetting(character.getJob()), false);
+		compareDamage = Calculator.getDamage(character.getRepresentSkill(), monster, character, mode);
+		character.setItemSettings(tempSetting, false);
+		
 		if(compareSetting!=null)
 		{
 			character.setItemSettings(compareSetting, true);
@@ -164,10 +168,6 @@ public class DealChart extends DnFComposite {
 			for(Skill skill : character.getDamageSkillList())
 				skillList.add(new DealInfo(mainComposite, skill, character, monster, mode));
 		}		
-		
-		character.setItemSettings(Setting.getMagicalSealedSetting(character.getJob()), false);
-		compareDamage = Calculator.getDamage(character.getRepresentSkill(), monster, character, mode);
-		character.setItemSettings(tempSetting, false);
 		
 		representDamage=0;
 		for(DealInfo dInfo : skillList){
@@ -243,6 +243,9 @@ public class DealChart extends DnFComposite {
 		LinkedList<DealInfo> newList = new LinkedList<DealInfo>();
 		Setting tempSetting = (Setting) character.getItemSetting().clone();
 		
+		character.setItemSettings(Setting.getMagicalSealedSetting(character.getJob()), false);
+		compareDamage = Calculator.getDamage(character.getRepresentSkill(), monster, character, mode);
+		
 		if(compareSetting!=null)
 		{
 			dealLabel.setText("데미지 "+"( vs "+compareSetting.setting_name+" )");
@@ -282,15 +285,13 @@ public class DealChart extends DnFComposite {
 			}
 		}
 		
-		character.setItemSettings(Setting.getMagicalSealedSetting(character.getJob()), false);
-		compareDamage = Calculator.getDamage(character.getRepresentSkill(), monster, character, mode);
 		character.setItemSettings(tempSetting, false);
 		
-		for(int i=0; i<skillList.size(); i++)
+		for(int i=0; i<newList.size(); i++)
 		{
-			if(!character.getDamageSkillList().contains(skillList.get(i).icon.getItem())){
-				skillList.get(i).getComposite().dispose();
-				skillList.remove(i--);
+			if(!character.getDamageSkillList().contains(newList.get(i).icon.getItem())){
+				newList.get(i).getComposite().dispose();
+				newList.remove(i--);
 			}
 		}
 		skillList = newList;
