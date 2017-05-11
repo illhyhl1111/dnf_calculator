@@ -962,8 +962,8 @@ public class CalculateProcessViewer extends Dialog {
 			formula.add(new TrackRecord('['));
 			formula.add(new TrackRecord("독공", status.getStat("독공")));
 			formula.add(new TrackRecord("독공 %증가(아이템)", indep_atkInc/100));
-			formula.add(new TrackRecord('+'));
-			formula.add(new TrackRecord("재련독공", status.trackList[StatList.WEP_IND_REFORGE], '+'));
+			//formula.add(new TrackRecord('+'));
+			//formula.add(new TrackRecord("재련독공", status.trackList[StatList.WEP_IND_REFORGE], '+'));
 			formula.add(new TrackRecord(']'));
 			formula.add(new TrackRecord("독공 %증가(스킬)", status.trackList[StatList.MAST_IND], '*'));
 			formula.add(new TrackRecord(']'));
@@ -971,6 +971,7 @@ public class CalculateProcessViewer extends Dialog {
 			setFormData(indep_atkCompostie, mag_atk_incLabel, 12, indep_atkLabel, 10);
 			setVisible(hasIndep, indep_atkLabel, indep_atkCompostie);
 			
+			/*
 			Label phy_ing_incLabel = new Label(resultInfo, SWT.NONE);
 			phy_ing_incLabel.setText("물리방무뎀 - ");
 			phy_ing_incLabel.setFont(DnFColor.TEMP2);
@@ -1002,11 +1003,12 @@ public class CalculateProcessViewer extends Dialog {
 			double mag_ingInc = setNumberComposite(mag_ing_incCompostie, formula, "최종 마법 방무뎀", '*');
 			setFormData(mag_ing_incCompostie, indep_atk_incLabel, 12, mag_ing_incLabel, 10);
 			setVisible(hasMag_per, mag_ing_incLabel, mag_ing_incCompostie);
+			*/
 			
 			Label def_phyLabel = new Label(resultInfo, SWT.NONE);
 			def_phyLabel.setText("고정물방 - ");
 			def_phyLabel.setFont(DnFColor.TEMP2);
-			setFormData(def_phyLabel, phy_ing_incLabel, 25, 0, 10);
+			setFormData(def_phyLabel, indep_atkLabel, 25, 0, 10);
 			Composite def_phyCompostie = new Composite(resultInfo, SWT.NONE);
 			def_phyCompostie.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
 			formula = new LinkedList<TrackRecord>();
@@ -1023,13 +1025,13 @@ public class CalculateProcessViewer extends Dialog {
 			formula.add(new TrackRecord(']'));
 			double def_phy = setNumberComposite(def_phyCompostie, formula, "고정 물리 방어력", '*');
 			if(def_phy<0) def_phy=0;
-			setFormData(def_phyCompostie, mag_ing_incLabel, 25, def_phyLabel, 10);
+			setFormData(def_phyCompostie, indep_atkLabel, 25, def_phyLabel, 10);
 			setVisible(hasPhy, def_phyLabel, def_phyCompostie);
 			
 			Label def_phy_incLabel = new Label(resultInfo, SWT.NONE);
 			def_phy_incLabel.setText("물방 딜감소율 - ");
 			def_phy_incLabel.setFont(DnFColor.TEMP2);
-			setFormData(def_phy_incLabel, mag_ing_incLabel, 25, rightPosition, 0);
+			setFormData(def_phy_incLabel, indep_atkLabel, 25, rightPosition, 0);
 			Composite def_phy_incCompostie = new Composite(resultInfo, SWT.NONE);
 			def_phy_incCompostie.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
 			formula = new LinkedList<TrackRecord>();
@@ -1049,7 +1051,7 @@ public class CalculateProcessViewer extends Dialog {
 			double bound = 1-character.target.getDoubleStat(Monster_StatList.DEFENCE_LIMIT)/100;
 			formula.add(new TrackRecord("물방 딜감소율(방깍하한선 포함)", result>bound ? bound : result));
 			double def_phy_inc = setNumberComposite(def_phy_incCompostie, formula, "물리방어력에 의한 데미지 감소율(곱)", '*');
-			setFormData(def_phy_incCompostie, mag_ing_incLabel, 25, def_phy_incLabel, 10);
+			setFormData(def_phy_incCompostie, indep_atkLabel, 25, def_phy_incLabel, 10);
 			setVisible(hasPhy, def_phy_incLabel, def_phy_incCompostie);
 			
 			Label def_magLabel = new Label(resultInfo, SWT.NONE);
@@ -1113,8 +1115,8 @@ public class CalculateProcessViewer extends Dialog {
 			formula.add(new TrackRecord("무기물공", phy_atk_inc));
 			formula.add(new TrackRecord(elementCalculator.get_type().getElement()+"속성 뎀증", elementCalculator.get_inc_elem()));
 			formula.add(new TrackRecord("물리방어력에 의한 데미지 감소율", def_phy_inc));
-			formula.add(new TrackRecord('+'));
-			formula.add(new TrackRecord("물리방무뎀", phy_ingInc));
+			//formula.add(new TrackRecord('+'));
+			//formula.add(new TrackRecord("물리방무뎀", phy_ingInc));
 			formula.add(new TrackRecord(')'));
 			formula.add(new TrackRecord("물리퍼뎀", phy_per/100));
 			formula.add(new TrackRecord("물크 증뎀 기댓값", phy_crt_inc));
@@ -1159,8 +1161,8 @@ public class CalculateProcessViewer extends Dialog {
 			formula.add(new TrackRecord("무기물공", mag_atk_inc));
 			formula.add(new TrackRecord(elementCalculator.get_type().getElement()+"속성 뎀증", elementCalculator.get_inc_elem()));
 			formula.add(new TrackRecord("마법방어력에 의한 데미지 감소율", def_mag_inc));
-			formula.add(new TrackRecord('+'));
-			formula.add(new TrackRecord("마법방무뎀", mag_ingInc));
+			//formula.add(new TrackRecord('+'));
+			//formula.add(new TrackRecord("마법방무뎀", mag_ingInc));
 			formula.add(new TrackRecord(')'));
 			formula.add(new TrackRecord("마법퍼뎀", mag_per/100));
 			formula.add(new TrackRecord("마크 증뎀 기댓값", mag_crt_inc));

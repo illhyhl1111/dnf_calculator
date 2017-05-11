@@ -80,8 +80,9 @@ public class ReinforceInfo {
 	private static int[] Legendary85Reforge=
 		{ 0, 33, 50, 66, 99, 132, 215, 298, 413 };
 	
-	private static int[] reinforceInfo=
-		{ 0, 1, 2, 3, 4, 6, 8, 10, 12, 14, 17, 33, 50, 67, 108, 150, 192, 267, 360, 417, 500};
+	private static double[] reinforceInfo=
+		{ 0, 1.8, 2.4, 3.3, 4.3, 5.3, 6.4, 7.6, 10.1, 13.5, 17.2,
+				24.8, 33.805, 39.61, 45.31, 51.1, 56.8525, 62.611, 68.3695, 74.128, 79.8865};
 	private static HashMap<Item_rarity, Double> rarityInfo = new HashMap<Item_rarity, Double>();
 	private static HashMap<Item_rarity, Integer> rarityInfo2 = new HashMap<Item_rarity, Integer>();
 	private static HashMap<Weapon_detailType, Double> weaponTypeInfo_phy = new HashMap<Weapon_detailType, Double>();
@@ -94,49 +95,49 @@ public class ReinforceInfo {
 	private static boolean readed=false;
 	
 	private static void readInfo(){
-		rarityInfo.put(Item_rarity.EPIC, 1.61); rarityInfo2.put(Item_rarity.EPIC, 13);
-		rarityInfo.put(Item_rarity.LEGENDARY, 1.4); rarityInfo2.put(Item_rarity.LEGENDARY, 13);
+		rarityInfo.put(Item_rarity.EPIC, 1.45); rarityInfo2.put(Item_rarity.EPIC, 14);
+		rarityInfo.put(Item_rarity.LEGENDARY, 1.35); rarityInfo2.put(Item_rarity.LEGENDARY, 13);
 		rarityInfo.put(Item_rarity.UNIQUE, 1.25); rarityInfo2.put(Item_rarity.UNIQUE, 12);
 		rarityInfo.put(Item_rarity.CHRONICLE, 1.1); rarityInfo2.put(Item_rarity.CHRONICLE, 11);
 		rarityInfo.put(Item_rarity.RARE, 1.0); rarityInfo2.put(Item_rarity.RARE, 10);
 		
-		weaponTypeInfo_phy.put(Weapon_detailType.GUN_HCANON, 1.06); weaponTypeInfo_mag.put(Weapon_detailType.GUN_HCANON, 0.64);
-		weaponTypeInfo_phy.put(Weapon_detailType.GUN_MUSKET, 1.0); weaponTypeInfo_mag.put(Weapon_detailType.GUN_MUSKET, 0.85);
-		weaponTypeInfo_phy.put(Weapon_detailType.GUN_REVOLVER, 0.87); weaponTypeInfo_mag.put(Weapon_detailType.GUN_REVOLVER, 0.77);
-		weaponTypeInfo_phy.put(Weapon_detailType.GUN_BOWGUN, 0.75); weaponTypeInfo_mag.put(Weapon_detailType.GUN_BOWGUN, 0.85);
-		weaponTypeInfo_phy.put(Weapon_detailType.GUN_AUTOPISTOL, 0.6); weaponTypeInfo_mag.put(Weapon_detailType.GUN_AUTOPISTOL, 0.94);
+		weaponTypeInfo_phy.put(Weapon_detailType.GUN_HCANON, 1.0054); weaponTypeInfo_mag.put(Weapon_detailType.GUN_HCANON, 0.9676);
+		weaponTypeInfo_phy.put(Weapon_detailType.GUN_MUSKET, 1.0); weaponTypeInfo_mag.put(Weapon_detailType.GUN_MUSKET, 0.9865);
+		weaponTypeInfo_phy.put(Weapon_detailType.GUN_REVOLVER, 0.9883); weaponTypeInfo_mag.put(Weapon_detailType.GUN_REVOLVER, 0.9793);
+		weaponTypeInfo_phy.put(Weapon_detailType.GUN_BOWGUN, 0.9784); weaponTypeInfo_mag.put(Weapon_detailType.GUN_BOWGUN, 0.9865);
+		weaponTypeInfo_phy.put(Weapon_detailType.GUN_AUTOPISTOL, 0.9676); weaponTypeInfo_mag.put(Weapon_detailType.GUN_AUTOPISTOL, 0.9946);
 		
-		weaponTypeInfo_phy.put(Weapon_detailType.SWORD_LONGSWORD, 1.2); weaponTypeInfo_mag.put(Weapon_detailType.SWORD_LONGSWORD, 0.9);
-		weaponTypeInfo_phy.put(Weapon_detailType.SWORD_CLUB, 1.1); weaponTypeInfo_mag.put(Weapon_detailType.SWORD_CLUB, 0.95);
-		weaponTypeInfo_phy.put(Weapon_detailType.SWORD_SHORTSWORD, 0.95); weaponTypeInfo_mag.put(Weapon_detailType.SWORD_SHORTSWORD, 1.15);
-		weaponTypeInfo_phy.put(Weapon_detailType.SWORD_KATANA, 0.95); weaponTypeInfo_mag.put(Weapon_detailType.SWORD_KATANA, 0.9);
-		weaponTypeInfo_phy.put(Weapon_detailType.SWORD_LIGHTSWORD, 1.03); weaponTypeInfo_mag.put(Weapon_detailType.SWORD_LIGHTSWORD, 1.0);
+		weaponTypeInfo_phy.put(Weapon_detailType.SWORD_LONGSWORD, 1.018); weaponTypeInfo_mag.put(Weapon_detailType.SWORD_LONGSWORD, 0.9910);
+		weaponTypeInfo_phy.put(Weapon_detailType.SWORD_CLUB, 1.009); weaponTypeInfo_mag.put(Weapon_detailType.SWORD_CLUB, 1.0045);
+		weaponTypeInfo_phy.put(Weapon_detailType.SWORD_SHORTSWORD, 0.9955); weaponTypeInfo_mag.put(Weapon_detailType.SWORD_SHORTSWORD, 1.0135);
+		weaponTypeInfo_phy.put(Weapon_detailType.SWORD_KATANA, 0.9955); weaponTypeInfo_mag.put(Weapon_detailType.SWORD_KATANA, 1.0045);
+		weaponTypeInfo_phy.put(Weapon_detailType.SWORD_LIGHTSWORD, 0.9937); weaponTypeInfo_mag.put(Weapon_detailType.SWORD_LIGHTSWORD, 0.9910);
 		
-		weaponTypeInfo_phy.put(Weapon_detailType.MAGE_BROOM, 1.0); weaponTypeInfo_mag.put(Weapon_detailType.MAGE_BROOM, 1.1);
-		weaponTypeInfo_phy.put(Weapon_detailType.MAGE_POLE, 1.1); weaponTypeInfo_mag.put(Weapon_detailType.MAGE_POLE, 0.9);
-		weaponTypeInfo_phy.put(Weapon_detailType.MAGE_ROD, 0.9); weaponTypeInfo_mag.put(Weapon_detailType.MAGE_ROD, 1.1);
-		weaponTypeInfo_phy.put(Weapon_detailType.MAGE_SPEAR, 1.2); weaponTypeInfo_mag.put(Weapon_detailType.MAGE_SPEAR, 0.95);
-		weaponTypeInfo_phy.put(Weapon_detailType.MAGE_STAFF, 0.95); weaponTypeInfo_mag.put(Weapon_detailType.MAGE_STAFF, 1.2);
+		weaponTypeInfo_phy.put(Weapon_detailType.MAGE_BROOM, 1.0); weaponTypeInfo_mag.put(Weapon_detailType.MAGE_BROOM, 1.009);
+		weaponTypeInfo_phy.put(Weapon_detailType.MAGE_POLE, 1.0072); weaponTypeInfo_mag.put(Weapon_detailType.MAGE_POLE, 0.9910);
+		weaponTypeInfo_phy.put(Weapon_detailType.MAGE_ROD, 0.9910); weaponTypeInfo_mag.put(Weapon_detailType.MAGE_ROD, 1.009);
+		weaponTypeInfo_phy.put(Weapon_detailType.MAGE_SPEAR, 1.018); weaponTypeInfo_mag.put(Weapon_detailType.MAGE_SPEAR, 0.9865);
+		weaponTypeInfo_phy.put(Weapon_detailType.MAGE_STAFF, 0.9955); weaponTypeInfo_mag.put(Weapon_detailType.MAGE_STAFF, 1.009);
 		
-		weaponTypeInfo_phy.put(Weapon_detailType.PRIEST_CROSS, 1.0); weaponTypeInfo_mag.put(Weapon_detailType.PRIEST_CROSS, 0.95);
-		weaponTypeInfo_phy.put(Weapon_detailType.PRIEST_ROSARY, 0.9); weaponTypeInfo_mag.put(Weapon_detailType.PRIEST_ROSARY, 1.15);
-		weaponTypeInfo_phy.put(Weapon_detailType.PRIEST_TOTEM, 1.05); weaponTypeInfo_mag.put(Weapon_detailType.PRIEST_TOTEM, 0.9);
-		weaponTypeInfo_phy.put(Weapon_detailType.PRIEST_SCYTHE, 1.05); weaponTypeInfo_mag.put(Weapon_detailType.PRIEST_SCYTHE, 1.0);
-		weaponTypeInfo_phy.put(Weapon_detailType.PRIEST_BATTLEAXE, 1.2); weaponTypeInfo_mag.put(Weapon_detailType.PRIEST_BATTLEAXE, 0.85);
+		weaponTypeInfo_phy.put(Weapon_detailType.PRIEST_CROSS, 1.0); weaponTypeInfo_mag.put(Weapon_detailType.PRIEST_CROSS, 0.9955);
+		weaponTypeInfo_phy.put(Weapon_detailType.PRIEST_ROSARY, 0.9910); weaponTypeInfo_mag.put(Weapon_detailType.PRIEST_ROSARY, 1.0135);
+		weaponTypeInfo_phy.put(Weapon_detailType.PRIEST_TOTEM, 1.0045); weaponTypeInfo_mag.put(Weapon_detailType.PRIEST_TOTEM, 0.9910);
+		weaponTypeInfo_phy.put(Weapon_detailType.PRIEST_SCYTHE, 1.0045); weaponTypeInfo_mag.put(Weapon_detailType.PRIEST_SCYTHE, 1.0045);
+		weaponTypeInfo_phy.put(Weapon_detailType.PRIEST_BATTLEAXE, 1.018); weaponTypeInfo_mag.put(Weapon_detailType.PRIEST_BATTLEAXE, 0.9865);
 		
 		weaponTypeInfo_phy.put(Weapon_detailType.FIGHTER_CLAW, 1.0); weaponTypeInfo_mag.put(Weapon_detailType.FIGHTER_CLAW, 1.0);
-		weaponTypeInfo_phy.put(Weapon_detailType.FIGHTER_GAUNTLET, 1.2); weaponTypeInfo_mag.put(Weapon_detailType.FIGHTER_GAUNTLET, 0.9);
-		weaponTypeInfo_phy.put(Weapon_detailType.FIGHTER_KNUCKLE, 0.95); weaponTypeInfo_mag.put(Weapon_detailType.FIGHTER_KNUCKLE, 1.15);
-		weaponTypeInfo_phy.put(Weapon_detailType.FIGHTER_TONFA, 0.95); weaponTypeInfo_mag.put(Weapon_detailType.FIGHTER_TONFA, 1.0);
-		weaponTypeInfo_phy.put(Weapon_detailType.FITGHTER_BOXGLOVE, 1.05); weaponTypeInfo_mag.put(Weapon_detailType.FITGHTER_BOXGLOVE, 0.95);
+		weaponTypeInfo_phy.put(Weapon_detailType.FIGHTER_GAUNTLET, 1.018); weaponTypeInfo_mag.put(Weapon_detailType.FIGHTER_GAUNTLET, 0.9910);
+		weaponTypeInfo_phy.put(Weapon_detailType.FIGHTER_KNUCKLE, 0.9955); weaponTypeInfo_mag.put(Weapon_detailType.FIGHTER_KNUCKLE, 1.0135);
+		weaponTypeInfo_phy.put(Weapon_detailType.FIGHTER_TONFA, 0.9955); weaponTypeInfo_mag.put(Weapon_detailType.FIGHTER_TONFA, 1.0);
+		weaponTypeInfo_phy.put(Weapon_detailType.FITGHTER_BOXGLOVE, 1.0045); weaponTypeInfo_mag.put(Weapon_detailType.FITGHTER_BOXGLOVE, 0.9955);
 		
-		weaponTypeInfo_phy.put(Weapon_detailType.LANCE_HALBERD, 1.2); weaponTypeInfo_mag.put(Weapon_detailType.LANCE_HALBERD, 0.9);
-		weaponTypeInfo_phy.put(Weapon_detailType.LANCE_PIKE, 1.05); weaponTypeInfo_mag.put(Weapon_detailType.LANCE_PIKE, 0.95);
+		weaponTypeInfo_phy.put(Weapon_detailType.LANCE_HALBERD, 1.018); weaponTypeInfo_mag.put(Weapon_detailType.LANCE_HALBERD, 0.9865);
+		weaponTypeInfo_phy.put(Weapon_detailType.LANCE_PIKE, 1.0045); weaponTypeInfo_mag.put(Weapon_detailType.LANCE_PIKE, 0.9910);
 		
-		weaponTypeInfo_phy.put(Weapon_detailType.THIEF_CHAKRAWEAPON, 0.8); weaponTypeInfo_mag.put(Weapon_detailType.THIEF_CHAKRAWEAPON, 1.1);
-		weaponTypeInfo_phy.put(Weapon_detailType.THIEF_DAGGER, 0.9); weaponTypeInfo_mag.put(Weapon_detailType.THIEF_DAGGER, 0.9);
-		weaponTypeInfo_phy.put(Weapon_detailType.THIEF_TWINSWORD, 1.1); weaponTypeInfo_mag.put(Weapon_detailType.THIEF_TWINSWORD, 0.8);
-		weaponTypeInfo_phy.put(Weapon_detailType.THIEF_WAND, 0.8); weaponTypeInfo_mag.put(Weapon_detailType.THIEF_WAND, 1.15);
+		weaponTypeInfo_phy.put(Weapon_detailType.THIEF_CHAKRAWEAPON, 0.9755); weaponTypeInfo_mag.put(Weapon_detailType.THIEF_CHAKRAWEAPON, 1.009);
+		weaponTypeInfo_phy.put(Weapon_detailType.THIEF_DAGGER, 0.9865); weaponTypeInfo_mag.put(Weapon_detailType.THIEF_DAGGER, 0.9901);
+		weaponTypeInfo_phy.put(Weapon_detailType.THIEF_TWINSWORD, 1.0018); weaponTypeInfo_mag.put(Weapon_detailType.THIEF_TWINSWORD, 0.9820);
+		weaponTypeInfo_phy.put(Weapon_detailType.THIEF_WAND, 0.9829); weaponTypeInfo_mag.put(Weapon_detailType.THIEF_WAND, 1.0135);
 		
 		mastery_rarity.put(Item_rarity.EPIC, 17);
 		mastery_rarity.put(Item_rarity.LEGENDARY, 14);
@@ -152,6 +153,7 @@ public class ReinforceInfo {
 		mastery_part.put(Equip_part.BELT, 0.1);
 		mastery_part.put(Equip_part.SHOES, 0.15);
 		
+		// 패치 이후로 부위 외에 의미 없음
 		masteryMap.put(Job.WEAPONMASTER, new MasteryInfo(Equip_type.MAIL, 36, 0, 1.8, 0, 0, 0));
 		masteryMap.put(Job.SOULMASTER, new MasteryInfo(Equip_type.FABRIC, 0, 24, 0, 1.2, 0, 0));
 		masteryMap.put(Job.BUSERKER, new MasteryInfo(Equip_type.HEAVY, 32, 0, 1.6, 0, 0, 0));
@@ -193,12 +195,12 @@ public class ReinforceInfo {
 	public static int getReinforceWeaponInfo_phy(int num, Item_rarity rarity, int level, Weapon_detailType type) throws UnknownInformationException
 	{
 		if(!readed) readInfo();
-		return (int) ( (level+rarityInfo2.get(rarity))/8*reinforceInfo[num]*rarityInfo.get(rarity)*weaponTypeInfo_phy.get(type) );
+		return (int) ( (level+rarityInfo2.get(rarity))/8*reinforceInfo[num]*rarityInfo.get(rarity)*weaponTypeInfo_phy.get(type)*1.1);
 	}
 	public static int getReinforceWeaponInfo_mag(int num, Item_rarity rarity, int level, Weapon_detailType type) throws UnknownInformationException
 	{
 		if(!readed) readInfo();
-		return (int) ( (level+rarityInfo2.get(rarity))/8*reinforceInfo[num]*rarityInfo.get(rarity)*weaponTypeInfo_mag.get(type) );
+		return (int) ( (level+rarityInfo2.get(rarity))/8*reinforceInfo[num]*rarityInfo.get(rarity)*weaponTypeInfo_mag.get(type)*1.1);
 	}
 	
 	public static int[] getEarringStatInfo(int num, Item_rarity rarity, int level) throws UnknownInformationException
@@ -235,7 +237,8 @@ public class ReinforceInfo {
 			break;
 		}
 		if(atk==-1 || fix==-1) throw new UnknownInformationException();
-		return new int[] {atk, fix};
+		//return new int[] {atk, fix};
+		return new int[] {fix, fix}; //강화패치
 	}
 	
 	public static int getDimensionInfo(int num, Item_rarity rarity, int level) throws UnknownInformationException
@@ -338,42 +341,58 @@ public class ReinforceInfo {
 	public static int getMastery_strInfo(Job job, Equipment equipment)
 	{
 		if(!readed) readInfo();
+		if(equipment.getName().contains("없음")) return 0;
+		
+		double rate = 1.0;
 		MasteryInfo info = masteryMap.get(job);
 		if(info==null || (info.type!=equipment.getEquipType() && equipment.getEquipType()!=Equip_type.ALL)){
-			if(job==Job.EXORCIST && equipment.getEquipType()==Equip_type.HEAVY) info = new MasteryInfo(Equip_type.HEAVY, 20, 0, 1, 0, 0, 0);
-			else return 0;
+			if(job==Job.EXORCIST && (equipment.getEquipType()==Equip_type.HEAVY || equipment.getEquipType()==Equip_type.FABRIC))
+				info = new MasteryInfo(Equip_type.HEAVY, 20, 0, 1, 0, 0, 0);
+			else rate = 0.4;
 		}
-		return (int)( (info.basic_str+info.inc_str*(mastery_rarity.get(equipment.getRarity())+equipment.getReinforce()/3+equipment.level))*mastery_part.get(equipment.getPart()) );
+		//return (int)( (info.basic_str+info.inc_str*(mastery_rarity.get(equipment.getRarity())+equipment.getReinforce()/3+equipment.level))*mastery_part.get(equipment.getPart()) );
+		if(info.basic_str==0) return 0;
+		return (int) ((20+2.5*(mastery_rarity.get(equipment.getRarity())+equipment.getReinforce()/3+equipment.level))*mastery_part.get(equipment.getPart())*rate);
 	}
 	public static int getMastery_intInfo(Job job, Equipment equipment)
 	{
 		if(!readed) readInfo();
+		if(equipment.getName().contains("없음")) return 0;
+		
+		double rate = 1.0;
 		MasteryInfo info = masteryMap.get(job);
 		if(info==null || (info.type!=equipment.getEquipType() && equipment.getEquipType()!=Equip_type.ALL)){
-			if(job==Job.EXORCIST && equipment.getEquipType()==Equip_type.FABRIC) info = new MasteryInfo(Equip_type.FABRIC, 0, 24, 0, 1.2, 0, 0);
-			else return 0;
+			if(job==Job.EXORCIST && (equipment.getEquipType()==Equip_type.HEAVY || equipment.getEquipType()==Equip_type.FABRIC))
+				info = new MasteryInfo(Equip_type.FABRIC, 0, 24, 0, 1.2, 0, 0);
+			else rate = 0.4;
 		}
-		if(equipment.getEquipType()==Equip_type.ALL && job==Job.EXORCIST)
-			info = new MasteryInfo(Equip_type.FABRIC, 0, 24, 0, 1.2, 0, 0);
-		return (int)( (info.basic_int+info.inc_int*(mastery_rarity.get(equipment.getRarity())+equipment.getReinforce()/3+equipment.level))*mastery_part.get(equipment.getPart()) );
+		//return (int)( (info.basic_int+info.inc_int*(mastery_rarity.get(equipment.getRarity())+equipment.getReinforce()/3+equipment.level))*mastery_part.get(equipment.getPart()) );
+		if(info.basic_int==0) return 0;
+		return (int) ((20+2.5*(mastery_rarity.get(equipment.getRarity())+equipment.getReinforce()/3+equipment.level))*mastery_part.get(equipment.getPart())*rate);
 	}
 	public static double getMastery_phyCrtInfo(Job job, Equipment equipment)
 	{
 		if(!readed) readInfo();
+		if(equipment.getName().contains("없음")) return 0;
+		
+		double rate = 1.0;
 		MasteryInfo info = masteryMap.get(job);
-		if(info==null || (info.type!=equipment.getEquipType() && equipment.getEquipType()!=Equip_type.ALL)) return 0;
-		double result = info.phy_crt*mastery_part.get(equipment.getPart());
-		int result2 = (int)(result*10+0.5);
-		return (double)result2/10;
+		if(info==null || (info.type!=equipment.getEquipType() && equipment.getEquipType()!=Equip_type.ALL))
+			rate = 0.5;
+		if(info.basic_str==0) return 0;
+		return 10*rate*mastery_part.get(equipment.getPart());
 	}
 	public static double getMastery_magCrtInfo(Job job, Equipment equipment)
 	{
 		if(!readed) readInfo();
-		MasteryInfo info = masteryMap.get(job);
-		if(info==null || (info.type!=equipment.getEquipType() && equipment.getEquipType()!=Equip_type.ALL)) return 0;
-		double result = info.mag_crt*mastery_part.get(equipment.getPart());
-		int result2 = (int)(result*10+0.5);
-		return (double)result2/10;
+		if(equipment.getName().contains("없음")) return 0;
+		
+		double rate = 1.0;
+		MasteryInfo info = masteryMap.get(job);		
+		if(info==null || (info.type!=equipment.getEquipType() && equipment.getEquipType()!=Equip_type.ALL))
+			rate = 0.5;
+		if(info.basic_int==0) return 0;
+		return 10*rate*mastery_part.get(equipment.getPart());
 	}
 }
 

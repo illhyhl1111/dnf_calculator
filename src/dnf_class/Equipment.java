@@ -47,7 +47,7 @@ public class Equipment extends Item
 		{
 			vStat.addStatList("무기물공", new StatusInfo(0), true);
 			vStat.addStatList("무기마공", new StatusInfo(0), true);
-			vStat.addStatList("재련독공", new StatusInfo(0), true);
+			vStat.addStatList("독공", new StatusInfo(0), true);
 		}
 		
 		try {
@@ -88,7 +88,7 @@ public class Equipment extends Item
 		{
 			vStat.addStatList("무기물공", new StatusInfo(0), true);
 			vStat.addStatList("무기마공", new StatusInfo(0), true);
-			vStat.addStatList("재련독공", new StatusInfo(0), true);
+			vStat.addStatList("독공", new StatusInfo(0), true);
 		}
 		
 		try {

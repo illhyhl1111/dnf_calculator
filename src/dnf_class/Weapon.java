@@ -29,9 +29,9 @@ public class Weapon extends Equipment{
 		this.weaponType =weaponType;
 		this.reforge=reforge;
 
-		vStat.addStatList("물리방무뎀", new StatusInfo(0), true);
-		vStat.addStatList("마법방무뎀", new StatusInfo(0), true);
-		vStat.addStatList("재련독공", 0, true);
+		vStat.addStatList("물공", new StatusInfo(0), true);
+		vStat.addStatList("마공", new StatusInfo(0), true);
+		vStat.addStatList("독공", 0, true);
 	}
 	public Weapon(String name, Item_rarity rarity, Weapon_detailType weaponType, SetName setName, int level, boolean isRare, String version)
 	{
@@ -46,9 +46,9 @@ public class Weapon extends Equipment{
 		this.weaponType=Weapon_detailType.NONE;
 		reforge=0;
 		
-		vStat.addStatList("물리방무뎀", new StatusInfo(0), true);
-		vStat.addStatList("마법방무뎀", new StatusInfo(0), true);
-		vStat.addStatList("재련독공", 0, true);
+		vStat.addStatList("물공", new StatusInfo(0), true);
+		vStat.addStatList("마공", new StatusInfo(0), true);
+		vStat.addStatList("독공", 0, true);
 	}
 	
 	@Override
@@ -90,7 +90,7 @@ public class Weapon extends Equipment{
 	{
 		int iter=0;
 		for(StatusAndName s : vStat.statList){
-			if(s.equals("물리방무뎀")){
+			if(s.equals("물공")){
 				return iter;
 			}
 			iter++;
@@ -103,7 +103,7 @@ public class Weapon extends Equipment{
 	{
 		int iter=0;
 		for(StatusAndName s : vStat.statList){
-			if(s.equals("재련독공")){
+			if(s.equals("독공")){
 				return iter;
 			}
 			iter++;

@@ -20,8 +20,8 @@ public class TrackableStatus extends Status {
 	public TrackableStatus(Job job, int level, Skill skill) throws ItemNotFoundedException{
 		super();
 		trackingSkill=skill;
-		LinkedList<?>[] tempList = new LinkedList<?>[StatList.STATNUM];
-		for(int i=0; i<StatList.STATNUM; i++)
+		LinkedList<?>[] tempList = new LinkedList<?>[StatList.STAT_END+1];
+		for(int i=0; i<StatList.STAT_END+1; i++)
 			tempList[i] = new LinkedList<TrackRecord>();
 		trackList = (LinkedList<TrackRecord>[]) tempList;
 		skillLevelList = new LinkedList<TrackRecord>();

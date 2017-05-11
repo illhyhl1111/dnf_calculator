@@ -9,8 +9,6 @@ import dnf_calculator.ElementInfo;
 import dnf_calculator.FunctionStat;
 import dnf_calculator.FunctionStatusList;
 import dnf_calculator.StatusList;
-import dnf_class.Characters;
-import dnf_class.Monster;
 
 public class Parser {
 	public static double parseForm(String data, double prev)
@@ -85,36 +83,12 @@ public class Parser {
 			return -1;
 		}
 		
-		else if(data[0].equals("무기마스터리")){
-			fList.statList.add(new FunctionStat(){
-				private static final long serialVersionUID = 7114802204195525723L;
-
-				@Override
-				public StatusList function(Characters character, Monster monster, Object item) {
-					StatusList statList = new StatusList();
-					if(character.getItemSetting().weapon.weaponType.getName().equals(data[2])){
-						statList.addStatList("물리마스터리", Double.valueOf(data[1]));
-						statList.addStatList("마법마스터리", Double.valueOf(data[1]));
-					}
-					return statList;
-				};
-			});
+		else if(data[0].equals("물리무기마스터리")){
+			fList.statList.add("물리무기마스터리"+FunctionStat.ARGS_SPLIT+data[1]+FunctionStat.ARGS_SPLIT+data[2]);
 			return Double.valueOf(data[1]);
 		}
-		else if(data[0].equals("무기마스터리_방무")){
-			fList.statList.add(new FunctionStat(){
-				private static final long serialVersionUID = -7647925551477189386L;
-
-				@Override
-				public StatusList function(Characters character, Monster monster, Object item) {
-					StatusList statList = new StatusList();
-					if(character.getItemSetting().weapon.weaponType.getName().equals(data[2])){
-						statList.addStatList("물리방무뻥", Double.valueOf(data[1]));
-						statList.addStatList("마법방무뻥", Double.valueOf(data[1]));
-					}
-					return statList;
-				};
-			});
+		else if(data[0].equals("마법무기마스터리")){
+			fList.statList.add("마법무기마스터리"+FunctionStat.ARGS_SPLIT+data[1]+FunctionStat.ARGS_SPLIT+data[2]);
 			return Double.valueOf(data[1]);
 		}
 		

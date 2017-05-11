@@ -87,7 +87,7 @@ public class SelectCharacter extends DnFComposite{
 	public void setSelectionComposite()
 	{		
 		try{
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream("data\\characterList.dfd"));
+			ObjectInputStream in = new ObjectInputStream(new FileInputStream("data\\characterList_1.2.dfd"));
 			Object temp = in.readObject();
 			characterList = (LinkedList<BriefCharacterInfo>)temp;
 			in.close();
@@ -103,7 +103,7 @@ public class SelectCharacter extends DnFComposite{
 	public void saveCharacterList()
 	{
 		try {
-			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("data\\characterList.dfd"));
+			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("data\\characterList_1.2.dfd"));
 			out.writeObject(characterList);
 			out.close();
 		} catch (IOException e) {
@@ -232,7 +232,7 @@ public class SelectCharacter extends DnFComposite{
 				saveCharacterList();
 				setDeleteComboItems(deleteCharacterCombo);
 				
-				File charFile = new File("data\\character_"+BriefCharacterInfo.getFileName(deleteChar)+".dfd");
+				File charFile = new File("data\\character_"+BriefCharacterInfo.getFileName(deleteChar)+"_1.2.dfd");
 				if(charFile.exists()) charFile.delete();
 				renew();
 			}

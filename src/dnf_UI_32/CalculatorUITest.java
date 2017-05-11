@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -40,6 +42,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 import dnf_InterfacesAndExceptions.CalculatorVersion;
 import dnf_class.Characters;
@@ -192,7 +195,7 @@ public class CalculatorUITest {
 			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				try{
-					ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("data\\character_"+character.name+".dfd"));
+					ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("data\\character_"+character.name+"1.2.dfd"));
 					out.writeObject(character);
 					out.close();
 				}
@@ -282,6 +285,80 @@ class NewVersion extends TitleAreaDialog {
 	}
 }
 
+class ErrorDialog extends TitleAreaDialog {
+
+    private String stack;
+    private URL URL;
+    public boolean readed;
+
+    public ErrorDialog(Shell parentShell, String stack) {
+    	super(parentShell);
+    	this.stack=stack;
+    	readed=false;
+    	try {
+			URL = new URL("http://blog.naver.com/illhyhl1111/220900371228");
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+    }
+
+    @Override
+    public void create() {
+            super.create();
+            setTitle("으악");
+            setMessage("프로그램이 주거버렸습니다.", IMessageProvider.ERROR);
+    }
+
+    @Override
+    protected Control createDialogArea(Composite parent) {
+            Composite area = (Composite) super.createDialogArea(parent);
+            Composite container = new Composite(area, SWT.NONE);
+            container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+            GridLayout layout = new GridLayout(2, false);
+            container.setLayout(layout);
+
+            createInput(container);
+            return area;
+    }
+
+    private void createInput(Composite container) {
+    	Label versionLabel = new Label(container, SWT.NONE);
+    	versionLabel.setText("\n처리되지 않은 에러가 발생하여 계산기가 죽었습니다."
+    			+ "\n\n아래 에러 로그를 복사하여, 제작자에게 전달해 주시면"
+    			+ "\n높은 확률로 제작자가 매우 좋아합니다.");
+    	versionLabel.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 2, 1));
+
+    	ErrorDialog thisShell = this;
+    	Label URLLabel = new Label(container, SWT.NONE);
+    	URLLabel.setText("제보 링크 : ");
+    	Link link = new Link(container, SWT.NONE);
+    	link.setText("<A>"+URL+"</A>");
+    	link.addSelectionListener(new SelectionAdapter(){
+    		@Override
+	        public void widgetSelected(SelectionEvent e) {
+    			System.out.println("You have selected: "+e.text);
+    			Program.launch(e.text);
+				readed=true;
+				thisShell.close();
+	        }
+	    });
+    	        
+    	Label errlLabel = new Label(container, SWT.NONE);
+    	errlLabel.setText("\n\n에러 로그 - ");
+    	errlLabel.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 2, 1));
+    	
+    	Text errText = new Text(container, SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
+		errText.setText(stack);
+		errText.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 2, 30));
+    }
+    
+    @Override
+	protected void createButtonsForButtonBar(Composite parent) {
+    	createButton(parent, IDialogConstants.OK_ID, "재시작", true);
+	    createButton(parent, IDialogConstants.CANCEL_ID, "종료", false);
+	}
+}
+
 class CalculatorUILoad
 {
 	public static void main(String[] args)
@@ -335,7 +412,7 @@ class CalculatorUILoad
 		
 		Characters character;
 		try{
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream("data\\character_"+BriefCharacterInfo.getFileName(selectionSet.getSelected().name)+".dfd"));
+			ObjectInputStream in = new ObjectInputStream(new FileInputStream("data\\character_"+BriefCharacterInfo.getFileName(selectionSet.getSelected().name)+"1.2.dfd"));
 			Object temp = in.readObject();
 			character = (Characters)temp;
 			character.updateDictionary();
@@ -351,16 +428,36 @@ class CalculatorUILoad
 		}
 		GetDictionary.getSkillIcon(character.getJob());
 		TerminateSignal terminateSignal = new TerminateSignal();
-		makeMainShell(display, character, terminateSignal);
+		Shell mainShell = makeMainShell(display, character, terminateSignal);
 		
 		while (!terminateSignal.isTerminated()) {
-		    if (!display.readAndDispatch())
-		        display.sleep();
+			try{
+			    if (!display.readAndDispatch())
+			        display.sleep();
+			} catch(Exception e) {
+				StringWriter sw = new StringWriter();
+				PrintWriter pw = new PrintWriter(sw);
+				e.printStackTrace(pw);
+				int out = IDialogConstants.CANCEL_ID;
+				
+				ErrorDialog dialog = new ErrorDialog(mainShell, sw.toString());
+				out = dialog.open();
+				mainShell.dispose();
+				
+				if(out==IDialogConstants.CANCEL_ID){
+					display.dispose();
+					return;
+				}
+				else
+					terminateSignal.mainShellterminated=false;
+				terminateSignal.selectionShellterminated=true;
+				makeMainShell(display, character, terminateSignal);
+			}
 		}
 		display.dispose();
 	}
 	
-	public static void makeMainShell(Display display, Characters character, TerminateSignal terminateSignal)
+	public static Shell makeMainShell(Display display, Characters character, TerminateSignal terminateSignal)
 	{
 		Shell shell = new Shell(display);
 		final StackLayout stackLayout = new StackLayout();
@@ -435,7 +532,7 @@ class CalculatorUILoad
 				terminateSignal.selectionShellterminated=true;
 				Characters newCharacter;
 				try{
-					ObjectInputStream in = new ObjectInputStream(new FileInputStream("data\\character_"+BriefCharacterInfo.getFileName(selectionSet.getSelected().name)+".dfd"));
+					ObjectInputStream in = new ObjectInputStream(new FileInputStream("data\\character_"+BriefCharacterInfo.getFileName(selectionSet.getSelected().name)+"1.2.dfd"));
 					Object temp = in.readObject();
 					newCharacter = (Characters)temp;
 					newCharacter.updateDictionary();
@@ -481,7 +578,7 @@ class CalculatorUILoad
 			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				try{
-					ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("data\\character_"+BriefCharacterInfo.getFileName(character.name)+".dfd"));
+					ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("data\\character_"+BriefCharacterInfo.getFileName(character.name)+"1.2.dfd"));
 					out.writeObject(character);
 					out.close();
 				}
@@ -492,8 +589,11 @@ class CalculatorUILoad
 				for(Shell shell : display.getShells()) shell.dispose();
 				display.removeFilter(SWT.KeyDown, keyFilter);
 				terminateSignal.mainShellterminated=true;
+				System.out.println("disposed!");
 			}			
 		});
+		
+		return shell;
 	}
 }
 

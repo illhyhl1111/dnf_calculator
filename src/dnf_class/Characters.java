@@ -346,6 +346,30 @@ public class Characters implements java.io.Serializable
 	{
 		initStatus(trackStat, trackingSkill);
 		
+		//item fStat
+		itemSetting.weapon.fStat.addListToStat(dungeonStatus, this, target, itemSetting.weapon);
+		for(Equipment e : itemSetting.equipmentList.values())
+			e.fStat.addListToStat(dungeonStatus, this, target, e);
+		for(Buff buff : buffList)
+			if(buff.enabled) buff.fStat.addListToStat(dungeonStatus, this, target, buff);
+		
+		for(Entry<SetName,Integer> e : setOptionList.entrySet())				//setOptionList(셋옵목록)에 포함된 모든 셋옵 e에 대해
+		{
+			try {
+				LinkedList<SetOption> candidates = userItemList.getSetOptions(e.getKey());		//e에 해당되는 셋옵 목록 - candidates
+				for(SetOption s : candidates)
+				{
+					if(s.isEnabled(e.getValue())) s.fStat.addListToStat(dungeonStatus, this, target, s);
+				}
+			} 
+			catch (ItemNotFoundedException e1) {
+				e1.printStackTrace();
+			}
+			
+		}
+		itemSetting.drape.fStat.addListToStat(dungeonStatus, this, target, itemSetting.drape);
+		
+		//item stat
 		itemStatUpdate(itemSetting.weapon);
 		
 		for(Equipment e : itemSetting.equipmentList.values())
@@ -376,30 +400,10 @@ public class Characters implements java.io.Serializable
 		
 		target.getAdditionalStatList().addListToStat(dungeonStatus, target.getName());
 		
-		itemSetting.weapon.fStat.addListToStat(dungeonStatus, this, target, itemSetting.weapon);
-		for(Equipment e : itemSetting.equipmentList.values())
-			e.fStat.addListToStat(dungeonStatus, this, target, e);
-		for(Buff buff : buffList)
-			if(buff.enabled) buff.fStat.addListToStat(dungeonStatus, this, target, buff);
-		
-		for(Entry<SetName,Integer> e : setOptionList.entrySet())				//setOptionList(셋옵목록)에 포함된 모든 셋옵 e에 대해
-		{
-			try {
-				LinkedList<SetOption> candidates = userItemList.getSetOptions(e.getKey());		//e에 해당되는 셋옵 목록 - candidates
-				for(SetOption s : candidates)
-				{
-					if(s.isEnabled(e.getValue())) s.fStat.addListToStat(dungeonStatus, this, target, s);
-				}
-			} 
-			catch (ItemNotFoundedException e1) {
-				e1.printStackTrace();
-			}
-			
-		}
-		itemSetting.drape.fStat.addListToStat(dungeonStatus, this, target, itemSetting.drape);
-		
+		//skill - fStat, set level
 		setSkillLevel(trackingSkill);
 		
+		//skill - stat
 		for(Skill skill : characterInfoList.skillList){
 			if(skill.buffEnabled(false)){
 				SkillLevelInfo skillInfo = skill.getSkillLevelInfo(false, isBurning);
@@ -416,14 +420,16 @@ public class Characters implements java.io.Serializable
 	}
 	
 	//1. 아이템으로부터 스킬 레벨을 구한다.
-	//2. 버프 스킬로부터 최종 스킬수치를 구한다.
-	//3. 최종 수치를 스탯에 더한다.
+	//2. 함수스탯을 실행시키고, 버프 스킬로부터 최종 스킬수치를 구한다.
+	//3. 최종 수치를 스탯에 더한다.(이 함수 리턴 이후)
 	//fStat을 포함한 스킬 A는, 스킬 A를 변경시키는 스킬 B의 영향을 제대로 받지 않는다.  
 	private void setSkillLevel(Skill trackingSkill) 
 	{
+		//1.
 		getSkillLevel(false, villageStatus.getSkillStatList());
 		getSkillLevel(true, dungeonStatus.getSkillStatList());
 		
+		//마을스탯
 		LinkedList<AbstractStatusInfo> list;
 		for(Skill skill : characterInfoList.skillList){
 			if(skill.buffEnabled(false)){
@@ -435,27 +441,35 @@ public class Characters implements java.io.Serializable
 			}
 		}
 		
+		//던전
 		for(Skill skill : characterInfoList.skillList){
 			if(skill.buffEnabled(true)){
 				list = new LinkedList<AbstractStatusInfo>();
 				SkillLevelInfo skillInfo = skill.getSkillLevelInfo(true, isBurning);
 				for(StatusAndName s : skillInfo.stat.statList)
 					list.add(s.stat);
-				for(FunctionStat fStat : skillInfo.fStat.statList)
-					for(StatusAndName s : fStat.function(this, target, skill).statList){
+				
+				for(String str : skillInfo.fStat.statList){
+					FunctionStat fStat = FunctionStat.getFunction(str);
+					String[] args = FunctionStat.parseArgs(str);
+					for(StatusAndName s : fStat.function(this, target, skill, args).statList){
 						list.add(s.stat);
 						dungeonStatus.trackStat(s.name, s.stat, skill.getName());
 					}
+				}
 				getSkillLevel(true, list);
 			}
 			else if(skill.isOptionSkill()){
 				list = new LinkedList<AbstractStatusInfo>();
 				SkillLevelInfo skillInfo = skill.getSkillLevelInfo(true, isBurning);
-				for(FunctionStat fStat : skillInfo.fStat.statList)
-					for(StatusAndName s : fStat.function(this, target, skill).statList){
+				for(String str : skillInfo.fStat.statList){
+					FunctionStat fStat = FunctionStat.getFunction(str);
+					String[] args = FunctionStat.parseArgs(str);
+					for(StatusAndName s : fStat.function(this, target, skill, args).statList){
 						list.add(s.stat);
 						dungeonStatus.trackStat(s.name, s.stat, skill.getName());
 					}
+				}
 				getSkillLevel(true, list);
 			}
 		}
