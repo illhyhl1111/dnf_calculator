@@ -11,36 +11,41 @@ public class FunctionStatusList implements java.io.Serializable, Cloneable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1108403569293695416L;
-	public LinkedList<FunctionStat> statList;
+	public LinkedList<String> statList;
 	
 	public FunctionStatusList()
 	{
-		statList = new LinkedList<FunctionStat>();
+		statList = new LinkedList<String>();
 	}
 	
 	public void addListToStat(Status stat, Characters character, Monster monster, Object item)
 	{
-		if(stat instanceof TrackableStatus){
-			for(FunctionStat s : statList){
+		
+		for(String s : statList){
+			FunctionStat fStat = FunctionStat.getFunction(s);
+			String[] args = FunctionStat.parseArgs(s);
+			
+			if(stat instanceof TrackableStatus){
 				if(item instanceof IconObject)
-					s.function(character, monster, item).addListToStat(stat, ((IconObject)item).getName());
+					fStat.function(character, monster, item, args).addListToStat(stat, ((IconObject)item).getName());
 				else
-					s.function(character, monster, item).addListToStat(stat, item.toString());
+					fStat.function(character, monster, item, args).addListToStat(stat, item.toString());
+			}
+			else {
+				fStat.function(character, monster, item, args).addListToStat(stat);
 			}
 		}
-		else
-			for(FunctionStat s : statList)
-				s.function(character, monster, item).addListToStat(stat);
 	}
+
 	
 	@Override
 	public Object clone() throws CloneNotSupportedException
 	{
 		FunctionStatusList temp = (FunctionStatusList) super.clone();
-		temp.statList = new LinkedList<FunctionStat>();
-		for(FunctionStat s : statList)
+		temp.statList = new LinkedList<String>();
+		for(String s : statList)
 		{
-			temp.statList.add((FunctionStat)s.clone());
+			temp.statList.add(s);
 		}
 		return temp;
 	}

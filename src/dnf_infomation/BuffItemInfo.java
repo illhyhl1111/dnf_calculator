@@ -4,19 +4,12 @@ import java.util.LinkedList;
 
 import dnf_InterfacesAndExceptions.CalculatorVersion;
 import dnf_InterfacesAndExceptions.Element_type;
-import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.Item_rarity;
 import dnf_InterfacesAndExceptions.Job;
-import dnf_InterfacesAndExceptions.StatList;
-import dnf_InterfacesAndExceptions.StatusTypeMismatch;
-import dnf_calculator.FunctionStat;
 import dnf_calculator.StatusAndName;
 import dnf_calculator.StatusList;
 import dnf_class.Buff;
-import dnf_class.Characters;
-import dnf_class.Equipment;
 import dnf_class.ExclusiveBuff;
-import dnf_class.Monster;
 import dnf_class.SelectionBuff;
 
 public class BuffItemInfo {
@@ -42,24 +35,14 @@ public class BuffItemInfo {
 		buffList.add(buff);
 		
 		buff = new Buff("스킹/지축 주문서", Item_rarity.RARE, CalculatorVersion.VER_1_0_a);
-		buff.fStat.statList.add(new FunctionStat() {
-			private static final long serialVersionUID = 1L;
-			@Override
-			public StatusList function(Characters character, Monster monster, Object item) {
-				StatusList statList = new StatusList();
-				statList.addStatList("물공", character.getLevel()/2);
-				statList.addStatList("마공", character.getLevel()/2);
-				return statList;
-			}
-		});
+		buff.fStat.statList.add("스킹주문서");
 		buff.explanation.add("캐릭터의 레벨 x 0.5 만큼 물리/마법공격력 증가");
 		buffList.add(buff);
 		
 		buff = new Buff("수련의 방 버프 1", Item_rarity.NONE, CalculatorVersion.VER_1_0_f);
 		buff.dStat.addStatList("힘", 5000, true, true); buff.dStat.addStatList("지능", 5000, true, true);
 		buff.dStat.addStatList("물공", 3000, true, true); buff.dStat.addStatList("마공", 3000, true, true);
-		buff.dStat.addStatList("독공", 5000, true, true); buff.dStat.addStatList("재련독공", 1000, true, true);
-		buff.dStat.addStatList("물리방무뎀", 3000, true, true); buff.dStat.addStatList("마법방무뎀", 3000, true, true);
+		buff.dStat.addStatList("독공", 5000, true, true);
 		buff.dStat.addStatList("화속", 500, true, true); buff.dStat.addStatList("수속", 500, true, true);
 		buff.dStat.addStatList("명속", 500, true, true); buff.dStat.addStatList("암속", 500, true, true);
 		buff.dStat.addStatList(Element_type.FIRE, 0, true, false, true); buff.dStat.addStatList(Element_type.WATER, 0, true, false, true);
@@ -198,86 +181,21 @@ public class BuffItemInfo {
 		selectionBuff.makeSelectionOption("잊혀진(골든) 에이션트 엘븐", statList);
 		buffList.add(selectionBuff);
 		
-		FunctionStat elementalMasterSwitching = new FunctionStat(){
-			private static final long serialVersionUID = 1L;
-			@Override
-			public StatusList function(Characters character, Monster monster, Object item) {
-				StatusList statList = new StatusList();
-				Equipment[] equip;
-				Buff buff = (Buff)item;
-				if(buff.getName().contains("무기->")) equip = new Equipment[] {character.getWeapon()};
-				else if(buff.getName().contains("방어구->"))
-					equip = new Equipment[] { character.getEquipmentList().get(Equip_part.ROBE),
-							character.getEquipmentList().get(Equip_part.TROUSER), character.getEquipmentList().get(Equip_part.SHOULDER),
-							character.getEquipmentList().get(Equip_part.BELT), character.getEquipmentList().get(Equip_part.SHOES)};
-				else if(buff.getName().contains("악세->"))
-					equip = new Equipment[] { character.getEquipmentList().get(Equip_part.BRACELET),
-							character.getEquipmentList().get(Equip_part.NECKLACE), character.getEquipmentList().get(Equip_part.RING) };
-				else if(buff.getName().contains("특수장비->"))
-					equip = new Equipment[] { character.getEquipmentList().get(Equip_part.AIDEQUIPMENT),
-							character.getEquipmentList().get(Equip_part.MAGICSTONE), character.getEquipmentList().get(Equip_part.EARRING) };
-				else equip = new Equipment[0];
-				
-				try {
-					for(Equipment e : equip){
-						for(StatusAndName s : e.vStat.statList){
-							switch(s.name){
-							case StatList.WEP_MAG: case StatList.WEP_PHY:
-							case StatList.WEP_NODEF_MAG: case StatList.WEP_NODEF_PHY:
-							case StatList.ELEM_ALL: case StatList.ELEM_DARKNESS: 
-							case StatList.ELEM_FIRE: case StatList.ELEM_WATER: case StatList.ELEM_LIGHT:
-							case StatList.SKILL: case StatList.SKILL_RANGE:
-							case StatList.MAST_MAG_ITEM: case StatList.MAST_INDEP_ITEM: case StatList.MAST_PHY_ITEM:
-							case StatList.INT_INC: case StatList.STR_INC:
-								break;
-							case StatList.DAM_SKILL:
-								statList.addStatList(StatList.DAM_SKILL, -100+10000/(100.0+s.stat.getStatToDouble()));
-								break;
-							default:
-								statList.addStatList(s.name, (int)-s.stat.getStatToDouble());	
-							}
-						}
-						for(StatusAndName s : e.dStat.statList){
-							switch(s.name){
-							case StatList.WEP_MAG: case StatList.WEP_PHY:
-							case StatList.WEP_NODEF_MAG: case StatList.WEP_NODEF_PHY:
-							case StatList.ELEM_ALL: case StatList.ELEM_DARKNESS: 
-							case StatList.ELEM_FIRE: case StatList.ELEM_WATER: case StatList.ELEM_LIGHT:
-							case StatList.SKILL: case StatList.SKILL_RANGE:
-							case StatList.MAST_MAG_ITEM: case StatList.MAST_INDEP_ITEM: case StatList.MAST_PHY_ITEM:
-							case StatList.INT_INC: case StatList.STR_INC:
-								break;
-							case StatList.DAM_SKILL:
-								statList.addStatList(StatList.DAM_SKILL, -100+10000/(100.0+s.stat.getStatToDouble()));
-								break;
-							default:
-								statList.addStatList(s.name, (int)-s.stat.getStatToDouble());	
-							}
-						}
-					}
-				}
-				catch (StatusTypeMismatch e) {
-					e.printStackTrace();
-				}
-				return statList;
-			}
-		};
-		
 		exclusiveBuff = new ExclusiveBuff("무기->케세라", Item_rarity.EPIC, new Job[] {Job.ELEMENTALMASTER}, CalculatorVersion.VER_1_0_f);
 		exclusiveBuff.dStat.addStatList("추뎀", 17);
 		exclusiveBuff.dStat.addStatList("스증뎀", 20);
 		exclusiveBuff.dStat.addStatList("모공증", 20);
-		exclusiveBuff.fStat.statList.add(elementalMasterSwitching);
+		exclusiveBuff.fStat.statList.add("엘마스위칭");
 		exclusiveBuff.explanation.add("착용한 무기에서 케세라세라로 스위칭합니다");
 		buffList.add(exclusiveBuff);
 		exclusiveBuff = new ExclusiveBuff("무기->이기(미해방)", Item_rarity.EPIC, new Job[] {Job.ELEMENTALMASTER}, CalculatorVersion.VER_1_0_f);
 		exclusiveBuff.dStat.addStatList("스증뎀", 35);
-		exclusiveBuff.fStat.statList.add(elementalMasterSwitching);
+		exclusiveBuff.fStat.statList.add("엘마스위칭");
 		exclusiveBuff.explanation.add("착용한 무기에서 이기무기로 스위칭합니다");
 		buffList.add(exclusiveBuff);
 		exclusiveBuff = new ExclusiveBuff("무기->창성", Item_rarity.EPIC, new Job[] {Job.ELEMENTALMASTER}, CalculatorVersion.VER_1_0_f);
 		exclusiveBuff.dStat.addStatList("스증뎀", 70.8);
-		exclusiveBuff.fStat.statList.add(elementalMasterSwitching);
+		exclusiveBuff.fStat.statList.add("엘마스위칭");
 		exclusiveBuff.explanation.add("착용한 무기에서 창성무기로 스위칭합니다");
 		buffList.add(exclusiveBuff);
 		exclusiveBuff = new ExclusiveBuff("악세->황홀경", Item_rarity.EPIC, new Job[] {Job.ELEMENTALMASTER}, CalculatorVersion.VER_1_0_f);
@@ -286,20 +204,20 @@ public class BuffItemInfo {
 		exclusiveBuff.dStat.addStatList("모공증", 17);
 		exclusiveBuff.dStat.addStatList("스증뎀", 5);
 		exclusiveBuff.dStat.addStatList("스증뎀", 12);
-		exclusiveBuff.fStat.statList.add(elementalMasterSwitching);
+		exclusiveBuff.fStat.statList.add("엘마스위칭");
 		exclusiveBuff.explanation.add("착용한 악세에서 황홀경(12강)으로 스위칭합니다");
 		buffList.add(exclusiveBuff);
 		exclusiveBuff = new ExclusiveBuff("방어구->택틱컬", Item_rarity.EPIC, new Job[] {Job.ELEMENTALMASTER}, CalculatorVersion.VER_1_0_f);
 		exclusiveBuff.dStat.addStatList("추뎀", 55);
 		exclusiveBuff.dStat.addStatList("마크", 12);
-		exclusiveBuff.fStat.statList.add(elementalMasterSwitching);
+		exclusiveBuff.fStat.statList.add("엘마스위칭");
 		exclusiveBuff.explanation.add("착용한 방어구에서 택틱(4인)으로 스위칭합니다");
 		buffList.add(exclusiveBuff);
 		exclusiveBuff = new ExclusiveBuff("특수장비->헤블론", Item_rarity.EPIC, new Job[] {Job.ELEMENTALMASTER}, CalculatorVersion.VER_1_0_f);
 		exclusiveBuff.dStat.addStatList("모공증", 20);
 		exclusiveBuff.dStat.addStatList("스증뎀", 10);
 		exclusiveBuff.dStat.addStatList("스증뎀", 20);
-		exclusiveBuff.fStat.statList.add(elementalMasterSwitching);
+		exclusiveBuff.fStat.statList.add("엘마스위칭");
 		exclusiveBuff.explanation.add("착용한 특수장비에서 헤블론(스증셋옵)으로 스위칭합니다");
 		buffList.add(exclusiveBuff);
 	}

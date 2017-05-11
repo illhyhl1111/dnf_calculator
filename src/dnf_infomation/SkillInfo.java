@@ -1,30 +1,15 @@
 package dnf_infomation;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 
 import dnf_InterfacesAndExceptions.CalculatorVersion;
 import dnf_InterfacesAndExceptions.Character_type;
 import dnf_InterfacesAndExceptions.Element_type;
-import dnf_InterfacesAndExceptions.Equip_part;
 import dnf_InterfacesAndExceptions.Job;
 import dnf_InterfacesAndExceptions.ParsingException;
 import dnf_InterfacesAndExceptions.Skill_type;
-import dnf_InterfacesAndExceptions.StatList;
-import dnf_InterfacesAndExceptions.StatusTypeMismatch;
-import dnf_InterfacesAndExceptions.UndefinedStatusKey;
-import dnf_InterfacesAndExceptions.Weapon_detailType;
-import dnf_calculator.BooleanInfo;
-import dnf_calculator.DoubleStatusInfo;
 import dnf_calculator.FunctionStat;
-import dnf_calculator.SkillStatusInfo;
-import dnf_calculator.StatusAndName;
-import dnf_calculator.StatusInfo;
-import dnf_calculator.StatusList;
-import dnf_class.Characters;
-import dnf_class.Equipment;
-import dnf_class.Monster;
 import dnf_class.Skill;
 import dnf_class.SkillLevelInfo;
 import dnf_class.SubSkill;
@@ -32,7 +17,7 @@ import dnf_class.SwitchingSkill;
 import dnf_class.TPSkill;
 
 public class SkillInfo {
-	
+
 	public static void getInfo(LinkedList<Skill> skillList, Object[] data) throws ParsingException
 	{
 		int i=0;
@@ -187,7 +172,7 @@ public class SkillInfo {
 					{
 						i--;
 						int compNum=2;
-						if(levelInfo.fStat.statList.size()!=0) compNum=3;
+						//if(levelInfo.fStat.statList.size()!=0) compNum=3;
 						
 						int repNum = Integer.valueOf(((String)temp).split(" ")[1]);
 						int levelDiff = skill.maxLevel-skillLevel;
@@ -245,15 +230,24 @@ public class SkillInfo {
 					if(skill.hasBuff() || (data[i] instanceof String && ((String)data[i]).startsWith("귀속"))){
 						temp = data[i++];
 						
-						if(temp instanceof FunctionStat){
+						/*if(temp instanceof FunctionStat){
 							levelInfo.fStat.statList.add((FunctionStat) temp);
 							temp = data[i++];
-						}
+						}*/
 						
 						if(temp!=null){
 							String[] statList = ((String)temp).split(" & ");
 							for(String str : statList){
 								if(str.isEmpty()) continue;
+								if(str.contains("fStat_")){
+									FunctionStat tempFuncion = FunctionInfo.fStat.get(((String)str).substring(6));
+									if(tempFuncion==null){
+										System.out.println("error at : "+data[i-1]);
+										throw new ParsingException(i-1, str);
+									}
+									levelInfo.fStat.statList.add(((String)str).substring(6));
+									continue;
+								}
 								if(str.contains("귀속")){
 									String[] skillAndPercent = str.split("/");
 									
@@ -292,6 +286,7 @@ public class SkillInfo {
 			catch(Exception e)
 			{
 				e.printStackTrace();
+				System.out.println("error at : "+data[i-1]);
 				System.out.println("앞1 : "+data[i-2]);
 				System.out.println("앞2 : "+data[i-3]);
 				System.out.println("뒤1 : "+data[i]);
@@ -304,6 +299,7 @@ public class SkillInfo {
 		}catch(Exception e)
 		{
 			e.printStackTrace();
+			System.out.println("error at : "+data[i-1]);
 			System.out.println("앞1 : "+data[i-2]);
 			System.out.println("앞2 : "+data[i-3]);
 			System.out.println("뒤1 : "+data[i]);
@@ -311,876 +307,6 @@ public class SkillInfo {
 			throw new ParsingException(i-1, temp);
 		}
 	}
-	
-	static FunctionStat fStat[] = new FunctionStat[]{
-	
-		//0, 혈지군무 분신
-		new FunctionStat(){
-			private static final long serialVersionUID = 1L;
-	
-			@Override
-			public StatusList function(Characters character, Monster monster, Object item) {
-				StatusList statList = new StatusList();
-				Skill skill = (Skill)item;
-				Skill basicSkill = character.characterInfoList.getSkill("혈지군무");
-				if(basicSkill.getCharSkillLevel()!=0){
-					skill.dungeonLevel = basicSkill.dungeonLevel;
-					skill.setSkillLevel(basicSkill.getCharSkillLevel());
-				}
-				
-				double skillEnhance=0;
-				SkillLevelInfo skillInfo = character.characterInfoList.getSkill("마인의 검세").getSkillLevelInfo(true, character.isBurning());
-				if(character.characterInfoList.getSkill("마인의 검세").getSkillLevel(true, character.isBurning())!=0){
-					switch(skill.getName()){
-					case "혈지군무 - 발":
-						skillEnhance = ((SkillStatusInfo)skillInfo.stat.statList.get(4).stat).getIncrease();
-						break;
-					case "혈지군무 - 무":
-						skillEnhance = ((SkillStatusInfo)skillInfo.stat.statList.get(5).stat).getIncrease();
-						break;
-					case "혈지군무 - 사형조수":
-						skillEnhance = ((SkillStatusInfo)skillInfo.stat.statList.get(6).stat).getIncrease();
-						break;
-					case "혈지군무 - 폭류나선":
-						skillEnhance = ((SkillStatusInfo)skillInfo.stat.statList.get(0).stat).getIncrease();
-						break;
-					case "혈지군무 - 혈화난무":
-						skillEnhance = ((SkillStatusInfo)skillInfo.stat.statList.get(1).stat).getIncrease();
-						break;
-					}
-				}
-				//statList.addSkill_damage(skill.getName(, 100.0/(100+skillEnhance)*100-100);
-				skill.dungeonIncrease *= 100.0/(100+skillEnhance);
-				return statList;
-			}
-		},
-		
-		//1, 듀얼트리거
-		new FunctionStat(){
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public StatusList function(Characters character, Monster monster, Object item) {
-				StatusList statList = new StatusList();
-				try {
-					int fire = (int)Math.round(character.dungeonStatus.getStat(StatList.ELEM_FIRE));
-					int light = (int)Math.round(character.dungeonStatus.getStat(StatList.ELEM_LIGHT));
-					if(fire>light) statList.addStatList(Element_type.LIGHT, fire-light, false, false, false);
-					else statList.addStatList(Element_type.FIRE, light-fire, false, false, false);
-				} catch (StatusTypeMismatch e) {
-					e.printStackTrace();
-				}
-				return statList;
-			}
-		},
-		
-		new FunctionStat(){
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public StatusList function(Characters character, Monster monster, Object item) {
-				StatusList statList = new StatusList();
-				Skill skill = (Skill)item;
-				try {
-					statList.addStatList("재련독공", character.dungeonStatus.getStat("재련독공")
-							*skill.getSkillLevelInfo(true, character.isBurning()).stat.statList.get(0).stat.getStatToDouble()/100);
-				} catch (UndefinedStatusKey | StatusTypeMismatch e) {
-					e.printStackTrace();
-				}
-				return statList;
-			}
-		},
-		
-		//3, 데바리
-		new FunctionStat(){
-			private static final long serialVersionUID = 1;
-			double save;
-			@Override
-			public StatusList function(Characters character, Monster monster, Object item) {
-				StatusList statList = new StatusList();
-				Skill skill = (Skill)item;
-				try {
-					if(character.getItemSetting().weapon.weaponType!=Weapon_detailType.GUN_REVOLVER){
-						double temp;
-						temp = skill.skillInfo.getLast().stat.statList.getFirst().stat.getStatToDouble();
-						if(temp!=0) save=temp;
-						
-						skill.skillInfo.getLast().stat.statList.getFirst().stat.setInfo(0.0);
-					} 
-					
-					else{
-						if(skill.skillInfo.getLast().stat.statList.getFirst().stat.getStatToDouble()==0)
-							skill.skillInfo.getLast().stat.statList.getFirst().stat.setInfo(save);
-					}
-				}
-				catch (StatusTypeMismatch e) {
-					e.printStackTrace();
-				}
-				
-				return statList;
-			}
-		},
-		
-		//4, 강화탄
-		new FunctionStat(){
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public StatusList function(Characters character, Monster monster, Object item) {
-				Skill skill = (Skill)item;
-				StatusList statList = new StatusList();
-				int level = skill.getSkillLevel(true, character.isBurning());
-				if(character.characterInfoList.getSkill("강화탄(무)").buffEnabled(true)){
-					statList.addStatList("%물방깍_스킬", level);
-					statList.addStatList("%마방깍_스킬", level);
-				}
-				else if(character.characterInfoList.getSkill("강화탄(화)").buffEnabled(true))
-					statList.addStatList("화속깍", level*2+2);
-				else if(character.characterInfoList.getSkill("강화탄(수)").buffEnabled(true))
-					statList.addStatList("수속깍", level*2+2);
-				else if(character.characterInfoList.getSkill("강화탄(명)").buffEnabled(true))
-					statList.addStatList("명속깍", level*2+2);
-					
-				if(character.characterInfoList.getSkill("강화탄(컨버전)").buffEnabled(true)){
-					statList.addStatList("마법컨버전", new BooleanInfo(true));
-				}
-				else{
-					statList.addStatList("물리컨버전", new BooleanInfo(true));
-				}
-				return statList;
-			}
-		},
-		
-		//5, 병기숙련
-		new FunctionStat(){
-			private static final long serialVersionUID = 1;
-			@Override
-			public StatusList function(Characters character, Monster monster, Object item) {
-				Skill skill = (Skill)item;
-				StatusList statList = new StatusList();
-				if(character.getItemSetting().weapon.weaponType==Weapon_detailType.GUN_BOWGUN
-						|| character.getItemSetting().weapon.weaponType==Weapon_detailType.GUN_MUSKET){
-					int level = skill.getSkillLevel(true, character.isBurning());
-					statList.addStatList("물리마스터리", level);
-					statList.addStatList("마법마스터리", level);
-					statList.addStatList("독공마스터리", level);
-					statList.addStatList("물리방무뻥", level);
-					statList.addStatList("마법방무뻥", level);
-				}
-					
-				return statList;
-			}
-		},
-		
-		//6, 매거진, 공중사격
-		new FunctionStat(){
-			private static final long serialVersionUID = 1;
-			@Override
-			public StatusList function(Characters character, Monster monster, Object item) {
-				StatusList statList = new StatusList();
-				Skill hit = character.characterInfoList.getSkill("평타(1사이클)");
-				switch(character.getItemSetting().weapon.weaponType)
-				{
-				case GUN_BOWGUN:
-					hit.setSkillLevel(1);
-					hit.dungeonLevel=20;
-					break;
-				case GUN_MUSKET:
-					hit.setSkillLevel(10);
-					hit.dungeonLevel=9;
-					break;
-				case GUN_REVOLVER:
-					hit.setSkillLevel(1);
-					hit.dungeonLevel=11;
-					break;
-				case GUN_HCANON:
-					hit.setSkillLevel(1);
-					hit.dungeonLevel=5;
-					break;
-				case GUN_AUTOPISTOL:
-					hit.setSkillLevel(1);
-					hit.dungeonLevel=17;
-					break;
-				default:
-					break;
-				}
-				return statList;
-			}
-		},
-		
-		//7, 기숙
-		new FunctionStat(){
-			private static final long serialVersionUID = 1;
-			@Override
-			public StatusList function(Characters character, Monster monster, Object item) {
-				Skill skill = (Skill)item;
-				if(character.hasContract()) skill.setSkillLevel(character.getLevel());
-				return new StatusList();
-			}
-		},
-		
-		//8, 원소폭격
-		new FunctionStat(){
-			private static final long serialVersionUID = 1;
-			@Override
-			public StatusList function(Characters character, Monster monster, Object item) {
-				Skill skill = (Skill)item;
-				int level = skill.getSkillLevel(true, character.isBurning());
-				StatusList statList = new StatusList();
-				for(Skill s : character.getSkillList())
-					if(s.getName().equals("검은 눈"))
-						if(s.getActiveEnabled()){
-							for(Skill dSkill : character.getSkillList()){
-								if(dSkill.hasDamage()){
-									switch(dSkill.getName()){
-									case "속성발동":
-										break;
-									case "파이어 로드": case "아이스 크리스탈 샤워": case "엘레멘탈 캐넌":
-										statList.addSkill_damage(dSkill.getName(), 13+level);
-										break;
-									default:
-										statList.addSkill_damage(dSkill.getName(), 25+2*level);
-										break;
-									}
-								}
-							}
-						}
-				return statList;
-			}
-		},
-		
-		//9, 컨버전, 테아나, 사도화 스킬별 레벨맞추기
-		new FunctionStat(){
-			private static final long serialVersionUID = 1;
-			@Override
-			public StatusList function(Characters character, Monster monster, Object item) {
-				//컨버전 적용
-				//천지쇄패, 대시공격, 테아나 체이서 레벨 맞추고 옵션 비활성화시 레벨 0
-				//일기당천, 사도화 체이서 레벨 맞추고 옵션 비활성화시 레벨 0
-				//퀘이사 익스플로젼 레벨 테아나에 맞추고 옵션 모두 비활성화시 레벨 0
-				StatusList statList = new StatusList();
-				Skill conversion = (Skill)item;
-				if(conversion.buffEnabled(true)) 
-					statList.addStatList(StatList.CONVERSION_NOPHY, new BooleanInfo(true));
-				else
-					statList.addStatList(StatList.CONVERSION_NOMAG, new BooleanInfo(true));
-				Skill theana = null, theanaSkill1 = null, theanaSkill2 = null, theanaSkill3 = null;
-				Skill apostle = null, apostleSkill1 = null, apostleSkill2 = null, quasar = null;
-				for(Skill s : character.characterInfoList.skillList){
-					switch(s.getName()){
-					case "테아나 변신~!!": theana = s; break;
-					case "천지쇄패": theanaSkill1 = s; break;
-					case "대시공격": theanaSkill2 = s; break;
-					case "테아나 체이서": theanaSkill3 = s; break;
-					case "사도화": apostle = s; break;
-					case "일기당천 쇄패": apostleSkill1 = s; break;
-					case "사도화 체이서": apostleSkill2 = s; break;
-					case "퀘이사 익스플로젼": quasar = s; break;
-					};
-				}
-				
-				int apostleLevel_char = apostle.getCharSkillLevel();
-				int apostleLevel_dun = apostle.dungeonLevel;
-				int theanaLevel_char = theana.getCharSkillLevel();
-				int theanaLevel_dun = theana.dungeonLevel;
-				if(!apostle.buffEnabled(true)){
-					apostleSkill1.setSkillLevel(0);
-					apostleSkill2.setSkillLevel(0);
-				}
-				else{
-					apostleSkill1.dungeonLevel=apostleLevel_dun;
-					apostleSkill1.setSkillLevel(apostleLevel_char);
-					apostleSkill2.dungeonLevel=apostleLevel_dun;
-					apostleSkill2.setSkillLevel(apostleLevel_char);
-					theana.setBuffEnabled(false);
-				}
-				
-				if(!theana.buffEnabled(true)){
-					theanaSkill1.setSkillLevel(0);
-					theanaSkill2.setSkillLevel(0);
-					theanaSkill3.setSkillLevel(0);
-				}
-				else{
-					theanaSkill1.dungeonLevel=theanaLevel_dun;
-					theanaSkill1.setSkillLevel(theanaLevel_char);
-					theanaSkill2.dungeonLevel=theanaLevel_dun;
-					theanaSkill2.setSkillLevel(theanaLevel_char);
-					theanaSkill3.dungeonLevel=theanaLevel_dun;
-					theanaSkill3.setSkillLevel(theanaLevel_char);
-				}
-				
-				if(!apostle.buffEnabled(true) && !theana.buffEnabled(true))
-					quasar.setSkillLevel(0);
-				else {
-					quasar.dungeonLevel=theanaLevel_dun;
-					quasar.setSkillLevel(theanaLevel_char);
-				}
-				
-				return statList;
-			}
-		},
-		
-		//10, 체이서 프레스
-		new FunctionStat(){
-			private static final long serialVersionUID = 1;
-			@Override
-			public StatusList function(Characters character, Monster monster, Object item) {
-				Skill numSkill = (Skill)item;
-				if(!numSkill.buffEnabled(true)) return new StatusList();
-				Skill targetSkill = character.characterInfoList.getSkill("체이서 프레스");
-				double num=1;
-				try {
-					num = numSkill.getSkillLevelInfo(true, character.isBurning()).stat.statList.getFirst().stat.getStatToDouble();
-				} catch (StatusTypeMismatch e) {
-					e.printStackTrace();
-				}
-				targetSkill.dungeonIncrease*=num;
-				return new StatusList();
-			}
-		},
-		
-		//11, 문무겸비
-		new FunctionStat(){
-			private static final long serialVersionUID = 1;
-			@Override
-			public StatusList function(Characters character, Monster monster, Object item) {
-				StatusList statList = new StatusList();
-				try {
-					int Str = (int)Math.round(character.dungeonStatus.getStat(StatList.STR));
-					int Int = (int)Math.round(character.dungeonStatus.getStat(StatList.INT));
-					Skill intBuff = character.characterInfoList.getSkill("고대의 기억");
-					if(intBuff.buffEnabled(true)){
-						int stat = (int) (intBuff.getSkillLevelInfo(true, character.isBurning())
-								.stat.statList.getFirst().stat.getStatToDouble()+0.0001);
-						Int+=stat;
-					}
-					if(Str>Int) statList.addStatList(StatList.INT, Str-Int);
-					else statList.addStatList(StatList.STR, Int-Str);
-					
-					double crt_phy = character.dungeonStatus.getStat(StatList.CRT_PHY);
-					double crt_mag = character.dungeonStatus.getStat(StatList.CRT_MAG);
-					if(crt_phy>crt_mag) statList.addStatList(StatList.CRT_MAG, crt_phy-crt_mag);
-					else statList.addStatList(StatList.CRT_PHY, crt_mag-crt_phy);
-				} catch (StatusTypeMismatch e) {
-					e.printStackTrace();
-				}
-				return statList;
-			}
-		},
-		
-		//12, 체이서합딜
-		new FunctionStat(){
-			private static final long serialVersionUID = 1;
-			@Override
-			public StatusList function(Characters character, Monster monster, Object item) {
-				Skill skill = (Skill)item;
-				if(!skill.buffEnabled(true)) return new StatusList();
-				double num=1;
-				try {
-					num = skill.getSkillLevelInfo(true, character.isBurning()).stat.statList.getFirst().stat.getStatToDouble();
-				} catch (StatusTypeMismatch e) {
-					e.printStackTrace();
-				}
-				StatusList statList = new StatusList();
-				statList.addSkill_damage(skill.getName(), num*100-100);
-				//skill.dungeonIncrease*=num;
-				return statList;
-			}
-		},
-		
-		//13, 중체이서, 왕체이서
-		new FunctionStat(){
-			private static final long serialVersionUID = 1;
-			@Override
-			public StatusList function(Characters character, Monster monster, Object item) {
-				Skill kingChaser = (Skill)item;
-				Skill chaser = null, middleChaser = null, fireChaser = null, darkChaser = null;
-				Skill basic1 = null, basic2 = null, basic3 = null, basic4 = null;  
-				for(Skill s : character.characterInfoList.skillList){
-					switch(s.getName()){
-					case "일반 체이서": chaser = s; break;
-					case "중 체이서": middleChaser = s; break;
-					case "체이서 : 화": fireChaser = s; break;
-					case "체이서 : 암": darkChaser = s; break;
-					case "천격": basic1 = s; break;
-					case "용아": basic2 = s; break;
-					case "낙화장": basic3 = s; break;
-					case "원무곤": basic4 = s; break;
-					}
-				}
-				if(kingChaser.buffEnabled(true)) chaser.dungeonIncrease*=1.5;
-				else if(middleChaser.buffEnabled(true)) chaser.dungeonIncrease*=1.25;
-				
-				int level = chaser.getCharSkillLevel();
-				fireChaser.setSkillLevel(level);
-				fireChaser.dungeonLevel=chaser.dungeonLevel;
-				darkChaser.setSkillLevel(level);
-				darkChaser.dungeonLevel=chaser.dungeonLevel;
-				basic2.setSkillLevel(level);
-				basic2.dungeonLevel=chaser.dungeonLevel;
-				basic3.setSkillLevel(level);
-				basic3.dungeonLevel=chaser.dungeonLevel;
-				basic4.setSkillLevel(level);
-				basic4.dungeonLevel=chaser.dungeonLevel;
-				basic1.setSkillLevel(level);
-				basic1.dungeonLevel=chaser.dungeonLevel;
-				return new StatusList();
-			}
-		},
-		
-		//14, 퓨전 체이서
-		new FunctionStat(){
-			private static final long serialVersionUID = 1;
-			@Override
-			public StatusList function(Characters character, Monster monster, Object item) {
-				StatusList statList = new StatusList();
-				Skill thisSkill = (Skill)item;
-				Skill targetSkill = null, optionSkill = null, tpSkill = null;
-				for(Skill s : character.characterInfoList.skillList){
-					switch(s.getName()){
-					case "퓨전 체이서": targetSkill = s; break;
-					case "퓨전 체이서(완충)": optionSkill = s; break;
-					case "퓨전 체이서 강화": tpSkill = s; break;
-					}
-				}
-				
-				if(!targetSkill.getActiveEnabled()){
-					optionSkill.setSkillLevel(0);
-					return statList;
-				}
-				
-				if(targetSkill.getBuffEnabled()){
-					int tpLevel = tpSkill.getSkillLevel(true, character.isBurning());
-					try {
-						for(StatusAndName s : targetSkill.getSkillLevelInfo(true, character.isBurning()).stat.statList){
-							if(s.name==StatList.STR || s.name==StatList.INT)
-								statList.addStatList(s.name, new StatusInfo((int) (s.stat.getStatToDouble()*(0.1*tpLevel))));
-							else
-								statList.addStatList(s.name, new DoubleStatusInfo(tpLevel));
-						}
-					} catch (StatusTypeMismatch e) {
-						e.printStackTrace();
-					}
-				}
-				
-				if(!thisSkill.buffEnabled(true)) optionSkill.dungeonIncrease=0;
-				else{
-					targetSkill.dungeonIncrease=0;
-					optionSkill.dungeonLevel=targetSkill.dungeonLevel;
-					optionSkill.setSkillLevel(targetSkill.getCharSkillLevel());
-				}
-				return statList;
-			}
-		},
-		
-		//15, 무충
-		new FunctionStat(){
-			private static final long serialVersionUID = 1;
-			@Override
-			public StatusList function(Characters character, Monster monster, Object item) {
-				Skill skill = (Skill)item;
-				Skill memorize = null, showtime = null, transcendence = null;
-				for(Skill s : character.characterInfoList.skillList){
-					switch(s.getName()){
-					case "메모라이즈": memorize = s; break;
-					case "쇼타임": showtime = s; break;
-					case "초월의 룬": transcendence = s; break;
-					}
-				}
-				
-				double showtimeDecrease=0, transcendenceIncrease=0, memorizeDecrease=0;
-				switch(showtime.getSkillLevel(true, character.isBurning())){
-				case 10: showtimeDecrease=56.2; break;
-				case 11: showtimeDecrease=61.8; break;
-				case 12: showtimeDecrease=67.4; break;
-				case 13: showtimeDecrease=73.1; break;
-				case 14: showtimeDecrease=75.6; break;
-				case 15: showtimeDecrease=79.2; break;
-				case 16: showtimeDecrease=82.8; break;
-				case 17: showtimeDecrease=86.4; break;
-				case 18: showtimeDecrease=90.0; break;
-				case 19: showtimeDecrease=93.6; break;
-				case 20: showtimeDecrease=97.2; break;
-				}	
-				switch(transcendence.getSkillLevel(true, character.isBurning())){
-				case 6: transcendenceIncrease=14.6; break;
-				case 7: transcendenceIncrease=16.0; break;
-				case 8: transcendenceIncrease=17.4; break;
-				case 9: transcendenceIncrease=18.8; break;
-				case 10: transcendenceIncrease=20.1; break;
-				case 11: transcendenceIncrease=21.6; break;
-				case 12: transcendenceIncrease=22.9; break;
-				case 13: transcendenceIncrease=24.4; break;
-				case 14: transcendenceIncrease=25.7; break;
-				case 15: transcendenceIncrease=27.2; break;
-				case 16: transcendenceIncrease=28.5; break;
-				}
-				memorizeDecrease = 18+2*memorize.getSkillLevel(true, character.isBurning());
-				
-				double result = showtimeDecrease*(100+transcendenceIncrease)/100+memorizeDecrease;
-				if(result>=100) skill.setBuffEnabled(true);
-				else skill.setBuffEnabled(false);
-				return new StatusList();
-			}
-		},
-
-		//16, 컨버전
-		new FunctionStat(){
-			private static final long serialVersionUID = 1;
-			@Override
-			public StatusList function(Characters character, Monster monster, Object item) {
-				StatusList statList = new StatusList();
-				Skill skill = (Skill)item;
-				
-				if(skill.buffEnabled(true)){
-					character.characterInfoList.getSkill("열정의 챠크라").setSkillLevel(0);
-					character.characterInfoList.getSkill("광명의 챠크라").masterSkill(character.getLevel(), character.hasContract());
-					statList.addStatList("마법컨버전", new BooleanInfo(true));
-					statList.addStatList(Element_type.LIGHT, 0, true, false, false);
-				}
-				else{
-					character.characterInfoList.getSkill("열정의 챠크라").masterSkill(character.getLevel(), character.hasContract());
-					character.characterInfoList.getSkill("광명의 챠크라").setSkillLevel(0);
-					statList.addStatList("물리컨버전", new BooleanInfo(true));
-					statList.addStatList(Element_type.FIRE, 0, true, false, false);
-				}
-				return statList;
-			}
-		},
-		
-		//17, 창룡격
-		new FunctionStat(){
-			private static final long serialVersionUID = 1;
-			@Override
-			public StatusList function(Characters character, Monster monster, Object item) {
-				StatusList statList = new StatusList();
-				int level = ((Skill)item).getSkillLevel(true, character.isBurning());
-				
-				if(character.characterInfoList.getSkill("광명의 챠크라").getActiveEnabled()) {
-					statList.addStatList("마크", level+7);
-					statList.addStatList("지능", 120+level*5);
-					statList.addStatList("명속강", 13+level);
-				}
-				else if(character.characterInfoList.getSkill("열정의 챠크라").getActiveEnabled()) {
-					statList.addStatList("물크", level+7);
-					statList.addStatList("힘", 120+level*5);
-					statList.addStatList("화속강", 13+level);
-				}
-				return statList;
-			}
-		},
-		
-		//18, 기숙
-		new FunctionStat(){
-			private static final long serialVersionUID = 1;
-			@Override
-			public StatusList function(Characters character, Monster monster, Object item) {
-				Skill skill = (Skill)item;
-				if(character.hasContract()) skill.setSkillLevel(character.getLevel());
-				return new StatusList();
-			}
-		},
-
-		//19, 마스터리
-		new FunctionStat(){
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public StatusList function(Characters character, Monster monster, Object item) {
-				StatusList statList = new StatusList();
-				
-				HashMap<Equip_part, Equipment> map = character.getItemSetting().equipmentList;
-				LinkedList<Equipment> equipList = new LinkedList<Equipment>();
-				equipList.add(map.get(Equip_part.ROBE));
-				equipList.add(map.get(Equip_part.TROUSER));
-				equipList.add(map.get(Equip_part.SHOES));
-				equipList.add(map.get(Equip_part.SHOULDER));
-				equipList.add(map.get(Equip_part.BELT));
-				
-				for(Equipment e : equipList){
-					statList.addStatList("힘", ReinforceInfo.getMastery_strInfo(character.getJob(), e));
-					statList.addStatList("지능", ReinforceInfo.getMastery_intInfo(character.getJob(), e));
-					statList.addStatList("물크", ReinforceInfo.getMastery_phyCrtInfo(character.getJob(), e));
-					statList.addStatList("마크", ReinforceInfo.getMastery_magCrtInfo(character.getJob(), e));
-				}
-				
-				return statList;
-			}
-		},
-		
-		//20, 전장의여신
-		new FunctionStat(){
-			private static final long serialVersionUID = 1L;
-			@Override
-			public StatusList function(Characters character, Monster monster, Object item) {
-				StatusList statList = new StatusList();
-				Skill skill = (Skill)item;
-				double value=15;
-				try {
-					value = skill.getSkillLevelInfo(true, character.isBurning()).stat.statList.getLast().stat.getStatToDouble();
-				} catch (StatusTypeMismatch e) {
-					e.printStackTrace();
-				}
-				
-				if(character.getWeapon().weaponType!=Weapon_detailType.MAGE_POLE 
-						&& character.getWeapon().weaponType!=Weapon_detailType.MAGE_SPEAR)
-					statList.addStatList("독공마스터리", (85+value)/(100+value)*100-100);
-				return statList;
-			}
-		},
-		
-		//21, 이중개방
-		new FunctionStat(){
-			private static final long serialVersionUID = 1L;
-			@Override
-			public StatusList function(Characters character, Monster monster, Object item) {
-				StatusList statList = new StatusList();
-				Skill skill = (Skill)item;
-				Skill basicSkill = character.characterInfoList.getSkill("화염의 각");
-				skill.dungeonLevel = basicSkill.dungeonLevel;
-				skill.setSkillLevel(basicSkill.getCharSkillLevel());
-				return statList;
-			}
-		},
-		
-		//22, 체인러쉬
-		new FunctionStat(){
-			private static final long serialVersionUID = 1L;
-			@Override
-			public StatusList function(Characters character, Monster monster, Object item) {
-				StatusList statList = new StatusList();
-				Skill skill = (Skill)item;
-				Skill chainRush = character.characterInfoList.getSkill("체인러쉬");
-				if(!skill.buffEnabled(true)) return statList;
-				double inc=0, inc2=0;
-				try {
-					inc = 12+0.5*chainRush.getSkillLevel(true, character.isBurning());
-					inc2 = inc+5;
-					int num= (int) (skill.getSkillLevelInfo(true, character.isBurning()).stat.statList.getFirst().stat.getStatToDouble()+0.0005);
-					if(num>6) num=6;
-					else if(num<0) num=0;
-					inc*=num; inc2*=num;
-				} catch (StatusTypeMismatch e) {
-					e.printStackTrace();
-				}
-				statList.addSkill_damage("무장 해제", inc);
-				statList.addSkill_damage("압도", inc);
-				statList.addSkill_damage("런지 에볼루션", inc);
-				statList.addSkill_damage("분쇄", inc);
-				statList.addSkill_damage("생명의 전조", inc);
-				statList.addSkill_damage("신뢰의 돌파", inc);
-				statList.addSkill_damage("체인 스트라이크", inc2);
-				statList.addSkill_damage("자연의 분노", inc);
-				return statList;
-			}
-		},
-		
-		//23, 히트엔드
-		new FunctionStat(){
-			private static final long serialVersionUID = 1L;
-			@Override
-			public StatusList function(Characters character, Monster monster, Object item) {
-				Skill TP = null, twinSword = null, hitand = null, hitbleed=null, hitand_num=null;
-				for(Skill s : character.characterInfoList.skillList){
-					switch(s.getName()){
-					case "히트엔드 강화": TP = s; break;
-					case "쌍검 마스터리": twinSword = s; break;
-					case "히트엔드": hitand = s; break;
-					case "히트엔드 - 버블수": hitand_num = s; break;
-					case "히트 블리드(발동)": hitbleed = s; break;
-					}
-				}
-				
-				boolean isDagger = false, hasHitBleed = false, isTwinSword = false;
-				if(character.getWeapon().weaponType==Weapon_detailType.THIEF_DAGGER) isDagger=true;
-				else if(character.getWeapon().weaponType==Weapon_detailType.THIEF_TWINSWORD) isTwinSword=true;
-				if(hitbleed.getBuffEnabled()) hasHitBleed = true; 
-				
-				int result = 100;
-				try {
-					int num = (int)(hitand_num.getSkillLevelInfo(true, character.isBurning()).stat.statList.getFirst().stat.getStatToDouble()+0.00001);
-					switch(num)
-					{
-					case 1: result=100; break;
-					case 2: result=125; break;
-					case 3: result=155; break;
-					case 4: result=195; break;
-					case 5: result=250; break;
-					case 6:
-						if(!(isDagger || hasHitBleed)) result = 250;
-						else result=325;
-						break;
-					default:
-						if(num<=0) result = 0;
-						else if(isDagger && hasHitBleed) result = 425;
-						else if(!(isDagger || hasHitBleed)) result = 250;
-						else result=325;
-						break;
-					}
-				} catch (StatusTypeMismatch e) {
-					e.printStackTrace();
-				}
-				
-				result *= (1+0.06*TP.getSkillLevel(true, character.isBurning()));
-				result *= hitand.dungeonIncrease;
-				if(isTwinSword){
-					int inc = 25+twinSword.getSkillLevel(true, character.isBurning());
-					if(inc>46) inc++;
-					result *= (1+0.01*inc);
-				}
-				if(!hitand.getActiveEnabled() || !hitand_num.buffEnabled(true)) result=0;
-				else result *= (0.99+0.01*hitand.getSkillLevel(true, character.isBurning()));
-
-				StatusList statList = new StatusList();
-				statList.addSkill_damage("히트엔드(딜)", (result-1)*100);
-				return statList;
-			}
-		},
-		
-		//24, 혈십자
-		new FunctionStat(){
-			private static final long serialVersionUID = 1L;
-			@Override
-			public StatusList function(Characters character, Monster monster, Object item) {
-				Skill skill = (Skill)item;
-				if(!skill.buffEnabled(true)) return new StatusList();
-				Skill target = character.characterInfoList.getSkill("혈십자");
-				int input = 0;
-				int addLevel = target.getSkillLevel(true, character.isBurning())-10;
-				double result = 0;
-				StatusList statList = new StatusList();
-				if(skill.buffEnabled(true)){
-					try {
-						input = (int)(skill.getSkillLevelInfo(true, character.isBurning()).stat.statList.getFirst().stat.getStatToDouble()+0.0005);
-					} catch (StatusTypeMismatch e) {
-						e.printStackTrace();
-					}
-					if(input<=0) return statList;
-					else if(input<=1) result = 14.5+0.5*addLevel;
-					else if(input<=2) result = 21.8+1.5*(addLevel/2)+0.8*(addLevel%2);
-					else result = 33.4+2.3*(addLevel/2)+1.2*(addLevel%2);
-				}
-				statList.addStatList("증뎀버프", result);
-				return statList;
-			};
-		},
-		
-		//25, 다이하드
-		new FunctionStat(){
-			private static final long serialVersionUID = 1L;
-			@Override
-			public StatusList function(Characters character, Monster monster, Object item) {
-				Skill skill = (Skill)item;
-				Skill tpSkill = character.characterInfoList.getSkill("다이하드 강화");
-				int level = skill.getSkillLevel(true, character.isBurning());
-				int tp = tpSkill.getSkillLevel(true, character.isBurning());
-				int result=0;
-				if(tp>=1) result=219+(tp-1)*20+(int)(16.3*(level-20));
-				StatusList statList = new StatusList();
-				statList.addStatList("힘", result);
-				return statList;
-			};
-		},
-		
-		//26, 러스트
-		new FunctionStat(){
-			private static final long serialVersionUID = 1L;
-			@Override
-			public StatusList function(Characters character, Monster monster, Object item) {
-				Skill skill = (Skill)item;
-				Skill target = character.characterInfoList.getSkill("블러드 러스트");
-				StatusList statList = new StatusList();
-				
-				if(target.buffEnabled(true)){
-					try {
-						int str = (int)(target.getSkillLevelInfo(true, character.isBurning()).stat.statList.getFirst().stat.getStatToDouble()+0.00005);
-						str *= (0.1*skill.getSkillLevel(true, character.isBurning()));
-						statList.addStatList("힘", str);
-					} catch (StatusTypeMismatch e) {
-						e.printStackTrace();
-					}
-				}
-				return statList;
-			};
-		},
-		
-		//27, 창조의 공간
-		new FunctionStat(){
-			private static final long serialVersionUID = 1L;
-			@Override
-			public StatusList function(Characters character, Monster monster, Object item) {
-				Skill skill = (Skill)item;
-				StatusList statList = new StatusList();
-				Skill fireWall = null, meteor = null, iceStone = null, windPress=null, windStorm=null, flameHurricane=null;
-				for(Skill s : character.characterInfoList.skillList){
-					switch(s.getName()){
-					case "파이어 월 횟수입력": fireWall = s; break;
-					case "운석 낙하 횟수입력": meteor = s; break;
-					case "아이스 스톤 횟수입력": iceStone = s; break;
-					case "윈드 프레스 횟수입력": windPress = s; break;
-					case "윈드 스톰 횟수입력": windStorm = s; break;
-					case "플레임 허리케인 횟수입력": flameHurricane = s; break;
-					}
-				}
-				
-				try {
-					if(!skill.buffEnabled(true)){
-						if(fireWall.buffEnabled(true))
-							statList.addSkill_damage("파이어 월", fireWall.getSkillLevelInfo(true, character.isBurning()).stat.statList.getFirst().stat.getStatToDouble()*100-100);
-						if(meteor.buffEnabled(true))
-							statList.addSkill_damage("운석 낙하", meteor.getSkillLevelInfo(true, character.isBurning()).stat.statList.getFirst().stat.getStatToDouble()*100-100);
-						if(iceStone.buffEnabled(true))
-							statList.addSkill_damage("아이스 스톤", iceStone.getSkillLevelInfo(true, character.isBurning()).stat.statList.getFirst().stat.getStatToDouble()*100-100);
-						if(windPress.buffEnabled(true))
-							statList.addSkill_damage("윈드 프레스", windPress.getSkillLevelInfo(true, character.isBurning()).stat.statList.getFirst().stat.getStatToDouble()*100-100);
-						if(windStorm.buffEnabled(true))
-							statList.addSkill_damage("윈드 스톰", windStorm.getSkillLevelInfo(true, character.isBurning()).stat.statList.getFirst().stat.getStatToDouble()*100-100);
-						if(flameHurricane.buffEnabled(true))
-							statList.addSkill_damage("플레임 허리케인", flameHurricane.getSkillLevelInfo(true, character.isBurning()).stat.statList.getFirst().stat.getStatToDouble()*100-100);
-					} 
-				
-					else{
-						statList.addSkill_damage("파이어 월", 3896);
-						statList.addSkill_damage("운석 낙하", 299);
-						statList.addSkill_damage("아이스 스톤", 330.5);
-						statList.addSkill_damage("윈드 프레스", 923);
-						statList.addSkill_damage("윈드 스톰", 575);
-						if(flameHurricane.buffEnabled(true))
-							statList.addSkill_damage("플레임 허리케인", flameHurricane.getSkillLevelInfo(true, character.isBurning()).stat.statList.getFirst().stat.getStatToDouble()*100-100);
-					}
-				}
-				catch (StatusTypeMismatch e) {
-					e.printStackTrace();
-				}
-				return statList;
-			};
-		},
-		
-		//28, 실버스트림
-		new FunctionStat(){
-			private static final long serialVersionUID = 1L;
-			@Override
-			public StatusList function(Characters character, Monster monster, Object item) {
-				Skill skill = (Skill)item;
-				Skill target = character.characterInfoList.getSkill("실버스트림(버프)");
-				if(skill.buffEnabled(true)){
-					target.dungeonLevel = 0;
-					try {
-						target.setSkillLevel((int) (skill.getSkillLevelInfo(true, character.isBurning()).stat.statList.getFirst().stat.getStatToDouble()+0.0001));
-					} catch (StatusTypeMismatch e) {
-						e.printStackTrace();
-					}
-				}
-				else if(target.getActiveEnabled()){
-					Skill target2 = character.characterInfoList.getSkill("실버스트림");
-					target.setSkillLevel(target2.getCharSkillLevel());
-					target.dungeonLevel=target2.dungeonLevel;
-				}
-				
-				return new StatusList();
-			};
-		},
-	};
 	
 	public static Object[] skillInfo_swordman()
 	{
@@ -1258,17 +384,19 @@ public class SkillInfo {
 				"17 0 0 0 0", "귀속/혈지군무 - 발/100 & 귀속/혈지군무 - 무/100 & 귀속/혈지군무 - 사형조수/100 & 귀속/혈지군무 - 폭류나선/100 & 귀속/혈지군무 - 혈화난무/100",
 				"+", "귀속/혈지군무 - 발/100 & 귀속/혈지군무 - 무/100 & 귀속/혈지군무 - 사형조수/100 & 귀속/혈지군무 - 폭류나선/100 & 귀속/혈지군무 - 혈화난무/100", "반복 1",
 				"혈지군무 - 발", Skill_type.OPTION, "", 40, 30, 20, 3, "설명 몬스터에 사복검 - 발 개체를 붙입니다",
-				"17", fStat[0], "귀속/사복검 - 발/260", "+", fStat[0], "귀속/사복검 - 발/+4", "반복 1",
+				"17", "귀속/사복검 - 발/260 & fStat_혈지군무", "+", "귀속/사복검 - 발/+4 & fStat_혈지군무", "반복 1",
 				"혈지군무 - 무", Skill_type.OPTION, "", 40, 30, 20, 3, "설명 몬스터에 사복검 - 무 개체를 붙입니다",
-				"17", fStat[0], "귀속/사복검 - 무/236", "+", fStat[0], "귀속/사복검 - 무/240", "+", fStat[0], "귀속/사복검 - 무/244", "+", fStat[0], "귀속/사복검 - 무/247", "+", fStat[0], "귀속/사복검 - 무/251", 
-				"+", fStat[0], "귀속/사복검 - 무/254", "+", fStat[0], "귀속/사복검 - 무/258", "+", fStat[0], "귀속/사복검 - 무/262", "+", fStat[0], "귀속/사복검 - 무/266", "+", fStat[0], "귀속/사복검 - 무/269", "반복 3",
+				"17", "귀속/사복검 - 무/236 & fStat_혈지군무", "+", "귀속/사복검 - 무/240 & fStat_혈지군무", "+", "귀속/사복검 - 무/244 & fStat_혈지군무", "+", "귀속/사복검 - 무/247 & fStat_혈지군무",
+				"+", "귀속/사복검 - 무/251 & fStat_혈지군무", "+", "귀속/사복검 - 무/254 & fStat_혈지군무", "+", "귀속/사복검 - 무/258 & fStat_혈지군무", "+", "귀속/사복검 - 무/262 & fStat_혈지군무", "+", 
+				"귀속/사복검 - 무/266 & fStat_혈지군무", "+", "귀속/사복검 - 무/269 & fStat_혈지군무", "반복 3",
 				"혈지군무 - 사형조수", Skill_type.OPTION, "", 40, 30, 20, 3, "설명 몬스터에 사형조수 개체를 붙입니다",
-				"17", fStat[0], "귀속/사형조수/234", "+", fStat[0], "귀속/사형조수/238", "+", fStat[0], "귀속/사형조수/242", "+", fStat[0], "귀속/사형조수/245", "+", fStat[0], "귀속/사형조수/249", 
-				"+", fStat[0], "귀속/사형조수/252", "+", fStat[0], "귀속/사형조수/256", "+", fStat[0], "귀속/사형조수/259", "+", fStat[0], "귀속/사형조수/263", "+", fStat[0], "귀속/사형조수/266", "반복 3",
+				"17", "귀속/사형조수/234 & fStat_혈지군무", "+", "귀속/사형조수/238 & fStat_혈지군무", "+", "귀속/사형조수/242 & fStat_혈지군무", "+", "귀속/사형조수/245 & fStat_혈지군무",
+				"+", "귀속/사형조수/249 & fStat_혈지군무", "+", "귀속/사형조수/252 & fStat_혈지군무", "+", "귀속/사형조수/256 & fStat_혈지군무", "+", "귀속/사형조수/259 & fStat_혈지군무",
+				"+", "귀속/사형조수/263 & fStat_혈지군무", "+", "귀속/사형조수/266 & fStat_혈지군무", "반복 3",
 				"혈지군무 - 폭류나선", Skill_type.OPTION, "", 40, 30, 20, 3, "설명 몬스터에 폭류나선 개체를 붙입니다",
-				"17", fStat[0], "귀속/폭류나선/130", "+", fStat[0], "귀속/폭류나선/+2", "반복 1",  
+				"17", "귀속/폭류나선/130 & fStat_혈지군무", "+", "귀속/폭류나선/+2 & fStat_혈지군무", "반복 1",  
 				"혈지군무 - 혈화난무", Skill_type.OPTION, "", 40, 30, 20, 3, "설명 몬스터에 혈화난무 개체를 붙입니다",
-				"17", fStat[0], "귀속/혈화난무/65", "+", fStat[0], "귀속/혈화난무/+1", "반복 1",
+				"17", "귀속/혈화난무/65 & fStat_혈지군무", "+", "귀속/혈화난무/+1 & fStat_혈지군무", "반복 1",
 				
 				"사복검 강화", "사복검 - 발 & 사복검 - 조 & 사복검 - 무", "", 55, 7, 5, 11, CalculatorVersion.VER_1_0_e, null, 
 				"폭류나선 강화", "폭류나선", "", 55, 7, 5, 10, CalculatorVersion.VER_1_0_e, null,
@@ -1324,9 +452,9 @@ public class SkillInfo {
 				"혈십자", Skill_type.PASSIVE, "", 15, 20, 10, 3, CalculatorVersion.VER_1_1_f,
 				"10", "", "+", "", null,
 				"혈십자 단계", Skill_type.INPUT, "", 15, 1, 1, 3, CalculatorVersion.VER_1_1_f, "설명 혈십자의 단계를 입력하세요",
-				"1", fStat[24], "횟수(재료수) 3", null,
+				"1", "횟수(재료수) 3 & fStat_혈십자", null,
 				"다이하드", Skill_type.BUF_ACTIVE, "", 20, 30, 20, 3, CalculatorVersion.VER_1_1_f, "설명 TP 투자 시 힘 증가",
-				"20", fStat[25], "", "+", fStat[25], "", "반복 1",
+				"20", "fStat_다이하드", "+", "fStat_다이하드", "반복 1",
 				"폭주", Skill_type.SWITCHING, "", 25, 30, 20, 3, CalculatorVersion.VER_1_1_f,
 				"20", "힘 1231 & 증뎀버프 70", null,
 				"폭주 - 피격", Skill_type.SWITCHING, "", 25, 30, 20, 3, CalculatorVersion.VER_1_1_f,
@@ -1349,8 +477,8 @@ public class SkillInfo {
 				"붕산격 강화", "붕산격", "", 50, 7, 5, 8, CalculatorVersion.VER_1_1_f, null,
 				"다이하드 강화", "다이하드", "", 50, 7, 5, 0, CalculatorVersion.VER_1_1_f, "설명 다이하드 발동 시 힘 증가", null,
 				"블러드 러스트 강화", "블러드 러스트", "", 55, 7, 5, -1, CalculatorVersion.VER_1_1_f, "설명 블러드 러스트 힘 증가량 10*n% 증가",
-				"1", fStat[26], "스킬 블러드 러스트 % 10", "2", fStat[26], "스킬 블러드 러스트 % 20", "3", fStat[26], "스킬 블러드 러스트 % 30", 
-				"4", fStat[26], "스킬 블러드 러스트 % 40", "5", fStat[26], "스킬 블러드 러스트 % 50", "6", fStat[26], "스킬 블러드 러스트 % 60", "7", fStat[26], "스킬 블러드 러스트 % 70", null,
+				"1", "스킬 블러드 러스트 % 10 & fStat_러스트", "2","스킬 블러드 러스트 % 20 & fStat_러스트", "3","스킬 블러드 러스트 % 30 & fStat_러스트", 
+				"4", "스킬 블러드 러스트 % 40 & fStat_러스트", "5", "스킬 블러드 러스트 % 50 & fStat_러스트", "6", "스킬 블러드 러스트 % 60 & fStat_러스트", "7", "스킬 블러드 러스트 % 70 & fStat_러스트", null,
 				"레이징 퓨리 강화", "레이징 퓨리", "", 65, 7, 5, -1, CalculatorVersion.VER_1_1_f,
 				"1", "스킬 레이징 퓨리 % 33.57", "+", "스킬 레이징 퓨리 % 45.71", "+", "스킬 레이징 퓨리 % 57.86", "+", "스킬 레이징 퓨리 % 70.00", 
 				"+", "스킬 레이징 퓨리 % 82.14", "+", "스킬 레이징 퓨리 % 94.29", "+", "스킬 레이징 퓨리 % 105.43", null,
@@ -1438,15 +566,15 @@ public class SkillInfo {
 				+ "스킬 양자 폭탄 1 & 스킬 X-1 익스트루더 1 & 스킬 에인션트 트리거 1 & 스킬 팜페로 부스터 1 & 스킬 FM-92 mk2 랜서 SW 1 & 스킬 PT-15 프로토타입 1 & 스킬 오퍼레이션 레이즈 1", null,
 				//중화기 마스터리
 				"중화기 마스터리", Skill_type.PASSIVE, "", 15, 20, 10, 3,
-				"10", "무기마스터리 10 핸드캐넌 & 증뎀버프 20", "+", "무기마스터리 11 핸드캐넌 & 증뎀버프 22", "+", "무기마스터리 12 핸드캐넌 & 증뎀버프 24", "+", "무기마스터리 13 핸드캐넌 & 증뎀버프 26", 
-				"+", "무기마스터리 14 핸드캐넌 & 증뎀버프 28", "+", "무기마스터리 15 핸드캐넌 & 증뎀버프 30", "+", "무기마스터리 16 핸드캐넌 & 증뎀버프 32", "+", "무기마스터리 17 핸드캐넌 & 증뎀버프 34",
-				"+", "무기마스터리 18 핸드캐넌 & 증뎀버프 36", "+", "무기마스터리 19 핸드캐넌 & 증뎀버프 38", "+", "무기마스터리 20 핸드캐넌 & 증뎀버프 40", null,
+				"10", "물리무기마스터리 10 핸드캐넌 & 증뎀버프 20", "+", "물리무기마스터리 11 핸드캐넌 & 증뎀버프 22", "+", "물리무기마스터리 12 핸드캐넌 & 증뎀버프 24", "+", "물리무기마스터리 13 핸드캐넌 & 증뎀버프 26", 
+				"+", "물리무기마스터리 14 핸드캐넌 & 증뎀버프 28", "+", "물리무기마스터리 15 핸드캐넌 & 증뎀버프 30", "+", "물리무기마스터리 16 핸드캐넌 & 증뎀버프 32", "+", "물리무기마스터리 17 핸드캐넌 & 증뎀버프 34",
+				"+", "물리무기마스터리 18 핸드캐넌 & 증뎀버프 36", "+", "물리무기마스터리 19 핸드캐넌 & 증뎀버프 38", "+", "물리무기마스터리 20 핸드캐넌 & 증뎀버프 40", null,
 				//옵힛
 				"오버 히트", "", "", 48, 40, 30, 3, 
 				"14", "증뎀버프 33", "15", "증뎀버프 34", "+", "증뎀버프 +2", "+", "증뎀버프 +1", "반복 2",
 				//알파서폿
 				"알파 서포트", "", "", 75, 40, 30, 3,
-				"5", "물리마스터리 22 & 독공마스터리 22 & 물리방무뻥 22", "6", "물리마스터리 24 & 독공마스터리 24 & 물리방무뻥 24", "+", "물리마스터리 +2 & 독공마스터리 +2 & 물리방무뻥 +2", "반복 1",
+				"5", "물리마스터리 22 & 독공마스터리 22", "6", "물리마스터리 24 & 독공마스터리 24", "+", "물리마스터리 +2 & 독공마스터리 +2", "반복 1",
 				//애자파츠
 				"AJ 강화파츠", "", "", "", "", "", "",
 				"6", "스킬 M-3 화염방사기 % 61.18 & 스킬 화염 강타 % 28.74 & 스킬 팜페로 부스터 % 60.29 & 스킬 M-137 개틀링건 % 69.35 & 스킬 바베~큐 % 36 & 스킬 슈타이어 대전차포 % 36 & 스킬 FM-31 그레네이드 런처 % 36 & "
@@ -1463,7 +591,7 @@ public class SkillInfo {
 				"10", "증뎀버프 76.9", null,
 				//듀얼트리거
 				"듀얼 트리거", Skill_type.PASSIVE, "", 35, 1, 1, 3, "설명 명, 화속성 중 높은 속성 강화 값으로 낮은 값이 상승한다.",
-				"1", fStat[1], null,
+				"1", "fStat_듀얼트리거", null,
 				
 				////////TP
 				"M-137 개틀링건 강화", "M-137 개틀링건", "", 50, 7, 5, 8, null,
@@ -1522,7 +650,7 @@ public class SkillInfo {
 				"체인 글린트", Skill_type.BUF_ACTIVE, "", 80, 20, 10, 3,
 				"4", "증뎀버프 30", "+", "증뎀버프 +3", "반복 1",
 				"데스 바이 리볼버", Skill_type.SWITCHING, "", 30, 20, 10, 3, CalculatorVersion.VER_1_1_b,
-				"10", fStat[3], "크증버프 105", null,
+				"10","크증버프 105 & fStat_데바리", null,
 				"트리플 클러치", Skill_type.BUF_ACTIVE, "", 20, 11, 1, 3,
 				"1", "스킬 탑스핀 % 10 & 스킬 라이징샷 % 10 & 스킬 니들 소배트 % 10 & 스킬 헤드샷 % 15", "+", "스킬 탑스핀 % +2 & 스킬 라이징샷 % +2 & 스킬 니들 소배트 % +2 & 스킬 헤드샷 % +3", "반복 1",
 				"체인 파우더", Skill_type.BUF_ACTIVE, "", 40, 20, 10, 2,
@@ -1597,9 +725,9 @@ public class SkillInfo {
 				"10 0 7.78 0 7.78", "스킬 C4 % 64 & 스킬 네이팜 탄(장판) % 64 & 스킬 록 온 서포트 % 64 & 스킬 EMP 스톰 % 64 & 스킬 G-61 중력류탄 % 64 & 스킬 G-96 열압력유탄 % 64 & "
 				+ "스킬 디-데이 % 64 & 스킬 G-35L 섬광류탄 % 64 & 스킬 G-18C 빙결류탄 % 64 & 스킬 M18 클레이모어 % 64 & 스킬 평타 % 64", null,
 				"병기 숙련", Skill_type.PASSIVE, "", 15, 20, 10, 3, CalculatorVersion.VER_1_0_e,
-				"10", fStat[5], "", "+", fStat[5], "", "반복 1",
+				"10", "fStat_병기숙련", "+", "fStat_병기숙련", "반복 1",
 				"강화탄", Skill_type.PASSIVE, "", 15, 20, 10, 3, CalculatorVersion.VER_1_0_e, "설명 강화탄을 찍지 않을 경우 물리/마법공격력이 모두 들어가는 참사가 발생합니다 빼지마세요",
-				"10", fStat[4], "", "+", fStat[4], "", "반복 1",
+				"10", "fStat_강화탄", "+", "fStat_강화탄", "반복 1",
 				"강화탄(화)", Skill_type.OPTION, "", 1, 1, 1, 1, CalculatorVersion.VER_1_0_e, "설명 적용우선순위 : 무속->화->수->명",
 				"1", "", null,
 				"강화탄(수)", Skill_type.OPTION, "", 1, 1, 1, 1, CalculatorVersion.VER_1_0_e, "설명 적용우선순위 : 무속->화->수->명",
@@ -1619,10 +747,11 @@ public class SkillInfo {
 				"패스티스트 건", Skill_type.PASSIVE, "", 30, 20, 5, 3, CalculatorVersion.VER_1_0_e,
 				"5", "스킬 평타 % 12", "+", "스킬 평타 % +0.5", "반복 1",
 				"공중사격", Skill_type.BUF_ACTIVE, "", 15, 20, 10, 3, CalculatorVersion.VER_1_0_e,
-				"10", fStat[6], "스킬 평타 % 20", "+", fStat[6], "스킬 평타 % +2", "반복 1",
+				"10","스킬 평타 % 20 & fStat_매거진", "+", "스킬 평타 % +2 & fStat_매거진", "반복 1",
 				"기본기 숙련", Skill_type.PASSIVE, "", 1, 100, 100, 1, CalculatorVersion.VER_1_0_f,
-				"90", fStat[7], "스킬 평타 % 512.2", "+", fStat[7], "스킬 평타 % 518", "+", fStat[7], "스킬 평타 % 523.7", "+", fStat[7], "스킬 평타 % 529.5", "+", fStat[7], "스킬 평타 % 535.2", "+", fStat[7], "스킬 평타 % 541",
-				"+", fStat[7], "스킬 평타 % 546.7", "+", fStat[7], "스킬 평타 % 552.5", "+", fStat[7], "스킬 평타 % 558.2", "+", fStat[7], "스킬 평타 % 564", "+", fStat[7], "스킬 평타 % 518", "+", fStat[7], "스킬 평타 % 569.7", null,
+				"90", "스킬 평타 % 512.2 & fStat_기숙", "+", "스킬 평타 % 518 & fStat_기숙", "+", "스킬 평타 % 523.7 & fStat_기숙", "+", "스킬 평타 % 529.5 & fStat_기숙",
+				"+", "스킬 평타 % 535.2 & fStat_기숙", "+", "스킬 평타 % 541 & fStat_기숙", "+", "스킬 평타 % 546.7 & fStat_기숙", "+", "스킬 평타 % 552.5 & fStat_기숙",
+				"+", "스킬 평타 % 558.2 & fStat_기숙", "+", "스킬 평타 % 564 & fStat_기숙", "+", "스킬 평타 % 518 & fStat_기숙", "+", "스킬 평타 % 569.7 & fStat_기숙", null,
 				
 				/////TP
 				"류탄 강화", "G-14 파열류탄 & G-35L 섬광류탄 & G-18C 빙결류탄", "", 50, 7, 5, 10, CalculatorVersion.VER_1_0_e, null,
@@ -1682,9 +811,9 @@ public class SkillInfo {
 				"10 778 0 778 0", "스킬 C4 % 64 & 스킬 네이팜 탄(장판) % 64 & 스킬 록 온 서포트 % 64 & 스킬 특수기동전대 '블랙 로즈' % 64 & 스킬 G-61 중력류탄 % 64 & 스킬 G-38ARG 반응류탄 % 64 & "
 				+ "스킬 슈퍼 노바 % 64 & 스킬 G-35L 섬광류탄 % 64 & 스킬 G-18C 빙결류탄 % 64 & 스킬 M18 클레이모어 % 64 & 스킬 데인저 클로즈 % 64 & 스킬 평타 % 64", null,
 				"병기 숙련", Skill_type.PASSIVE, "", 15, 20, 10, 3, CalculatorVersion.VER_1_0_d,
-				"10", fStat[5], "", "+", fStat[5], "", "반복 1",
+				"10", "fStat_병기숙련", "+", "fStat_병기숙련", "반복 1",
 				"강화탄", Skill_type.PASSIVE, "", 15, 20, 10, 3, CalculatorVersion.VER_1_0_d, "설명 강화탄을 찍지 않을 경우 물리/마법공격력이 모두 들어가는 참사가 발생합니다 빼지마세요",
-				"10", fStat[4], "", "+", fStat[4], "", "반복 1",
+				"10", "fStat_강화탄", "+", "fStat_강화탄", "반복 1",
 				"강화탄(화)", Skill_type.OPTION, "", 1, 1, 1, 1, CalculatorVersion.VER_1_0_d, "설명 적용우선순위 : 무속->화->수->명",
 				"1", "", null,
 				"강화탄(수)", Skill_type.OPTION, "", 1, 1, 1, 1, CalculatorVersion.VER_1_0_d, "설명 적용우선순위 : 무속->화->수->명",
@@ -1704,9 +833,9 @@ public class SkillInfo {
 				"패스티스트 건", Skill_type.PASSIVE, "", 30, 20, 5, 3, CalculatorVersion.VER_1_0_d,
 				"5", "스킬 평타 % 12", "+", "스킬 평타 % +0.5", "반복 1",
 				"매거진 드럼", Skill_type.PASSIVE, "", 15, 20, 10, 3, CalculatorVersion.VER_1_0_d,
-				"10", fStat[6], "스킬 평타 % 20", "+", fStat[6], "스킬 평타 % +2", "반복 1",
+				"10", "스킬 평타 % 20 & fStat_매거진", "+", "스킬 평타 % +2 & fStat_매거진", "반복 1",
 				"기본기 숙련", Skill_type.PASSIVE, "", 1, 100, 100, 1, CalculatorVersion.VER_1_0_d,
-				"90", fStat[7], "스킬 평타 % 512.2", "+", fStat[7], "스킬 평타 % +5.8", "반복 1",
+				"90", "스킬 평타 % 512.2 & fStat_기숙", "+", "스킬 평타 % +5.8 & fStat_기숙", "반복 1",
 				
 				/////TP
 				"류탄 강화", "G-14 파열류탄 & G-35L 섬광류탄 & G-18C 빙결류탄", "", 50, 7, 5, 10, CalculatorVersion.VER_1_0_d, null,
@@ -1762,9 +891,9 @@ public class SkillInfo {
 				"1", "스킬 M-137 개틀링건 1 & 스킬 바베~큐 1 & 스킬 M-3 화염방사기 1 & 스킬 슈타이어 대전차포 1 & 스킬 레이저 라이플 1 & 스킬 화염 강타 1 & 스킬 FM-31 그레네이드 런처 1 & 스킬 FM-92 스팅어 1 & 스킬 캐넌볼 1 & "
 				+ "스킬 양자 폭탄 1 & 스킬 X-1 익스트루더 1 & 스킬 새틀라이트 빔 1 & 스킬 팜페로 부스터 1 & 스킬 FM-92 스팅어 SW 1 & 스킬 사이즈믹 웨이브 1 & 스킬 버스터 빔 1", null,
 				"중화기 마스터리", Skill_type.PASSIVE, "", 15, 20, 10, 3, CalculatorVersion.VER_1_0_e,
-				"10", "무기마스터리 10 핸드캐넌 & 증뎀버프 20", "+", "무기마스터리 11 핸드캐넌 & 증뎀버프 22", "+", "무기마스터리 12 핸드캐넌 & 증뎀버프 24", "+", "무기마스터리 13 핸드캐넌 & 증뎀버프 26", 
-				"+", "무기마스터리 14 핸드캐넌 & 증뎀버프 28", "+", "무기마스터리 15 핸드캐넌 & 증뎀버프 30", "+", "무기마스터리 16 핸드캐넌 & 증뎀버프 32", "+", "무기마스터리 17 핸드캐넌 & 증뎀버프 34",
-				"+", "무기마스터리 18 핸드캐넌 & 증뎀버프 36", "+", "무기마스터리 19 핸드캐넌 & 증뎀버프 38", "+", "무기마스터리 20 핸드캐넌 & 증뎀버프 40", null,
+				"10", "물리무기마스터리 10 핸드캐넌 & 증뎀버프 20", "+", "물리무기마스터리 11 핸드캐넌 & 증뎀버프 22", "+", "물리무기마스터리 12 핸드캐넌 & 증뎀버프 24", "+", "물리무기마스터리 13 핸드캐넌 & 증뎀버프 26", 
+				"+", "물리무기마스터리 14 핸드캐넌 & 증뎀버프 28", "+", "물리무기마스터리 15 핸드캐넌 & 증뎀버프 30", "+", "물리무기마스터리 16 핸드캐넌 & 증뎀버프 32", "+", "물리무기마스터리 17 핸드캐넌 & 증뎀버프 34",
+				"+", "물리무기마스터리 18 핸드캐넌 & 증뎀버프 36", "+", "물리무기마스터리 19 핸드캐넌 & 증뎀버프 38", "+", "물리무기마스터리 20 핸드캐넌 & 증뎀버프 40", null,
 				"스펙트럴 서치 아이", "", "", 48, 40, 30, 3, CalculatorVersion.VER_1_0_e,
 				"14", "크리저항감소 21.6", "+", "크리저항감소 +1.6", "반복 1",
 				"근력 강화", "", "", 75, 40, 30, 3, CalculatorVersion.VER_1_0_e,
@@ -1781,7 +910,7 @@ public class SkillInfo {
 				"미라클 비전", Skill_type.SWITCHING, "", 30, 20, 10, 3, CalculatorVersion.VER_1_0_f,
 				"10", "증뎀버프 77.7", null,
 				"듀얼 트리거", Skill_type.PASSIVE, "", 35, 1, 1, 3, CalculatorVersion.VER_1_0_e, "설명 명, 화속성 중 높은 속성 강화 값으로 낮은 값이 상승한다.", 
-				"1", fStat[1], null,
+				"1", "fStat_듀얼트리거", null,
 				"집중포화", Skill_type.BUF_ACTIVE, "", 40, 1, 1, 3,  CalculatorVersion.VER_1_0_e, "설명 그냥 넣어봤음", 
 				"1", "", null,
 				
@@ -1855,14 +984,14 @@ public class SkillInfo {
 				"+", "스킬 라이징샷 % +1 & 스킬 헤드샷 % +1 & 스킬 트리플 탭 % +1 & 스킬 난사 % +1 & 스킬 멀티 헤드샷 % +1 & 스킬 더블 건호크 % +1 & 스킬 제압 사격 % +1 & "
 				+ "스킬 스커드 제노사이드 % +1 & 스킬 데들리 어프로치 % +1 & 스킬 패스트 드로우 % +1 & 스킬 세븐스 플로우 % +1 & 스킬 이동사격 % +1", "반복 1",
 				"데스 바이 리볼버", Skill_type.SWITCHING, "", 30, 20, 10, 3, CalculatorVersion.VER_1_1_b,
-				"10", fStat[3], "크증버프 105", null,
+				"10", "크증버프 105 & fStat_데바리", null,
 				"죽음의 표식", Skill_type.BUF_ACTIVE, "", 48, 40, 30, 3, CalculatorVersion.VER_1_0_e,
 				"15", "증뎀버프 33 & 물크 17.3", "+", "증뎀버프 +2 & 물크 +1.1", "+", "증뎀버프 +2 & 물크 +1.1", "+", "증뎀버프 +2 & 물크 +1.2", "반복 3",
-				"강화 리볼버", Skill_type.PASSIVE, "", 75, 20, 10, 3, CalculatorVersion.VER_1_0_e, "설명 리볼버 착용시 물공, 방무뎀 (6+3.5*n)% 증가(소숫점 버림)",
-				"6", "무기마스터리 27 리볼버 & 무기마스터리_방무 27 리볼버", "+", "무기마스터리 30 리볼버 & 무기마스터리_방무 30 리볼버", "+", "무기마스터리 34 리볼버 & 무기마스터리_방무 34 리볼버", "+", "무기마스터리 37 리볼버 & 무기마스터리_방무 37 리볼버",
-				"+", "무기마스터리 41 리볼버 & 무기마스터리_방무 41 리볼버", "+", "무기마스터리 44 리볼버 & 무기마스터리_방무 44 리볼버", "+", "무기마스터리 48 리볼버 & 무기마스터리_방무 48 리볼버", "+", "무기마스터리 51 리볼버 & 무기마스터리_방무 51 리볼버",
-				"+", "무기마스터리 55 리볼버 & 무기마스터리_방무 55 리볼버", "+", "무기마스터리 58 리볼버 & 무기마스터리_방무 58 리볼버", "+", "무기마스터리 62 리볼버 & 무기마스터리_방무 62 리볼버", "+", "무기마스터리 65 리볼버 & 무기마스터리_방무 65 리볼버",
-				"+", "무기마스터리 69 리볼버 & 무기마스터리_방무 69 리볼버", "+", "무기마스터리 72 리볼버 & 무기마스터리_방무 72 리볼버", "+", "무기마스터리 76 리볼버 & 무기마스터리_방무 76 리볼버", null,
+				"강화 리볼버", Skill_type.PASSIVE, "", 75, 20, 10, 3, CalculatorVersion.VER_1_0_e, "설명 리볼버 착용시 물공 (6+3.5*n)% 증가(소숫점 버림)",
+				"6", "물리무기마스터리 27 리볼버", "+", "물리무기마스터리 30 리볼버", "+", "물리무기마스터리 34 리볼버", "+", "물리무기마스터리 37 리볼버",
+				"+", "물리무기마스터리 41 리볼버", "+", "물리무기마스터리 44 리볼버", "+", "물리무기마스터리 48 리볼버", "+", "물리무기마스터리 51 리볼버",
+				"+", "물리무기마스터리 55 리볼버", "+", "물리무기마스터리 58 리볼버", "+", "물리무기마스터리 62 리볼버", "+", "물리무기마스터리 65 리볼버",
+				"+", "물리무기마스터리 69 리볼버", "+", "물리무기마스터리 72 리볼버", "+", "물리무기마스터리 76 리볼버", null,
 				"사격술", Skill_type.PASSIVE, "", 80, 20, 10, 3, CalculatorVersion.VER_1_0_e,
 				"4", "스킬 라이징샷 % 22 & 스킬 헤드샷 % 49 & 스킬 트리플 탭 % 22 & 스킬 난사 % 22 & 스킬 멀티 헤드샷 % 22 & 스킬 더블 건호크 % 22 & 스킬 제압 사격 % 22 & "
 				+ "스킬 스커드 제노사이드 % 22 & 스킬 데들리 어프로치 % 22 & 스킬 패스트 드로우 % 22 & 스킬 세븐스 플로우 % 22 & 스킬 이동사격 % 22",
@@ -1901,7 +1030,7 @@ public class SkillInfo {
 				"마법 크리티컬 히트", Skill_type.PASSIVE, "", 20, 20, 10, 3,
 				"10", "마크 10", "+", "마크 +1", "반복 1",
 				"방어구 마스터리", Skill_type.PASSIVE, "", 15, 1, 1, 1, CalculatorVersion.VER_1_1_b,
-				"1", fStat[19], null, 
+				"1", "fStat_마스터리", null, 
 		};
 		
 		return data;
@@ -1950,7 +1079,7 @@ public class SkillInfo {
 				
 				/////패시브
 				"원소 폭격", Skill_type.BUF_ACTIVE, "", 30, 5, 5, 5, CalculatorVersion.VER_1_1_b, "설명 검은 눈의 효과 적용",
-				"5", fStat[8], "스킬 체인 라이트닝 % 10", null, 
+				"5", "스킬 체인 라이트닝 % 10 & fStat_원소폭격", null, 
 				"페이탈 엘레멘트", Skill_type.PASSIVE, "", 48, 40, 30, 3, CalculatorVersion.VER_1_0_g,
 				"15", "크증버프 24 & 마크 10.0", "+", "크증버프 +1.5 & 마크 +0.5", "반복 1",
 				"검은 눈", "", "", 75, 40, 30, 3, CalculatorVersion.VER_1_0_d, "설명 원소폭격 사용 시 스킬 데미지 증가",
@@ -1981,7 +1110,7 @@ public class SkillInfo {
 				"중 체이서", Skill_type.OPTION, "", 15, 1, 1, 1, CalculatorVersion.VER_1_0_f, "설명 중 체이서 데미지를 적용시킵니다(왕체이서 옵션 선택시 왕체이서 적용).",
 				"1", "", null,
 				"왕 체이서", Skill_type.OPTION, "", 15, 1, 1, 1, CalculatorVersion.VER_1_1_b, "설명 왕 체이서 데미지를 적용시킵니다.",
-				"1", fStat[13], "", null,
+				"1", "fStat_왕체이서", null,
 				"체이서 : 화", Skill_type.BUF_ACTIVE, "", 15, 60, 50, 2, CalculatorVersion.VER_1_0_f, "설명 일반 체이서의 레벨을 따라갑니다",
 				"38", "힘 410 & 지능 410", "+", "힘 420 & 지능 420", "+", "힘 430 & 지능 430", "+", "힘 420 & 지능 420", "+", "힘 441 & 지능 441",
 				 "+", "힘 451 & 지능 451", "+", "힘 461 & 지능 461", "+", "힘 471 & 지능 471", "+", "힘 481 & 지능 481", null,
@@ -2011,7 +1140,7 @@ public class SkillInfo {
 				"1", "귀속/일반 체이서/630 & 귀속/사도화 체이서/630", "+", "귀속/일반 체이서/630 & 귀속/사도화 체이서/630", "+", "귀속/일반 체이서/660 & 귀속/사도화 체이서/660",
 				"+", "귀속/일반 체이서/690 & 귀속/사도화 체이서/690", "+", "귀속/일반 체이서/690 & 귀속/사도화 체이서/690", "+", "귀속/일반 체이서/715 & 귀속/사도화 체이서/715", null,
 				"퓨전 체이서(완충설정)", Skill_type.OPTION, "", 30, 1, 1, 1, CalculatorVersion.VER_1_1_b, "설명 옵션을 선택할 경우 완충 퓨전 체이서가 딜표에 표기됩니당",
-				"1", fStat[14], null,
+				"1", "fStat_퓨체", null,
 				"쇄패", Skill_type.ACTIVE, "", 30, 60, 50, 2, Element_type.NONE, CalculatorVersion.VER_1_0_f,
 				"31 12195 0 0 0", "+ 12504", "+ 12811", "+ 13199", "+ 13424", "+ 13730", "+ 14039", null,
 				"체이서 프레스", Skill_type.ACTIVE, "", 35, 11, 1, 1, Element_type.NONE, CalculatorVersion.VER_1_0_f, "설명 체이서 프레스에 소모되는 체이서 숫자는 체이서 프레스(체이서 수)에서 설정하세요",
@@ -2019,7 +1148,7 @@ public class SkillInfo {
 				"+", "귀속/일반 체이서/128 & 귀속/테아나 체이서/128 & 귀속/사도화 체이서/128", "+", "귀속/일반 체이서/133 & 귀속/테아나 체이서/133 & 귀속/사도화 체이서/133",
 				"+", "귀속/일반 체이서/140 & 귀속/테아나 체이서/140 & 귀속/사도화 체이서/140", null,
 				"체이서 프레스(체이서 수)", Skill_type.INPUT, "", 35, 1, 1, 1, CalculatorVersion.VER_1_1_f, "설명 체이서 프레스에 소모되는 체이서 숫자를 입력합니다",
-				"1", fStat[10], "횟수(재료수) 9", null,
+				"1", "횟수(재료수) 9 & fStat_체프", null,
 				"뇌연격", Skill_type.ACTIVE, "", 35, 60, 50, 2, Element_type.NONE, CalculatorVersion.VER_1_0_f,
 				"28 26666 0 0 0", "+ 27426", "+ 28124", "+ 28898", "+ 29597", "+ 30279", "+ 31039", "+ 31765", null,
 				"강습유성타", Skill_type.ACTIVE, "", 40, 60, 50, 2, Element_type.NONE, CalculatorVersion.VER_1_0_f,
@@ -2048,19 +1177,19 @@ public class SkillInfo {
 				"대시공격", Skill_type.ACTIVE, "", 50, 40, 30, 5, Element_type.NONE, CalculatorVersion.VER_1_1_f,
 				"10 1553*4 0 0 15.53*4", "+ 1671*4 16.71*4", "+ 1789*4 17.89*4", "+ 1906*4 19.06*4", "9 1435*4 0 0 14.35*4", null,
 				"체이서", Skill_type.INPUT, "", 15, 1, 1, 1, CalculatorVersion.VER_1_1_f, "설명 사용자가 입력한 수만큼의 체이서 딜 합을 표기합니다",
-				"1", fStat[12], "횟수(재료수) 1 & 귀속/일반 체이서/100 & 귀속/테아나 체이서/100 & 귀속/사도화 체이서/100", null,
+				"1", "횟수(재료수) 1 & 귀속/일반 체이서/100 & 귀속/테아나 체이서/100 & 귀속/사도화 체이서/100 & fStat_체이서합딜", null,
 				
 				/////패시브
-				"창 마스터리", Skill_type.PASSIVE, "", 20, 30, 20, 3, CalculatorVersion.VER_1_0_f, "설명 물리공격력, 물리방무증가 2n%",
-				"20", "무기마스터리 40 창 & 무기마스터리_방무 40 창", "+", "무기마스터리 42 창 & 무기마스터리_방무 42 창", "+", "무기마스터리 44 창 & 무기마스터리_방무 44 창", "+", "무기마스터리 46 창 & 무기마스터리_방무 46 창",
-				"+", "무기마스터리 48 창 & 무기마스터리_방무 48 창", "+", "무기마스터리 50 창 & 무기마스터리_방무 50 창", "+", "무기마스터리 52 창 & 무기마스터리_방무 52 창", "+", "무기마스터리 54 창 & 무기마스터리_방무 54 창",
-				"+", "무기마스터리 56 창 & 무기마스터리_방무 56 창", "+", "무기마스터리 58 창 & 무기마스터리_방무 58 창", "+", "무기마스터리 60 창 & 무기마스터리_방무 60 창", null,
-				"봉 마스터리", Skill_type.PASSIVE, "", 20, 30, 20, 3, CalculatorVersion.VER_1_0_f, "설명 물리공격력, 물리방무증가 2n%",
-				"20", "무기마스터리 40 봉 & 무기마스터리_방무 40 봉", "+", "무기마스터리 42 봉 & 무기마스터리_방무 42 봉", "+", "무기마스터리 44 봉 & 무기마스터리_방무 44 봉", "+", "무기마스터리 46 봉 & 무기마스터리_방무 46 봉",
-				"+", "무기마스터리 48 봉 & 무기마스터리_방무 48 봉", "+", "무기마스터리 50 봉 & 무기마스터리_방무 50 봉", "+", "무기마스터리 52 봉 & 무기마스터리_방무 52 봉", "+", "무기마스터리 54 봉 & 무기마스터리_방무 54 봉",
-				"+", "무기마스터리 56 봉 & 무기마스터리_방무 56 봉", "+", "무기마스터리 58 봉 & 무기마스터리_방무 58 봉", "+", "무기마스터리 60 봉 & 무기마스터리_방무 60 봉", null,
+				"창 마스터리", Skill_type.PASSIVE, "", 20, 30, 20, 3, CalculatorVersion.VER_1_0_f, "설명 물리공격력 증가 2n%",
+				"20", "물리무기마스터리 40 창", "+", "물리무기마스터리 42 창", "+", "물리무기마스터리 44 창", "+", "물리무기마스터리 46 창",
+				"+", "물리무기마스터리 48 창", "+", "물리무기마스터리 50 창", "+", "물리무기마스터리 52 창", "+", "물리무기마스터리 54 창",
+				"+", "물리무기마스터리 56 창", "+", "물리무기마스터리 58 창", "+", "물리무기마스터리 60 창", null,
+				"봉 마스터리", Skill_type.PASSIVE, "", 20, 30, 20, 3, CalculatorVersion.VER_1_0_f, "설명 물리공격력 증가 2n%",
+				"20", "물리무기마스터리 40 봉", "+", "물리무기마스터리 42 봉", "+", "물리무기마스터리 44 봉", "+", "물리무기마스터리 46 봉",
+				"+", "물리무기마스터리 48 봉", "+", "물리무기마스터리 50 봉", "+", "물리무기마스터리 52 봉", "+", "물리무기마스터리 54 봉",
+				"+", "물리무기마스터리 56 봉", "+", "물리무기마스터리 58 봉", "+", "물리무기마스터리 60 봉", null,
 				"전장의 여신", Skill_type.PASSIVE, "", 20, 30, 20, 3, CalculatorVersion.VER_1_1_c, "설명 창, 봉 마스터리의 독공 15%가 포함된 값입니다\n무기가 창, 봉이 아닐 시 실제로는 15%가 빠진 값이 적용됩니다",
-				"20", fStat[20], "증뎀버프 25 & 독공마스터리 40", "+", fStat[20], "증뎀버프 +2 & 독공마스터리 +2", "반복 1",
+				"20", "증뎀버프 25 & 독공마스터리 40 & fStat_전장의여신", "+", "증뎀버프 +2 & 독공마스터리 +2 & fStat_전장의여신", "반복 1",
 				"배틀 그루브", Skill_type.PASSIVE, "", 48, 40, 30, 3, CalculatorVersion.VER_1_0_f, "설명 3단계의 증가량입니다",
 				"15", "스킬 천격 % 35.5 & 스킬 용아 % 35.5 & 스킬 원무곤 % 35.5 & 스킬 낙화장 % 35.5 & 스킬 더블 스윙 % 35.5 & 스킬 쇄패 % 35.5 & 스킬 뇌연격 % 35.5 & 스킬 강습유성타 % 35.5 & 스킬 황룡난무 % 35.5 & "
 				+ "스킬 천지쇄패 % 35.5 & 스킬 퀘이사 익스플로젼 % 35.5 & 스킬 트윙클 스매쉬 % 35.5 & 스킬 사도의 춤 % 35.5 & 스킬 일기당천 쇄패 % 35.5 & 스킬 타이머 밤 % 35.5 & "
@@ -2071,7 +1200,7 @@ public class SkillInfo {
 				"체이서 에볼루션", Skill_type.BUF_ACTIVE, "", 75, 40, 30, 3, CalculatorVersion.VER_1_0_f,
 				"6", "스킬 일반 체이서 % 26", "+", "스킬 일반 체이서 % +3", "반복 1",
 				"문무겸비", Skill_type.PASSIVE, "", 75, 40, 30, 3, CalculatorVersion.VER_1_1_b,
-				"6", fStat[11], "크증버프 34", "+", fStat[11], "크증버프 +2", "반복 1",
+				"6", "크증버프 34 & fStat_문무겸비", "+", "크증버프 +2 & fStat_문무겸비", "반복 1",
 				"테아나 변신~!!", Skill_type.BUF_ACTIVE, "", 50, 40, 30, 5, CalculatorVersion.VER_1_0_f,
 				"9", "스킬 일반 체이서 % -100 & 스킬 천격 % -100 & 스킬 용아 % -100 & 스킬 낙화장 % -100 & 스킬 더블 스윙 % -100 & 스킬 쇄패 % -100 & 스킬 진 뇌연격 % -100 & 스킬 원무곤 % -100 & 스킬 타이머 밤 % -100 & "
 				+ "스킬 퓨전 체이서 % -100 & 스킬 퓨전 체이서(완충) % -100 & 스킬 트윙클 스매쉬 % -100 & 스킬 체이서 강화 사출 % -100 & 스킬 사도의 춤 % -100", 
@@ -2085,7 +1214,7 @@ public class SkillInfo {
 				"+", "증뎀버프 42 & 스킬 퀘이사 익스플로젼 % -42/1.42 & 스킬 일반 체이서 % -100 & 스킬 테아나 체이서 % -100", "+", "증뎀버프 45 & 스킬 퀘이사 익스플로젼 % -45/1.45 & 스킬 일반 체이서 % -100 & 스킬 테아나 체이서 % -100",
 				"+", "증뎀버프 48 & 스킬 퀘이사 익스플로젼 % -48/1.48 & 스킬 일반 체이서 % -100 & 스킬 테아나 체이서 % -100", "+", "증뎀버프 51 & 스킬 퀘이사 익스플로젼 % -51/1.51 & 스킬 일반 체이서 % -100 & 스킬 테아나 체이서 % -100", null,
 				"컨버전", Skill_type.OPTION,  "", 20, 1, 1, 1, CalculatorVersion.VER_1_1_b, "설명 옵션을 선택하면 마법(매지컬 테아나~!! 적용)\n선택하지 않으면 물리 컨버전(황룡난무 적용)",
-				"1", fStat[9], null,
+				"1", "fStat_컨버전-배메", null,
 				
 				/////TP
 				"천격 강화", "천격", "", 50, 7, 5, 8, CalculatorVersion.VER_1_0_f, null,
@@ -2184,7 +1313,7 @@ public class SkillInfo {
 				"쇼타임", Skill_type.PASSIVE, "", 20, 20, 10, 3, CalculatorVersion.VER_1_0_f,
 				"10", "", "11", "", null,
 				"무충검사", Skill_type.OPTION, "", 1, 1, 1, 1, CalculatorVersion.VER_1_1_b, "설명 템상태가 무충조건을 만족하면 자동으로 아이콘이 활성화됩니다",
-				"1", fStat[15], null,
+				"1", "fStat_무충", null,
 				
 				/////TP
 				"프로스트 헤드 강화", "프로스트 헤드", "", 50, 7, 5, 8, CalculatorVersion.VER_1_0_f, null,
@@ -2268,7 +1397,7 @@ public class SkillInfo {
 				"1", "횟수(재료수) 1", null,
 				"창조의 공간 - 게이지", Skill_type.INPUT, "", 85, 1, 1, 1, CalculatorVersion.VER_1_1_f, 
 				"설명 창조의 공간의 스킬 강화 상태로 변경", "설명 화염/냉기/바람스킬 딜표 표기는 강화상태에서의 최대 히트수 기준",
-				"1", fStat[27], null,
+				"1", "fStat_창조의공간", null,
 				
 				/////TP
 				"파이어 월 강화", "파이어 월", "", 50, 7, 5, 10, CalculatorVersion.VER_1_1_f, null,
@@ -2290,9 +1419,9 @@ public class SkillInfo {
 				"진격의 황룡", Skill_type.ACTIVE, Job.EXORCIST, 85, 40, 30, 5, Element_type.NONE, CalculatorVersion.VER_1_1_g,
 				"2 104076 0 104134 0", "+ 123667 123730", "+ 143258 143327", "+ 162849 162923", "+ 182440 182520", "+ 202031 202116", "+ 221622 221747", "+ 241213 241343",  null,
 				"창룡격", Skill_type.DAMAGE_BUF, "", 50, 40, 30, 5, Element_type.NONE, CalculatorVersion.VER_1_0_f, "설명 버프 - 컨버젼이 적용된 쪽으로\n크리티컬 +(7+Lv)\n힘 +(120+5*Lv)\n속강 +(13+Lv)", 
-				"9 87330 0 87330 0", fStat[17], "", "+ 94423 94423", fStat[17], "", "+ 94423 94423", fStat[17], "", "+ 94423 94423", fStat[17], "", "+ 101516 101516", fStat[17], "",
-				"+ 108608 108608", fStat[17], "", "+ 115701 115701", fStat[17], "", "+ 122794 122794", fStat[17], "", "+ 129887 129887", fStat[17], "", "+ 136980 136980", fStat[17], "", 
-				"+ 144073 144073", fStat[17], "", "+ 151165 151165", fStat[17], "", "+ 158258 158258", null,
+				"9 87330 0 87330 0", "fStat_창룡격", "+ 94423 94423", "fStat_창룡격", "+ 94423 94423", "fStat_창룡격", "+ 94423 94423", "fStat_창룡격", "+ 101516 101516", "fStat_창룡격",
+				"+ 108608 108608", "fStat_창룡격", "+ 115701 115701", "fStat_창룡격", "+ 122794 122794", "fStat_창룡격", "+ 129887 129887", "fStat_창룡격", "+ 136980 136980", "fStat_창룡격", 
+				"+ 144073 144073", "fStat_창룡격", "+ 151165 151165", "fStat_창룡격", "+ 158258 158258", "fStat_창룡격", null,
 				"식신의 군", Skill_type.ACTIVE, "", 45, 60, 50, 2, Element_type.NONE, CalculatorVersion.VER_1_0_f,
 				"23 55150 0 55150 0", "+ 56880 56880", "+ 58624 58624", "+ 60353 60353", "+ 62082 62082", "+ 63812 63812", "+ 65541 65541", "+ 67271 67271", "+ 69000 69000",
 				"+ 70745 70745", "+ 72474 72474", "+ 74203 74203", "+ 75933 75933", "+ 77662 77662", "+ 79392 79392", "+ 81121 81121", "+ 82866 82866", "+ 84595 84595",null,
@@ -2343,14 +1472,14 @@ public class SkillInfo {
 				"열정의 챠크라", Skill_type.SWITCHING, "", 20, 30, 20, 3, CalculatorVersion.VER_1_0_f,
 				"20", "힘 1832", null,
 				"컨버전", Skill_type.OPTION,  "", 20, 1, 1, 1, CalculatorVersion.VER_1_1_b,  "설명 옵션을 선택하면 마법(광챠 적용), 선택하지 않으면 물리(열챠 적용) 컨버전",
-				"1", fStat[16], null,
+				"1", "fStat_컨버전-퇴마", null,
 				"거병 마스터리", Skill_type.PASSIVE, "", 20, 30, 20, 3, CalculatorVersion.VER_1_0_f,
-				"20", "물리마스터리 30 & 마법마스터리 30 & 물리방무뻥 30 & 마법방무뻥 30", "+", "물리마스터리 +1 & 마법마스터리 +1 & 물리방무뻥 +1 & 마법방무뻥 +1", "반복 1",
+				"20", "물리마스터리 30 & 마법마스터리 30", "+", "물리마스터리 +1 & 마법마스터리 +1", "반복 1",
 				"투기 발산", Skill_type.PASSIVE, "", 48, 30, 20, 3, CalculatorVersion.VER_1_0_f,
 				"15", "증뎀버프 22", "+", "증뎀버프 +1", "반복 1",
 				"신선의 경지", Skill_type.PASSIVE, "", 75, 20, 10, 3, CalculatorVersion.VER_1_0_f,
-				"6", "물리마스터리 20 & 마법마스터리 20 & 물리방무뻥 20 & 마법방무뻥 20 & 물크 20 & 마크 20", 
-				"+", "물리마스터리 +2 & 마법마스터리 +2 & 물리방무뻥 +2 & 마법방무뻥 +2 & 물크 +2 & 마크 +2", "반복 1",
+				"6", "물리마스터리 20 & 마법마스터리 20 & 물크 20 & 마크 20", 
+				"+", "물리마스터리 +2 & 마법마스터리 +2 & 물크 +2 & 마크 +2", "반복 1",
 				"신의 챠크라", Skill_type.PASSIVE, "", 75, 40, 30, 3, CalculatorVersion.VER_1_0_f,
 				"6", "증뎀버프 34 & %물방깍_스킬 3", "+", "증뎀버프 +2 & %물방깍_스킬 3", "반복 1",
 				"잠룡", Skill_type.DAMAGE_PASSIVE, "", 15, 11, 1, 5, CalculatorVersion.VER_1_0_f,
@@ -2368,9 +1497,9 @@ public class SkillInfo {
 				"지의 식신 - 현무", Skill_type.SWITCHING, "", 40, 20, 10, 3, CalculatorVersion.VER_1_0_f,
 				"10", "%물방깍_스킬 36.3 & %마방깍_스킬 36.3", null,
 				"기본기 숙련", Skill_type.PASSIVE, "", 1, 100, 100, 1, CalculatorVersion.VER_1_1_b,
-				"90", fStat[18], "스킬 공참타 % 512.2", "+", fStat[18], "스킬 공참타 % 518", "+", fStat[18], "스킬 공참타 % 523.7", "+", fStat[18], "스킬 공참타 % 529.5", "+", fStat[18], "스킬 공참타 % 535.2",
-				"+", fStat[18], "스킬 공참타 % 541", "+", fStat[18], "스킬 공참타 % 546.7", "+", fStat[18], "스킬 공참타 % 552.5", "+", fStat[18], "스킬 공참타 % 558.2", "+", fStat[18], "스킬 공참타 % 564",
-				"+", fStat[18], "스킬 공참타 % 518", "+", fStat[18], "스킬 공참타 % 569.7", null,
+				"90", "스킬 공참타 % 512.2 & fStat_기숙", "+", "스킬 공참타 % 518 & fStat_기숙", "+", "스킬 공참타 % 523.7 & fStat_기숙", "+", "스킬 공참타 % 529.5 & fStat_기숙",
+				"+", "스킬 공참타 % 535.2 & fStat_기숙", "+", "스킬 공참타 % 541 & fStat_기숙", "+", "스킬 공참타 % 546.7 & fStat_기숙", "+", "스킬 공참타 % 552.5 & fStat_기숙", "+",
+				"스킬 공참타 % 558.2 & fStat_기숙", "+", "스킬 공참타 % 564 & fStat_기숙", "+", "스킬 공참타 % 518 & fStat_기숙", "+", "스킬 공참타 % 569.7 & fStat_기숙", null,
 				"공의 식신 - 백호", Skill_type.BUF_ACTIVE, "", 30, 60, 50, 2, CalculatorVersion.VER_1_0_f, "설명 데미지 측정 포기ㅜ",
 				"31", "%마방깍_스킬 3", "32", "%마방깍_스킬 3", null,
 				
@@ -2439,10 +1568,10 @@ public class SkillInfo {
 				"화염의 각", Skill_type.BUF_ACTIVE, "", 50, 40, 30, 5, CalculatorVersion.VER_1_1_d,
 				"9", "증뎀버프 34", "+", "증뎀버프 +4", "반복 1",
 				"이중개방", Skill_type.OPTION, "", 50, 40, 30, 5, Element_type.NONE, CalculatorVersion.VER_1_1_d,
-				"9 50100 0 0 0", fStat[21], "", "+ 54170", fStat[21], "", "+ 58241", fStat[21], "", "+ 62309", fStat[21], "", "+ 66378", fStat[21], "",
-				"+ 70446", fStat[21], "", "+ 74517", fStat[21], "", "+ 78586", fStat[21], "", "+ 82654", fStat[21], "", "+ 86724", fStat[21], "", null,
+				"9 50100 0 0 0", "fStat_이중개방", "+ 54170", "fStat_이중개방", "+ 58241", "fStat_이중개방", "+ 62309", "fStat_이중개방", "+ 66378", "fStat_이중개방",
+				"+ 70446", "fStat_이중개방", "+ 74517", "fStat_이중개방", "+ 78586", "fStat_이중개방", "+ 82654", "fStat_이중개방", "+ 86724", "fStat_이중개방", null,
 				"효율적인 연소", Skill_type.PASSIVE, "", 48, 40, 30, 3, CalculatorVersion.VER_1_1_d,
-				"15", "물리마스터리 19 & 물리방무뻥 19", "+", "물리마스터리 +1 & 물리방무뻥 +1", "반복 1",
+				"15", "물리마스터리 19", "+", "물리마스터리 +1", "반복 1",
 				"화력개방", Skill_type.PASSIVE, "", 75, 40, 30, 3, CalculatorVersion.VER_1_1_e,
 				"6", "증뎀버프 29", "+", "증뎀버프 +2", "반복 1",
 				"급소 지정", Skill_type.PASSIVE, "", 30, 30, 20, 3, CalculatorVersion.VER_1_1_d,
@@ -2500,10 +1629,10 @@ public class SkillInfo {
 				
 				/////패시브
 				"마창 제어", Skill_type.PASSIVE, "", 15, 20, 10, 3, CalculatorVersion.VER_1_1_d, "설명 무기마스터리 10+2*n", 
-				"10", "무기마스터리 30 미늘창 & 무기마스터리_방무 30 미늘창", "+", "무기마스터리 32 미늘창 & 무기마스터리_방무 32 미늘창", "+", "무기마스터리 34 미늘창 & 무기마스터리_방무 34 미늘창", 
-				"+", "무기마스터리 36 미늘창 & 무기마스터리_방무 36 미늘창", "+", "무기마스터리 38 미늘창 & 무기마스터리_방무 38 미늘창", "+", "무기마스터리 40 미늘창 & 무기마스터리_방무 40 미늘창", 
-				"+", "무기마스터리 42 미늘창 & 무기마스터리_방무 42 미늘창", "+", "무기마스터리 44 미늘창 & 무기마스터리_방무 44 미늘창", "+", "무기마스터리 46 미늘창 & 무기마스터리_방무 46 미늘창", 
-				"+", "무기마스터리 48 미늘창 & 무기마스터리_방무 48 미늘창", "+", "무기마스터리 50 미늘창 & 무기마스터리_방무 50 미늘창", null,
+				"10", "물리무기마스터리 30 미늘창", "+", "물리무기마스터리 32 미늘창", "+", "물리무기마스터리 34 미늘창", 
+				"+", "물리무기마스터리 36 미늘창", "+", "물리무기마스터리 38 미늘창", "+", "물리무기마스터리 40 미늘창", 
+				"+", "물리무기마스터리 42 미늘창", "+", "물리무기마스터리 44 미늘창", "+", "물리무기마스터리 46 미늘창", 
+				"+", "물리무기마스터리 48 미늘창", "+", "물리무기마스터리 50 미늘창", null,
 				"마창 해방",  Skill_type.SWITCHING, "", 20, 20, 10, 3, CalculatorVersion.VER_1_1_d,
 				"10", "물크 30 & 크증버프 60", null,
 				"마창 지배", Skill_type.PASSIVE, "", 48, 40, 30, 3, CalculatorVersion.VER_1_1_d,
@@ -2556,7 +1685,7 @@ public class SkillInfo {
 				"용기의 방패", Skill_type.PASSIVE, "", 75, 40, 30, 3, CalculatorVersion.VER_1_1_d,
 				"6", "증뎀버프 30", "+", "증뎀버프 +2", "반복 1",
 				"강인한 신념", Skill_type.PASSIVE, "", 15, 20, 10, 5, CalculatorVersion.VER_1_1_d,
-				"10", "물리마스터리 30 & 물리방무뻥 30", "+", "물리마스터리 +1 & 물리방무뻥 +1", "반복 1",
+				"10", "물리마스터리 30", "+", "물리마스터리 +1", "반복 1",
 				"대자연의 가호", Skill_type.PASSIVE, "", 48, 40, 30, 3, CalculatorVersion.VER_1_1_d,
 				"15", "증뎀버프 30 & 스킬 천마 섬광 % 31.5 & 스킬 트와일라잇 유니콘 % 31.5",
 				"+", "증뎀버프 +2 & 스킬 천마 섬광 % +0.5 & 스킬 트와일라잇 유니콘 % +0.5",
@@ -2566,7 +1695,7 @@ public class SkillInfo {
 				"체인러쉬", Skill_type.PASSIVE, "", 30, 16, 6, 5, CalculatorVersion.VER_1_1_d, 
 				"6", "", "7", "", null,
 				"체인러쉬-체인수", Skill_type.INPUT, "", 30, 1, 1, 5, CalculatorVersion.VER_1_1_f, "설명 체인러쉬에 사용될 체인수를 입력해주세요",
-				"1", fStat[22], "횟수(재료수) 6", null,
+				"1", "횟수(재료수) 6 & fStat_체인러쉬", null,
 				
 				/////TP
 				"무장 해제 강화", "무장 해제", "", 50, 7, 5, 8, CalculatorVersion.VER_1_1_d, null,
@@ -2609,7 +1738,7 @@ public class SkillInfo {
 				"9", "힘 510 & 크증버프 52.0875", "+", "힘 561 & 크증버프 52.0875", "+", "힘 612 & 크증버프 52.0875", "+", "힘 664 & 크증버프 52.0875",
 				"+", "힘 706 & 크증버프 52.0875", "+", "힘 748 & 크증버프 52.0875", null,
 				"실버스트림(스위칭)", Skill_type.INPUT, "", 50, 1, 1, 5, CalculatorVersion.VER_1_1_f, "설명 스위칭시의 스킬 레벨을 입력하세요", "설명 아이콘 비활성화시 실시간으로 적용",
-				"1", fStat[28], "횟수(재료수) 13", null,
+				"1", "횟수(재료수) 13 & fStat_실버스트림", null,
 				"체인소 러시", Skill_type.ACTIVE, "", 60, 40, 30, 2, Element_type.NONE, CalculatorVersion.VER_1_1_f,
 				"16 25442 0 0 0", "귀속/히트엔드(딜)/5085", "+ 26466", "귀속/히트엔드(딜)/5290", "+ 27488", "귀속/히트엔드(딜)/5495", 
 				"+ 28513", "귀속/히트엔드(딜)/5700", "+ 29538", "귀속/히트엔드(딜)/5905", null,
@@ -2628,23 +1757,23 @@ public class SkillInfo {
 				
 				/////패시브
 				"단검 마스터리", Skill_type.PASSIVE, "", 20, 30, 20, 4, CalculatorVersion.VER_1_1_f,
-				"18", "무기마스터리 29.8 단검 & 무기마스터리_방무 29.8 단검", "+", "무기마스터리 31.5 단검 & 무기마스터리_방무 31.5 단검", "+", "무기마스터리 33 단검 & 무기마스터리_방무 33 단검",
-				"+", "무기마스터리 34.5 단검 & 무기마스터리_방무 34.5 단검", "+", "무기마스터리 36.2 단검 & 무기마스터리_방무 36.2 단검", "+", "무기마스터리 38.5 단검 & 무기마스터리_방무 38.5 단검",
-				"+", "무기마스터리 40.5 단검 & 무기마스터리_방무 40.5 단검", "+", "무기마스터리 42.5 단검 & 무기마스터리_방무 42.5 단검", "+", "무기마스터리 44.5 단검 & 무기마스터리_방무 44.5 단검",
-				"+", "무기마스터리 46.5 단검 & 무기마스터리_방무 46.5 단검", "+", "무기마스터리 48.5 단검 & 무기마스터리_방무 48.5 단검", "+", "무기마스터리 50.5 단검 & 무기마스터리_방무 50.5 단검", null,
-				"쌍검 마스터리", Skill_type.PASSIVE, "", 20, 30, 20, 4, CalculatorVersion.VER_1_1_f, 
-				"18", "무기마스터리 25.7 쌍검 & 무기마스터리_방무 25.7 쌍검", "+", "무기마스터리 27.1 쌍검 & 무기마스터리_방무 27.1 쌍검", "+", "무기마스터리 28.6 쌍검 & 무기마스터리_방무 28.6 쌍검",
-				"+", "무기마스터리 30.0 쌍검 & 무기마스터리_방무 30.0 쌍검", "+", "무기마스터리 31.4 쌍검 & 무기마스터리_방무 31.4 쌍검", "+", "무기마스터리 32.9 쌍검 & 무기마스터리_방무 32.9 쌍검",
-				"+", "무기마스터리 34.5 쌍검 & 무기마스터리_방무 34.5 쌍검", "+", "무기마스터리 36.0 쌍검 & 무기마스터리_방무 36.0 쌍검", "+", "무기마스터리 37.5 쌍검 & 무기마스터리_방무 37.5 쌍검",
-				"+", "무기마스터리 39.0 쌍검 & 무기마스터리_방무 39.0 쌍검", "+", "무기마스터리 40.5 쌍검 & 무기마스터리_방무 40.5 쌍검", "+", "무기마스터리 42.0 쌍검 & 무기마스터리_방무 42.0 쌍검", null,
+				"18", "물리무기마스터리 29.8 단검", "+", "물리무기마스터리 31.5 단검", "+", "물리무기마스터리 33 단검",
+				"+", "물리무기마스터리 34.5 단검", "+", "물리무기마스터리 36.2 단검", "+", "물리무기마스터리 38.5 단검",
+				"+", "물리무기마스터리 40.5 단검", "+", "물리무기마스터리 42.5 단검", "+", "물리무기마스터리 44.5 단검",
+				"+", "물리무기마스터리 46.5 단검", "+", "물리무기마스터리 48.5 단검", "+", "물리무기마스터리 50.5 단검", null,
+				"쌍검 마스터리", Skill_type.PASSIVE, "", 20, 30, 20, 4, CalculatorVersion.VER_1_1_f,
+				"18", "물리무기마스터리 25.7 쌍검", "+", "물리무기마스터리 27.1 쌍검", "+", "물리무기마스터리 28.6 쌍검",
+				"+", "물리무기마스터리 30.0 쌍검", "+", "물리무기마스터리 31.4 쌍검", "+", "물리무기마스터리 32.9 쌍검",
+				"+", "물리무기마스터리 34.5 쌍검", "+", "물리무기마스터리 36.0 쌍검", "+", "물리무기마스터리 37.5 쌍검",
+				"+", "물리무기마스터리 39.0 쌍검", "+", "물리무기마스터리 40.5 쌍검", "+", "물리무기마스터리 42.0 쌍검", null,
 				"문아크", Skill_type.PASSIVE, "", 48, 40, 30, 3, CalculatorVersion.VER_1_1_f,
 				"15", "크증버프 40 & 물크 32", "+", "크증버프 41.5 & 물크 34", "+", "크증버프 43 & 물크 36", "+", "크증버프 44.5 & 물크 38", "+", "크증버프 +1.5 & 물크 +2", "반복 1",
 				"히트 블리드", Skill_type.PASSIVE, "", 75, 20, 10, 3, CalculatorVersion.VER_1_1_f,
-				"6", "물리마스터리 20 & 물리방무뻥 20", "+", "물리마스터리 22 & 물리방무뻥 22", "+", "물리마스터리 24 & 물리방무뻥 24", "+", "물리마스터리 +2 & 물리방무뻥 +2", "반복 1",
+				"6", "물리마스터리 20", "+", "물리마스터리 22", "+", "물리마스터리 24", "+", "물리마스터리 +2", "반복 1",
 				"히트 블리드(발동)", Skill_type.OPTION, "", 75, 1, 1, 3, CalculatorVersion.VER_1_1_f, "설명 활성화시 엑셀 링크스 부분 버프 발동",
 				"1", "", null,
 				"히트엔드 - 버블수", Skill_type.INPUT, "", 15, 1, 1, 5, CalculatorVersion.VER_1_1_f, "설명 사용될 히트엔드 버블수를 입력해주세요", "설명 최대치를 초과할 경우 최대치 적용",
-				"1", fStat[23], "횟수(재료수) 6", null,
+				"1", "횟수(재료수) 6 & fStat_히트엔드", null,
 				"히트엔드", Skill_type.PASSIVE, "", 15, 30, 20, 2, CalculatorVersion.VER_1_1_f, "설명 히트엔드 딜 (n-1)% 증가",
 				"20", "", "+", "", "반복 1",
 				"히트엔드(딜)", Skill_type.ACTIVE_NOMARK, "", 15, 1, 1, 1, Element_type.NONE, CalculatorVersion.VER_1_1_f,
@@ -2690,10 +1819,10 @@ public class SkillInfo {
 				
 				/////패시브
 				"날카로운 단검", Skill_type.PASSIVE, "", 20, 30, 20, 3, CalculatorVersion.VER_1_1_f, "설명 단검 착용시 마스터리 적용",
-				"20", "무기마스터리 30 단검 & 무기마스터리_방무 30 단검", "+", "무기마스터리 31.2 단검 & 무기마스터리_방무 31.2 단검", "+", "무기마스터리 32.4 단검 & 무기마스터리_방무 32.4 단검",
-				"+", "무기마스터리 33.7 단검 & 무기마스터리_방무 33.7 단검", "+", "무기마스터리 34.9 단검 & 무기마스터리_방무 34.9 단검", "+", "무기마스터리 36.1 단검 & 무기마스터리_방무 36.1 단검",
-				"+", "무기마스터리 37.4 단검 & 무기마스터리_방무 37.4 단검", "+", "무기마스터리 38.6 단검 & 무기마스터리_방무 38.6 단검", "+", "무기마스터리 39.8 단검 & 무기마스터리_방무 39.8 단검",
-				"+", "무기마스터리 41.1 단검 & 무기마스터리_방무 41.1 단검", "+", "무기마스터리 42.3 단검 & 무기마스터리_방무 42.3 단검", null,
+				"20", "물리무기마스터리 30 단검", "+", "물리무기마스터리 31.2 단검", "+", "물리무기마스터리 32.4 단검",
+				"+", "물리무기마스터리 33.7 단검", "+", "물리무기마스터리 34.9 단검", "+", "물리무기마스터리 36.1 단검",
+				"+", "물리무기마스터리 37.4 단검", "+", "물리무기마스터리 38.6 단검", "+", "물리무기마스터리 39.8 단검",
+				"+", "물리무기마스터리 41.1 단검", "+", "물리무기마스터리 42.3 단검", null,
 				"암살기술", Skill_type.PASSIVE, "", 15, 1, 1, 3, CalculatorVersion.VER_1_1_f,
 				"1", "크증버프 20", null,
 				"배후습격", Skill_type.PASSIVE, "", 48, 40, 30, 3, CalculatorVersion.VER_1_1_f, 

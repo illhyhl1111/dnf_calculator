@@ -9,8 +9,8 @@ public interface StatList									// 스탯 종류에 붙는 고유한 식별번
 	int ELEMENTNUM_END = ELEMENTNUM_START+ELEMENTNUM-1;
 	///////////////////////////////////////	
 	int INTNUM_START = ELEMENTNUM_END+1;	
-	int WEP_PHY=INTNUM_START+0; int WEP_MAG=INTNUM_START+1; int  WEP_NODEF_PHY=INTNUM_START+2; int WEP_NODEF_MAG=INTNUM_START+3;	// 무기물공, 무기마공, 방무물공, 방무마공
-	int WEP_IND=INTNUM_START+4; int WEP_IND_REFORGE=INTNUM_START+5; 																// 독공, 재련독공
+	int WEP_PHY=INTNUM_START+0; int WEP_MAG=INTNUM_START+1;// int  WEP_NODEF_PHY=INTNUM_START+2; int WEP_NODEF_MAG=INTNUM_START+3;	// 무기물공, 무기마공, 방무물공(미사용), 방무마공(미사용)
+	int WEP_IND=INTNUM_START+4;// int WEP_IND_REFORGE=INTNUM_START+5; 																// 독공, 재련독공(미사용)
 	int DEF_DEC_FIXED_PHY=INTNUM_START+6; int  DEF_DEC_PERCENT_PHY_ITEM=INTNUM_START+7;												// 고정물방깍, (아이템)퍼센트물방깍,
 	int DEF_DEC_FIXED_MAG=INTNUM_START+8; int DEF_DEC_PERCENT_MAG_ITEM=INTNUM_START+9;												// 고정마방깍, (아이템)퍼센트마방깍
 	int STR=INTNUM_START+10; int INT=INTNUM_START+11; int STA=INTNUM_START+12; int WILL=INTNUM_START+13;							// 힘, 지능, 체력, 정신력
@@ -28,7 +28,7 @@ public interface StatList									// 스탯 종류에 붙는 고유한 식별번
 	int WEP_NODEF_PHY_INC=INTNUM_START+35; int WEP_NODEF_MAG_INC=INTNUM_START+36;
 	int NONE=INTNUM_START+37;																										// 없음
 	int INTNUM = 38;								// 총 int형 스탯 개수
-	int INTNUM_END = INTNUM_START+INTNUM-1;
+	int INTNUM_END = 49;
 	///////////////////////////////////////	
 	int DOUBLENUM_START = INTNUM_END+1;	
 	int DAM_SKILL =DOUBLENUM_START+0;																				// 스증뎀합
@@ -39,20 +39,21 @@ public interface StatList									// 스탯 종류에 붙는 고유한 식별번
 	int MAST_PHY_2=DOUBLENUM_START+11; int MAST_MAG_2=DOUBLENUM_START+12;											// (비워둠)
 	int BUF_INC=DOUBLENUM_START+13; int BUF_CRT=DOUBLENUM_START+14;													//(스킬) 증뎀버프, 크증뎀버프
 	int MAST_PHY_ITEM=DOUBLENUM_START+15; int MAST_MAG_ITEM=DOUBLENUM_START+16; int MAST_INDEP_ITEM=DOUBLENUM_START+17;		// 물리,마법,독공뻥
-	int DOUBLENUM = 18;														// 총 double형 스탯 개수
-	int DOUBLENUM_END = DOUBLENUM_START+DOUBLENUM-1;
+	int INPUTNUM=INTNUM_START+18;																							//스킬 횟수 사용자 입력 정보
+	int DOUBLENUM = 19;														// 총 double형 스탯 개수
+	int DOUBLENUM_END = 74;
 	///////////////////////////////////////
 	int SKILL = DOUBLENUM_END+1;
 	int SKILL_RANGE = DOUBLENUM_END+2;
 	int SKILLNUM = 2; int SKILLNUM_END=DOUBLENUM_END+SKILLNUM;
 	//////////////////////////////////////
-	int INPUTNUM=SKILLNUM_END+1;																				//스킬 횟수 사용자 입력 정보
-	int BOOLNUM_START = SKILLNUM_END+2;	
+	int BOOLNUM_START = SKILLNUM_END+1;	
 	int CONVERSION_NOPHY=BOOLNUM_START+0; int CONVERSION_NOMAG=BOOLNUM_START+1;
 	int BOOLNUM=2;
-	int BOOLNUM_END = BOOLNUM_START+BOOLNUM-1;
+	int BOOLNUM_END = BOOLNUM_START+4;
 	/////////////////////////////////////
-	int STATNUM = ELEMENTNUM+INTNUM+DOUBLENUM+BOOLNUM+SKILLNUM+1;								// 총 스탯 개수
+	//int STATNUM = ELEMENTNUM+INTNUM+DOUBLENUM+BOOLNUM+SKILLNUM;								// 총 스탯 개수
+	int STAT_END = BOOLNUM_END;
 	////////////////////////////////////	
 	
 }

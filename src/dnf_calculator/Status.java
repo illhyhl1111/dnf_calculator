@@ -28,13 +28,11 @@ public class Status implements Cloneable, java.io.Serializable {
 	public static final String[] nonInfoStatOrder = new String[] {
 		"힘", "힘 %증가",
 		"지능", "지능 %증가",
-		"무기물공합", "물리방무뎀",
-		"무기마공합", "마법방무뎀", 
-		"독공", "재련독공수치",
-		"독공마스터리", "독공 %증가", 
+		"무기물공합", "무기마공합", 
+		"독공", "독공마스터리",  
 		"물리마스터리", "마법마스터리",
-		"물공 %증가", "물리방무증가",
-		"마공 %증가", "마법방무증가", 
+		"물공 %증가", "마공 %증가",
+		"독공 %증가", "크리저항감소",
 		"증뎀", "증뎀 추가증가",
 		"크증뎀", "크증 추가증가",
 		"추뎀", "스증뎀",
@@ -49,7 +47,7 @@ public class Status implements Cloneable, java.io.Serializable {
 		"고정물방깍", "고정마방깍",
 		"%물방깍_템", "%마방깍_템",
 		"%물방깍_스킬", "%마방깍_스킬",
-		"적 방어력 무시", "크리저항감소",
+		"적 방어력 무시",
 		
 	};
 	public static final int nonInfoStatNum=nonInfoStatOrder.length;
@@ -57,7 +55,7 @@ public class Status implements Cloneable, java.io.Serializable {
 	
 	public Status()									// 모든 스탯 0으로 초기화(디폴트 장비)
 	{
-		statInfo = new AbstractStatusInfo[StatList.STATNUM];
+		statInfo = new AbstractStatusInfo[StatList.STAT_END+1];
 		int i;
 		for(i=0; i<=StatList.ELEMENTNUM_END; i++)
 			statInfo[i] = new ElementInfo(false, 0);
@@ -70,9 +68,7 @@ public class Status implements Cloneable, java.io.Serializable {
 		
 		for(i=StatList.BOOLNUM_START; i<=StatList.BOOLNUM_END; i++)
 			statInfo[i] = new BooleanInfo(false);
-		
-		statInfo[StatList.INPUTNUM] = new DoubleStatusInfo(1);
-	
+			
 		skillInfo = new LinkedList<AbstractStatusInfo>();
 	}
 	
@@ -97,10 +93,7 @@ public class Status implements Cloneable, java.io.Serializable {
 		
 		statHash.put("물공", StatList.WEP_PHY); statHash.put("무기물공", StatList.WEP_PHY); statHash.put("무기물공합", StatList.WEP_PHY);
 		statHash.put("마공", StatList.WEP_MAG); statHash.put("무기마공", StatList.WEP_MAG); statHash.put("무기마공합", StatList.WEP_MAG);
-		statHash.put("물리방무뎀", StatList.WEP_NODEF_PHY); statHash.put("마법방무뎀", StatList.WEP_NODEF_MAG);
-		statHash.put("물리방무", StatList.WEP_NODEF_PHY); statHash.put("마법방무", StatList.WEP_NODEF_MAG);
 		statHash.put("독공", StatList.WEP_IND); statHash.put("독립공격", StatList.WEP_IND);
-		statHash.put("재련독공", StatList.WEP_IND_REFORGE); statHash.put("재련독공수치", StatList.WEP_IND_REFORGE);
 	
 		statHash.put("고정물방깍", StatList.DEF_DEC_FIXED_PHY); statHash.put("고정마방깍", StatList.DEF_DEC_FIXED_MAG);
 		statHash.put("퍼물방깍_템", StatList.DEF_DEC_PERCENT_PHY_ITEM); statHash.put("퍼마방깍_템", StatList.DEF_DEC_PERCENT_MAG_ITEM);
@@ -310,7 +303,7 @@ public class Status implements Cloneable, java.io.Serializable {
 	{
 		Status temp = (Status)super.clone();
 		temp.statInfo = (AbstractStatusInfo[])this.statInfo.clone();
-		for(int i=0; i<StatList.STATNUM; i++)
+		for(int i=0; i<StatList.STAT_END+1; i++)
 			statInfo[i] = (AbstractStatusInfo)this.statInfo[i].clone();
 		temp.skillInfo = new LinkedList<AbstractStatusInfo>();
 		for(AbstractStatusInfo s : this.skillInfo)

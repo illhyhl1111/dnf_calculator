@@ -108,8 +108,7 @@ public class StatusAndName implements java.io.Serializable, Cloneable
 		reverseHash.put(StatList.ELEM_LIGHT, "명속성 강화 +"); reverseHash.put(StatList.ELEM_DARKNESS, "암속성 강화 +");
 		
 		reverseHash.put(StatList.WEP_PHY, "물리 공격력 +"); reverseHash.put(StatList.WEP_MAG, "마법 공격력 +");
-		reverseHash.put(StatList.WEP_NODEF_PHY, " 방어무시 물리 공격력 +"); reverseHash.put(StatList.WEP_NODEF_MAG, " 방어무시 마법 공격력 +");
-		reverseHash.put(StatList.WEP_IND, "독립 공격력 +"); reverseHash.put(StatList.WEP_IND_REFORGE, " 독립 공격력(재련) +");
+		reverseHash.put(StatList.WEP_IND, "독립 공격력 +"); 
 		
 		reverseHash.put(StatList.DEF_DEC_FIXED_PHY, "적 물리방어력(고정) -"); reverseHash.put(StatList.DEF_DEC_FIXED_MAG, "적 마법방어력(고정) -");
 		reverseHash.put(StatList.DEF_DEC_PERCENT_MAG_ITEM, "적 마법방어력(%) -"); reverseHash.put(StatList.DEF_DEC_PERCENT_PHY_ITEM, "적 물리방어력(%) -");

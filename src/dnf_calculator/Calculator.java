@@ -55,9 +55,7 @@ public class Calculator {
 			double inc_strength=1+strength/250.0;																					// 1+힘*(100+힘뻥)/100/250
 			int inc_weapon=(int)((stat.getStat(StatList.WEP_PHY)*(stat.getStat(StatList.MAST_PHY)+100))/100);										// [[무기물공*(100+마스터리2)/100]*(100+마스터리1)/100]
 			inc_weapon=(int) (inc_weapon*(100+stat.getStat(StatList.MAST_PHY_ITEM))/100);
-			double defIgnore=((stat.getStat(StatList.WEP_NODEF_PHY)*(100-object.getStat(Monster_StatList.DIFFICULTY)))/100);	
-			defIgnore=(int) (defIgnore*(100+stat.getStat(StatList.WEP_NODEF_PHY_INC))/100);										// 방어무시데미지
-			double frontATK=inc_strength*inc_weapon*dec_defence*elementCal.get_inc_elem()+defIgnore;							// (힘*물공)*방어력*속강+방무뎀
+			double frontATK=inc_strength*inc_weapon*dec_defence*elementCal.get_inc_elem();									// (힘*물공)*방어력*속강
 			
 			double inc_critical = getIncCrt_phy(object, stat);
 			
@@ -85,7 +83,7 @@ public class Calculator {
 			double inc_strength=1+strength/250.0;																// 1+힘*(100+힘뻥)/100/250
 			int inc_indep=(int)(stat.getStat(StatList.WEP_IND)*(100+stat.getStat(StatList.MAST_IND))/100*(100+stat.getStat(StatList.MAST_INDEP_ITEM))/100);
 			//inc_indep+= (int)(stat.getStat(StatList.WEP_IND_REFORGE)*(100+stat.getStat(StatList.MAST_REFORGE))/100);		// 독공*독공뻥+재련 *재련뻥
-			inc_indep+= (int)(stat.getStat(StatList.WEP_IND_REFORGE)*(100+stat.getStat(StatList.MAST_IND))/100);		// 독공*독공뻥+재련 *재련뻥												
+			//inc_indep+= (int)(stat.getStat(StatList.WEP_IND_REFORGE)*(100+stat.getStat(StatList.MAST_IND))/100);		// 독공*독공뻥+재련 *재련뻥												
 			double frontATK=inc_strength*inc_indep*dec_defence*elementCal.get_inc_elem();					// 힘*독공*방어력*속강
 			
 			double inc_critical = getIncCrt_phy(object, stat);
@@ -113,9 +111,7 @@ public class Calculator {
 			double inc_strength=1+strength/250.0;																						// 1+지능/250
 			int inc_weapon=(int)((stat.getStat(StatList.WEP_MAG)*(stat.getStat(StatList.MAST_MAG)+100))/100);							// [[무기마공*(100+마스터리2)/100]*(100+마스터리1)/100]
 			inc_weapon=(int) (inc_weapon*(100+stat.getStat(StatList.MAST_MAG_ITEM))/100);
-			int defIgnore=(int)((stat.getStat(StatList.WEP_NODEF_MAG)*(100-object.getStat(Monster_StatList.DIFFICULTY)))/100);
-			defIgnore=(int) (defIgnore*(100+stat.getStat(StatList.WEP_NODEF_MAG_INC))/100);											// 방어무시데미지
-			double frontATK=inc_strength*inc_weapon*dec_defence*elementCal.get_inc_elem()+defIgnore;								// (지능*마공)*방어력*속강+방무뎀
+			double frontATK=inc_strength*inc_weapon*dec_defence*elementCal.get_inc_elem();									// (지능*마공)*방어력*속강
 			
 			double inc_critical = getIncCrt_mag(object, stat);
 			
@@ -142,7 +138,7 @@ public class Calculator {
 			double inc_strength=1+strength/250.0;																// 1+지능/250
 			int inc_indep=(int)(stat.getStat(StatList.WEP_IND)*(100+stat.getStat(StatList.MAST_IND))/100*(100+stat.getStat(StatList.MAST_INDEP_ITEM))/100);
 			//inc_indep+= (int)(stat.getStat(StatList.WEP_IND_REFORGE)*(100+stat.getStat(StatList.MAST_REFORGE))/100);		// 독공*독공뻥+재련 *재련뻥
-			inc_indep+= (int)(stat.getStat(StatList.WEP_IND_REFORGE)*(100+stat.getStat(StatList.MAST_IND))/100);		// 독공*독공뻥+재련 *재련뻥 
+			//inc_indep+= (int)(stat.getStat(StatList.WEP_IND_REFORGE)*(100+stat.getStat(StatList.MAST_IND))/100);		// 독공*독공뻥+재련 *재련뻥 
 			double frontATK=inc_strength*inc_indep*dec_defence*elementCal.get_inc_elem();					// 지능*독공*방어력*속강
 			
 			double inc_critical = getIncCrt_mag(object, stat);
@@ -312,7 +308,7 @@ public class Calculator {
 			int inc_weapon1=(int)(stat.getStat(StatList.WEP_PHY));						// [무기물공*(100+마스터리2)/100]
 			int inc_weapon2=(int)( (inc_weapon1*(stat.getStat(StatList.MAST_PHY)+100))/100 + 0.9999);							// [[무기물공*(100+마스터리2)/100]*(100+마스터리1)/100] - 소숫점포함
 			inc_weapon2=(int) ((inc_weapon2*(100+stat.getStat(StatList.MAST_PHY_ITEM))/100)*(100+stat.getStat("투함포항"))/100);
-			return (int)((inc_weapon2*(1+getInfoStrength(stat)/250.0)+ stat.getStat("물리방무")*(100+stat.getStat(StatList.WEP_NODEF_PHY_INC))/100));
+			return (int)(inc_weapon2*(1+getInfoStrength(stat)/250.0));
 		}
 		catch(StatusTypeMismatch | UndefinedStatusKey e)
 		{
@@ -326,7 +322,7 @@ public class Calculator {
 			int inc_weapon1=(int)(stat.getStat(StatList.WEP_MAG));						// [무기마공*(100+마스터리2)/100]
 			int inc_weapon2=(int)( (inc_weapon1*(stat.getStat(StatList.MAST_MAG)+100))/100 + 0.9999);							// [[무기마공*(100+마스터리2)/100]*(100+마스터리1)/100] - 소숫점포함
 			inc_weapon2=(int) (inc_weapon2*(100+stat.getStat(StatList.MAST_MAG_ITEM))/100*(100+stat.getStat("투함포항"))/100);
-			return (int)((inc_weapon2*(1+getInfoIntellegence(stat)/250.0)+ stat.getStat("마법방무")*(100+stat.getStat(StatList.WEP_NODEF_MAG_INC))/100));
+			return (int)(inc_weapon2*(1+getInfoIntellegence(stat)/250.0));
 		}
 		catch(StatusTypeMismatch | UndefinedStatusKey e)
 		{
@@ -338,7 +334,6 @@ public class Calculator {
 	{
 		try{
 			int inc_indep=(int)(stat.getStat(StatList.WEP_IND)*(100+stat.getStat(StatList.MAST_IND))/100*(100+stat.getStat(StatList.MAST_INDEP_ITEM))/100);
-			inc_indep+= (int)(stat.getStat(StatList.WEP_IND_REFORGE)*(100+stat.getStat(StatList.MAST_IND))/100);		// 독공*독공뻥+재련 *재련뻥
 			return inc_indep;
 		}
 		catch(StatusTypeMismatch e)
@@ -367,7 +362,7 @@ public class Calculator {
 	
 	public static long percentDamage_physical_ign(int skillPercent, Element_type element, Monster object, Characters character, int indepLevel, boolean isHoldingSkill, int mode)
 	{
-		//calculate with status
+		/*미사용
 		try{
 			Status stat=character.dungeonStatus;
 			CalculateElement elementCal = new CalculateElement(object, stat, element);								// 각 속강별 데미지 계산
@@ -383,12 +378,13 @@ public class Calculator {
 		{
 			e.printStackTrace();
 			return -1;
-		}
+		}*/
+		return 0;
 	}
 	
 	public static long percentDamage_magical_ign(int skillPercent, Element_type element, Monster object, Characters character, int indepLevel, boolean isHoldingSkill, int mode)
 	{
-		//calculate with status
+		/*미사용
 		try{
 			Status stat=character.dungeonStatus;
 			CalculateElement elementCal = new CalculateElement(object, stat, element);								// 각 속강별 데미지 계산
@@ -404,7 +400,8 @@ public class Calculator {
 		{
 			e.printStackTrace();
 			return -1;
-		}
+		}*/
+		return 0;
 	}
 	
 	public static LinkedList<Entry<String, Double>> evaluateStatus(Skill skill, Monster object, Characters character, double skillInc)
@@ -415,7 +412,7 @@ public class Calculator {
 		
 		double phy_per, phy_per_ign, phy_fix, mag_per, mag_per_ign, mag_fix, deal;
 		double str, str_inc, intel, intel_inc, phy_atk, phy_atk_inc, mag_atk, mag_atk_inc;
-		double ind, ind_inc, reforge, add_inc, all_inc, crt_inc, crt;
+		double ind, ind_inc, add_inc, all_inc, crt_inc, crt;
 		double p, a, c, k, K1, K2;
 		CalculateElement elementCal;
 		skillInc /= 100;
@@ -426,7 +423,6 @@ public class Calculator {
 			phy_atk = stat.getStat(StatList.WEP_PHY); phy_atk_inc = 1+stat.getStat(StatList.MAST_PHY_ITEM)/100;
 			mag_atk = stat.getStat(StatList.WEP_MAG); mag_atk_inc = 1+stat.getStat(StatList.MAST_MAG_ITEM)/100;
 			ind = stat.getStat(StatList.WEP_IND); ind_inc = 1+stat.getStat(StatList.MAST_INDEP_ITEM)/100;
-			reforge = stat.getStat(StatList.WEP_IND_REFORGE);
 			add_inc = 1+stat.getStat(StatList.DAM_INC)/100+stat.getStat(StatList.DAM_INC_ADD)/100;
 			crt_inc = 1+stat.getStat(StatList.DAM_CRT)/100+stat.getStat(StatList.DAM_CRT_ADD)/100;
 			all_inc = 1+stat.getStat(StatList.DAM_INC_ALL)/100;
@@ -480,9 +476,8 @@ public class Calculator {
 				result.add(new AbstractMap.SimpleEntry<String, Double>("마공 % 증가", skillInc/mag_per*mag_atk_inc*100));
 			}
 			if(Double.compare(phy_fix+mag_fix, 0)!=0){
-				result.add(new AbstractMap.SimpleEntry<String, Double>("독공", skillInc/(phy_fix+mag_fix)*(ind*ind_inc+reforge)/ind_inc));
-				result.add(new AbstractMap.SimpleEntry<String, Double>("독공 % 증가", skillInc/(phy_fix+mag_fix)*(ind*ind_inc+reforge)/ind*100));
-				result.add(new AbstractMap.SimpleEntry<String, Double>("재련독공", skillInc/(phy_fix+mag_fix)*(ind*ind_inc+reforge)));
+				result.add(new AbstractMap.SimpleEntry<String, Double>("독공", skillInc/(phy_fix+mag_fix)*(ind*ind_inc)/ind_inc));
+				result.add(new AbstractMap.SimpleEntry<String, Double>("독공 % 증가", skillInc/(phy_fix+mag_fix)*(ind*ind_inc)/ind*100));
 			}
 			result.add(new AbstractMap.SimpleEntry<String, Double>("데미지 추가증가", skillInc*add_inc*100));
 			result.add(new AbstractMap.SimpleEntry<String, Double>("모든 공격력 증가", skillInc*all_inc*100));

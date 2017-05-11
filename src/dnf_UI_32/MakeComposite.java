@@ -245,14 +245,14 @@ public class MakeComposite {
 				
 				if(((Equipment)item).getReinforce()!=0){
 					stat = new Label(itemInfo, SWT.WRAP);
-					stat.setText("+"+((Equipment)item).getReinforce()+" 강화: 방어무시 물리 공격력 + "+((int)phyIgnStat.stat.getStatToDouble()) );
+					stat.setText("+"+((Equipment)item).getReinforce()+" 강화: 물리 공격력 + "+((int)phyIgnStat.stat.getStatToDouble()) );
 					leftData = new GridData();
 					leftData.widthHint=InterfaceSize.ITEM_INFO_SIZE-10;
 					stat.setLayoutData(leftData);
 					stat.setForeground(DnFColor.UNCOMMON);
 					
 					stat = new Label(itemInfo, SWT.WRAP);
-					stat.setText("+"+((Equipment)item).getReinforce()+" 강화: 방어무시 마법 공격력 + "+((int)magIgnStat.stat.getStatToDouble()));
+					stat.setText("+"+((Equipment)item).getReinforce()+" 강화: 마법 공격력 + "+((int)magIgnStat.stat.getStatToDouble()));
 					leftData = new GridData();
 					leftData.widthHint=InterfaceSize.ITEM_INFO_SIZE-10;
 					stat.setLayoutData(leftData);

@@ -199,6 +199,18 @@ public class StatusList implements java.io.Serializable, Cloneable {
 		return null;
 	}
 	
+	public StatusAndName findStat(int name, int index)
+	{
+		int i = 0;
+		for(StatusAndName s : statList){
+			if(i<index);
+			else if(s.name==name){
+				return s;
+			}
+		}
+		return null;
+	}
+	
 	public void addListToStat(Status stat)
 	{
 		for(StatusAndName s : statList)

@@ -1134,7 +1134,7 @@ public class ChangeItemStatus extends Dialog{
 
 	private void setIgnStat(int phyIgnStat, Label phyStat, Text phyText, int magIgnStat, Label magStat, Text magText) throws StatusTypeMismatch
 	{
-		phyStat.setText("+"+currentReinforce+" 강화: 방어무시 물리 공격력 +");
+		phyStat.setText("+"+currentReinforce+" 강화: 물리 공격력 +");
 		phyStat.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_BLUE));
 		
 		String strength = String.valueOf(phyIgnStat);
@@ -1142,7 +1142,7 @@ public class ChangeItemStatus extends Dialog{
 		phyText.addVerifyListener(new TextInputOnlyInteger());
 		phyText.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_BLUE));
 
-		magStat.setText("+"+currentReinforce+" 강화: 방어무시 마법 공격력 +");
+		magStat.setText("+"+currentReinforce+" 강화: 마법 공격력 +");
 		magStat.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_BLUE));
 		
 		strength = String.valueOf(magIgnStat);
@@ -1180,7 +1180,7 @@ public class ChangeItemStatus extends Dialog{
 	
 	private void setRefStat(int refStat, Label refStatLabel, Text refText)
 	{
-		refStatLabel.setText("+"+currentReforge+" 제련: 독립 공격력 +");
+		refStatLabel.setText("+"+currentReforge+" 재련: 독립 공격력 +");
 		refStatLabel.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_DARK_BLUE));
 		
 		String strength = String.valueOf(refStat);
