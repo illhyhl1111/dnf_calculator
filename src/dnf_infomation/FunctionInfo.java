@@ -865,7 +865,9 @@ public class FunctionInfo {
 				Equipment equipment =(Equipment)item;
 				if(equipment.dStat.statList.get(0).enabled && equipment.dStat.statList.get(1).enabled)
 					equipment.dStat.statList.get(0).enabled=false;
-				return new StatusList();
+				StatusList statList = new StatusList();
+				statList.addStatList("모공증", -15);
+				return statList;
 			}
 		});
 		
@@ -1102,17 +1104,22 @@ public class FunctionInfo {
 			public StatusList function(Characters character, Monster monster, Object item, String[] args) {
 				StatusList statList = new StatusList();
 				int count=0;
+				double sum=0;
 				Equipment equipment = (Equipment)item;
 				int num = equipment.dStat.statList.size();
 				for(int i=0; i<num; i++){
-					if(equipment.dStat.statList.get(i).enabled)
-						count++;
+					try {
+						if(equipment.dStat.statList.get(i).enabled){
+							count++;
+							if(i!=num-1) sum-=equipment.dStat.statList.get(i).stat.getStatToDouble();
+						}
+						else if(i==num-1) sum+=equipment.dStat.statList.get(i).stat.getStatToDouble();
+					}
+					catch (StatusTypeMismatch e) {
+						e.printStackTrace();
+					}
 				}
-				if(count>1){
-					for(int i=0; i<num-1; i++)
-						equipment.dStat.statList.get(i).enabled = false;
-					equipment.dStat.statList.getLast().enabled = true;
-				}
+				if(count>1) statList.addStatList(equipment.dStat.statList.getFirst().name, sum);
 				return statList; 
 			}
 		});

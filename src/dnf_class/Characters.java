@@ -346,29 +346,6 @@ public class Characters implements java.io.Serializable
 	{
 		initStatus(trackStat, trackingSkill);
 		
-		//item fStat
-		itemSetting.weapon.fStat.addListToStat(dungeonStatus, this, target, itemSetting.weapon);
-		for(Equipment e : itemSetting.equipmentList.values())
-			e.fStat.addListToStat(dungeonStatus, this, target, e);
-		for(Buff buff : buffList)
-			if(buff.enabled) buff.fStat.addListToStat(dungeonStatus, this, target, buff);
-		
-		for(Entry<SetName,Integer> e : setOptionList.entrySet())				//setOptionList(셋옵목록)에 포함된 모든 셋옵 e에 대해
-		{
-			try {
-				LinkedList<SetOption> candidates = userItemList.getSetOptions(e.getKey());		//e에 해당되는 셋옵 목록 - candidates
-				for(SetOption s : candidates)
-				{
-					if(s.isEnabled(e.getValue())) s.fStat.addListToStat(dungeonStatus, this, target, s);
-				}
-			} 
-			catch (ItemNotFoundedException e1) {
-				e1.printStackTrace();
-			}
-			
-		}
-		itemSetting.drape.fStat.addListToStat(dungeonStatus, this, target, itemSetting.drape);
-		
 		//item stat
 		itemStatUpdate(itemSetting.weapon);
 		
@@ -399,6 +376,30 @@ public class Characters implements java.io.Serializable
 			if(buff.enabled) itemStatUpdate(buff);
 		
 		target.getAdditionalStatList().addListToStat(dungeonStatus, target.getName());
+
+		//item fStat
+		itemSetting.weapon.fStat.addListToStat(dungeonStatus, this, target, itemSetting.weapon);
+		for(Equipment e : itemSetting.equipmentList.values())
+			e.fStat.addListToStat(dungeonStatus, this, target, e);
+		for(Buff buff : buffList)
+			if(buff.enabled) buff.fStat.addListToStat(dungeonStatus, this, target, buff);
+		
+		for(Entry<SetName,Integer> e : setOptionList.entrySet())				//setOptionList(셋옵목록)에 포함된 모든 셋옵 e에 대해
+		{
+			try {
+				LinkedList<SetOption> candidates = userItemList.getSetOptions(e.getKey());		//e에 해당되는 셋옵 목록 - candidates
+				for(SetOption s : candidates)
+				{
+					if(s.isEnabled(e.getValue())) s.fStat.addListToStat(dungeonStatus, this, target, s);
+				}
+			} 
+			catch (ItemNotFoundedException e1) {
+				e1.printStackTrace();
+			}
+			
+		}
+		itemSetting.drape.fStat.addListToStat(dungeonStatus, this, target, itemSetting.drape);
+		
 		
 		//skill - fStat, set level
 		setSkillLevel(trackingSkill);

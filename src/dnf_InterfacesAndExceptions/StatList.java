@@ -39,7 +39,7 @@ public interface StatList									// 스탯 종류에 붙는 고유한 식별번
 	int MAST_PHY_2=DOUBLENUM_START+11; int MAST_MAG_2=DOUBLENUM_START+12;											// (비워둠)
 	int BUF_INC=DOUBLENUM_START+13; int BUF_CRT=DOUBLENUM_START+14;													//(스킬) 증뎀버프, 크증뎀버프
 	int MAST_PHY_ITEM=DOUBLENUM_START+15; int MAST_MAG_ITEM=DOUBLENUM_START+16; int MAST_INDEP_ITEM=DOUBLENUM_START+17;		// 물리,마법,독공뻥
-	int INPUTNUM=INTNUM_START+18;																							//스킬 횟수 사용자 입력 정보
+	int INPUTNUM=DOUBLENUM_START+18;																							//스킬 횟수 사용자 입력 정보
 	int DOUBLENUM = 19;														// 총 double형 스탯 개수
 	int DOUBLENUM_END = 74;
 	///////////////////////////////////////
