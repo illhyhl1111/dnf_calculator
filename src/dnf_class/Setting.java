@@ -466,6 +466,9 @@ public class Setting implements java.io.Serializable, Cloneable{
 		case VANGUARD:
 			magicalSealedSetting.weapon=magicalSealedWeapon.get(Weapon_detailType.LANCE_HALBERD);
 			break;
+		case DUALIST:
+			magicalSealedSetting.weapon=magicalSealedWeapon.get(Weapon_detailType.LANCE_PIKE);
+			break;
 		case ELVENKNIGHT:
 			magicalSealedSetting.weapon=magicalSealedWeapon.get(Weapon_detailType.SWORD_LONGSWORD);
 			break;

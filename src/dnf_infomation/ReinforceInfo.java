@@ -158,7 +158,7 @@ public class ReinforceInfo {
 		masteryMap.put(Job.SOULMASTER, new MasteryInfo(Equip_type.FABRIC, 0, 24, 0, 1.2, 0, 0));
 		masteryMap.put(Job.BUSERKER, new MasteryInfo(Equip_type.HEAVY, 32, 0, 1.6, 0, 0, 0));
 		masteryMap.put(Job.ASURA, new MasteryInfo(Equip_type.PLATE, 0, 20, 0, 1, 0, 0));
-		masteryMap.put(Job.NENMASTER_F, new MasteryInfo(Equip_type.FABRIC, 0, 40, 0, 2, 10, 0));
+		masteryMap.put(Job.NENMASTER_F, new MasteryInfo(Equip_type.FABRIC, 0, 24, 0, 1.2, 0, 0));
 		masteryMap.put(Job.NENMASTER_M, new MasteryInfo(Equip_type.FABRIC, 0, 24, 0, 1.2, 0, 0));
 		masteryMap.put(Job.STRIKER_F, new MasteryInfo(Equip_type.MAIL, 40, 0, 2, 0, 5, 0));
 		masteryMap.put(Job.STRIKER_M, new MasteryInfo(Equip_type.MAIL, 40, 0, 2, 0, 5, 0));
@@ -187,6 +187,7 @@ public class ReinforceInfo {
 		masteryMap.put(Job.NECROMENCER, new MasteryInfo(Equip_type.MAIL, 0, 30, 0, 1.5, 0, 0));
 		masteryMap.put(Job.DEMONSLAYER, new MasteryInfo(Equip_type.HEAVY, 30, 0, 1.5, 0, 10, 0));
 		masteryMap.put(Job.VANGUARD, new MasteryInfo(Equip_type.HEAVY, 32, 0, 1.6, 0, 10, 0));
+		masteryMap.put(Job.DUALIST, new MasteryInfo(Equip_type.MAIL, 32, 0, 1.6, 0, 10, 0));
 		masteryMap.put(Job.ELVENKNIGHT, new MasteryInfo(Equip_type.PLATE, 30, 0, 1.5, 0, 10, 0));
 		masteryMap.put(Job.CREATOR, new MasteryInfo(Equip_type.PLATE, 0, 20, 0, 1, 0, 0));
 		readed=true;

@@ -159,6 +159,16 @@ public class CharacterInfo {
 		temp.statList.addStatList("마크", 8);
 		basicStatList.add(temp);
 		
+		/////듀얼리스트
+		temp = new CharInfoBox(Job.DUALIST, 90, new StatusList());
+		temp.statList.addStatList("힘", 721);
+		temp.statList.addStatList("지능", 641);
+		temp.statList.addStatList("독공", 966);
+		temp.statList.addStatList("모속강", 13);
+		temp.statList.addStatList("물크", 8);
+		temp.statList.addStatList("마크", 8);
+		basicStatList.add(temp);
+		
 		/////엘븐
 		temp = new CharInfoBox(Job.ELVENKNIGHT, 90, new StatusList());
 		temp.statList.addStatList("힘", 744);
