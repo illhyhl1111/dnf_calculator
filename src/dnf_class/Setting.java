@@ -478,6 +478,9 @@ public class Setting implements java.io.Serializable, Cloneable{
 		case SHADOWDANCER:
 			magicalSealedSetting.weapon=magicalSealedWeapon.get(Weapon_detailType.THIEF_DAGGER);
 			break;
+		case NENMASTER_F:
+			magicalSealedSetting.weapon=magicalSealedWeapon.get(Weapon_detailType.FIGHTER_KNUCKLE);
+			break;
 		default:
 			break;
 		}

@@ -208,5 +208,16 @@ public class CharacterInfo {
 		temp.statList.addStatList("물크", 8);
 		temp.statList.addStatList("마크", 8);
 		basicStatList.add(temp);
+		
+		/////염제
+		temp = new CharInfoBox(Job.NENMASTER_F, 90, new StatusList());
+		temp.statList.addStatList("힘", 615);
+		temp.statList.addStatList("지능", 748);
+		temp.statList.addStatList("독공", 960);
+		temp.statList.addStatList("모속강", 13);
+		temp.statList.addStatList("물크", 8);
+		temp.statList.addStatList("마크", 8);
+		basicStatList.add(temp);
+		
 	}
 }

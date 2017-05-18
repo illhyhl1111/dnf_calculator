@@ -12,7 +12,7 @@ public enum Job implements java.io.Serializable
 	SPITFIRE_M(Character_type.GUNNER_M, "커맨더", "바칼) 혈누"), MECHANIC_M(Character_type.GUNNER_M, "프라임"),
 	CRUSADER(Character_type.PRIEST, "세인트"), INFIGHTER(Character_type.PRIEST, "저스티스"),
 	AVENGER(Character_type.PRIEST, "이모탈"), EXORCIST(Character_type.PRIEST, "태을선인", "??) 종교, 디레지에) 성불왕"),
-	NENMASTER_F(Character_type.FIGHTER_F, "염제 폐월수화", "구현 예정"), GRAPPLER_F(Character_type.FIGHTER_F, "얼티밋 디바"),
+	NENMASTER_F(Character_type.FIGHTER_F, "염제 폐월수화", "던조닉) 프사암릿내놔"), GRAPPLER_F(Character_type.FIGHTER_F, "얼티밋 디바"),
 	STRIKER_F(Character_type.FIGHTER_F, "카이저"), STREETFIGHTER_F(Character_type.FIGHTER_F, "용독문주", "구현 예정"),
 	NENMASTER_M(Character_type.FIGHTER_M, "염황 광풍제월"), GRAPPLER_M(Character_type.FIGHTER_M, "그랜드 마스터", "구현 예정"),
 	STRIKER_M(Character_type.FIGHTER_M, "패황", "카시야스) 발차기팡팡"), STREETFIGHTER_M(Character_type.FIGHTER_M, "명왕"),
