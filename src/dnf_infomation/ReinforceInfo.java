@@ -187,6 +187,7 @@ public class ReinforceInfo {
 		masteryMap.put(Job.NECROMENCER, new MasteryInfo(Equip_type.MAIL, 0, 30, 0, 1.5, 0, 0));
 		masteryMap.put(Job.DEMONSLAYER, new MasteryInfo(Equip_type.HEAVY, 30, 0, 1.5, 0, 10, 0));
 		masteryMap.put(Job.VANGUARD, new MasteryInfo(Equip_type.HEAVY, 32, 0, 1.6, 0, 10, 0));
+		masteryMap.put(Job.DUALIST, new MasteryInfo(Equip_type.MAIL, 32, 0, 1.6, 0, 10, 0));
 		masteryMap.put(Job.ELVENKNIGHT, new MasteryInfo(Equip_type.PLATE, 30, 0, 1.5, 0, 10, 0));
 		masteryMap.put(Job.CREATOR, new MasteryInfo(Equip_type.PLATE, 0, 20, 0, 1, 0, 0));
 		readed=true;

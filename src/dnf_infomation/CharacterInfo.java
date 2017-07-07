@@ -148,12 +148,43 @@ public class CharacterInfo {
 		temp.statList.addStatList("물크", 8);
 		temp.statList.addStatList("마크", 8);
 		basicStatList.add(temp);
+
+		
+		/////카이저
+		temp = new CharInfoBox(Job.STRIKER_F, 90, new StatusList());
+		temp.statList.addStatList("힘", 765);
+		temp.statList.addStatList("지능", 598);
+		temp.statList.addStatList("독공", 960);
+		temp.statList.addStatList("모속강", 13);
+		temp.statList.addStatList("물크", 8);
+		temp.statList.addStatList("마크", 8);
+		basicStatList.add(temp);
+
+		/////자이언트
+		temp = new CharInfoBox(Job.GRAPPLER_M, 90, new StatusList());
+		temp.statList.addStatList("힘", 727);
+		temp.statList.addStatList("지능", 640); // 안나와있음
+		temp.statList.addStatList("독공", 960);
+		temp.statList.addStatList("모속강", 13);
+		temp.statList.addStatList("물크", 8);
+		temp.statList.addStatList("마크", 8);
+		basicStatList.add(temp);
 		
 		/////워로드
 		temp = new CharInfoBox(Job.VANGUARD, 90, new StatusList());
 		temp.statList.addStatList("힘", 758);
 		temp.statList.addStatList("지능", 604);
 		temp.statList.addStatList("독공", 960);
+		temp.statList.addStatList("모속강", 13);
+		temp.statList.addStatList("물크", 8);
+		temp.statList.addStatList("마크", 8);
+		basicStatList.add(temp);
+		
+		/////듀얼리스트
+		temp = new CharInfoBox(Job.DUALIST, 90, new StatusList());
+		temp.statList.addStatList("힘", 721);
+		temp.statList.addStatList("지능", 641);
+		temp.statList.addStatList("독공", 966);
 		temp.statList.addStatList("모속강", 13);
 		temp.statList.addStatList("물크", 8);
 		temp.statList.addStatList("마크", 8);
@@ -208,5 +239,16 @@ public class CharacterInfo {
 		temp.statList.addStatList("물크", 8);
 		temp.statList.addStatList("마크", 8);
 		basicStatList.add(temp);
+		
+		/////염제
+		temp = new CharInfoBox(Job.NENMASTER_F, 90, new StatusList());
+		temp.statList.addStatList("힘", 615);
+		temp.statList.addStatList("지능", 748);
+		temp.statList.addStatList("독공", 960);
+		temp.statList.addStatList("모속강", 13);
+		temp.statList.addStatList("물크", 8);
+		temp.statList.addStatList("마크", 8);
+		basicStatList.add(temp);
+		
 	}
 }

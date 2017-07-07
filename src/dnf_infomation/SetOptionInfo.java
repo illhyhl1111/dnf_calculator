@@ -25,8 +25,8 @@ public class SetOptionInfo {
 		temp.dStat.addStatList("암속깍", 30, false, true);
 		setOptionList.add(temp);
 		//불마력
-		temp = new SetOption(SetName.BURNINGSPELL, 5, CalculatorVersion.VER_1_2_a);
-		temp.vStat.addStatList("마공", 480);
+		temp = new SetOption(SetName.BURNINGSPELL, 5, CalculatorVersion.VER_1_2_b);
+		temp.vStat.addStatList("마공", 550);
 		temp.vStat.addStatList("독공", 550);
 		temp.dStat.addStatList("지능뻥", 18, false, true);
 		setOptionList.add(temp);

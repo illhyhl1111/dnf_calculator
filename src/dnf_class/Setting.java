@@ -463,8 +463,14 @@ public class Setting implements java.io.Serializable, Cloneable{
 		case STRIKER_F: case STRIKER_M:
 			magicalSealedSetting.weapon=magicalSealedWeapon.get(Weapon_detailType.FITGHTER_BOXGLOVE);
 			break;
+		case GRAPPLER_F: case GRAPPLER_M:
+			magicalSealedSetting.weapon=magicalSealedWeapon.get(Weapon_detailType.FIGHTER_GAUNTLET);
+			break;
 		case VANGUARD:
 			magicalSealedSetting.weapon=magicalSealedWeapon.get(Weapon_detailType.LANCE_HALBERD);
+			break;
+		case DUALIST:
+			magicalSealedSetting.weapon=magicalSealedWeapon.get(Weapon_detailType.LANCE_PIKE);
 			break;
 		case ELVENKNIGHT:
 			magicalSealedSetting.weapon=magicalSealedWeapon.get(Weapon_detailType.SWORD_LONGSWORD);
@@ -477,6 +483,9 @@ public class Setting implements java.io.Serializable, Cloneable{
 			break;
 		case SHADOWDANCER:
 			magicalSealedSetting.weapon=magicalSealedWeapon.get(Weapon_detailType.THIEF_DAGGER);
+			break;
+		case NENMASTER_F:
+			magicalSealedSetting.weapon=magicalSealedWeapon.get(Weapon_detailType.FIGHTER_KNUCKLE);
 			break;
 		default:
 			break;
