@@ -158,9 +158,14 @@ public class Characters implements java.io.Serializable
 	public boolean changeSkillEnable(Skill skill)
 	{
 		skill.setBuffEnabled(!skill.getBuffEnabled());
-		if(skill.skillInfo.getLast().stat.findStat(StatList.CRT_PHY)!=null || skill.skillInfo.getLast().stat.findStat(StatList.CRT_MAG)!=null){
-			if(autoOptimize) optimizeEmblem(autoOptimizeMode, autoOptimizeRarity);
-			return true;
+		try{
+			if(skill.skillInfo.getLast().stat.findStat(StatList.CRT_PHY)!=null || skill.skillInfo.getLast().stat.findStat(StatList.CRT_MAG)!=null){
+				if(autoOptimize) optimizeEmblem(autoOptimizeMode, autoOptimizeRarity);
+				return true;
+			}
+		} catch (NullPointerException e)
+		{
+			return false;
 		}
 		return false;
 	}
